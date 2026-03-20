@@ -101,7 +101,6 @@
         /* ==========================================
            สไตล์เฉพาะของ P+ Transfer Slip
            ========================================== */
-        /* ลบ display: flex ออกเพื่อแก้ปัญหาหน้าสลิปโผล่ตอนเลื่อน */
         #view-scan {
             background-color: #e9ecef;
             font-family: 'Kanit', sans-serif;
@@ -538,7 +537,7 @@
             
             <div id="banner-container" class="flex overflow-x-auto hide-scrollbar snap-x px-4 gap-3 pb-2 cursor-grab">
                 <div class="relative w-[280px] h-[130px] rounded-2xl overflow-hidden flex-shrink-0 snap-center shadow-md bg-black select-none" onclick="navigateTo('promo1')">
-                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" alt="[Image of ช้อปปิ้ง]">
+                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" alt="">
                     <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent pointer-events-none"></div>
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full pointer-events-none">
                         <div>
@@ -884,11 +883,12 @@
                     <div class="detail-value">123456789012345678</div>
                 </div>
                 
-                <!-- ช่องระบุจำนวนเงิน (พิมพ์ได้ + อัปเดต QR อัตโนมัติ) -->
+                <!-- ช่องระบุจำนวนเงิน (พิมพ์ได้ + อัปเดต QR อัตโนมัติ + บันทึกลงภาพ) -->
                 <div class="detail-item">
                     <div class="detail-label">จำนวน:</div>
                     <div class="detail-value">
-                        <input type="number" id="payment-amount-input" class="amount-input" value="888.00" step="0.01" min="0" oninput="updateQRWithDelay()"> บาท
+                        <!-- เพิ่ม this.setAttribute('value', this.value) เพื่อให้ html2canvas เห็นตัวเลขล่าสุด -->
+                        <input type="number" id="payment-amount-input" class="amount-input" value="888.00" step="0.01" min="0" oninput="this.setAttribute('value', this.value); updateQRWithDelay()"> บาท
                     </div>
                 </div>
                 
@@ -917,7 +917,7 @@
                 <div class="qr-section">
                     <div class="qr-container" id="qr-target">
                         <div class="laser-scan" id="laser-effect"></div>
-                        <img id="promptpay-qr-img" src="" alt="[Image of คิวอาร์โค้ด]" style="width: 100%; height: 100%; object-fit: contain;">
+                        <img id="promptpay-qr-img" src="" alt="" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div class="verified-box">verified by Next Live</div>
                 </div>
@@ -954,7 +954,7 @@
             </div>
         </div>
         
-        <!-- Input Area (Fixed ด้านบน Bottom Nav) -->
+        <!-- Input Area -->
         <div class="fixed bottom-[70px] w-full max-w-[414px] p-3 bg-white border-t border-slate-100 z-30">
             <form id="ai-chat-form" class="flex gap-2" onsubmit="handleAIChatSubmit(event)">
                 <input type="text" id="ai-input" class="flex-1 bg-slate-100 rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-sky-400" placeholder="พิมพ์ข้อความที่นี่..." autocomplete="off">
@@ -982,12 +982,11 @@
             <span class="text-[10px] font-semibold">โปรโมชั่น</span>
         </div>
         
-        <!-- 3. Center Scan Button (QR) -> เปลี่ยนไปหน้า Scan -->
+        <!-- 3. Center Scan Button (QR) -->
         <div class="flex-[1.2] flex justify-center relative h-full">
             <div id="qr-popup-box" class="absolute left-1/2 transform -translate-x-1/2 bg-sky-500 text-white text-[10px] font-bold py-1 px-3 rounded-full shadow-md whitespace-nowrap z-10 opacity-0 pointer-events-none" style="top: -10px;">
                 <span id="qr-popup-text">QR Pay</span>
             </div>
-            <!-- ปุ่มกดแล้วเรียก switchTab('scan', this) -->
             <div onclick="switchTab('scan', this)" class="nav-item absolute -top-6 z-20 w-[50px] h-[50px] bg-gradient-to-tr from-blue-600 to-sky-400 text-white rounded-[14px] border-[3px] border-white shadow-lg shadow-sky-200 cursor-pointer flex items-center justify-center transform hover:scale-105 transition">
                 <i class="fa-solid fa-qrcode text-xl"></i>
             </div>
@@ -1013,7 +1012,7 @@
     // 0. ตั้งค่าตัวแปร URL & Gemini API
     // ==========================================
     let url = "https://script.google.com/macros/s/XXXXXXXXXXXXXXXXXXXXXXXXXXXX/exec"; 
-    const apiKey = ""; // API Key ถูกจัดการโดยสภาพแวดล้อม (Execution Environment) แล้ว
+    const apiKey = ""; 
 
     const appUrls = {
         booking: "booking.html",      order: "order.html",          
@@ -1039,13 +1038,11 @@
     // 1. ระบบ Navigation Bar (JS Display Style Fix)
     // ==========================================
     function switchTab(tabId, element) {
-        // ซ่อนหน้าจอทั้งหมดโดยใช้ style.display เพื่อข้ามปัญหาการแสดงผล
         document.querySelectorAll('.view-section').forEach(el => {
             el.style.display = 'none';
         });
 
         const targetView = document.getElementById(`view-${tabId}`);
-        // ตั้งค่าการแสดงผลตามหน้านั้นๆ
         if (tabId === 'scan') {
             targetView.style.display = 'flex';
             targetView.style.flexDirection = 'column';
@@ -1057,10 +1054,8 @@
             targetView.style.display = 'block';
         }
 
-        // ซ่อน/แสดง ปุ่มลอย AI เฉพาะหน้า Home
         document.getElementById('ai-fab').style.display = (tabId === 'home') ? 'block' : 'none';
 
-        // จัดการสีของไอคอนเมนูด้านล่าง
         document.querySelectorAll('.nav-item').forEach(nav => {
             if(nav.classList.contains('text-sky-600')) {
                 nav.classList.remove('text-sky-600');
@@ -1068,12 +1063,10 @@
             }
         });
         
-        // ถ้ายูสเซอร์กดปุ่มที่ส่งค่า element มา และปุ่มนั้นไม่ใช่ปุ่มตรงกลาง (QR) ให้ Active
         if(element && !element.classList.contains('bg-gradient-to-tr')) {
             element.classList.remove('text-slate-400', 'hover:text-sky-500');
             element.classList.add('text-sky-600');
         } else if(tabId === 'home') {
-            // ถ้าถูกบังคับเด้งกลับหน้าโฮม ให้ Active เมนูแรก
             const firstNav = document.querySelectorAll('.nav-item')[0];
             firstNav.classList.remove('text-slate-400', 'hover:text-sky-500');
             firstNav.classList.add('text-sky-600');
@@ -1110,7 +1103,7 @@
 
 
     // ==========================================
-    // 3. ระบบ P+ Slip (นับถอยหลัง, อัปโหลด, ดาวน์โหลด)
+    // 3. ระบบ P+ Slip (นับถอยหลัง, อัปโหลด, ดาวน์โหลดแก้ไขเรื่องรูปภายนอกหาย)
     // ==========================================
     let timeLeft = 180; 
     function startCountdown() {
@@ -1179,11 +1172,14 @@
         }
     }
 
+    // แก้ปัญหาเรื่องโลโก้/QR ดาวน์โหลดไม่ติดโดยใช้ useCORS และ allowTaint
     function downloadSlip() {
         const slipElement = document.getElementById('slip-element');
         html2canvas(slipElement, { 
             scale: 2, 
             backgroundColor: null,
+            useCORS: true,       // อนุญาตให้ดึงภาพจากลิงก์ภายนอก
+            allowTaint: true,    // ป้องกันภาพแหว่งจาก origin อื่น
             ignoreElements: function(element) {
                 if (element.classList && element.classList.contains('controls')) return true;
                 return false;
@@ -1193,6 +1189,9 @@
             link.download = 'P-Plus-Slip-NextLive.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
+        }).catch(err => {
+            console.error("Error capturing slip:", err);
+            alert("เกิดข้อผิดพลาดในการบันทึกภาพ กรุณาลองอีกครั้งค่ะ");
         });
     }
 
@@ -1239,11 +1238,8 @@
         const message = inputEl.value.trim();
         if (!message) return;
 
-        // แสดงข้อความของผู้ใช้
         addChatMessage('user', message);
         inputEl.value = '';
-        
-        // แสดงสถานะ Loading ของ AI
         const loadingId = addChatLoading();
 
         try {
@@ -1269,7 +1265,6 @@
             `;
         } else {
             div.className = 'flex gap-2 items-end';
-            // จัดการ Markdown เบื้องต้นให้เป็นตัวหนา และขึ้นบรรทัดใหม่
             const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
             div.innerHTML = `
                 <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-sky-400 to-blue-600 flex items-center justify-center shrink-0">
@@ -1368,7 +1363,7 @@
 
     function updateBannerDots(index) {
         for(let i=0; i<bannerDots.length; i++) {
-            dotsClassName = (i === index) ? 'w-4 h-1.5 rounded-full bg-sky-500 transition-all duration-300' : 'w-1.5 h-1.5 rounded-full bg-slate-300 transition-all duration-300';
+            let dotsClassName = (i === index) ? 'w-4 h-1.5 rounded-full bg-sky-500 transition-all duration-300' : 'w-1.5 h-1.5 rounded-full bg-slate-300 transition-all duration-300';
             bannerDots[i].className = dotsClassName;
         }
     }
