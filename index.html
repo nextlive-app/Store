@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>NEXT LIVE SHOP App & AI</title>
+    <title>NEXT LIVE SHOP App</title>
     
     <!-- โหลดไลบรารีและฟอนต์ต่างๆ -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -32,13 +32,7 @@
             margin: 0;
         }
 
-        .no-select {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
+        .no-select { user-select: none; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .snap-x { scroll-snap-type: x mandatory; }
@@ -56,7 +50,6 @@
             position: relative;
             box-shadow: 0 0 40px rgba(0,0,0,0.15);
         }
-
         .app-container::-webkit-scrollbar { display: none; }
 
         .header-gradient {
@@ -64,7 +57,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .bg-pattern {
             position: absolute;
             right: -30px;
@@ -84,7 +76,6 @@
             80% { transform: translate(-50%, -30px) scale(1); opacity: 1; }
             100% { transform: translate(-50%, 15px) scale(0.8); opacity: 0; }
         }
-        
         .animate-qr-popup {
             animation: popup-from-behind 2.5s ease-in-out forwards;
         }
@@ -92,11 +83,30 @@
         .bank-card-base {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255,255,255,0.1);
         }
-
         .glow-line-blue {
             border-top: 2px solid #38bdf8;
             box-shadow: 0 -10px 25px -5px rgba(56, 189, 248, 0.6);
         }
+
+        /* ==========================================
+           สไตล์สำหรับหน้า Form (Login/Register)
+           ========================================== */
+        .form-input {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: #334155;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
+        .form-label { display: block; font-size: 12px; font-weight: 500; color: #64748b; margin-bottom: 4px; text-align: left; }
+        
+        #loading-overlay { display: none; position: absolute; inset: 0; background: rgba(255,255,255,0.8); z-index: 100; align-items: center; justify-content: center; flex-direction: column; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0ea5e9; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* ==========================================
            สไตล์เฉพาะของ P+ Transfer Slip
@@ -117,6 +127,7 @@
             position: relative;
             overflow: hidden;
             box-sizing: border-box;
+            margin: 0 auto;
         }
 
         .watermark {
@@ -139,66 +150,16 @@
             z-index: 2;
         }
 
-        .title-area {
-            display: flex;
-            gap: 8px;
-        }
+        .title-area { display: flex; gap: 8px; }
+        .teal-bar { width: 4px; background-color: #00b09b; border-radius: 2px; margin-top: 2px; margin-bottom: 2px; }
+        .title-text h2 { margin: 0; font-size: 17px; font-weight: 600; color: #333; line-height: 1.2; }
+        .title-text p { margin: 0; font-size: 14px; color: #666; font-weight: 400; margin-top: 2px; }
+        .logo-kplus { font-size: 32px; font-weight: 700; color: #333; line-height: 1; letter-spacing: -1px; }
+        .logo-kplus span { color: #00b09b; }
 
-        .teal-bar {
-            width: 4px;
-            background-color: #00b09b;
-            border-radius: 2px;
-            margin-top: 2px;
-            margin-bottom: 2px;
-        }
-
-        .title-text h2 {
-            margin: 0;
-            font-size: 17px;
-            font-weight: 600;
-            color: #333;
-            line-height: 1.2;
-        }
-
-        .title-text p {
-            margin: 0;
-            font-size: 14px;
-            color: #666;
-            font-weight: 400;
-            margin-top: 2px;
-        }
-
-        .logo-kplus {
-            font-size: 32px;
-            font-weight: 700;
-            color: #333;
-            line-height: 1;
-            letter-spacing: -1px;
-        }
-
-        .logo-kplus span {
-            color: #00b09b;
-        }
-
-        .divider {
-            height: 1px;
-            background-color: #d8d8d8;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .parties {
-            position: relative;
-            z-index: 2;
-            margin-bottom: 20px;
-        }
-
-        .account-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+        .divider { height: 1px; background-color: #d8d8d8; margin-bottom: 20px; position: relative; z-index: 2; }
+        .parties { position: relative; z-index: 2; margin-bottom: 20px; }
+        .account-row { display: flex; align-items: center; gap: 16px; }
 
         .k-logo {
             width: 52px;
@@ -212,274 +173,86 @@
             border: 2px solid #ed1c24; 
             overflow: hidden; 
         }
+        .k-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .account-info { display: flex; flex-direction: column; line-height: 1.3; }
+        .account-name { font-size: 16px; font-weight: 500; color: #333; }
+        .account-bank, .account-num { font-size: 14px; color: #555; font-weight: 400; }
+        .arrow-container { width: 52px; height: 32px; display: flex; justify-content: center; align-items: center; }
 
-        .k-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; 
-        }
-
-        .account-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.3;
-        }
-
-        .account-name {
-            font-size: 16px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .account-bank, .account-num {
-            font-size: 14px;
-            color: #555;
-            font-weight: 400;
-        }
-
-        .arrow-container {
-            width: 52px;
-            height: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .details {
-            position: relative;
-            z-index: 2;
-            width: 65%;
-        }
-
-        .detail-item {
-            margin-bottom: 6px;
-        }
-
-        .detail-label {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 2px;
-        }
-
-        .detail-value {
-            text-align: right;
-            font-size: 15px;
-            font-weight: 400;
-            color: #333;
-            border-bottom: 1px solid #d0d0d0;
-            margin-left: 12px;
-            padding-bottom: 2px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
+        .details { position: relative; z-index: 2; width: 65%; }
+        .detail-item { margin-bottom: 6px; }
+        .detail-label { font-size: 14px; color: #333; margin-bottom: 2px; }
+        .detail-value { text-align: right; font-size: 15px; font-weight: 400; color: #333; border-bottom: 1px solid #d0d0d0; margin-left: 12px; padding-bottom: 2px; display: flex; justify-content: flex-end; align-items: center; }
 
         .amount-input {
-            width: 80px;
-            text-align: right;
-            font-size: 16px;
-            font-weight: 600;
-            color: #00b09b;
-            border: none;
-            background: transparent;
-            outline: none;
-            font-family: 'Kanit', sans-serif;
-            padding: 0;
-            margin-right: 4px;
+            width: 80px; text-align: right; font-size: 16px; font-weight: 600; color: #00b09b;
+            border: none; background: transparent; outline: none; font-family: 'Kanit', sans-serif;
+            padding: 0; margin-right: 4px;
         }
-        
-        .amount-input:focus {
-            border-bottom: 1px dashed #00b09b;
-        }
+        .amount-input:focus { border-bottom: 1px dashed #00b09b; }
+        .amount-input::-webkit-outer-spin-button, .amount-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .amount-input[type=number] { -moz-appearance: textfield; }
 
-        .amount-input::-webkit-outer-spin-button,
-        .amount-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .amount-input[type=number] {
-            -moz-appearance: textfield;
-        }
-
-        .expiry-text {
-            color: #ff003c;
-            font-size: 10px;
-            margin-top: 16px;
-            line-height: 1.2;
-            font-weight: 400;
-        }
-
-        .controls {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
+        .expiry-text { color: #ff003c; font-size: 10px; margin-top: 16px; line-height: 1.2; font-weight: 400; }
+        .controls { display: flex; gap: 8px; margin-top: 12px; }
         .action-btn {
-            background-color: #e9ecef;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-family: 'Kanit', sans-serif;
-            font-size: 12px;
-            font-weight: 500;
-            color: #333;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 3px 3px 6px #c5c8cb, -3px -3px 6px #ffffff;
-            transition: all 0.2s ease;
+            background-color: #e9ecef; border: none; padding: 8px 12px; border-radius: 8px;
+            font-family: 'Kanit', sans-serif; font-size: 12px; font-weight: 500; color: #333;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 3px 3px 6px #c5c8cb, -3px -3px 6px #ffffff; transition: all 0.2s ease;
         }
-
-        .action-btn:active {
-            box-shadow: inset 3px 3px 6px #c5c8cb, inset -3px -3px 6px #ffffff;
-            color: #00b09b;
-        }
-
-        .file-input-wrapper input[type="file"] {
-            display: none;
-        }
+        .action-btn:active { box-shadow: inset 3px 3px 6px #c5c8cb, inset -3px -3px 6px #ffffff; color: #00b09b; }
+        .file-input-wrapper input[type="file"] { display: none; }
 
         .qr-wrapper {
-            position: absolute;
-            bottom: 24px;
-            right: 24px;
-            width: 105px;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: absolute; bottom: 24px; right: 24px; width: 105px; z-index: 10;
+            display: flex; flex-direction: column; align-items: center;
         }
-
-        .qr-pp-logo {
-            width: 55px; 
-            height: auto;
-            margin-bottom: 6px; 
-        }
-
-        .qr-section {
-            width: 100%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-radius: 4px;
-        }
-
+        .qr-pp-logo { width: 55px; height: auto; margin-bottom: 6px; }
+        .qr-section { width: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 4px; }
         .qr-container {
-            background: #fff;
-            padding: 5px;
-            border: 1px solid #e0e0e0;
-            border-bottom: none;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-            position: relative;
-            height: 95px;
-            box-sizing: border-box;
-            overflow: hidden;
+            background: #fff; padding: 5px; border: 1px solid #e0e0e0; border-bottom: none;
+            border-top-left-radius: 4px; border-top-right-radius: 4px; position: relative;
+            height: 95px; box-sizing: border-box; overflow: hidden;
         }
-
         .verified-box {
-            background: #d8d8d8;
-            color: #333;
-            font-size: 10px;
-            font-weight: 500;
-            text-align: center;
-            padding: 4px 0;
-            border: 1px solid #e0e0e0;
-            border-top: none;
-            border-bottom-left-radius: 4px;
-            border-bottom-right-radius: 4px;
+            background: #d8d8d8; color: #333; font-size: 10px; font-weight: 500; text-align: center;
+            padding: 4px 0; border: 1px solid #e0e0e0; border-top: none;
+            border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;
         }
-
         .laser-scan {
-            position: absolute;
-            left: 5%;
-            width: 90%;
-            height: 2px;
-            background-color: #ff003c;
-            box-shadow: 0 0 6px #ff003c, 0 0 10px #ff003c;
-            z-index: 20;
-            border-radius: 2px;
+            position: absolute; left: 5%; width: 90%; height: 2px; background-color: #ff003c;
+            box-shadow: 0 0 6px #ff003c, 0 0 10px #ff003c; z-index: 20; border-radius: 2px;
             animation: scan 2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite alternate;
         }
-
-        @keyframes scan {
-            0% { top: 5%; opacity: 0.8; }
-            50% { opacity: 1; }
-            100% { top: 95%; opacity: 0.8; }
-        }
-
-        .uploaded-qr-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 2px;
-        }
-
+        @keyframes scan { 0% { top: 5%; opacity: 0.8; } 50% { opacity: 1; } 100% { top: 95%; opacity: 0.8; } }
+        .uploaded-qr-image { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+        
         .checking-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 75px;
-            height: 42px;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 4px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            z-index: 30;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 75px; height: 42px; background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 30;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        .loading-svg {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            border-radius: 4px;
-            pointer-events: none;
-        }
-
-        .overlay-inner {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            width: 100%;
-        }
-
-        .check-title {
-            font-size: 8px;
-            color: #333;
-            margin-bottom: 2px;
-        }
-
-        .progress-number {
-            font-size: 11px;
-            font-weight: 600;
-            color: #00b09b;
-        }
-
-        .success-state {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-            color: #16984e;
-            font-size: 8.5px;
-            font-weight: 500;
-            line-height: 1;
-        }
-
-        .success-icon {
-            width: 10px; 
-            height: 10px;
-        }
+        .loading-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 4px; pointer-events: none; }
+        .overlay-inner { position: relative; z-index: 2; text-align: center; width: 100%; }
+        .check-title { font-size: 8px; color: #333; margin-bottom: 2px; }
+        .progress-number { font-size: 11px; font-weight: 600; color: #00b09b; }
+        .success-state { display: flex; align-items: center; justify-content: center; gap: 2px; color: #16984e; font-size: 8.5px; font-weight: 500; line-height: 1; }
+        .success-icon { width: 10px; height: 10px; }
     </style>
 </head>
 <body class="no-select">
 
 <div class="app-container relative flex flex-col">
     
-    <!-- ปุ่มลอยเปิด AI Chat (แสดงหน้า Home) -->
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p class="text-slate-600 font-medium mt-3 text-sm" id="loading-text">กำลังประมวลผล...</p>
+    </div>
+
+    <!-- ปุ่มลอย AI Chat (แสดงหน้า Home) -->
     <div id="ai-fab" class="absolute bottom-[85px] right-5 z-40">
         <button onclick="switchTab('ai', null)" class="bg-gradient-to-tr from-sky-400 to-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg shadow-sky-500/40 hover:scale-105 transition transform">
             <i class="fa-solid fa-robot text-2xl"></i>
@@ -489,14 +262,14 @@
     <!-- ==========================================
          VIEW 1: หน้าหลัก (HOME)
          ========================================== -->
-    <div id="view-home" class="view-section flex-1 pb-28" style="display: block;">
+    <div id="view-home" class="view-section flex-1 pb-28 block">
         <!-- Header Section -->
         <div class="header-gradient text-white pt-8 pb-8 px-5 rounded-b-[1.5rem] relative z-0 shadow-md">
             <div class="bg-pattern"></div>
             <!-- User Info -->
             <div class="flex items-center gap-3 mb-4 relative z-10">
                 <div class="w-10 h-10 rounded-full border-2 border-white bg-sky-200 flex items-center justify-center overflow-hidden shadow-sm">
-                    <img id="home-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="" class="w-full h-full object-cover">
+                    <img id="home-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <div class="text-[15px] font-semibold leading-tight">ยินดีต้อนรับ สู่</div>
@@ -537,7 +310,7 @@
             
             <div id="banner-container" class="flex overflow-x-auto hide-scrollbar snap-x px-4 gap-3 pb-2 cursor-grab">
                 <div class="relative w-[280px] h-[130px] rounded-2xl overflow-hidden flex-shrink-0 snap-center shadow-md bg-black select-none" onclick="navigateTo('promo1')">
-                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" alt="">
+                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" alt="[Image of ช้อปปิ้ง]">
                     <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent pointer-events-none"></div>
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full pointer-events-none">
                         <div>
@@ -667,7 +440,7 @@
     <!-- ==========================================
          VIEW 2: หน้าโปรโมชั่น (PROMOTIONS)
          ========================================== -->
-    <div id="view-promotions" class="view-section flex-1 bg-slate-900 pb-28 min-h-screen" style="display: none;">
+    <div id="view-promotions" class="view-section flex-1 bg-slate-900 pb-28 hidden min-h-screen">
         <div class="pt-10 pb-6 px-5 text-center relative">
             <h1 class="text-white text-2xl font-bold tracking-wide drop-shadow-[0_0_10px_rgba(56,189,248,0.8)]">โปรโมชั่นสุดคุ้ม</h1>
             <p class="text-sky-200 text-xs mt-1">อัปเดตสิทธิพิเศษสำหรับคุณเท่านั้น</p>
@@ -715,7 +488,6 @@
                     </div>
                 </div>
             </div>
-            
             <div class="text-center text-slate-500 text-xs mt-2 pb-4">อัปเดตล่าสุดวันนี้</div>
         </div>
     </div>
@@ -724,15 +496,14 @@
     <!-- ==========================================
          VIEW 3: หน้าโปรไฟล์ (PROFILE)
          ========================================== -->
-    <div id="view-profile" class="view-section flex-1 bg-slate-50 pb-28 min-h-screen" style="display: none;">
+    <div id="view-profile" class="view-section flex-1 bg-slate-50 pb-28 hidden min-h-screen">
+        
+        <!-- Header Profile -->
         <div class="bg-white px-5 pt-12 pb-6 text-center shadow-sm rounded-b-3xl relative z-10">
-            <h1 class="text-slate-800 text-xl font-bold">ข้อมูลโปรไฟล์</h1>
+            <h1 class="text-slate-800 text-xl font-bold">ข้อมูลบัญชี</h1>
             <div class="mt-6 mb-4 relative inline-block">
                 <div class="w-24 h-24 rounded-full border-4 border-sky-100 bg-sky-50 flex items-center justify-center overflow-hidden shadow-md mx-auto">
                     <img id="main-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="" class="w-full h-full object-cover">
-                </div>
-                <div class="absolute bottom-0 right-0 bg-sky-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md cursor-pointer border-2 border-white">
-                    <i class="fa-solid fa-camera text-xs"></i>
                 </div>
             </div>
             <div id="profile-name-display" class="text-lg font-bold text-slate-800">ผู้เยี่ยมชม</div>
@@ -740,17 +511,81 @@
         </div>
 
         <div class="px-5 mt-6">
-            <!-- ส่วนที่ 1: หน้าล็อกอิน -->
-            <div id="auth-section" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 text-center block">
+            <!-- ส่วนหน้าเลือก (ยังไม่ล็อกอิน) -->
+            <div id="auth-choice-section" class="text-center block">
                 <i class="fa-regular fa-id-card text-4xl text-sky-200 mb-3"></i>
                 <h3 class="text-slate-700 font-bold mb-1">เข้าสู่ระบบเพื่อดำเนินการ</h3>
                 <p class="text-xs text-slate-400 mb-5">คุณสามารถเข้าถึงประวัติการสั่งซื้อ และจัดการกระเป๋าเงินได้</p>
-                <button onclick="toggleLogin(true)" class="w-full bg-sky-500 text-white font-bold py-3 rounded-xl shadow-md shadow-sky-500/30 hover:bg-sky-600 transition">
-                    สมัคร / เข้าใช้งาน
-                </button>
+                <div class="flex gap-3">
+                    <button onclick="showAuthView('login')" class="flex-1 bg-white text-sky-600 font-bold py-3 rounded-xl shadow-sm border border-sky-100 hover:bg-sky-50 transition">
+                        ลงชื่อเข้าใช้งาน
+                    </button>
+                    <button onclick="showAuthView('register')" class="flex-1 bg-sky-500 text-white font-bold py-3 rounded-xl shadow-md shadow-sky-500/30 hover:bg-sky-600 transition">
+                        สมัครบัญชี
+                    </button>
+                </div>
             </div>
 
-            <!-- ส่วนที่ 2: ข้อมูลผู้ใช้ -->
+            <!-- ส่วนฟอร์มล็อกอิน -->
+            <div id="login-form-section" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-3">
+                    <button onclick="showAuthView('choice')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="text-lg font-bold text-slate-800">ลงชื่อเข้าใช้งาน</h2>
+                </div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="mb-4">
+                        <label class="form-label">Email Or Phone Number</label>
+                        <input type="text" id="login-id" class="form-input" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="login-password" class="form-input" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-blue-700 transition">
+                        ลงชื่อเข้าใช้
+                    </button>
+                </form>
+            </div>
+
+            <!-- ส่วนฟอร์มสมัครสมาชิก -->
+            <div id="register-form-section" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-3">
+                    <button onclick="showAuthView('choice')" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="text-lg font-bold text-slate-800">Let's get started</h2>
+                </div>
+                <form onsubmit="handleRegister(event)">
+                    <div class="flex gap-3 mb-4">
+                        <div class="flex-1">
+                            <label class="form-label">First name (ชื่อ)</label>
+                            <input type="text" id="reg-fname" class="form-input" required>
+                        </div>
+                        <div class="flex-1">
+                            <label class="form-label">Last name (นามสกุล)</label>
+                            <input type="text" id="reg-lname" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Email Account (บัญชีอีเมล)</label>
+                        <input type="email" id="reg-email" class="form-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Phone number (หมายเลขโทรศัพท์)</label>
+                        <div class="flex gap-2">
+                            <div class="form-input w-[30%] flex items-center justify-center bg-slate-50 text-slate-500">🇹🇭 +66</div>
+                            <input type="tel" id="reg-phone" class="form-input w-[70%]" pattern="[0-9]{9,10}" placeholder="08xxxxxxxx" required>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="form-label">Password (รหัสผ่าน)</label>
+                        <input type="password" id="reg-password" class="form-input" required minlength="6">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                        GET STARTED <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- ส่วนข้อมูลผู้ใช้ (หลังล็อกอิน) -->
             <div id="user-info-section" class="hidden">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-5">
                     <div class="flex items-center justify-between px-5 py-4 border-b border-slate-50">
@@ -758,21 +593,28 @@
                             <i class="fa-regular fa-user text-sky-500 w-5 text-center"></i>
                             <span class="text-sm font-medium">ชื่อ สกุล</span>
                         </div>
-                        <div class="text-sm text-slate-800 font-semibold">สมชาย ใจดี</div>
+                        <div class="text-sm text-slate-800 font-semibold" id="display-fullname">-</div>
                     </div>
                     <div class="flex items-center justify-between px-5 py-4 border-b border-slate-50">
                         <div class="flex items-center gap-3 text-slate-600">
                             <i class="fa-regular fa-envelope text-sky-500 w-5 text-center"></i>
                             <span class="text-sm font-medium">อีเมล</span>
                         </div>
-                        <div class="text-sm text-slate-800 font-semibold">somchai@example.com</div>
+                        <div class="text-sm text-slate-800 font-semibold" id="display-email">-</div>
                     </div>
-                    <div class="flex items-center justify-between px-5 py-4">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-50">
                         <div class="flex items-center gap-3 text-slate-600">
                             <i class="fa-solid fa-mobile-screen text-sky-500 w-5 text-center"></i>
                             <span class="text-sm font-medium">เบอร์โทรศัพท์</span>
                         </div>
-                        <div class="text-sm text-slate-800 font-semibold">089-123-4567</div>
+                        <div class="text-sm text-slate-800 font-semibold" id="display-phone">-</div>
+                    </div>
+                    <div class="flex items-center justify-between px-5 py-4 bg-sky-50">
+                        <div class="flex items-center gap-3 text-sky-700">
+                            <i class="fa-solid fa-wallet text-sky-500 w-5 text-center"></i>
+                            <span class="text-sm font-medium">เครดิตคงเหลือ</span>
+                        </div>
+                        <div class="text-sm text-sky-700 font-bold">฿ <span id="display-credit">0.00</span></div>
                     </div>
                 </div>
 
@@ -785,10 +627,11 @@
                     </button>
                 </div>
 
-                <button onclick="toggleLogin(false)" class="w-full bg-red-50 text-red-500 font-bold py-3.5 rounded-xl border border-red-100 hover:bg-red-100 transition">
+                <button onclick="logout()" class="w-full bg-red-50 text-red-500 font-bold py-3.5 rounded-xl border border-red-100 hover:bg-red-100 transition">
                     ออกจากระบบ
                 </button>
             </div>
+
         </div>
     </div>
 
@@ -796,7 +639,7 @@
     <!-- ==========================================
          VIEW 4: เงื่อนไขข้อกำหนด (TERMS)
          ========================================== -->
-    <div id="view-terms" class="view-section flex-1 bg-white pb-28 min-h-screen" style="display: none;">
+    <div id="view-terms" class="view-section flex-1 bg-white pb-28 hidden min-h-screen">
         <div class="px-5 pt-12 text-center">
             <h1 class="text-slate-800 text-xl font-bold mb-4">เงื่อนไขข้อกำหนด</h1>
             <p class="text-slate-500 text-sm">หน้านี้กำลังปรับปรุง...</p>
@@ -807,8 +650,7 @@
     <!-- ==========================================
          VIEW 5: ระบบสลิปโอนเงิน (SCAN / P+ Slip)
          ========================================== -->
-    <div id="view-scan" class="view-section flex-1 min-h-screen pb-28" style="display: none; flex-direction: column; align-items: center;">
-        <!-- ตัวสลิปหลัก -->
+    <div id="view-scan" class="view-section flex-1 hidden min-h-screen pb-28">
         <div class="slip-card" id="slip-element">
             <svg class="watermark" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
                 <g stroke="#000" stroke-width="1.5" fill="none">
@@ -844,11 +686,12 @@
 
             <div class="divider"></div>
 
-            <!-- ข้อมูลบัญชีต้นทางและปลายทาง -->
+            <!-- ข้อมูลบัญชี -->
             <div class="parties">
                 <div class="account-row">
                     <div class="k-logo">
-                        <img src="https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6789cc7973863d34426baf54_678316f2a65ae45dd6a22f9f_678303b39e0a1b2f05c23bc4_673ac03613ce1d036f897c16_thaiqr_logosimbolo.png" alt="">
+                        <!-- โลโก้พร้อมเพย์ -->
+                        <img src="https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6789cc7973863d34426baf54_678316f2a65ae45dd6a22f9f_678303b39e0a1b2f05c23bc4_673ac03613ce1d036f897c16_thaiqr_logosimbolo.png" crossorigin="anonymous" alt="">
                     </div>
                     <div class="account-info">
                         <div class="account-name">Bank : PromptPay</div>
@@ -866,7 +709,7 @@
 
                 <div class="account-row">
                     <div class="k-logo">
-                        <img src="https://img1.pic.in.th/images/IMG_0593.jpeg" alt="">
+                        <img src="https://img1.pic.in.th/images/IMG_0593.jpeg" crossorigin="anonymous" alt="">
                     </div>
                     <div class="account-info">
                         <div class="account-name">Service Shop</div>
@@ -883,11 +726,9 @@
                     <div class="detail-value">123456789012345678</div>
                 </div>
                 
-                <!-- ช่องระบุจำนวนเงิน (พิมพ์ได้ + อัปเดต QR อัตโนมัติ + บันทึกลงภาพ) -->
                 <div class="detail-item">
                     <div class="detail-label">จำนวน:</div>
                     <div class="detail-value">
-                        <!-- เพิ่ม this.setAttribute('value', this.value) เพื่อให้ html2canvas เห็นตัวเลขล่าสุด -->
                         <input type="number" id="payment-amount-input" class="amount-input" value="888.00" step="0.01" min="0" oninput="this.setAttribute('value', this.value); updateQRWithDelay()"> บาท
                     </div>
                 </div>
@@ -912,12 +753,12 @@
 
             <!-- กล่องห่อหุ้ม Logo พร้อม QR Code ด้านขวา -->
             <div class="qr-wrapper">
-                <img src="https://www.designil.com/wp-content/uploads/2020/04/prompt-pay-logo.png" alt="" class="qr-pp-logo">
+                <img src="https://www.designil.com/wp-content/uploads/2020/04/prompt-pay-logo.png" crossorigin="anonymous" alt="" class="qr-pp-logo">
                 
                 <div class="qr-section">
                     <div class="qr-container" id="qr-target">
                         <div class="laser-scan" id="laser-effect"></div>
-                        <img id="promptpay-qr-img" src="" alt="" style="width: 100%; height: 100%; object-fit: contain;">
+                        <img id="promptpay-qr-img" crossorigin="anonymous" src="" alt="[Image of คิวอาร์โค้ด]" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div class="verified-box">verified by Next Live</div>
                 </div>
@@ -929,8 +770,7 @@
     <!-- ==========================================
          VIEW 6: ระบบผู้ช่วย AI (Gemini Chatbot)
          ========================================== -->
-    <div id="view-ai" class="view-section flex-1 bg-slate-50 pb-[80px] min-h-screen relative" style="display: none; flex-direction: column;">
-        <!-- Header -->
+    <div id="view-ai" class="view-section flex-1 bg-slate-50 pb-[80px] hidden min-h-screen relative">
         <div class="bg-gradient-to-r from-blue-700 to-sky-500 px-5 pt-10 pb-4 shadow-md sticky top-0 z-20 flex items-center gap-3">
             <button onclick="switchTab('home', null)" class="text-white hover:text-sky-200">
                 <i class="fa-solid fa-arrow-left text-lg"></i>
@@ -941,8 +781,7 @@
             </div>
         </div>
         
-        <!-- Chat Area -->
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col pb-6">
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col pb-6 h-full">
             <div class="flex gap-2 items-end">
                 <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-sky-400 to-blue-600 flex items-center justify-center shrink-0">
                     <i class="fa-solid fa-robot text-white text-xs"></i>
@@ -954,7 +793,6 @@
             </div>
         </div>
         
-        <!-- Input Area -->
         <div class="fixed bottom-[70px] w-full max-w-[414px] p-3 bg-white border-t border-slate-100 z-30">
             <form id="ai-chat-form" class="flex gap-2" onsubmit="handleAIChatSubmit(event)">
                 <input type="text" id="ai-input" class="flex-1 bg-slate-100 rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-sky-400" placeholder="พิมพ์ข้อความที่นี่..." autocomplete="off">
@@ -970,19 +808,14 @@
          BOTTOM NAVIGATION BAR
          ========================================== -->
     <div class="fixed bottom-0 w-full max-w-[414px] bg-white border-t border-slate-200 flex justify-between items-center px-2 h-[70px] z-50 rounded-t-2xl shadow-[0_-5px_15px_rgba(0,0,0,0.03)]">
-        <!-- 1. หน้าหลัก -->
         <div onclick="switchTab('home', this)" class="nav-item flex-1 flex flex-col items-center justify-center gap-1 cursor-pointer text-sky-600 transition-colors duration-200">
             <i class="fa-solid fa-house text-lg"></i>
             <span class="text-[10px] font-semibold">หน้าหลัก</span>
         </div>
-        
-        <!-- 2. โปรโมชั่น -->
         <div onclick="switchTab('promotions', this)" class="nav-item flex-1 flex flex-col items-center justify-center gap-1 cursor-pointer text-slate-400 hover:text-sky-500 transition-colors duration-200">
             <i class="fa-solid fa-tags text-lg"></i>
             <span class="text-[10px] font-semibold">โปรโมชั่น</span>
         </div>
-        
-        <!-- 3. Center Scan Button (QR) -->
         <div class="flex-[1.2] flex justify-center relative h-full">
             <div id="qr-popup-box" class="absolute left-1/2 transform -translate-x-1/2 bg-sky-500 text-white text-[10px] font-bold py-1 px-3 rounded-full shadow-md whitespace-nowrap z-10 opacity-0 pointer-events-none" style="top: -10px;">
                 <span id="qr-popup-text">QR Pay</span>
@@ -991,14 +824,10 @@
                 <i class="fa-solid fa-qrcode text-xl"></i>
             </div>
         </div>
-
-        <!-- 4. เงื่อนไขข้อกำหนด -->
         <div onclick="switchTab('terms', this)" class="nav-item flex-1 flex flex-col items-center justify-center gap-1 cursor-pointer text-slate-400 hover:text-sky-500 transition-colors duration-200">
             <i class="fa-solid fa-file-contract text-lg"></i>
             <span class="text-[9px] font-semibold text-center leading-tight">เงื่อนไข<br>ข้อกำหนด</span>
         </div>
-        
-        <!-- 5. โปรไฟล์ -->
         <div onclick="switchTab('profile', this)" class="nav-item flex-1 flex flex-col items-center justify-center gap-1 cursor-pointer text-slate-400 hover:text-sky-500 transition-colors duration-200">
             <i class="fa-solid fa-user text-lg"></i>
             <span class="text-[10px] font-semibold">โปรไฟล์</span>
@@ -1009,10 +838,10 @@
 
 <script>
     // ==========================================
-    // 0. ตั้งค่าตัวแปร URL & Gemini API
+    // 0. ตั้งค่าตัวแปร URL สำหรับเชื่อมต่อ GAS (อัปเดตตรงนี้ให้ตรงกับ Web App URL ของคุณ)
     // ==========================================
-    let url = "https://script.google.com/macros/s/XXXXXXXXXXXXXXXXXXXXXXXXXXXX/exec"; 
-    const apiKey = ""; 
+    const url = "https://script.google.com/macros/s/AKfycbyHV2cP-rk4UXtvgZ5V6ltO0ZbivWhbAyi97d_MiJkYNMIqPDjynO3F5pjmMnnCA5sd/exec"; 
+    const apiKey = ""; // สำหรับ Gemini API (Execution env จัดการให้)
 
     const appUrls = {
         booking: "booking.html",      order: "order.html",          
@@ -1033,9 +862,15 @@
         }
     }
 
+    function showLoading(show, text = "กำลังประมวลผล...") {
+        const overlay = document.getElementById('loading-overlay');
+        document.getElementById('loading-text').innerText = text;
+        overlay.style.display = show ? 'flex' : 'none';
+    }
+
 
     // ==========================================
-    // 1. ระบบ Navigation Bar (JS Display Style Fix)
+    // 1. ระบบ Navigation Bar
     // ==========================================
     function switchTab(tabId, element) {
         document.querySelectorAll('.view-section').forEach(el => {
@@ -1077,10 +912,115 @@
 
 
     // ==========================================
-    // 2. ระบบ QR Code Generator (อัปเดตตามช่อง Input)
+    // 2. ระบบการเข้าสู่ระบบ & โปรไฟล์
+    // ==========================================
+    window.addEventListener('load', () => {
+        const savedUser = localStorage.getItem('nextLiveUser');
+        if(savedUser) {
+            setLoggedInState(JSON.parse(savedUser));
+        } else {
+            showAuthView('choice');
+        }
+    });
+
+    function showAuthView(viewName) {
+        document.getElementById('auth-choice-section').classList.add('hidden');
+        document.getElementById('login-form-section').classList.add('hidden');
+        document.getElementById('register-form-section').classList.add('hidden');
+        document.getElementById('user-info-section').classList.add('hidden');
+
+        if(viewName === 'choice') document.getElementById('auth-choice-section').classList.remove('hidden');
+        if(viewName === 'login') document.getElementById('login-form-section').classList.remove('hidden');
+        if(viewName === 'register') document.getElementById('register-form-section').classList.remove('hidden');
+        if(viewName === 'info') document.getElementById('user-info-section').classList.remove('hidden');
+    }
+
+    function setLoggedInState(user) {
+        document.getElementById('profile-name-display').textContent = user.fname + " " + user.lname;
+        document.getElementById('profile-role-display').innerHTML = '<span class="text-sky-500"><i class="fa-solid fa-circle-check"></i> ยืนยันตัวตนแล้ว</span>';
+        document.getElementById('main-profile-img').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.fname;
+        document.getElementById('home-profile-img').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.fname;
+
+        document.getElementById('display-fullname').textContent = user.fname + " " + user.lname;
+        document.getElementById('display-email').textContent = user.email;
+        document.getElementById('display-phone').textContent = user.phone;
+        document.getElementById('display-credit').textContent = parseFloat(user.credit || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
+
+        showAuthView('info');
+    }
+
+    function logout() {
+        localStorage.removeItem('nextLiveUser');
+        document.getElementById('profile-name-display').textContent = "ผู้เยี่ยมชม";
+        document.getElementById('profile-role-display').textContent = "กรุณาเข้าสู่ระบบเพื่อใช้งานเต็มรูปแบบ";
+        document.getElementById('main-profile-img').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Guest";
+        document.getElementById('home-profile-img').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Guest";
+        showAuthView('choice');
+    }
+
+    async function handleRegister(e) {
+        e.preventDefault();
+        showLoading(true, "กำลังสร้างบัญชีของคุณ...");
+        
+        const payload = {
+            action: 'register',
+            fname: document.getElementById('reg-fname').value,
+            lname: document.getElementById('reg-lname').value,
+            email: document.getElementById('reg-email').value,
+            phone: document.getElementById('reg-phone').value,
+            password: document.getElementById('reg-password').value
+        };
+
+        try {
+            const res = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+            const data = await res.json();
+            
+            if(data.status === 'success') {
+                alert("สมัครสมาชิกสำเร็จ ยินดีต้อนรับค่ะ!");
+                localStorage.setItem('nextLiveUser', JSON.stringify(data.user));
+                document.getElementById('register-form-section').querySelector('form').reset();
+                setLoggedInState(data.user);
+            } else {
+                alert(data.message); 
+            }
+        } catch (error) {
+            alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+        }
+        showLoading(false);
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        showLoading(true, "กำลังตรวจสอบข้อมูล...");
+        
+        const payload = {
+            action: 'login',
+            loginId: document.getElementById('login-id').value,
+            password: document.getElementById('login-password').value
+        };
+
+        try {
+            const res = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+            const data = await res.json();
+            
+            if(data.status === 'success') {
+                localStorage.setItem('nextLiveUser', JSON.stringify(data.user));
+                document.getElementById('login-form-section').querySelector('form').reset();
+                setLoggedInState(data.user);
+            } else {
+                alert(data.message); 
+            }
+        } catch (error) {
+            alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+        }
+        showLoading(false);
+    }
+
+
+    // ==========================================
+    // 3. ระบบ QR Code Generator
     // ==========================================
     let qrUpdateTimeout; 
-    
     function generateQR() {
         const selectedAccount = "140000621803299";
         let amountVal = document.getElementById('payment-amount-input').value;
@@ -1095,15 +1035,13 @@
 
     function updateQRWithDelay() {
         clearTimeout(qrUpdateTimeout);
-        qrUpdateTimeout = setTimeout(() => {
-            generateQR();
-        }, 500);
+        qrUpdateTimeout = setTimeout(() => { generateQR(); }, 500);
     }
     window.addEventListener('promptpayReady', generateQR);
 
 
     // ==========================================
-    // 3. ระบบ P+ Slip (นับถอยหลัง, อัปโหลด, ดาวน์โหลดแก้ไขเรื่องรูปภายนอกหาย)
+    // 4. ระบบ P+ Slip
     // ==========================================
     let timeLeft = 180; 
     function startCountdown() {
@@ -1131,7 +1069,7 @@
                 const perimeter = 230;
 
                 qrTarget.innerHTML = `
-                    <img src="${e.target.result}" class="uploaded-qr-image" alt="Uploaded Payment">
+                    <img src="${e.target.result}" class="uploaded-qr-image" alt="">
                     <div class="checking-overlay" id="checking-overlay">
                         <svg class="loading-svg" width="75" height="42">
                             <rect x="1" y="1" width="73" height="40" rx="3" fill="none" stroke="#00b09b" stroke-width="2" 
@@ -1172,14 +1110,13 @@
         }
     }
 
-    // แก้ปัญหาเรื่องโลโก้/QR ดาวน์โหลดไม่ติดโดยใช้ useCORS และ allowTaint
     function downloadSlip() {
         const slipElement = document.getElementById('slip-element');
         html2canvas(slipElement, { 
             scale: 2, 
             backgroundColor: null,
-            useCORS: true,       // อนุญาตให้ดึงภาพจากลิงก์ภายนอก
-            allowTaint: true,    // ป้องกันภาพแหว่งจาก origin อื่น
+            useCORS: true,
+            allowTaint: true,
             ignoreElements: function(element) {
                 if (element.classList && element.classList.contains('controls')) return true;
                 return false;
@@ -1191,13 +1128,12 @@
             link.click();
         }).catch(err => {
             console.error("Error capturing slip:", err);
-            alert("เกิดข้อผิดพลาดในการบันทึกภาพ กรุณาลองอีกครั้งค่ะ");
+            alert("เกิดข้อผิดพลาดในการบันทึกภาพ กรุณาลองใหม่อีกครั้งค่ะ");
         });
     }
 
-
     // ==========================================
-    // 4. ผู้ช่วยอัจฉริยะ Gemini API (AI Chatbot)
+    // 5. ผู้ช่วยอัจฉริยะ Gemini API (AI Chatbot)
     // ==========================================
     async function callGeminiAPI(prompt, retryCount = 0) {
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
@@ -1205,7 +1141,7 @@
             contents: [{ parts: [{ text: prompt }] }],
             systemInstruction: { 
                 parts: [{ 
-                    text: "คุณคือผู้ช่วย AI สาวสุดน่ารักของแอปพลิเคชัน 'NEXT LIVE SHOP' หน้าที่ของคุณคือให้คำแนะนำลูกค้าเกี่ยวกับการสั่งซื้อ โปรโมชั่น และวิธีการใช้งานแอป ตอบคำถามด้วยภาษาไทยที่สุภาพ เป็นกันเอง มีความกระตือรือร้น และใช้ความยาวสั้นกระชับ" 
+                    text: "คุณคือผู้ช่วย AI ของ 'NEXT LIVE SHOP' ตอบคำถามด้วยภาษาไทยที่สุภาพ เป็นกันเอง และกระชับ" 
                 }] 
             }
         };
@@ -1227,7 +1163,7 @@
                 await new Promise(res => setTimeout(res, delays[retryCount]));
                 return callGeminiAPI(prompt, retryCount + 1);
             } else {
-                return "ขออภัย เกิดข้อผิดพลาดในการเชื่อมต่อระบบ (AI ไม่พร้อมใช้งาน) รบกวนลองใหม่อีกครั้งค่ะ";
+                return "ขออภัย ระบบ AI ขัดข้อง รบกวนลองใหม่อีกครั้งค่ะ";
             }
         }
     }
@@ -1307,38 +1243,6 @@
 
 
     // ==========================================
-    // 5. จำลองระบบ Login (หน้าโปรไฟล์)
-    // ==========================================
-    let isLoggedIn = false;
-    function toggleLogin(status) {
-        isLoggedIn = status;
-        const authSec = document.getElementById('auth-section');
-        const userInfoSec = document.getElementById('user-info-section');
-        const profileName = document.getElementById('profile-name-display');
-        const profileRole = document.getElementById('profile-role-display');
-        const mainImg = document.getElementById('main-profile-img');
-        const homeImg = document.getElementById('home-profile-img');
-
-        if (isLoggedIn) {
-            authSec.classList.add('hidden');
-            userInfoSec.classList.remove('hidden');
-            profileName.textContent = "สมชาย ใจดี";
-            profileRole.innerHTML = '<span class="text-sky-500"><i class="fa-solid fa-circle-check"></i> ยืนยันตัวตนแล้ว</span>';
-            mainImg.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix";
-            homeImg.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix";
-        } else {
-            authSec.classList.remove('hidden');
-            userInfoSec.classList.add('hidden');
-            profileName.textContent = "ผู้เยี่ยมชม";
-            profileRole.textContent = "กรุณาเข้าสู่ระบบเพื่อใช้งานเต็มรูปแบบ";
-            mainImg.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Guest";
-            homeImg.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Guest";
-        }
-    }
-    toggleLogin(false);
-
-
-    // ==========================================
     // 6. อนิเมชัน Pop-up และ เลื่อนการ์ด/แบนเนอร์
     // ==========================================
     const popupBox = document.getElementById('qr-popup-box');
@@ -1353,7 +1257,6 @@
         popupBox.classList.add('animate-qr-popup');
     }, 5000); 
 
-    // ระบบ Banner Carousel
     const bannerContainer = document.getElementById('banner-container');
     const bannerDots = document.getElementById('banner-dots').children;
     const bannerCount = 3;
@@ -1363,8 +1266,7 @@
 
     function updateBannerDots(index) {
         for(let i=0; i<bannerDots.length; i++) {
-            let dotsClassName = (i === index) ? 'w-4 h-1.5 rounded-full bg-sky-500 transition-all duration-300' : 'w-1.5 h-1.5 rounded-full bg-slate-300 transition-all duration-300';
-            bannerDots[i].className = dotsClassName;
+            bannerDots[i].className = (i === index) ? 'w-4 h-1.5 rounded-full bg-sky-500 transition-all duration-300' : 'w-1.5 h-1.5 rounded-full bg-slate-300 transition-all duration-300';
         }
     }
     function scrollBanner() {
@@ -1392,7 +1294,6 @@
         }
     });
 
-    // ระบบ Bank Cards Carousel 
     const banksData = [
         { class: "bank-bbl", name: "Bangkok Bank (กรุงเทพ)", color: "#1E4598" },
         { class: "bank-kbank", name: "Kasikornbank (กสิกรไทย)", color: "#138F2D" },
@@ -1496,11 +1397,8 @@
         }
     });
 
-    // ระบบ Drag to scroll (PC)
     function enableDragScroll(slider, startScrollFunc, stopScrollFunc) {
-        let isDown = false;
-        let startX;
-        let scrollLeft;
+        let isDown = false, startX, scrollLeft;
         slider.addEventListener('mousedown', (e) => {
             isDown = true;
             slider.classList.add('cursor-grabbing');
