@@ -46,6 +46,15 @@
         .header-gradient { background: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%); position: relative; overflow: hidden; }
         .bg-pattern { position: absolute; right: -30px; top: -20px; width: 250px; height: 250px; opacity: 0.1; pointer-events: none; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%); }
 
+        @keyframes popup-from-behind {
+            0% { transform: translate(-50%, 15px) scale(0.8); opacity: 0; }
+            15% { transform: translate(-50%, -35px) scale(1.05); opacity: 1; }
+            25% { transform: translate(-50%, -30px) scale(1); opacity: 1; }
+            80% { transform: translate(-50%, -30px) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, 15px) scale(0.8); opacity: 0; }
+        }
+        .animate-qr-popup { animation: popup-from-behind 2.5s ease-in-out forwards; }
+
         .bank-card-base { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255,255,255,0.1); }
         .glow-line-blue { border-top: 2px solid #38bdf8; box-shadow: 0 -10px 25px -5px rgba(56, 189, 248, 0.6); }
 
@@ -62,7 +71,6 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes scaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         
-        /* แก้ไข Date Input ไม่ให้ล้นและปรับข้อความให้อยู่ตรงกลาง */
         input[type="date"] { box-sizing: border-box; }
         input[type="date"]::-webkit-datetime-edit { padding: 0; line-height: 1.5; }
         input[type="date"]::-webkit-calendar-picker-indicator { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; opacity: 0.6; transition: 0.2s; }
@@ -136,12 +144,12 @@
     <!-- ==========================================
          VIEW 1: หน้าหลัก (HOME) 
          ========================================== -->
-    <div id="view-home" class="view-section flex-1 pb-28" style="display: none;">
+    <div id="view-home" class="view-section flex-1 pb-28 block" style="display: block;">
         <div class="header-gradient text-white pt-8 pb-8 px-5 rounded-b-[1.5rem] relative z-0 shadow-md">
             <div class="bg-pattern"></div>
             <div class="flex items-center gap-3 mb-4 relative z-10">
                 <div class="w-10 h-10 rounded-full border-2 border-white bg-sky-200 flex items-center justify-center overflow-hidden shadow-sm">
-                    <img id="home-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="Profile" class="w-full h-full object-cover">
+                    <img id="home-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" alt="" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <div class="text-[15px] font-semibold leading-tight">ยินดีต้อนรับ สู่</div>
@@ -167,7 +175,6 @@
             </div>
         </div>
 
-        <!-- Banner Section -->
         <div class="mb-4 relative">
             <div class="flex justify-between items-end px-5 mb-2.5">
                 <h2 class="text-[15px] font-bold text-slate-800 font-inter">โปรโมชั่นสุด HOT</h2>
@@ -175,7 +182,7 @@
             </div>
             <div id="banner-container" class="flex overflow-x-auto hide-scrollbar snap-x px-4 gap-3 pb-2 cursor-grab">
                 <div class="relative w-[280px] h-[130px] rounded-2xl overflow-hidden flex-shrink-0 snap-center shadow-md bg-black select-none">
-                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none">
+                    <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" alt="">
                     <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent pointer-events-none"></div>
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full pointer-events-none">
                         <div>
@@ -189,7 +196,7 @@
                     </div>
                 </div>
                 <div class="relative w-[280px] h-[130px] rounded-2xl overflow-hidden flex-shrink-0 snap-center shadow-md bg-black select-none">
-                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" alt="">
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-black/40 pointer-events-none"></div>
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full pointer-events-none">
                         <div>
@@ -209,7 +216,6 @@
             </div>
         </div>
 
-        <!-- Main Grid Menu -->
         <div class="px-5 py-2">
             <div class="grid grid-cols-4 gap-y-5 gap-x-2">
                 <div class="flex flex-col items-center justify-start gap-1.5 cursor-pointer group" onclick="switchTab('booking', this)">
@@ -263,7 +269,6 @@
          VIEW 9: สั่งซื้อสินค้า (ENJOY SHOPPING SYSTEM) 
          ========================================== -->
     <div id="view-order" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative flex-col" style="display: none;">
-        <!-- Header -->
         <div class="pt-8 pb-2 px-5 bg-white relative z-10">
             <div class="absolute top-0 left-0 w-32 h-16 bg-accent rounded-br-[3rem] -z-10 opacity-70"></div>
             <h1 class="text-2xl font-extrabold italic text-primary tracking-wide uppercase" id="orderPageTitle">ENJOY SHOPPING</h1>
@@ -273,7 +278,6 @@
             </div>
         </div>
 
-        <!-- Order Sub Navigation -->
         <div class="flex justify-between items-start mt-4 px-7 mb-4 border-b border-gray-100 pb-4">
             <div onclick="switchOrderTab('home')" class="flex flex-col items-center gap-2 cursor-pointer group">
                 <div id="order-tab-home" class="w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition bg-accent border-primary text-primary">
@@ -297,7 +301,6 @@
             </div>
         </div>
 
-        <!-- 9.1 Order Home -->
         <div id="order-home-content" class="px-5 pb-10 block">
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-1 h-4 bg-secondary rounded-full"></div>
@@ -306,7 +309,6 @@
             <div id="shop-product-list" class="space-y-4"></div>
         </div>
 
-        <!-- 9.2 Order Favorites -->
         <div id="order-fav-content" class="px-5 pb-10 hidden">
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-1 h-4 bg-red-400 rounded-full"></div>
@@ -318,7 +320,6 @@
             </div>
         </div>
 
-        <!-- 9.3 Order Cart -->
         <div id="order-cart-content" class="px-5 pb-32 hidden relative h-full">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
@@ -335,7 +336,6 @@
                 <i class="ph ph-shopping-cart text-5xl mb-2 text-gray-300"></i><p class="text-sm">รถเข็นว่างเปล่า</p>
             </div>
 
-            <!-- Discount Code Section -->
             <div id="cart-promo-section" class="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-200">
                 <p class="text-xs font-semibold text-gray-600 mb-2">โค้ดส่วนลด / โปรโมชั่น</p>
                 <div class="flex gap-2">
@@ -345,7 +345,7 @@
                 <p id="promoMsg" class="text-xs mt-2 font-semibold"></p>
             </div>
 
-            <!-- ยึดปุ่มชำระเงินไว้ล่างจอด้วย fixed -->
+            <!-- ยึดปุ่มชำระเงินไว้ล่างจอ (เหนือเมนูหลัก) ด้วย fixed -->
             <div id="checkoutBar" class="fixed bottom-[70px] left-1/2 transform -translate-x-1/2 w-full max-w-[414px] bg-white border-t border-gray-100 p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40 hidden">
                 <div class="flex justify-between items-center">
                     <div>
@@ -473,7 +473,7 @@
                 <div>
                     <h3 class="text-sm font-bold text-gray-800 border-b pb-1 mb-2">รายละเอียดสินค้า</h3>
                     <div class="flex items-center gap-3 mb-2">
-                        <img id="sum-pic" src="" class="w-12 h-16 object-cover rounded shadow-sm">
+                        <img id="sum-pic" src="" class="w-12 h-16 object-cover rounded shadow-sm" alt="">
                         <div class="flex-1 min-w-0"><div id="sum-prod-name" class="font-bold text-sm truncate"></div></div>
                     </div>
                 </div>
@@ -505,7 +505,7 @@
         <div class="bg-white px-5 pt-12 pb-6 text-center shadow-sm rounded-b-3xl relative z-10">
             <h1 class="text-slate-800 text-xl font-bold">ข้อมูลบัญชี</h1>
             <div class="mt-6 mb-4 relative inline-block">
-                <div class="w-24 h-24 rounded-full border-4 border-sky-100 bg-sky-50 flex items-center justify-center overflow-hidden mx-auto"><img id="main-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" class="w-full h-full object-cover"></div>
+                <div class="w-24 h-24 rounded-full border-4 border-sky-100 bg-sky-50 flex items-center justify-center overflow-hidden mx-auto"><img id="main-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" class="w-full h-full object-cover" alt=""></div>
             </div>
             <div id="profile-name-display" class="text-lg font-bold text-slate-800">ผู้เยี่ยมชม</div>
             <div id="profile-role-display" class="text-xs text-slate-400 mt-1">กรุณาเข้าสู่ระบบเพื่อใช้งาน</div>
@@ -585,12 +585,12 @@
 
             <div class="parties">
                 <div class="account-row">
-                    <div class="k-logo"><img src="https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6789cc7973863d34426baf54_678316f2a65ae45dd6a22f9f_678303b39e0a1b2f05c23bc4_673ac03613ce1d036f897c16_thaiqr_logosimbolo.png" crossorigin="anonymous" alt="Sender"></div>
+                    <div class="k-logo"><img src="https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6789cc7973863d34426baf54_678316f2a65ae45dd6a22f9f_678303b39e0a1b2f05c23bc4_673ac03613ce1d036f897c16_thaiqr_logosimbolo.png" crossorigin="anonymous" alt=""></div>
                     <div class="account-info"><div class="account-name">Bank : PromptPay</div><div class="account-bank">Mr . Narinpat Meechai</div><div class="account-num">xxX-X-X8888-X</div></div>
                 </div>
                 <div class="arrow-container"><svg viewBox="0 0 24 24" width="18" height="18" stroke="#888" stroke-width="1.5" fill="none"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="6,16 12,22 18,16"/></svg></div>
                 <div class="account-row">
-                    <div class="k-logo"><img src="https://img1.pic.in.th/images/IMG_0593.jpeg" crossorigin="anonymous" alt="Receiver"></div>
+                    <div class="k-logo"><img src="https://img1.pic.in.th/images/IMG_0593.jpeg" crossorigin="anonymous" alt=""></div>
                     <div class="account-info"><div class="account-name">Service Shop</div><div class="account-bank">a@a.com</div><div class="account-num">OD97910500</div></div>
                 </div>
             </div>
@@ -614,11 +614,11 @@
             </div>
 
             <div class="qr-wrapper">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/PromptPay-logo.png/600px-PromptPay-logo.png" crossorigin="anonymous" alt="PP" class="qr-pp-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/PromptPay-logo.png/600px-PromptPay-logo.png" crossorigin="anonymous" alt="" class="qr-pp-logo">
                 <div class="qr-section">
                     <div class="qr-container" id="qr-target">
                         <div class="laser-scan" id="laser-effect"></div>
-                        <img id="promptpay-qr-img" crossorigin="anonymous" src="" style="width: 100%; height: 100%; object-fit: contain;">
+                        <img id="promptpay-qr-img" crossorigin="anonymous" src="" alt="[Image of คิวอาร์โค้ด]" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div class="verified-box">verified by Next Live</div>
                 </div>
@@ -654,6 +654,11 @@
     let currentCartContext = {};
     let currentTransactionType = 'pay_product'; 
 
+    // บังคับให้โหลดหน้า Home เป็นหน้าแรก ทันทีที่เปิดเว็บ
+    window.addEventListener('load', () => {
+        switchTab('home', document.querySelectorAll('.nav-item')[0]);
+    });
+
     function showLoading(show, text = "กำลังประมวลผล...") {
         const overlay = document.getElementById('loading-overlay');
         document.getElementById('loading-text').innerText = text;
@@ -686,18 +691,21 @@
     }
 
     // ==========================================
-    // 1. ระบบจัดการหน้าและ Navigation (Fix Display Bug)
+    // 1. ระบบจัดการหน้าและ Navigation
     // ==========================================
     function switchTab(tabId, element) {
         document.querySelectorAll('.view-section').forEach(el => { 
             el.style.display = 'none'; 
             el.classList.remove('block', 'flex', 'hidden'); 
         });
+        
         const targetView = document.getElementById(`view-${tabId}`);
         if(!targetView) return;
         
         if (tabId === 'scan') {
-            targetView.style.display = 'flex'; targetView.style.flexDirection = 'column'; targetView.style.alignItems = 'center';
+            targetView.style.display = 'flex'; 
+            targetView.style.flexDirection = 'column'; 
+            targetView.style.alignItems = 'center';
         } else {
             targetView.style.display = 'block';
         }
@@ -711,7 +719,9 @@
         }
 
         if (tabId === 'booking' || tabId === 'order') fetchProductsList(tabId);
-        document.querySelector('.app-container').scrollTo(0, 0);
+        
+        const container = document.querySelector('.app-container');
+        if(container) container.scrollTo(0, 0);
     }
 
     function switchOrderTab(tab) {
@@ -780,7 +790,7 @@
             container.innerHTML += `
             <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex gap-4 items-center relative">
                 <button onclick="toggleLike('${prod.id}')" class="absolute top-2 left-2 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center shadow-sm z-10 group">${isLikedHtml}</button>
-                <img src="${prod.pic}" class="w-20 h-28 object-cover rounded-xl shadow-inner">
+                <img src="${prod.pic}" alt="" class="w-20 h-28 object-cover rounded-xl shadow-inner bg-gray-100">
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-900 leading-tight truncate text-sm">${prod.name}</h3>
                     <p class="text-[10px] text-gray-400 mt-1 leading-snug line-clamp-2">${prod.desc}</p>
@@ -831,7 +841,7 @@
         favs.forEach(prod => {
             container.innerHTML += `
             <div class="bg-white rounded-2xl p-3 shadow-sm border border-red-50 flex gap-4 items-center">
-                <img src="${prod.pic}" class="w-16 h-20 object-cover rounded-xl">
+                <img src="${prod.pic}" alt="" class="w-16 h-20 object-cover rounded-xl">
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-900 leading-tight truncate text-sm">${prod.name}</h3>
                     <p class="text-xs font-bold text-primary mt-1">฿${prod.price}</p>
@@ -860,7 +870,7 @@
             container.innerHTML += `
             <div class="bg-white rounded-2xl p-3 shadow-sm border border-blue-50 flex gap-3 items-center transition ${prod.selected ? 'ring-2 ring-accent' : ''}">
                 <input type="checkbox" class="custom-checkbox" ${prod.selected ? 'checked' : ''} onchange="toggleItemSelection('${prod.id}', this.checked)">
-                <img src="${prod.pic}" class="w-16 h-20 object-cover rounded-xl shadow-sm">
+                <img src="${prod.pic}" alt="" class="w-16 h-20 object-cover rounded-xl shadow-sm">
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-900 leading-tight truncate text-sm">${prod.name}</h3>
                     <div class="flex justify-between items-end mt-3">
@@ -955,7 +965,7 @@
 
 
     // ==========================================
-    // 4. ระบบจองสินค้า (Booking)
+    // 4. ระบบจองสินค้า (Booking) (แก้ปัญหาวันที่ล้น & ให้เด้งหน้าสรุป)
     // ==========================================
     function renderBookingProducts() {
         const container = document.getElementById('booking-product-list');
@@ -963,7 +973,7 @@
         globalProducts.forEach(prod => {
             container.innerHTML += `
             <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-50 flex gap-4 items-center transition hover:shadow-lg">
-                <img src="${prod.pic}" class="w-20 h-28 object-cover rounded-xl shadow-inner bg-gray-100">
+                <img src="${prod.pic}" alt="" class="w-20 h-28 object-cover rounded-xl shadow-inner bg-gray-100">
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-900 leading-tight truncate">${prod.name}</h3>
                     <p class="text-[11px] text-gray-400 mt-1 leading-snug truncate">${prod.desc}</p>
@@ -983,16 +993,22 @@
         currentBookingContext.product = prod;
         document.getElementById('bookTitleDisplay').textContent = prod.name;
         
+        // ดึงข้อมูลบัญชีลงฟอร์ม
         const savedUser = localStorage.getItem('nextLiveUser');
         if(savedUser) {
             const user = JSON.parse(savedUser);
             document.getElementById('book-fullname').value = user.fname + " " + user.lname;
             document.getElementById('book-email').value = user.email;
             document.getElementById('book-phone').value = user.phone;
+        } else {
+            document.getElementById('book-fullname').value = "";
+            document.getElementById('book-email').value = "";
+            document.getElementById('book-phone').value = "";
         }
 
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('pickupDate').setAttribute('min', today);
+        document.getElementById('pickupDate').value = "";
 
         const modal = document.getElementById('bookingModal');
         const modalContent = document.getElementById('modalContent');
@@ -1013,7 +1029,7 @@
         };
         closeBookingModal();
         renderBookingSummary();
-        switchTab('booking-summary', null);
+        switchTab('booking-summary', null); // สั่งเปิดหน้าสรุปทันที
     }
 
     function renderBookingSummary() {
@@ -1049,7 +1065,7 @@
         
         document.getElementById('slip-file-input').disabled = false;
         document.getElementById('upload-btn-label').style.opacity = '1';
-        switchTab('scan', null);
+        switchTab('scan', null); // เด้งไปหน้าชำระคิวอาร์ทันที
     }
 
     function resetQRScanUI() {
@@ -1084,7 +1100,6 @@
             timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }, 1000); 
     }
-    window.onload = startCountdownTimer;
 
     async function handleTimeoutFailure() {
         if(currentTransactionType === 'booking') {
@@ -1105,7 +1120,7 @@
             reader.onload = function(e) {
                 const base64Data = e.target.result.split(',')[1];
                 const perimeter = 230;
-                document.getElementById('qr-target').innerHTML = `<img src="${e.target.result}" class="uploaded-qr-image"><div class="checking-overlay" id="checking-overlay"><svg class="loading-svg" width="75" height="42"><rect x="1" y="1" width="73" height="40" rx="3" fill="none" stroke="#00b09b" stroke-width="2" stroke-dasharray="${perimeter}" stroke-dashoffset="${perimeter}" id="anim-border"></rect></svg><div class="overlay-inner" id="overlay-inner"><div class="check-title">กำลังตรวจสอบ</div><div class="progress-number" id="progress-text">0%</div></div></div>`;
+                document.getElementById('qr-target').innerHTML = `<img src="${e.target.result}" class="uploaded-qr-image" alt=""><div class="checking-overlay" id="checking-overlay"><svg class="loading-svg" width="75" height="42"><rect x="1" y="1" width="73" height="40" rx="3" fill="none" stroke="#00b09b" stroke-width="2" stroke-dasharray="${perimeter}" stroke-dashoffset="${perimeter}" id="anim-border"></rect></svg><div class="overlay-inner" id="overlay-inner"><div class="check-title">กำลังตรวจสอบ</div><div class="progress-number" id="progress-text">0%</div></div></div>`;
                 let progress = 0; const progressText = document.getElementById('progress-text'); const animBorder = document.getElementById('anim-border');
                 let interval = setInterval(() => {
                     progress += 1; progressText.innerText = progress + '%';
@@ -1171,7 +1186,7 @@
     // ==========================================
     window.addEventListener('load', () => {
         const savedUser = localStorage.getItem('nextLiveUser');
-        if(savedUser) { setLoggedInState(JSON.parse(savedUser)); } else { showAuthView('choice'); }
+        if(savedUser) { setLoggedInState(JSON.parse(savedUser)); } 
     });
 
     function showAuthView(viewName) {
