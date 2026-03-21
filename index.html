@@ -73,13 +73,11 @@
         input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; transition: 0.2s; }
         input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
-        /* Custom Checkbox สำหรับรถเข็น */
         .custom-checkbox { appearance: none; background-color: #fff; margin: 0; font: inherit; color: currentColor; width: 1.25em; height: 1.25em; border: 2px solid #CBD5E1; border-radius: 0.25em; display: grid; place-content: center; transition: 0.2s; cursor: pointer; }
         .custom-checkbox::before { content: ""; width: 0.65em; height: 0.65em; transform: scale(0); transition: 120ms transform ease-in-out; box-shadow: inset 1em 1em white; background-color: white; transform-origin: center; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
         .custom-checkbox:checked { background-color: #3B82F6; border-color: #3B82F6; }
         .custom-checkbox:checked::before { transform: scale(1); }
 
-        /* สไตล์ P+ Transfer Slip */
         #view-scan { background-color: #e9ecef; font-family: 'Kanit', sans-serif; padding-top: 40px; min-height: 100vh; }
         .slip-card { width: 360px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); padding: 24px; position: relative; overflow: hidden; box-sizing: border-box; margin: 0 auto; }
         .watermark { position: absolute; right: -20px; top: 70px; width: 260px; height: 400px; opacity: 0.05; z-index: 0; pointer-events: none; }
@@ -140,13 +138,6 @@
         <p class="text-slate-600 font-medium mt-3 text-sm" id="loading-text">กำลังประมวลผล...</p>
     </div>
 
-    <!-- AI Fab -->
-    <div id="ai-fab" class="absolute bottom-[85px] right-5 z-40">
-        <button onclick="switchTab('ai', null)" class="bg-gradient-to-tr from-sky-400 to-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg shadow-sky-500/40 hover:scale-105 transition transform">
-            <i class="fa-solid fa-robot text-2xl"></i>
-        </button>
-    </div>
-
     <!-- ==========================================
          VIEW 1: หน้าหลัก (HOME) 
          ========================================== -->
@@ -181,7 +172,6 @@
             </div>
         </div>
 
-        <!-- Banner Section -->
         <div class="mb-4 relative">
             <div class="flex justify-between items-end px-5 mb-2.5">
                 <h2 class="text-[15px] font-bold text-slate-800 font-inter">โปรโมชั่นสุด HOT</h2>
@@ -223,7 +213,6 @@
             </div>
         </div>
 
-        <!-- Main Grid Menu -->
         <div class="px-5 py-2">
             <div class="grid grid-cols-4 gap-y-5 gap-x-2">
                 <div class="flex flex-col items-center justify-start gap-1.5 cursor-pointer group" onclick="switchTab('booking', this)">
@@ -277,7 +266,6 @@
          VIEW 9: สั่งซื้อสินค้า (ENJOY SHOPPING SYSTEM) 
          ========================================== -->
     <div id="view-order" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative flex-col">
-        <!-- Header -->
         <div class="pt-8 pb-2 px-5 bg-white relative z-10">
             <div class="absolute top-0 left-0 w-32 h-16 bg-accent rounded-br-[3rem] -z-10 opacity-70"></div>
             <h1 class="text-2xl font-extrabold italic text-primary tracking-wide uppercase" id="orderPageTitle">ENJOY SHOPPING</h1>
@@ -287,7 +275,6 @@
             </div>
         </div>
 
-        <!-- Order Sub Navigation -->
         <div class="flex justify-between items-start mt-4 px-7 mb-4 border-b border-gray-100 pb-4">
             <div onclick="switchOrderTab('home')" class="flex flex-col items-center gap-2 cursor-pointer group">
                 <div id="order-tab-home" class="w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition bg-accent border-primary text-primary">
@@ -311,7 +298,6 @@
             </div>
         </div>
 
-        <!-- 9.1 Order Home -->
         <div id="order-home-content" class="px-5 pb-10 block">
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-1 h-4 bg-secondary rounded-full"></div>
@@ -320,7 +306,6 @@
             <div id="shop-product-list" class="space-y-4"></div>
         </div>
 
-        <!-- 9.2 Order Favorites -->
         <div id="order-fav-content" class="px-5 pb-10 hidden">
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-1 h-4 bg-red-400 rounded-full"></div>
@@ -332,13 +317,9 @@
             </div>
         </div>
 
-        <!-- 9.3 Order Cart -->
         <div id="order-cart-content" class="px-5 pb-32 hidden relative h-full">
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2">
-                    <div class="w-1 h-4 bg-secondary rounded-full"></div>
-                    <h3 class="font-bold text-gray-800 text-lg tracking-wide">ตะกร้าสินค้า</h3>
-                </div>
+                <div class="flex items-center gap-2"><div class="w-1 h-4 bg-secondary rounded-full"></div><h3 class="font-bold text-gray-800 text-lg tracking-wide">ตะกร้าสินค้า</h3></div>
                 <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
                     <input type="checkbox" id="selectAllCart" class="custom-checkbox" onchange="toggleSelectAllCart(this.checked)"> เลือกทั้งหมด
                 </label>
@@ -349,7 +330,6 @@
                 <i class="ph ph-shopping-cart text-5xl mb-2 text-gray-300"></i><p class="text-sm">รถเข็นว่างเปล่า</p>
             </div>
 
-            <!-- Discount Code Section -->
             <div id="cart-promo-section" class="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-200">
                 <p class="text-xs font-semibold text-gray-600 mb-2">โค้ดส่วนลด / โปรโมชั่น</p>
                 <div class="flex gap-2">
@@ -359,8 +339,8 @@
                 <p id="promoMsg" class="text-xs mt-2 font-semibold"></p>
             </div>
 
-            <!-- Checkout Bar -->
-            <div id="checkoutBar" class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-100 p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+            <!-- ยึดปุ่มชำระเงินไว้ล่างจอ (เหนือเมนูหลัก) ด้วย fixed -->
+            <div id="checkoutBar" class="fixed bottom-[70px] left-1/2 transform -translate-x-1/2 w-full max-w-[414px] bg-white border-t border-gray-100 p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40 hidden">
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-xs text-gray-500">ยอดชำระ <span id="selectedCountText" class="text-secondary font-bold">0</span> รายการ</p>
@@ -395,18 +375,18 @@
                 <div class="bg-gray-50 p-3 rounded-lg">
                     <div class="grid grid-cols-2 gap-2 text-sm">
                         <div class="text-gray-500">ราคารวม:</div><div id="osum-subtotal" class="text-right text-gray-800"></div>
-                        <div class="text-gray-500">ส่วนลด (โปรโมชั่น):</div><div id="osum-discount" class="text-right text-green-600"></div>
+                        <div class="text-gray-500">ส่วนลด:</div><div id="osum-discount" class="text-right text-green-600"></div>
                         <div class="text-gray-500">สุทธิ (ก่อน VAT):</div><div id="osum-net" class="text-right text-gray-800"></div>
-                        <div class="text-gray-500">ภาษีมูลค่าเพิ่ม (7%):</div><div id="osum-vat" class="text-right text-gray-800"></div>
+                        <div class="text-gray-500">ภาษี (7%):</div><div id="osum-vat" class="text-right text-gray-800"></div>
                         <div class="text-primary font-bold text-base border-t border-primary/20 pt-2 mt-1">ยอดชำระสุทธิ:</div>
                         <div id="osum-total" class="text-right font-bold text-primary text-base border-t border-primary/20 pt-2 mt-1"></div>
                     </div>
                 </div>
 
-                <button onclick="confirmAndPayOrder()" class="w-full bg-secondary text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-blue-600 transition flex items-center justify-center gap-2 mt-4">
+                <button onclick="confirmAndPayOrder()" class="w-full bg-secondary text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-blue-600 transition mt-4">
                     ยืนยันเพื่อชำระเงิน <i class="fa-solid fa-qrcode"></i>
                 </button>
-                <button onclick="switchTab('order', null); switchOrderTab('cart');" class="w-full bg-white text-gray-500 font-bold py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition mt-2">
+                <button onclick="switchTab('order', null); switchOrderTab('cart');" class="w-full bg-white text-gray-500 font-bold py-2 rounded-xl border border-gray-200 mt-2">
                     กลับไปหน้ารถเข็น
                 </button>
             </div>
@@ -528,8 +508,8 @@
             <div id="auth-choice-section" class="text-center block">
                 <i class="fa-regular fa-id-card text-4xl text-sky-200 mb-3"></i><h3 class="text-slate-700 font-bold mb-1">เข้าสู่ระบบเพื่อดำเนินการ</h3>
                 <div class="flex gap-3 mt-5">
-                    <button onclick="showAuthView('login')" class="flex-1 bg-white text-sky-600 font-bold py-3 rounded-xl border border-sky-100">เข้าสู่ระบบ</button>
-                    <button onclick="showAuthView('register')" class="flex-1 bg-sky-500 text-white font-bold py-3 rounded-xl">สมัครบัญชี</button>
+                    <button onclick="showAuthView('login')" class="flex-1 bg-white text-sky-600 font-bold py-3 rounded-xl shadow-sm border border-sky-100 hover:bg-sky-50">เข้าสู่ระบบ</button>
+                    <button onclick="showAuthView('register')" class="flex-1 bg-sky-500 text-white font-bold py-3 rounded-xl shadow-md hover:bg-sky-600">สมัครบัญชี</button>
                 </div>
             </div>
 
@@ -566,7 +546,7 @@
                     <div class="flex justify-between px-5 py-4 border-b border-slate-50"><span class="text-sm font-medium text-slate-600">เบอร์โทรศัพท์</span><div class="text-sm text-slate-800 font-semibold" id="display-phone">-</div></div>
                     <div class="flex justify-between px-5 py-4 bg-sky-50"><span class="text-sm font-medium text-sky-700">เครดิตคงเหลือ</span><div class="text-sm text-sky-700 font-bold">฿ <span id="display-credit">0.00</span></div></div>
                 </div>
-                <button onclick="logout()" class="w-full bg-red-50 text-red-500 font-bold py-3.5 rounded-xl border border-red-100">ออกจากระบบ</button>
+                <button onclick="logout()" class="w-full bg-red-50 text-red-500 font-bold py-3.5 rounded-xl border border-red-100 hover:bg-red-100">ออกจากระบบ</button>
             </div>
         </div>
     </div>
@@ -668,6 +648,31 @@
     }
 
     // ==========================================
+    // จัดการ LocalStorage สำหรับ Cart และ Fav
+    // ==========================================
+    function saveUserPreferences() {
+        const user = JSON.parse(localStorage.getItem('nextLiveUser'));
+        if (!user) return;
+        const favs = globalProducts.filter(p => p.isLiked).map(p => p.id);
+        const cart = globalProducts.filter(p => p.inCart).map(p => p.id);
+        localStorage.setItem('nextLivePrefs_' + user.email, JSON.stringify({favs, cart}));
+    }
+
+    function loadUserPreferences() {
+        const user = JSON.parse(localStorage.getItem('nextLiveUser'));
+        if (!user) {
+            globalProducts.forEach(p => { p.isLiked = false; p.inCart = false; p.selected = false; });
+            return;
+        }
+        const prefs = JSON.parse(localStorage.getItem('nextLivePrefs_' + user.email) || '{"favs":[], "cart":[]}');
+        globalProducts.forEach(p => {
+            p.isLiked = prefs.favs.includes(p.id);
+            p.inCart = prefs.cart.includes(p.id);
+            p.selected = p.inCart; 
+        });
+    }
+
+    // ==========================================
     // 1. ระบบจัดการหน้าและ Navigation
     // ==========================================
     function switchTab(tabId, element) {
@@ -680,7 +685,6 @@
             targetView.style.display = 'block';
         }
 
-        document.getElementById('ai-fab').style.display = (tabId === 'home' || tabId === 'order') ? 'block' : 'none';
         document.querySelectorAll('.nav-item').forEach(nav => {
             if(nav.classList.contains('text-sky-600')) { nav.classList.remove('text-sky-600'); nav.classList.add('text-slate-400', 'hover:text-sky-500'); }
         });
@@ -705,18 +709,15 @@
 
         if(tab === 'home') {
             document.getElementById('order-home-content').classList.remove('hidden');
-            let el = document.getElementById('order-tab-home');
-            el.className = "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition relative bg-accent border-primary text-primary";
+            document.getElementById('order-tab-home').className = "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition relative bg-accent border-primary text-primary";
             renderShopProducts();
         } else if (tab === 'fav') {
             document.getElementById('order-fav-content').classList.remove('hidden');
-            let el = document.getElementById('order-tab-fav');
-            el.className = "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition relative border-red-400 text-red-500 bg-red-50";
+            document.getElementById('order-tab-fav').className = "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition relative border-red-400 text-red-500 bg-red-50";
             renderFavorites();
         } else if (tab === 'cart') {
             document.getElementById('order-cart-content').classList.remove('hidden');
-            let el = document.getElementById('order-tab-cart');
-            el.className = "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition relative border-secondary text-secondary bg-blue-50";
+            document.getElementById('order-tab-cart').className = "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition relative border-secondary text-secondary bg-blue-50";
             renderCart();
         }
     }
@@ -725,21 +726,24 @@
     // 2. ดึงข้อมูลสินค้าจาก GAS
     // ==========================================
     async function fetchProductsList(caller) {
-        showLoading(true, "กำลังโหลดสินค้า...");
-        try {
-            const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'get_products' }) });
-            const data = await res.json();
-            if(data.status === 'success' && data.data && data.data.length > 0) {
-                // Map เพิ่มสถานะสำหรับระบบ Shop
-                globalProducts = data.data.map(p => ({ ...p, isLiked: false, inCart: false, selected: false }));
-            } else { throw new Error('No data'); }
-        } catch (e) {
-            globalProducts = [
-                { id: "B001", name: "The Giant Kingdom", desc: "Story book", price: 1500, discount: 0, stock: 261, pic: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=150&h=200&fit=crop", isLiked: false, inCart: false, selected: false },
-                { id: "B002", name: "Bear's wish", desc: "Child education", price: 850, discount: 50, stock: 142, pic: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=150&h=200&fit=crop", isLiked: false, inCart: false, selected: false },
-                { id: "B003", name: "Animal adventures", desc: "Motivational story book", price: 1200, discount: 200, stock: 89, pic: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=150&h=200&fit=crop", isLiked: false, inCart: false, selected: false }
-            ];
+        if(globalProducts.length === 0) {
+            showLoading(true, "กำลังโหลดสินค้า...");
+            try {
+                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'get_products' }) });
+                const data = await res.json();
+                if(data.status === 'success' && data.data && data.data.length > 0) {
+                    globalProducts = data.data.map(p => ({ ...p, isLiked: false, inCart: false, selected: false }));
+                } else { throw new Error('No data'); }
+            } catch (e) {
+                globalProducts = [
+                    { id: "B001", name: "The Giant Kingdom", desc: "Story book", price: 1500, discount: 0, stock: 261, pic: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=150&h=200&fit=crop", isLiked: false, inCart: false, selected: false },
+                    { id: "B002", name: "Bear's wish", desc: "Child education", price: 850, discount: 50, stock: 142, pic: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=150&h=200&fit=crop", isLiked: false, inCart: false, selected: false },
+                    { id: "B003", name: "Animal adventures", desc: "Motivational story book", price: 1200, discount: 200, stock: 89, pic: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=150&h=200&fit=crop", isLiked: false, inCart: false, selected: false }
+                ];
+            }
         }
+        
+        loadUserPreferences(); // โหลดค่า Fav/Cart ของยูสเซอร์นี้
         showLoading(false);
         if(caller === 'booking') renderBookingProducts();
         if(caller === 'order') { switchOrderTab('home'); }
@@ -754,7 +758,7 @@
         globalProducts.forEach(prod => {
             const isLikedHtml = prod.isLiked ? `<i class="ph-fill ph-heart text-xl text-red-500"></i>` : `<i class="ph ph-heart text-xl text-gray-300 group-hover:text-red-400 transition"></i>`;
             const btnText = prod.inCart ? 'In Cart' : 'Add to Cart';
-            const btnClass = prod.inCart ? 'bg-gray-200 text-gray-600' : 'bg-secondary text-white shadow-md shadow-blue-500/30 hover:-translate-y-0.5';
+            const btnClass = prod.inCart ? 'bg-gray-200 text-gray-600' : 'bg-secondary text-white shadow-md hover:-translate-y-0.5';
 
             container.innerHTML += `
             <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex gap-4 items-center relative">
@@ -778,7 +782,7 @@
 
     function toggleLike(id) {
         const prod = globalProducts.find(p => p.id === id);
-        if(prod) { prod.isLiked = !prod.isLiked; updateShopBadges(); renderShopProducts(); renderFavorites(); }
+        if(prod) { prod.isLiked = !prod.isLiked; saveUserPreferences(); updateShopBadges(); renderShopProducts(); renderFavorites(); }
     }
     
     function toggleCart(id) {
@@ -786,7 +790,7 @@
         if(prod) { 
             prod.inCart = !prod.inCart; 
             prod.selected = prod.inCart; 
-            updateShopBadges(); renderShopProducts(); renderCart(); 
+            saveUserPreferences(); updateShopBadges(); renderShopProducts(); renderCart(); 
         }
     }
 
@@ -888,7 +892,6 @@
 
     function checkoutCart() {
         if (currentCartContext.items.length === 0) return;
-        // เช็กล็อกอิน
         if(!localStorage.getItem('nextLiveUser')){ alert("กรุณาเข้าสู่ระบบก่อนทำการสั่งซื้อ"); switchTab('profile', null); return; }
         
         renderOrderSummary();
@@ -900,12 +903,8 @@
         if(!prod) return;
         if(!localStorage.getItem('nextLiveUser')){ alert("กรุณาเข้าสู่ระบบก่อนทำการสั่งซื้อ"); switchTab('profile', null); return; }
         
-        // Reset code
         appliedDiscount = 0;
-        const subtotal = prod.price;
-        const netBeforeVat = subtotal;
-        const vat = netBeforeVat * 0.07;
-        const total = netBeforeVat + vat;
+        const subtotal = prod.price; const netBeforeVat = subtotal; const vat = netBeforeVat * 0.07; const total = netBeforeVat + vat;
         currentCartContext = { items: [prod], subtotal, discountAmt: 0, netBeforeVat, vat, total };
         renderOrderSummary();
         switchTab('order-summary', null);
@@ -1042,7 +1041,6 @@
         generateQR();
     }
 
-
     // ==========================================
     // 5. ระบบ P+ Slip (คิวอาร์, เวลา, ส่งข้อมูล)
     // ==========================================
@@ -1123,7 +1121,6 @@
             const res = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
             const data = await res.json();
             
-            // ระบบ Anti-Fraud
             if(data.status === 'banned') {
                 alert(data.message);
                 logout(); return;
@@ -1134,10 +1131,9 @@
             } else {
                 alert(data.message);
                 if(currentTransactionType === 'pay_cart' && data.status === 'success') {
-                    // เคลียร์รถเข็น
                     globalProducts.forEach(p => { if(p.inCart && p.selected) { p.inCart=false; p.selected=false; } });
                     appliedDiscount = 0; document.getElementById('promoCodeInput').value = ""; document.getElementById('promoMsg').innerText = "";
-                    renderShopProducts(); updateShopBadges();
+                    saveUserPreferences(); renderShopProducts(); updateShopBadges();
                 }
                 currentBookingContext = {}; currentCartContext = {};
                 resetQRScanUI(); switchTab('home', null);
@@ -1178,11 +1174,14 @@
         document.getElementById('display-email').textContent = user.email;
         document.getElementById('display-phone').textContent = user.phone;
         document.getElementById('display-credit').textContent = parseFloat(user.credit || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
+        
+        loadUserPreferences(); // โหลดข้อมูลรถเข็นตอนล็อกอิน
         showAuthView('info');
     }
 
     function logout() {
         localStorage.removeItem('nextLiveUser');
+        globalProducts.forEach(p => { p.isLiked = false; p.inCart = false; p.selected = false; });
         document.getElementById('profile-name-display').textContent = "ผู้เยี่ยมชม";
         document.getElementById('profile-role-display').textContent = "กรุณาเข้าสู่ระบบเพื่อใช้งาน";
         document.getElementById('main-profile-img').src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Guest";
@@ -1235,6 +1234,48 @@
             const dot = document.createElement('div'); dot.className = `w-1.5 h-1.5 rounded-full transition-all duration-300 ${index === 0 ? 'bg-sky-500 w-4' : 'bg-slate-300'}`; bankDotsContainer.appendChild(dot);
         }
     });
+
+    let currentBankIndex = 0;
+    const bankCardWidth = 240 + 12; 
+    let bankInterval;
+
+    function updateBankDots(index) {
+        const activeDotIndex = index % 5; 
+        const dots = bankDotsContainer.children;
+        for(let i=0; i<dots.length; i++) {
+            dots[i].className = i === activeDotIndex ? 'w-4 h-1.5 rounded-full bg-sky-500 transition-all duration-300 shadow-sm' : 'w-1.5 h-1.5 rounded-full bg-slate-300 transition-all duration-300';
+        }
+    }
+    function scrollBanks() {
+        currentBankIndex++;
+        if (currentBankIndex >= banksData.length) {
+            currentBankIndex = 0;
+            bankContainer.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            bankContainer.scrollBy({ left: bankCardWidth, behavior: 'smooth' });
+        }
+        updateBankDots(currentBankIndex);
+    }
+    bankInterval = setInterval(scrollBanks, 2500); 
+
+    function enableDragScroll(slider) {
+        let isDown = false, startX, scrollLeft;
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true; slider.classList.add('cursor-grabbing'); slider.classList.remove('snap-x');
+            startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('cursor-grabbing'); slider.classList.add('snap-x'); });
+        slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('cursor-grabbing'); slider.classList.add('snap-x'); });
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            slider.scrollLeft = scrollLeft - ((x - startX) * 1.5);
+        });
+    }
+    enableDragScroll(document.getElementById('banner-container'));
+    enableDragScroll(bankContainer);
+
 </script>
 </body>
 </html>
