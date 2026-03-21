@@ -46,19 +46,10 @@
         .header-gradient { background: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%); position: relative; overflow: hidden; }
         .bg-pattern { position: absolute; right: -30px; top: -20px; width: 250px; height: 250px; opacity: 0.1; pointer-events: none; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%); }
 
-        @keyframes popup-from-behind {
-            0% { transform: translate(-50%, 15px) scale(0.8); opacity: 0; }
-            15% { transform: translate(-50%, -35px) scale(1.05); opacity: 1; }
-            25% { transform: translate(-50%, -30px) scale(1); opacity: 1; }
-            80% { transform: translate(-50%, -30px) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, 15px) scale(0.8); opacity: 0; }
-        }
-        .animate-qr-popup { animation: popup-from-behind 2.5s ease-in-out forwards; }
-
         .bank-card-base { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255,255,255,0.1); }
         .glow-line-blue { border-top: 2px solid #38bdf8; box-shadow: 0 -10px 25px -5px rgba(56, 189, 248, 0.6); }
 
-        .form-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #334155; outline: none; transition: all 0.2s; }
+        .form-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #334155; outline: none; transition: all 0.2s; box-sizing: border-box; }
         .form-input:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
         .form-label { display: block; font-size: 12px; font-weight: 500; color: #64748b; margin-bottom: 4px; text-align: left; }
         
@@ -70,7 +61,11 @@
         .modal-scale-up { animation: scaleUp 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes scaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; transition: 0.2s; }
+        
+        /* แก้ไข Date Input ไม่ให้ล้นและปรับข้อความให้อยู่ตรงกลาง */
+        input[type="date"] { box-sizing: border-box; }
+        input[type="date"]::-webkit-datetime-edit { padding: 0; line-height: 1.5; }
+        input[type="date"]::-webkit-calendar-picker-indicator { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; opacity: 0.6; transition: 0.2s; }
         input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
         .custom-checkbox { appearance: none; background-color: #fff; margin: 0; font: inherit; color: currentColor; width: 1.25em; height: 1.25em; border: 2px solid #CBD5E1; border-radius: 0.25em; display: grid; place-content: center; transition: 0.2s; cursor: pointer; }
@@ -141,7 +136,7 @@
     <!-- ==========================================
          VIEW 1: หน้าหลัก (HOME) 
          ========================================== -->
-    <div id="view-home" class="view-section flex-1 pb-28 block">
+    <div id="view-home" class="view-section flex-1 pb-28" style="display: none;">
         <div class="header-gradient text-white pt-8 pb-8 px-5 rounded-b-[1.5rem] relative z-0 shadow-md">
             <div class="bg-pattern"></div>
             <div class="flex items-center gap-3 mb-4 relative z-10">
@@ -172,6 +167,7 @@
             </div>
         </div>
 
+        <!-- Banner Section -->
         <div class="mb-4 relative">
             <div class="flex justify-between items-end px-5 mb-2.5">
                 <h2 class="text-[15px] font-bold text-slate-800 font-inter">โปรโมชั่นสุด HOT</h2>
@@ -213,6 +209,7 @@
             </div>
         </div>
 
+        <!-- Main Grid Menu -->
         <div class="px-5 py-2">
             <div class="grid grid-cols-4 gap-y-5 gap-x-2">
                 <div class="flex flex-col items-center justify-start gap-1.5 cursor-pointer group" onclick="switchTab('booking', this)">
@@ -265,7 +262,8 @@
     <!-- ==========================================
          VIEW 9: สั่งซื้อสินค้า (ENJOY SHOPPING SYSTEM) 
          ========================================== -->
-    <div id="view-order" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative flex-col">
+    <div id="view-order" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative flex-col" style="display: none;">
+        <!-- Header -->
         <div class="pt-8 pb-2 px-5 bg-white relative z-10">
             <div class="absolute top-0 left-0 w-32 h-16 bg-accent rounded-br-[3rem] -z-10 opacity-70"></div>
             <h1 class="text-2xl font-extrabold italic text-primary tracking-wide uppercase" id="orderPageTitle">ENJOY SHOPPING</h1>
@@ -275,6 +273,7 @@
             </div>
         </div>
 
+        <!-- Order Sub Navigation -->
         <div class="flex justify-between items-start mt-4 px-7 mb-4 border-b border-gray-100 pb-4">
             <div onclick="switchOrderTab('home')" class="flex flex-col items-center gap-2 cursor-pointer group">
                 <div id="order-tab-home" class="w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition bg-accent border-primary text-primary">
@@ -298,6 +297,7 @@
             </div>
         </div>
 
+        <!-- 9.1 Order Home -->
         <div id="order-home-content" class="px-5 pb-10 block">
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-1 h-4 bg-secondary rounded-full"></div>
@@ -306,6 +306,7 @@
             <div id="shop-product-list" class="space-y-4"></div>
         </div>
 
+        <!-- 9.2 Order Favorites -->
         <div id="order-fav-content" class="px-5 pb-10 hidden">
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-1 h-4 bg-red-400 rounded-full"></div>
@@ -317,9 +318,13 @@
             </div>
         </div>
 
+        <!-- 9.3 Order Cart -->
         <div id="order-cart-content" class="px-5 pb-32 hidden relative h-full">
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2"><div class="w-1 h-4 bg-secondary rounded-full"></div><h3 class="font-bold text-gray-800 text-lg tracking-wide">ตะกร้าสินค้า</h3></div>
+                <div class="flex items-center gap-2">
+                    <div class="w-1 h-4 bg-secondary rounded-full"></div>
+                    <h3 class="font-bold text-gray-800 text-lg tracking-wide">ตะกร้าสินค้า</h3>
+                </div>
                 <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
                     <input type="checkbox" id="selectAllCart" class="custom-checkbox" onchange="toggleSelectAllCart(this.checked)"> เลือกทั้งหมด
                 </label>
@@ -330,6 +335,7 @@
                 <i class="ph ph-shopping-cart text-5xl mb-2 text-gray-300"></i><p class="text-sm">รถเข็นว่างเปล่า</p>
             </div>
 
+            <!-- Discount Code Section -->
             <div id="cart-promo-section" class="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-200">
                 <p class="text-xs font-semibold text-gray-600 mb-2">โค้ดส่วนลด / โปรโมชั่น</p>
                 <div class="flex gap-2">
@@ -339,7 +345,7 @@
                 <p id="promoMsg" class="text-xs mt-2 font-semibold"></p>
             </div>
 
-            <!-- ยึดปุ่มชำระเงินไว้ล่างจอ (เหนือเมนูหลัก) ด้วย fixed -->
+            <!-- ยึดปุ่มชำระเงินไว้ล่างจอด้วย fixed -->
             <div id="checkoutBar" class="fixed bottom-[70px] left-1/2 transform -translate-x-1/2 w-full max-w-[414px] bg-white border-t border-gray-100 p-4 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)] z-40 hidden">
                 <div class="flex justify-between items-center">
                     <div>
@@ -357,7 +363,7 @@
     <!-- ==========================================
          VIEW 10: หน้าสรุปรายการสั่งซื้อ (CART SUMMARY)
          ========================================== -->
-    <div id="view-order-summary" class="view-section flex-1 bg-gray-50 pb-28 hidden min-h-screen p-4">
+    <div id="view-order-summary" class="view-section flex-1 bg-gray-50 pb-28 hidden min-h-screen p-4" style="display: none;">
         <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mt-6 relative">
             <div class="absolute -right-6 -top-6 text-gray-50 opacity-20"><i class="fa-solid fa-file-invoice text-9xl"></i></div>
             
@@ -375,18 +381,18 @@
                 <div class="bg-gray-50 p-3 rounded-lg">
                     <div class="grid grid-cols-2 gap-2 text-sm">
                         <div class="text-gray-500">ราคารวม:</div><div id="osum-subtotal" class="text-right text-gray-800"></div>
-                        <div class="text-gray-500">ส่วนลด:</div><div id="osum-discount" class="text-right text-green-600"></div>
+                        <div class="text-gray-500">ส่วนลด (โปรโมชั่น):</div><div id="osum-discount" class="text-right text-green-600"></div>
                         <div class="text-gray-500">สุทธิ (ก่อน VAT):</div><div id="osum-net" class="text-right text-gray-800"></div>
-                        <div class="text-gray-500">ภาษี (7%):</div><div id="osum-vat" class="text-right text-gray-800"></div>
+                        <div class="text-gray-500">ภาษีมูลค่าเพิ่ม (7%):</div><div id="osum-vat" class="text-right text-gray-800"></div>
                         <div class="text-primary font-bold text-base border-t border-primary/20 pt-2 mt-1">ยอดชำระสุทธิ:</div>
                         <div id="osum-total" class="text-right font-bold text-primary text-base border-t border-primary/20 pt-2 mt-1"></div>
                     </div>
                 </div>
 
-                <button onclick="confirmAndPayOrder()" class="w-full bg-secondary text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-blue-600 transition mt-4">
+                <button onclick="confirmAndPayOrder()" class="w-full bg-secondary text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-blue-600 transition flex items-center justify-center gap-2 mt-4">
                     ยืนยันเพื่อชำระเงิน <i class="fa-solid fa-qrcode"></i>
                 </button>
-                <button onclick="switchTab('order', null); switchOrderTab('cart');" class="w-full bg-white text-gray-500 font-bold py-2 rounded-xl border border-gray-200 mt-2">
+                <button onclick="switchTab('order', null); switchOrderTab('cart');" class="w-full bg-white text-gray-500 font-bold py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition mt-2">
                     กลับไปหน้ารถเข็น
                 </button>
             </div>
@@ -397,7 +403,7 @@
     <!-- ==========================================
          VIEW 7: หน้าจองสินค้า (BOOKING) 
          ========================================== -->
-    <div id="view-booking" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative">
+    <div id="view-booking" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative" style="display: none;">
         <div class="pt-8 pb-4 px-6 relative">
             <div class="absolute top-0 left-0 w-32 h-20 bg-accent rounded-br-[3rem] -z-10"></div>
             <h1 class="text-3xl font-extrabold italic text-primary tracking-wide">BOOKING</h1>
@@ -414,44 +420,45 @@
             <div class="text-center text-gray-400 text-sm py-10">กำลังโหลดรายการสินค้า...</div>
         </div>
 
-        <!-- Booking Modal -->
+        <!-- Booking Modal (จัดเต็มป้องกันล้นขอบ) -->
         <div id="bookingModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-            <div id="modalContent" class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative">
+            <div id="modalContent" class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative box-border">
                 <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 bg-gray-100 rounded-lg w-8 h-8 flex items-center justify-center transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
                 <h2 class="text-2xl font-bold text-primary mb-1">ฟอร์มการจอง</h2>
                 <p class="text-sm text-gray-500 mb-5">คุณกำลังจอง: <span id="bookTitleDisplay" class="font-semibold text-secondary"></span></p>
 
-                <form id="bookingForm" onsubmit="handleBookingFormSubmit(event)">
-                    <div class="space-y-4">
-                        <div>
+                <form id="bookingForm" onsubmit="handleBookingFormSubmit(event)" class="w-full box-border">
+                    <div class="space-y-4 w-full flex flex-col box-border">
+                        <div class="w-full box-border">
                             <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-สกุล ผู้จอง</label>
                             <input type="text" id="book-fullname" required class="box-border block w-full h-11 px-4 rounded-lg bg-gray-50 border border-gray-200 focus:border-secondary outline-none text-sm">
                         </div>
-                        <div>
+                        <div class="w-full box-border">
                             <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล</label>
                             <input type="email" id="book-email" required class="box-border block w-full h-11 px-4 rounded-lg bg-gray-50 border border-gray-200 focus:border-secondary outline-none text-sm">
                         </div>
-                        <div>
+                        <div class="w-full box-border">
                             <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์โทรศัพท์</label>
                             <input type="tel" id="book-phone" required pattern="[0-9]{9,10}" class="box-border block w-full h-11 px-4 rounded-lg bg-gray-50 border border-gray-200 focus:border-secondary outline-none text-sm">
                         </div>
-                        <div>
+                        <div class="w-full box-border">
                             <label class="block text-sm font-medium text-gray-700 mb-1">วันที่ต้องการรับ</label>
+                            <!-- แก้ไข CSS การจัดวางกล่องวันที่ให้เสมออันอื่น -->
                             <input type="date" id="pickupDate" required class="box-border block w-full h-11 px-4 rounded-lg bg-gray-50 border border-gray-200 focus:border-secondary outline-none text-sm">
                         </div>
                     </div>
-                    <div class="mt-8">
-                        <button type="submit" class="w-full h-12 bg-secondary text-white font-bold rounded-lg shadow-md hover:bg-blue-600 transition-all">ยืนยันการจอง</button>
+                    <div class="mt-8 w-full box-border">
+                        <button type="submit" class="w-full h-12 bg-secondary text-white font-bold rounded-lg shadow-md hover:bg-blue-600 transition-all box-border">ยืนยันการจอง</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Booking Summary (ซ่อนไว้) -->
-    <div id="view-booking-summary" class="view-section flex-1 bg-gray-50 pb-28 hidden min-h-screen p-4">
+    <!-- Booking Summary (ซ่อนไว้เพื่อไปเปิดด้วย style.display=block) -->
+    <div id="view-booking-summary" class="view-section flex-1 bg-gray-50 pb-28 hidden min-h-screen p-4" style="display: none;">
         <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mt-6 relative">
             <div class="absolute -right-6 -top-6 text-gray-50 opacity-20"><i class="fa-solid fa-file-invoice text-9xl"></i></div>
             <div class="bg-primary px-5 py-4 text-white"><h2 class="text-lg font-bold">สรุปรายการจองสินค้า</h2></div>
@@ -487,14 +494,14 @@
     <!-- ==========================================
          VIEW 2, 3, 4: PROMOTIONS, PROFILE, TERMS
          ========================================== -->
-    <div id="view-promotions" class="view-section flex-1 bg-slate-900 pb-28 hidden min-h-screen">
+    <div id="view-promotions" class="view-section flex-1 bg-slate-900 pb-28 hidden min-h-screen" style="display: none;">
         <div class="pt-10 pb-6 px-5 text-center relative"><h1 class="text-white text-2xl font-bold">โปรโมชั่นสุดคุ้ม</h1></div>
         <div class="px-4 flex flex-col gap-5">
             <div class="bg-slate-800 rounded-xl overflow-hidden relative glow-line-blue"><div class="flex p-4 items-center gap-4"><div class="flex-1"><h3 class="text-sky-400 font-bold text-lg mb-1">เงินคืนสูงสุด 5% ทุกการสั่งซื้อ</h3></div></div></div>
         </div>
     </div>
 
-    <div id="view-profile" class="view-section flex-1 bg-slate-50 pb-28 hidden min-h-screen">
+    <div id="view-profile" class="view-section flex-1 bg-slate-50 pb-28 hidden min-h-screen" style="display: none;">
         <div class="bg-white px-5 pt-12 pb-6 text-center shadow-sm rounded-b-3xl relative z-10">
             <h1 class="text-slate-800 text-xl font-bold">ข้อมูลบัญชี</h1>
             <div class="mt-6 mb-4 relative inline-block">
@@ -532,7 +539,13 @@
                         <div class="flex-1"><label class="form-label">Last name</label><input type="text" id="reg-lname" class="form-input" required></div>
                     </div>
                     <div class="mb-4"><label class="form-label">Email Account</label><input type="email" id="reg-email" class="form-input" required></div>
-                    <div class="mb-4"><label class="form-label">Phone number</label><div class="flex gap-2"><div class="form-input w-[30%] flex items-center justify-center bg-slate-50 text-slate-500">🇹🇭 +66</div><input type="tel" id="reg-phone" class="form-input w-[70%]" pattern="[0-9]{9,10}" required></div></div>
+                    <div class="mb-4">
+                        <label class="form-label">Phone number</label>
+                        <div class="flex gap-2">
+                            <div class="form-input w-[30%] flex items-center justify-center bg-slate-50 text-slate-500">🇹🇭 +66</div>
+                            <input type="tel" id="reg-phone" class="form-input w-[70%]" pattern="[0-9]{9,10}" required>
+                        </div>
+                    </div>
                     <div class="mb-6"><label class="form-label">Password</label><input type="password" id="reg-password" class="form-input" required minlength="6"></div>
                     <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl">GET STARTED <i class="fa-solid fa-arrow-right"></i></button>
                 </form>
@@ -551,14 +564,14 @@
         </div>
     </div>
 
-    <div id="view-terms" class="view-section flex-1 bg-white pb-28 hidden min-h-screen">
+    <div id="view-terms" class="view-section flex-1 bg-white pb-28 hidden min-h-screen" style="display: none;">
         <div class="px-5 pt-12 text-center"><h1 class="text-slate-800 text-xl font-bold mb-4">เงื่อนไขข้อกำหนด</h1></div>
     </div>
 
     <!-- ==========================================
          VIEW 5: ระบบสลิปโอนเงิน (SCAN / P+ Slip)
          ========================================== -->
-    <div id="view-scan" class="view-section flex-1 hidden min-h-screen pb-28">
+    <div id="view-scan" class="view-section flex-1 hidden min-h-screen pb-28" style="display: none;">
         <div class="slip-card" id="slip-element">
             <svg class="watermark" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
                 <g stroke="#000" stroke-width="1.5" fill="none"><text x="100" y="32" font-family="'Kanit', sans-serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" stroke="none">Next Live</text><polygon points="100,45 160,65 100,85 40,65" fill="#000" opacity="0.05"/><polygon points="40,65 100,85 100,380 40,360" /><polygon points="100,85 160,65 160,360 100,380" /><line x1="55" y1="70" x2="55" y2="365" /><line x1="70" y1="75" x2="70" y2="370" /><line x1="145" y1="70" x2="145" y2="365" /><line x1="40" y1="120" x2="160" y2="120" /><line x1="40" y1="180" x2="160" y2="180" /><line x1="40" y1="360" x2="160" y2="360" /></g>
@@ -673,11 +686,15 @@
     }
 
     // ==========================================
-    // 1. ระบบจัดการหน้าและ Navigation
+    // 1. ระบบจัดการหน้าและ Navigation (Fix Display Bug)
     // ==========================================
     function switchTab(tabId, element) {
-        document.querySelectorAll('.view-section').forEach(el => { el.style.display = 'none'; });
+        document.querySelectorAll('.view-section').forEach(el => { 
+            el.style.display = 'none'; 
+            el.classList.remove('block', 'flex', 'hidden'); 
+        });
         const targetView = document.getElementById(`view-${tabId}`);
+        if(!targetView) return;
         
         if (tabId === 'scan') {
             targetView.style.display = 'flex'; targetView.style.flexDirection = 'column'; targetView.style.alignItems = 'center';
@@ -743,7 +760,7 @@
             }
         }
         
-        loadUserPreferences(); // โหลดค่า Fav/Cart ของยูสเซอร์นี้
+        loadUserPreferences(); 
         showLoading(false);
         if(caller === 'booking') renderBookingProducts();
         if(caller === 'order') { switchOrderTab('home'); }
@@ -758,7 +775,7 @@
         globalProducts.forEach(prod => {
             const isLikedHtml = prod.isLiked ? `<i class="ph-fill ph-heart text-xl text-red-500"></i>` : `<i class="ph ph-heart text-xl text-gray-300 group-hover:text-red-400 transition"></i>`;
             const btnText = prod.inCart ? 'In Cart' : 'Add to Cart';
-            const btnClass = prod.inCart ? 'bg-gray-200 text-gray-600' : 'bg-secondary text-white shadow-md hover:-translate-y-0.5';
+            const btnClass = prod.inCart ? 'bg-gray-200 text-gray-600' : 'bg-secondary text-white shadow-md shadow-blue-500/30 hover:-translate-y-0.5';
 
             container.innerHTML += `
             <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex gap-4 items-center relative">
@@ -1175,7 +1192,7 @@
         document.getElementById('display-phone').textContent = user.phone;
         document.getElementById('display-credit').textContent = parseFloat(user.credit || 0).toLocaleString('en-US', {minimumFractionDigits: 2});
         
-        loadUserPreferences(); // โหลดข้อมูลรถเข็นตอนล็อกอิน
+        loadUserPreferences(); 
         showAuthView('info');
     }
 
@@ -1211,70 +1228,6 @@
         } catch (error) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); }
         showLoading(false);
     }
-
-    // ==========================================
-    // 7. Bank Cards
-    // ==========================================
-    const banksData = [
-        { class: "bank-bbl", name: "Bangkok Bank (กรุงเทพ)", color: "#1E4598" },
-        { class: "bank-kbank", name: "Kasikornbank (กสิกรไทย)", color: "#138F2D" },
-        { class: "bank-scb", name: "Siam Commercial Bank", color: "#4E2E7F" },
-        { class: "bank-ktb", name: "Krungthai Bank (กรุงไทย)", color: "#1BA5E1" },
-        { class: "bank-bay", name: "Bank of Ayudhya (กรุงศรี)", color: "#FEC43B" }
-    ];
-    const bankContainer = document.getElementById('bank-card-container');
-    const bankDotsContainer = document.getElementById('bank-card-dots');
-    banksData.forEach((bank, index) => {
-        const cardEl = document.createElement('div');
-        cardEl.className = `bank-card-base min-w-[240px] w-[240px] h-[150px] rounded-xl p-4 flex flex-col justify-between text-white snap-center flex-shrink-0 relative overflow-hidden pointer-events-none select-none`;
-        cardEl.style.backgroundColor = bank.color;
-        cardEl.innerHTML = `<div class="absolute inset-0 bg-gradient-to-br from-white/10 to-black/20 pointer-events-none"></div><div class="absolute right-[-20px] top-[-20px] w-28 h-28 border-[16px] border-white/10 rounded-full pointer-events-none"></div><div class="flex justify-between items-start relative z-10"><div class="text-[13px] font-bold text-white tracking-wide truncate pr-2 w-full drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">${bank.name}</div></div><div class="relative z-10 mt-2"><i class="bank ${bank.class} xxl shadow block mb-3 drop-shadow-md"></i><div class="font-inter text-[15px] tracking-widest font-medium drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] opacity-95">•••• •••• •••• 9999</div></div><div class="flex justify-between items-end relative z-10 text-[9px] text-white/90 font-inter mt-1 font-medium"><div class="drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">NEXT LIVE SHOP</div><div class="bg-black/20 px-2 py-0.5 rounded-sm backdrop-blur-sm shadow-sm border border-white/10">SUPPORTED</div></div>`;
-        bankContainer.appendChild(cardEl);
-        if (index < 5) {
-            const dot = document.createElement('div'); dot.className = `w-1.5 h-1.5 rounded-full transition-all duration-300 ${index === 0 ? 'bg-sky-500 w-4' : 'bg-slate-300'}`; bankDotsContainer.appendChild(dot);
-        }
-    });
-
-    let currentBankIndex = 0;
-    const bankCardWidth = 240 + 12; 
-    let bankInterval;
-
-    function updateBankDots(index) {
-        const activeDotIndex = index % 5; 
-        const dots = bankDotsContainer.children;
-        for(let i=0; i<dots.length; i++) {
-            dots[i].className = i === activeDotIndex ? 'w-4 h-1.5 rounded-full bg-sky-500 transition-all duration-300 shadow-sm' : 'w-1.5 h-1.5 rounded-full bg-slate-300 transition-all duration-300';
-        }
-    }
-    function scrollBanks() {
-        currentBankIndex++;
-        if (currentBankIndex >= banksData.length) {
-            currentBankIndex = 0;
-            bankContainer.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-            bankContainer.scrollBy({ left: bankCardWidth, behavior: 'smooth' });
-        }
-        updateBankDots(currentBankIndex);
-    }
-    bankInterval = setInterval(scrollBanks, 2500); 
-
-    function enableDragScroll(slider) {
-        let isDown = false, startX, scrollLeft;
-        slider.addEventListener('mousedown', (e) => {
-            isDown = true; slider.classList.add('cursor-grabbing'); slider.classList.remove('snap-x');
-            startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft;
-        });
-        slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('cursor-grabbing'); slider.classList.add('snap-x'); });
-        slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('cursor-grabbing'); slider.classList.add('snap-x'); });
-        slider.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            slider.scrollLeft = scrollLeft - ((x - startX) * 1.5);
-        });
-    }
-    enableDragScroll(document.getElementById('banner-container'));
-    enableDragScroll(bankContainer);
 
 </script>
 </body>
