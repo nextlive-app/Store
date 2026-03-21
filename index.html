@@ -66,11 +66,13 @@
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #0ea5e9; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* การทำแอนิเมชันสำหรับเปิด/ปิด Modal */
         .modal-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         .modal-scale-up { animation: scaleUp 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes scaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         
+        /* ปรับ Input Date ให้อยู่ตรงกลางไม่ล้นขอบ */
         input[type="date"] { box-sizing: border-box; }
         input[type="date"]::-webkit-datetime-edit { padding: 0; line-height: 1.5; }
         input[type="date"]::-webkit-calendar-picker-indicator { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; opacity: 0.6; transition: 0.2s; }
@@ -81,6 +83,7 @@
         .custom-checkbox:checked { background-color: #3B82F6; border-color: #3B82F6; }
         .custom-checkbox:checked::before { transform: scale(1); }
 
+        /* สไตล์ P+ Transfer Slip */
         #view-scan { background-color: #e9ecef; font-family: 'Kanit', sans-serif; padding-top: 40px; min-height: 100vh; }
         .slip-card { width: 360px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); padding: 24px; position: relative; overflow: hidden; box-sizing: border-box; margin: 0 auto; }
         .watermark { position: absolute; right: -20px; top: 70px; width: 260px; height: 400px; opacity: 0.05; z-index: 0; pointer-events: none; }
@@ -144,7 +147,7 @@
     <!-- ==========================================
          VIEW 1: หน้าหลัก (HOME) 
          ========================================== -->
-    <div id="view-home" class="view-section flex-1 pb-28 block" style="display: block;">
+    <div id="view-home" class="view-section flex-1 pb-28 block">
         <div class="header-gradient text-white pt-8 pb-8 px-5 rounded-b-[1.5rem] relative z-0 shadow-md">
             <div class="bg-pattern"></div>
             <div class="flex items-center gap-3 mb-4 relative z-10">
@@ -175,6 +178,7 @@
             </div>
         </div>
 
+        <!-- Banner Section -->
         <div class="mb-4 relative">
             <div class="flex justify-between items-end px-5 mb-2.5">
                 <h2 class="text-[15px] font-bold text-slate-800 font-inter">โปรโมชั่นสุด HOT</h2>
@@ -255,6 +259,7 @@
             </div>
         </div>
 
+        <!-- 1. ดึงข้อมูล 33 ธนาคารที่คุณให้มาใส่เรียบร้อย -->
         <div class="mt-4 mb-8 relative bg-slate-50 py-4 border-y border-slate-100 shadow-sm">
             <div class="flex justify-between items-center px-5 mb-3">
                 <h2 class="text-[15px] font-bold text-slate-800">รองรับการชำระ</h2>
@@ -268,7 +273,7 @@
     <!-- ==========================================
          VIEW 9: สั่งซื้อสินค้า (ENJOY SHOPPING SYSTEM) 
          ========================================== -->
-    <div id="view-order" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative flex-col" style="display: none;">
+    <div id="view-order" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative flex-col">
         <div class="pt-8 pb-2 px-5 bg-white relative z-10">
             <div class="absolute top-0 left-0 w-32 h-16 bg-accent rounded-br-[3rem] -z-10 opacity-70"></div>
             <h1 class="text-2xl font-extrabold italic text-primary tracking-wide uppercase" id="orderPageTitle">ENJOY SHOPPING</h1>
@@ -363,7 +368,7 @@
     <!-- ==========================================
          VIEW 10: หน้าสรุปรายการสั่งซื้อ (CART SUMMARY)
          ========================================== -->
-    <div id="view-order-summary" class="view-section flex-1 bg-gray-50 pb-28 hidden min-h-screen p-4" style="display: none;">
+    <div id="view-order-summary" class="view-section flex-1 bg-gray-50 pb-28 hidden min-h-screen p-4">
         <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mt-6 relative">
             <div class="absolute -right-6 -top-6 text-gray-50 opacity-20"><i class="fa-solid fa-file-invoice text-9xl"></i></div>
             
@@ -401,18 +406,20 @@
 
 
     <!-- ==========================================
-         VIEW 7: หน้าจองสินค้า (BOOKING) 
+         2. VIEW 7: หน้าจองสินค้า (BOOKING) คืนค่าแบบต้นฉบับเป๊ะๆ
          ========================================== -->
-    <div id="view-booking" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative" style="display: none;">
+    <div id="view-booking" class="view-section flex-1 bg-white pb-28 hidden min-h-screen relative">
         <div class="pt-8 pb-4 px-6 relative">
             <div class="absolute top-0 left-0 w-32 h-20 bg-accent rounded-br-[3rem] -z-10"></div>
-            <h1 class="text-3xl font-extrabold italic text-primary tracking-wide">BOOKING</h1>
-            <p class="text-xs text-gray-500 mt-1">ระบบจองสินค้าล่วงหน้า มัดจำ 50%</p>
+            <h1 class="text-3xl font-extrabold italic text-primary tracking-wide">BOOK LENDING</h1>
         </div>
 
         <div class="px-6 mb-4 overflow-x-auto no-scrollbar">
             <div class="flex space-x-6 border-b border-gray-100 pb-2 min-w-max">
-                <button class="relative text-black font-bold text-lg">ทั้งหมด<span class="absolute -bottom-2.5 left-0 w-6 h-1 bg-secondary rounded-full"></span></button>
+                <button class="relative text-black font-bold text-lg">Child<span class="absolute -bottom-2.5 left-0 w-6 h-1 bg-secondary rounded-full"></span></button>
+                <button class="text-gray-400 font-medium text-lg hover:text-gray-600 transition">Humanities</button>
+                <button class="text-gray-400 font-medium text-lg hover:text-gray-600 transition">Education</button>
+                <button class="text-gray-400 font-medium text-lg hover:text-gray-600 transition">Science</button>
             </div>
         </div>
 
@@ -420,8 +427,10 @@
             <div class="text-center text-gray-400 text-sm py-10">กำลังโหลดรายการสินค้า...</div>
         </div>
 
-        <!-- Booking Modal (จัดเต็มป้องกันล้นขอบ) -->
+        <!-- Booking Modal (จัดเต็มป้องกันล้นขอบ และแสดง Success Checkmark) -->
         <div id="bookingModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+            
+            <!-- ฟอร์มการจอง -->
             <div id="modalContent" class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative box-border">
                 <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 bg-gray-100 rounded-lg w-8 h-8 flex items-center justify-center transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -445,20 +454,28 @@
                         </div>
                         <div class="w-full box-border">
                             <label class="block text-sm font-medium text-gray-700 mb-1">วันที่ต้องการรับ</label>
-                            <!-- แก้ไข CSS การจัดวางกล่องวันที่ให้เสมออันอื่น -->
                             <input type="date" id="pickupDate" required class="box-border block w-full h-11 px-4 rounded-lg bg-gray-50 border border-gray-200 focus:border-secondary outline-none text-sm">
                         </div>
                     </div>
                     <div class="mt-8 w-full box-border">
-                        <button type="submit" class="w-full h-12 bg-secondary text-white font-bold rounded-lg shadow-md hover:bg-blue-600 transition-all box-border">ยืนยันการจอง</button>
+                        <button type="submit" class="w-full h-12 bg-secondary text-white font-bold rounded-lg shadow-md shadow-blue-500/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 box-border">ยืนยันรายการ</button>
                     </div>
                 </form>
+            </div>
+
+            <!-- แสดงความสำเร็จแบบต้นฉบับ -->
+            <div id="successContent" class="bg-white w-full max-w-sm rounded-2xl p-8 shadow-2xl hidden flex-col items-center text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">ทำรายการสำเร็จ!</h2>
+                <p class="text-sm text-gray-500 mb-6">ระบบได้รับข้อมูลการจองของคุณเรียบร้อยแล้ว กำลังพาท่านไปหน้าสรุปรายการ...</p>
             </div>
         </div>
     </div>
 
-    <!-- Booking Summary (ซ่อนไว้เพื่อไปเปิดด้วย style.display=block) -->
-    <div id="view-booking-summary" class="view-section flex-1 bg-gray-50 pb-28 hidden min-h-screen p-4" style="display: none;">
+    <!-- Booking Summary (จะโผล่มาหลัง SuccessContent) -->
+    <div id="view-booking-summary" class="view-section flex-1 bg-gray-50 pb-28 hidden min-h-screen p-4">
         <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mt-6 relative">
             <div class="absolute -right-6 -top-6 text-gray-50 opacity-20"><i class="fa-solid fa-file-invoice text-9xl"></i></div>
             <div class="bg-primary px-5 py-4 text-white"><h2 class="text-lg font-bold">สรุปรายการจองสินค้า</h2></div>
@@ -473,7 +490,7 @@
                 <div>
                     <h3 class="text-sm font-bold text-gray-800 border-b pb-1 mb-2">รายละเอียดสินค้า</h3>
                     <div class="flex items-center gap-3 mb-2">
-                        <img id="sum-pic" src="" class="w-12 h-16 object-cover rounded shadow-sm" alt="">
+                        <img id="sum-pic" src="" class="w-12 h-16 object-cover rounded shadow-sm">
                         <div class="flex-1 min-w-0"><div id="sum-prod-name" class="font-bold text-sm truncate"></div></div>
                     </div>
                 </div>
@@ -494,18 +511,18 @@
     <!-- ==========================================
          VIEW 2, 3, 4: PROMOTIONS, PROFILE, TERMS
          ========================================== -->
-    <div id="view-promotions" class="view-section flex-1 bg-slate-900 pb-28 hidden min-h-screen" style="display: none;">
+    <div id="view-promotions" class="view-section flex-1 bg-slate-900 pb-28 hidden min-h-screen">
         <div class="pt-10 pb-6 px-5 text-center relative"><h1 class="text-white text-2xl font-bold">โปรโมชั่นสุดคุ้ม</h1></div>
         <div class="px-4 flex flex-col gap-5">
             <div class="bg-slate-800 rounded-xl overflow-hidden relative glow-line-blue"><div class="flex p-4 items-center gap-4"><div class="flex-1"><h3 class="text-sky-400 font-bold text-lg mb-1">เงินคืนสูงสุด 5% ทุกการสั่งซื้อ</h3></div></div></div>
         </div>
     </div>
 
-    <div id="view-profile" class="view-section flex-1 bg-slate-50 pb-28 hidden min-h-screen" style="display: none;">
+    <div id="view-profile" class="view-section flex-1 bg-slate-50 pb-28 hidden min-h-screen">
         <div class="bg-white px-5 pt-12 pb-6 text-center shadow-sm rounded-b-3xl relative z-10">
             <h1 class="text-slate-800 text-xl font-bold">ข้อมูลบัญชี</h1>
             <div class="mt-6 mb-4 relative inline-block">
-                <div class="w-24 h-24 rounded-full border-4 border-sky-100 bg-sky-50 flex items-center justify-center overflow-hidden mx-auto"><img id="main-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" class="w-full h-full object-cover" alt=""></div>
+                <div class="w-24 h-24 rounded-full border-4 border-sky-100 bg-sky-50 flex items-center justify-center overflow-hidden mx-auto"><img id="main-profile-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Guest" class="w-full h-full object-cover"></div>
             </div>
             <div id="profile-name-display" class="text-lg font-bold text-slate-800">ผู้เยี่ยมชม</div>
             <div id="profile-role-display" class="text-xs text-slate-400 mt-1">กรุณาเข้าสู่ระบบเพื่อใช้งาน</div>
@@ -520,7 +537,6 @@
                 </div>
             </div>
 
-            <!-- Login Form -->
             <div id="login-form-section" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-3"><button onclick="showAuthView('choice')" class="text-slate-400"><i class="fa-solid fa-arrow-left"></i></button><h2 class="text-lg font-bold">ลงชื่อเข้าใช้งาน</h2></div>
                 <form onsubmit="handleLogin(event)">
@@ -530,7 +546,6 @@
                 </form>
             </div>
 
-            <!-- Register Form -->
             <div id="register-form-section" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div class="flex items-center gap-3 mb-5 border-b border-slate-100 pb-3"><button onclick="showAuthView('choice')" class="text-slate-400"><i class="fa-solid fa-arrow-left"></i></button><h2 class="text-lg font-bold">Let's get started</h2></div>
                 <form onsubmit="handleRegister(event)">
@@ -551,7 +566,6 @@
                 </form>
             </div>
 
-            <!-- User Info -->
             <div id="user-info-section" class="hidden">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-5">
                     <div class="flex justify-between px-5 py-4 border-b border-slate-50"><span class="text-sm font-medium text-slate-600">ชื่อ สกุล</span><div class="text-sm text-slate-800 font-semibold" id="display-fullname">-</div></div>
@@ -564,14 +578,14 @@
         </div>
     </div>
 
-    <div id="view-terms" class="view-section flex-1 bg-white pb-28 hidden min-h-screen" style="display: none;">
+    <div id="view-terms" class="view-section flex-1 bg-white pb-28 hidden min-h-screen">
         <div class="px-5 pt-12 text-center"><h1 class="text-slate-800 text-xl font-bold mb-4">เงื่อนไขข้อกำหนด</h1></div>
     </div>
 
     <!-- ==========================================
          VIEW 5: ระบบสลิปโอนเงิน (SCAN / P+ Slip)
          ========================================== -->
-    <div id="view-scan" class="view-section flex-1 hidden min-h-screen pb-28" style="display: none;">
+    <div id="view-scan" class="view-section flex-1 hidden min-h-screen pb-28">
         <div class="slip-card" id="slip-element">
             <svg class="watermark" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
                 <g stroke="#000" stroke-width="1.5" fill="none"><text x="100" y="32" font-family="'Kanit', sans-serif" font-size="18" font-weight="bold" fill="#000" text-anchor="middle" stroke="none">Next Live</text><polygon points="100,45 160,65 100,85 40,65" fill="#000" opacity="0.05"/><polygon points="40,65 100,85 100,380 40,360" /><polygon points="100,85 160,65 160,360 100,380" /><line x1="55" y1="70" x2="55" y2="365" /><line x1="70" y1="75" x2="70" y2="370" /><line x1="145" y1="70" x2="145" y2="365" /><line x1="40" y1="120" x2="160" y2="120" /><line x1="40" y1="180" x2="160" y2="180" /><line x1="40" y1="360" x2="160" y2="360" /></g>
@@ -585,12 +599,12 @@
 
             <div class="parties">
                 <div class="account-row">
-                    <div class="k-logo"><img src="https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6789cc7973863d34426baf54_678316f2a65ae45dd6a22f9f_678303b39e0a1b2f05c23bc4_673ac03613ce1d036f897c16_thaiqr_logosimbolo.png" crossorigin="anonymous" alt=""></div>
+                    <div class="k-logo"><img src="https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6789cc7973863d34426baf54_678316f2a65ae45dd6a22f9f_678303b39e0a1b2f05c23bc4_673ac03613ce1d036f897c16_thaiqr_logosimbolo.png" crossorigin="anonymous" alt="Sender"></div>
                     <div class="account-info"><div class="account-name">Bank : PromptPay</div><div class="account-bank">Mr . Narinpat Meechai</div><div class="account-num">xxX-X-X8888-X</div></div>
                 </div>
                 <div class="arrow-container"><svg viewBox="0 0 24 24" width="18" height="18" stroke="#888" stroke-width="1.5" fill="none"><line x1="12" y1="2" x2="12" y2="22"/><polyline points="6,16 12,22 18,16"/></svg></div>
                 <div class="account-row">
-                    <div class="k-logo"><img src="https://img1.pic.in.th/images/IMG_0593.jpeg" crossorigin="anonymous" alt=""></div>
+                    <div class="k-logo"><img src="https://img1.pic.in.th/images/IMG_0593.jpeg" crossorigin="anonymous" alt="Receiver"></div>
                     <div class="account-info"><div class="account-name">Service Shop</div><div class="account-bank">a@a.com</div><div class="account-num">OD97910500</div></div>
                 </div>
             </div>
@@ -603,7 +617,10 @@
                         <input type="number" id="payment-amount-input" class="amount-input" value="0.00" step="0.01" min="0" oninput="this.setAttribute('value', this.value); updateQRWithDelay()"> บาท
                     </div>
                 </div>
+                
+                <!-- 3. ระบบเวลาถอยหลัง (Timer) ตรงนี้แหละค่ะ จะให้เริ่มนับตอนกดชำระเงินเท่านั้น -->
                 <div class="expiry-text">* QR ใช้ได้ครั้งเดียวเท่านั้น หมดอายุใน <span id="countdown-timer">03:00</span> นาที</div>
+                
                 <div class="controls" id="slip-controls">
                     <button class="action-btn" onclick="downloadSlip()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>ดาวน์โหลด</button>
                     <label class="action-btn file-input-wrapper" id="upload-btn-label">
@@ -614,11 +631,11 @@
             </div>
 
             <div class="qr-wrapper">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/PromptPay-logo.png/600px-PromptPay-logo.png" crossorigin="anonymous" alt="" class="qr-pp-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/PromptPay-logo.png/600px-PromptPay-logo.png" crossorigin="anonymous" alt="PP" class="qr-pp-logo">
                 <div class="qr-section">
                     <div class="qr-container" id="qr-target">
                         <div class="laser-scan" id="laser-effect"></div>
-                        <img id="promptpay-qr-img" crossorigin="anonymous" src="" alt="[Image of คิวอาร์โค้ด]" style="width: 100%; height: 100%; object-fit: contain;">
+                        <img id="promptpay-qr-img" crossorigin="anonymous" src="" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div class="verified-box">verified by Next Live</div>
                 </div>
@@ -654,11 +671,6 @@
     let currentCartContext = {};
     let currentTransactionType = 'pay_product'; 
 
-    // บังคับให้โหลดหน้า Home เป็นหน้าแรก ทันทีที่เปิดเว็บ
-    window.addEventListener('load', () => {
-        switchTab('home', document.querySelectorAll('.nav-item')[0]);
-    });
-
     function showLoading(show, text = "กำลังประมวลผล...") {
         const overlay = document.getElementById('loading-overlay');
         document.getElementById('loading-text').innerText = text;
@@ -691,7 +703,7 @@
     }
 
     // ==========================================
-    // 1. ระบบจัดการหน้าและ Navigation
+    // 1. ระบบจัดการหน้าและ Navigation 
     // ==========================================
     function switchTab(tabId, element) {
         document.querySelectorAll('.view-section').forEach(el => { 
@@ -961,26 +973,30 @@
         document.getElementById('slip-file-input').disabled = false;
         document.getElementById('upload-btn-label').style.opacity = '1';
         switchTab('scan', null);
+        
+        // เริ่มจับเวลา 3 นาที
+        timeLeft = 180; clearInterval(countdownIntervalGlobal); startCountdownTimer();
     }
 
 
     // ==========================================
-    // 4. ระบบจองสินค้า (Booking) (แก้ปัญหาวันที่ล้น & ให้เด้งหน้าสรุป)
+    // 4. ระบบจองสินค้า (Booking) - แบบออริจินัลที่คุณต้องการ
     // ==========================================
     function renderBookingProducts() {
         const container = document.getElementById('booking-product-list');
         container.innerHTML = '';
         globalProducts.forEach(prod => {
             container.innerHTML += `
-            <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-50 flex gap-4 items-center transition hover:shadow-lg">
-                <img src="${prod.pic}" alt="" class="w-20 h-28 object-cover rounded-xl shadow-inner bg-gray-100">
+            <div class="bg-white rounded-2xl p-3 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-gray-50 flex gap-4 items-center transition hover:shadow-lg">
+                <img src="${prod.pic}" alt="" class="w-20 h-28 object-cover rounded-xl shadow-inner">
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-900 leading-tight truncate">${prod.name}</h3>
-                    <p class="text-[11px] text-gray-400 mt-1 leading-snug truncate">${prod.desc}</p>
-                    <p class="text-xs font-bold text-sky-600 mt-1">฿${parseFloat(prod.price).toLocaleString()}</p>
-                    <div class="flex justify-between items-end mt-2">
+                    <p class="text-[11px] text-gray-400 mt-1 leading-snug">${prod.desc}</p>
+                    <div class="flex justify-between items-end mt-3">
                         <p class="text-[11px] text-gray-400 font-medium"><span class="text-red-500 font-bold">${prod.stock}</span> remaining</p>
-                        <button onclick="openBookingModal('${prod.id}')" class="bg-secondary text-white font-bold text-xs px-4 py-2 rounded-lg shadow-md hover:-translate-y-0.5 transition-all">จองสินค้า</button>
+                        <button onclick="openBookingModal('${prod.id}')" class="bg-secondary text-white font-bold text-xs px-4 py-2 rounded-lg shadow-md shadow-blue-500/40 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-blue-500/50 hover:bg-blue-600 transition-all duration-300">
+                            Borrow it
+                        </button>
                     </div>
                 </div>
             </div>`;
@@ -993,7 +1009,6 @@
         currentBookingContext.product = prod;
         document.getElementById('bookTitleDisplay').textContent = prod.name;
         
-        // ดึงข้อมูลบัญชีลงฟอร์ม
         const savedUser = localStorage.getItem('nextLiveUser');
         if(savedUser) {
             const user = JSON.parse(savedUser);
@@ -1012,8 +1027,11 @@
 
         const modal = document.getElementById('bookingModal');
         const modalContent = document.getElementById('modalContent');
+        const successContent = document.getElementById('successContent');
+        
         modal.classList.remove('hidden'); modal.classList.add('flex', 'modal-fade-in');
         modalContent.classList.remove('hidden'); modalContent.classList.add('modal-scale-up');
+        successContent.classList.add('hidden'); successContent.classList.remove('flex', 'modal-scale-up');
     }
 
     function closeBookingModal() {
@@ -1027,9 +1045,19 @@
             name: document.getElementById('book-fullname').value, email: document.getElementById('book-email').value,
             phone: document.getElementById('book-phone').value, date: document.getElementById('pickupDate').value
         };
-        closeBookingModal();
-        renderBookingSummary();
-        switchTab('booking-summary', null); // สั่งเปิดหน้าสรุปทันที
+        
+        // ปิดฟอร์ม โชว์ Success Content (ติ๊กถูกเขียว) ที่คุณระบุมา
+        document.getElementById('modalContent').classList.add('hidden');
+        const successContent = document.getElementById('successContent');
+        successContent.classList.remove('hidden');
+        successContent.classList.add('flex', 'modal-scale-up');
+        
+        // รอ 1.5 วิ แล้วพาไปหน้าสรุป
+        setTimeout(() => {
+            closeBookingModal();
+            renderBookingSummary();
+            switchTab('booking-summary', null);
+        }, 1500);
     }
 
     function renderBookingSummary() {
@@ -1038,17 +1066,13 @@
 
         document.getElementById('sum-name').textContent = user.name; document.getElementById('sum-phone').textContent = user.phone;
         const dateParts = user.date.split('-'); document.getElementById('sum-date').textContent = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-        document.getElementById('sum-pic').src = prod.pic; document.getElementById('sum-prod-name').textContent = prod.name; document.getElementById('sum-prod-desc').textContent = prod.desc;
+        document.getElementById('sum-pic').src = prod.pic; document.getElementById('sum-prod-name').textContent = prod.name;
 
         const p = parseFloat(prod.price) || 0; const d = parseFloat(prod.discount) || 0;
         const net = p - d; const vat = net * 0.07; const total = net + vat; const deposit = total / 2;
         
         currentBookingContext.depositAmount = deposit; currentBookingContext.netPrice = total; 
 
-        document.getElementById('sum-price').textContent = "฿" + p.toLocaleString('en-US', {minimumFractionDigits:2});
-        document.getElementById('sum-discount').textContent = "- ฿" + d.toLocaleString('en-US', {minimumFractionDigits:2});
-        document.getElementById('sum-net').textContent = "฿" + net.toLocaleString('en-US', {minimumFractionDigits:2});
-        document.getElementById('sum-vat').textContent = "฿" + vat.toLocaleString('en-US', {minimumFractionDigits:2});
         document.getElementById('sum-total').textContent = "฿" + total.toLocaleString('en-US', {minimumFractionDigits:2});
         document.getElementById('sum-deposit').textContent = "฿" + deposit.toLocaleString('en-US', {minimumFractionDigits:2});
     }
@@ -1061,11 +1085,12 @@
         amountInput.setAttribute('value', amountInput.value);
         
         generateQR();
-        timeLeft = 180; clearInterval(countdownIntervalGlobal); startCountdownTimer();
-        
         document.getElementById('slip-file-input').disabled = false;
         document.getElementById('upload-btn-label').style.opacity = '1';
-        switchTab('scan', null); // เด้งไปหน้าชำระคิวอาร์ทันที
+        switchTab('scan', null);
+        
+        // เริ่มจับเวลา 3 นาที
+        timeLeft = 180; clearInterval(countdownIntervalGlobal); startCountdownTimer();
     }
 
     function resetQRScanUI() {
@@ -1091,11 +1116,22 @@
     window.addEventListener('promptpayReady', generateQR);
 
     let countdownIntervalGlobal;
+    let timeLeft = 180;
+    // ปิดไม่ให้ทำงานอัตโนมัติ ให้รันผ่านปุ่มเท่านั้น
     function startCountdownTimer() {
         const timerDisplay = document.getElementById('countdown-timer');
+        clearInterval(countdownIntervalGlobal);
+        timeLeft = 180;
+        timerDisplay.innerText = "03:00";
+        
         countdownIntervalGlobal = setInterval(() => {
-            if (timeLeft <= 0) { clearInterval(countdownIntervalGlobal); timerDisplay.innerText = "00:00"; handleTimeoutFailure(); return; }
             timeLeft--;
+            if (timeLeft < 0) { 
+                clearInterval(countdownIntervalGlobal); 
+                timerDisplay.innerText = "00:00"; 
+                handleTimeoutFailure(); 
+                return; 
+            }
             const mins = Math.floor(timeLeft / 60); const secs = timeLeft % 60;
             timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }, 1000); 
@@ -1107,11 +1143,21 @@
             alert("หมดเวลาทำรายการ 3 นาที ระบบบันทึกสถานะการชำระเงินล้มเหลวแล้วค่ะ");
             const payload = { action: 'booking', timeout: true, productId: currentBookingContext.product.id, productName: currentBookingContext.product.name, netPrice: currentBookingContext.netPrice, buyname: currentBookingContext.user.name, buyemail: currentBookingContext.user.email, phone: currentBookingContext.user.phone, pickupDate: currentBookingContext.user.date };
             fetch(url, { method: 'POST', body: JSON.stringify(payload) });
-            currentBookingContext = {}; resetQRScanUI(); switchTab('home', null);
+            currentBookingContext = {}; resetQRScanUI(); switchTab('home', document.querySelectorAll('.nav-item')[0]);
+        } else if(currentTransactionType === 'pay_cart') {
+            alert("หมดเวลาทำรายการ 3 นาที ระบบยกเลิกการชำระเงินแล้วค่ะ");
+            resetQRScanUI(); switchTab('order', null); switchOrderTab('cart');
         }
     }
 
-    function openGeneralScan() { currentTransactionType = 'pay_product'; document.getElementById('payment-amount-input').disabled = false; generateQR(); switchTab('scan', null); }
+    function openGeneralScan() { 
+        currentTransactionType = 'pay_product'; 
+        document.getElementById('payment-amount-input').disabled = false; 
+        generateQR(); 
+        clearInterval(countdownIntervalGlobal);
+        document.getElementById('countdown-timer').innerText = "03:00";
+        switchTab('scan', null); 
+    }
 
     function handleImageUpload(event) {
         const file = event.target.files[0];
@@ -1159,7 +1205,8 @@
             } else if (data.status === 'wrong_amount') {
                 alert(data.message);
                 if(currentTransactionType === 'pay_cart') { switchTab('order'); switchOrderTab('cart'); } 
-                else { resetQRScanUI(); switchTab('home', null); }
+                else if (currentTransactionType === 'booking') { switchTab('booking-summary', null); }
+                else { resetQRScanUI(); switchTab('home', document.querySelectorAll('.nav-item')[0]); }
             } else {
                 alert(data.message);
                 if(currentTransactionType === 'pay_cart' && data.status === 'success') {
@@ -1168,9 +1215,9 @@
                     saveUserPreferences(); renderShopProducts(); updateShopBadges();
                 }
                 currentBookingContext = {}; currentCartContext = {};
-                resetQRScanUI(); switchTab('home', null);
+                resetQRScanUI(); switchTab('home', document.querySelectorAll('.nav-item')[0]);
             }
-        } catch(e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); resetQRScanUI(); switchTab('home', null); }
+        } catch(e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); resetQRScanUI(); switchTab('home', document.querySelectorAll('.nav-item')[0]); }
         showLoading(false);
     }
 
@@ -1185,6 +1232,73 @@
     // 6. ระบบ Login / Register
     // ==========================================
     window.addEventListener('load', () => {
+        // ให้ 33 ธนาคารทำงานตอนโหลด
+        const bankContainerDOM = document.getElementById('bank-card-container');
+        const bankDotsContainerDOM = document.getElementById('bank-card-dots');
+        const banksDataFull = [
+            { class: "bank-bbl", name: "Bangkok Bank (กรุงเทพ)", color: "#1E4598" },
+            { class: "bank-kbank", name: "Kasikornbank (กสิกรไทย)", color: "#138F2D" },
+            { class: "bank-rbs", name: "Royal Bank of Scotland", color: "#0B214A" },
+            { class: "bank-ktb", name: "Krungthai Bank (กรุงไทย)", color: "#1BA5E1" },
+            { class: "bank-jpm", name: "J.P. Morgan", color: "#412011" },
+            { class: "bank-mufg", name: "Bank of Tokyo-Mitsubishi UFJ", color: "#D71118" },
+            { class: "bank-tmb", name: "TMB Bank (ทีเอ็มบี)", color: "#1272C1" },
+            { class: "bank-scb", name: "Siam Commercial Bank (ไทยพาณิชย์)", color: "#4E2E7F" },
+            { class: "bank-citi", name: "Citibank", color: "#0B76BC" },
+            { class: "bank-smbc", name: "Sumitomo Mitsui Banking Corporation", color: "#8ABA18" },
+            { class: "bank-sc", name: "Standard Chartered (Thai)", color: "#0F6EAA" },
+            { class: "bank-cimb", name: "CIMB Thai Bank (ซีไอเอ็มบี)", color: "#7E1F2A" },
+            { class: "bank-uob", name: "United Overseas Bank (Thai)", color: "#0F3B76" },
+            { class: "bank-bay", name: "Bank of Ayudhya (กรุงศรี)", color: "#FEC43B" },
+            { class: "bank-mega", name: "Mega International Commercial Bank", color: "#84684B" },
+            { class: "bank-boa", name: "Bank of America", color: "#E31837" },
+            { class: "bank-cacib", name: "Crédit Agricole", color: "#007461" },
+            { class: "bank-gsb", name: "Government Savings Bank (ออมสิน)", color: "#EB008B" },
+            { class: "bank-hsbc", name: "Hongkong and Shanghai Banking Corp", color: "#DB0011" },
+            { class: "bank-db", name: "Deutsche Bank", color: "#0018A8" },
+            { class: "bank-ghb", name: "Government Housing Bank (ธอส.)", color: "#F37021" },
+            { class: "bank-baac", name: "Bank for Agriculture (ธ.ก.ส.)", color: "#368C34" },
+            { class: "bank-mb", name: "Mizuho Bank", color: "#0B2E81" },
+            { class: "bank-bnp", name: "BNP Paribas", color: "#00915A" },
+            { class: "bank-tbank", name: "Thanachart Bank (ธนชาต)", color: "#F15223" },
+            { class: "bank-ibank", name: "Islamic Bank of Thailand (อิสลาม)", color: "#115B2E" },
+            { class: "bank-tisco", name: "Tisco Bank (ทิสโก้)", color: "#165296" },
+            { class: "bank-kk", name: "Kiatnakin Bank (เกียรตินาคิน)", color: "#1EA1D7" },
+            { class: "bank-icbc", name: "ICBC (Thai)", color: "#C8121E" },
+            { class: "bank-tcrb", name: "Thai Credit Retail Bank (ไทยเครดิต)", color: "#005EAA" },
+            { class: "bank-lhb", name: "Land and Houses Bank", color: "#6D6E71" },
+            { class: "bank-tmn", name: "TrueMoney Wallet (ทรูมันนี่)", color: "#FF6600" },
+            { class: "bank-pp", name: "PromptPay (พร้อมเพย์)", color: "#113566" }
+        ];
+        if(bankContainerDOM && bankDotsContainerDOM) {
+            banksDataFull.forEach((bank, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = `bank-card-base min-w-[240px] w-[240px] h-[150px] rounded-xl p-4 flex flex-col justify-between text-white snap-center flex-shrink-0 relative overflow-hidden pointer-events-none select-none`;
+                cardEl.style.backgroundColor = bank.color;
+                cardEl.innerHTML = `<div class="absolute inset-0 bg-gradient-to-br from-white/10 to-black/20 pointer-events-none"></div><div class="absolute right-[-20px] top-[-20px] w-28 h-28 border-[16px] border-white/10 rounded-full pointer-events-none"></div><div class="flex justify-between items-start relative z-10"><div class="text-[13px] font-bold text-white tracking-wide truncate pr-2 w-full drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">${bank.name}</div></div><div class="relative z-10 mt-2"><i class="bank ${bank.class} xxl shadow block mb-3 drop-shadow-md"></i><div class="font-inter text-[15px] tracking-widest font-medium drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] opacity-95">•••• •••• •••• 9999</div></div><div class="flex justify-between items-end relative z-10 text-[9px] text-white/90 font-inter mt-1 font-medium"><div class="drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">NEXT LIVE SHOP</div><div class="bg-black/20 px-2 py-0.5 rounded-sm backdrop-blur-sm shadow-sm border border-white/10">SUPPORTED</div></div>`;
+                bankContainerDOM.appendChild(cardEl);
+                if (index < 5) {
+                    const dot = document.createElement('div'); dot.className = `w-1.5 h-1.5 rounded-full transition-all duration-300 ${index === 0 ? 'bg-sky-500 w-4' : 'bg-slate-300'}`; bankDotsContainerDOM.appendChild(dot);
+                }
+            });
+            let currentBankIndex = 0; const bankCardWidth = 240 + 12; 
+            setInterval(() => {
+                currentBankIndex++;
+                if (currentBankIndex >= banksDataFull.length) { currentBankIndex = 0; bankContainerDOM.scrollTo({ left: 0, behavior: 'smooth' }); } 
+                else { bankContainerDOM.scrollBy({ left: bankCardWidth, behavior: 'smooth' }); }
+                const dots = bankDotsContainerDOM.children;
+                for(let i=0; i<dots.length; i++) { dots[i].className = i === (currentBankIndex%5) ? 'w-4 h-1.5 rounded-full bg-sky-500 transition-all duration-300 shadow-sm' : 'w-1.5 h-1.5 rounded-full bg-slate-300 transition-all duration-300'; }
+            }, 2500); 
+            
+            // Drag scroll
+            let isDown = false, startX, scrollLeft;
+            bankContainerDOM.addEventListener('mousedown', (e) => { isDown = true; bankContainerDOM.classList.add('cursor-grabbing'); bankContainerDOM.classList.remove('snap-x'); startX = e.pageX - bankContainerDOM.offsetLeft; scrollLeft = bankContainerDOM.scrollLeft; });
+            bankContainerDOM.addEventListener('mouseleave', () => { isDown = false; bankContainerDOM.classList.remove('cursor-grabbing'); bankContainerDOM.classList.add('snap-x'); });
+            bankContainerDOM.addEventListener('mouseup', () => { isDown = false; bankContainerDOM.classList.remove('cursor-grabbing'); bankContainerDOM.classList.add('snap-x'); });
+            bankContainerDOM.addEventListener('mousemove', (e) => { if (!isDown) return; e.preventDefault(); const x = e.pageX - bankContainerDOM.offsetLeft; bankContainerDOM.scrollLeft = scrollLeft - ((x - startX) * 1.5); });
+        }
+
+        // โหลดข้อมูลเข้าสู่ระบบ
         const savedUser = localStorage.getItem('nextLiveUser');
         if(savedUser) { setLoggedInState(JSON.parse(savedUser)); } 
     });
