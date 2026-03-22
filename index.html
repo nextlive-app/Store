@@ -418,8 +418,8 @@
         <!-- Booking Modal -->
         <div id="bookingModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
             
-            <!-- ฟอร์มการจอง -->
-            <div id="modalContent" class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl relative box-border">
+            <!-- ฟอร์มการจอง (เพิ่ม max-h-[90vh] และ overflow-y-auto เพื่อให้เลื่อนลงมาคลิกปุ่มได้) -->
+            <div id="modalContent" class="bg-white w-full max-w-sm max-h-[90vh] overflow-y-auto no-scrollbar rounded-2xl p-6 shadow-2xl relative box-border">
                 <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 bg-gray-100 rounded-lg w-8 h-8 flex items-center justify-center transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
@@ -988,7 +988,7 @@
         switchTab('scan', null);
         
         // เริ่มจับเวลา 3 นาที
-        timeLeft = 180; clearInterval(countdownIntervalGlobal); startCountdownTimer();
+        startCountdownTimer();
     }
 
 
@@ -1120,9 +1120,9 @@
             grid.innerHTML += `<div class="${classNames}" ${onClick}>${i}</div>`;
         }
 
-        // Next month days to fill grid (42 cells max)
+        // Next month days to fill grid (ALWAYS 42 cells max to prevent height jumping)
         const totalCells = firstDay + daysInMonth;
-        const nextDays = (totalCells > 35) ? 42 - totalCells : 35 - totalCells;
+        const nextDays = 42 - totalCells;
         for (let i = 1; i <= nextDays; i++) {
             grid.innerHTML += `<div class="cal-day cal-day-disabled">${i}</div>`;
         }
@@ -1211,7 +1211,7 @@
         switchTab('scan', null);
         
         // เริ่มจับเวลา 3 นาที
-        timeLeft = 180; clearInterval(countdownIntervalGlobal); startCountdownTimer();
+        startCountdownTimer();
     }
 
     function resetQRScanUI() {
@@ -1238,7 +1238,8 @@
 
     let countdownIntervalGlobal;
     let timeLeft = 180;
-    // ปิดไม่ให้ทำงานอัตโนมัติ ให้รันผ่านปุ่มเท่านั้น
+    
+    // เริ่มจับเวลาและรีเซ็ตทุกครั้งที่เรียก
     function startCountdownTimer() {
         const timerDisplay = document.getElementById('countdown-timer');
         clearInterval(countdownIntervalGlobal);
@@ -1259,15 +1260,21 @@
     }
 
     async function handleTimeoutFailure() {
+        document.getElementById('slip-file-input').disabled = true;
+        document.getElementById('upload-btn-label').style.opacity = '0.5';
+
         if(currentTransactionType === 'booking') {
-            document.getElementById('slip-file-input').disabled = true; document.getElementById('upload-btn-label').style.opacity = '0.5';
             alert("หมดเวลาทำรายการ 3 นาที ระบบบันทึกสถานะการชำระเงินล้มเหลวแล้วค่ะ");
             const payload = { action: 'booking', timeout: true, productId: currentBookingContext.product.id, productName: currentBookingContext.product.name, netPrice: currentBookingContext.netPrice, buyname: currentBookingContext.user.name, buyemail: currentBookingContext.user.email, phone: currentBookingContext.user.phone, pickupDate: currentBookingContext.user.date };
             fetch(url, { method: 'POST', body: JSON.stringify(payload) });
             currentBookingContext = {}; resetQRScanUI(); switchTab('home', document.querySelectorAll('.nav-item')[0]);
         } else if(currentTransactionType === 'pay_cart') {
-            alert("หมดเวลาทำรายการ 3 นาที ระบบยกเลิกการชำระเงินแล้วค่ะ");
+            alert("หมดเวลาทำรายการ 3 นาที ระบบยกเลิกการชำระเงินตะกร้าสินค้าแล้วค่ะ");
             resetQRScanUI(); switchTab('order', null); switchOrderTab('cart');
+        } else {
+            // กรณีเปิดหน้าสแกนทั่วไป (pay_product)
+            alert("หมดเวลาทำรายการ 3 นาที กรุณาทำรายการใหม่ค่ะ");
+            resetQRScanUI(); switchTab('home', document.querySelectorAll('.nav-item')[0]);
         }
     }
 
@@ -1275,8 +1282,10 @@
         currentTransactionType = 'pay_product'; 
         document.getElementById('payment-amount-input').disabled = false; 
         generateQR(); 
-        clearInterval(countdownIntervalGlobal);
-        document.getElementById('countdown-timer').innerText = "03:00";
+        
+        // เริ่มจับเวลาทุกครั้งที่เปิดหน้าสแกน
+        startCountdownTimer();
+        
         switchTab('scan', null); 
     }
 
