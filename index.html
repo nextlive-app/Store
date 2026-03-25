@@ -19,6 +19,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <script>
+        // ==========================================
+        // ใส่ลิงก์ Web App จาก Google Apps Script ตรงนี้ 👇
+        // ==========================================
+        const GAS_URL = "https://script.google.com/macros/s/AKfycby.../exec"; // <--- นำ URL Web app ของคุณมาวาง
+        
         tailwind.config = {
             theme: {
                 extend: {
@@ -39,7 +44,6 @@
         .cat-link { padding: 10px 15px; cursor: pointer; transition: 0.2s; white-space: nowrap; color: #4b5563;}
         .cat-link:hover { color: #1a3b63; background-color: #f1f5f9; border-radius: 4px; font-weight: 600;}
         html { scroll-padding-top: 140px; }
-        /* QR Screen Font */
         .qr-header { background-color: #1a3b63; }
         .qr-btn { background-color: #4b82ad; }
     </style>
@@ -116,7 +120,7 @@
         </div>
         <div id="loading-products" class="text-center py-20 text-gray-400">
             <i class="fas fa-spinner fa-spin text-4xl mb-4 text-secondary"></i>
-            <div>กำลังเชื่อมต่อระบบและดึงข้อมูลสินค้า...</div>
+            <div>กำลังเชื่อมต่อฐานข้อมูล...</div>
         </div>
         <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 hidden"></div>
     </div>
@@ -222,37 +226,30 @@
         <div class="w-full flex items-center p-4 bg-white sticky top-0 z-10">
             <button onclick="app.cancelPayment()" class="text-secondary text-xl"><i class="fas fa-chevron-left"></i></button>
             <div class="flex-1 text-center font-medium text-secondary text-lg">QR Payment by KBank</div>
-            <div class="w-5"></div><!-- Spacer -->
+            <div class="w-5"></div>
         </div>
 
         <div class="w-full max-w-[400px] mx-auto px-4 pb-10 flex flex-col relative flex-1">
-            
             <!-- Main Card -->
             <div class="bg-white rounded border shadow-sm flex flex-col">
-                <!-- Dark Blue Header -->
                 <div class="qr-header text-white p-3 flex justify-center items-center gap-2 rounded-t">
                     <i class="fas fa-plus-square text-2xl"></i>
                     <div class="font-bold tracking-widest text-sm uppercase">Thai QR Payment</div>
                 </div>
 
                 <div class="p-6 flex flex-col items-center">
-                    <!-- PromptPay Logo -->
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/PromptPay-logo.png/1200px-PromptPay-logo.png" alt="PromptPay" class="h-6 mb-4">
                     
-                    <!-- QR Box -->
                     <div class="w-56 h-56 mb-6 flex justify-center items-center relative" id="qr-container">
                         <img id="qr-image" src="" alt="QR" class="w-full h-full object-contain">
                     </div>
 
-                    <!-- Amount -->
                     <div class="text-[#4b82ad] text-[40px] font-normal leading-none mb-3 font-sans tracking-tight" id="pay-amount">0.00</div>
                     
-                    <!-- Timer -->
                     <div class="text-gray-400 text-sm mb-6 flex items-center gap-1">
                         <i class="fas fa-sync-alt"></i> <span id="countdown-timer">03:00</span>
                     </div>
 
-                    <!-- Merchant Box -->
                     <div class="w-full border-t border-b py-3 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-full border-2 border-red-500 flex items-center justify-center p-1 relative">
                             <i class="fas fa-leaf text-2xl text-green-500"></i>
@@ -266,7 +263,6 @@
                 </div>
             </div>
 
-            <!-- Powered By -->
             <div class="text-center text-gray-500 text-sm my-6 flex items-center justify-center gap-2">
                 Powered by KBank <i class="fas fa-leaf text-green-500 border rounded-full p-1 text-xs"></i>
             </div>
@@ -279,18 +275,16 @@
         </div>
     </div>
 
-    <!-- Product Detail Modal (Smaller & Responsive) -->
+    <!-- Product Detail Modal -->
     <div id="modal-product" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-xl max-w-xl w-full p-5 relative shadow-2xl">
             <button onclick="app.closeModal()" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-xl w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full"><i class="fas fa-times"></i></button>
             
             <div class="flex flex-col gap-4">
-                <!-- Image Box (Smaller height) -->
                 <div class="w-full h-48 sm:h-64 bg-gray-50 rounded flex items-center justify-center p-2 border">
                     <img id="m-img" src="" class="max-h-full max-w-full object-contain mix-blend-multiply">
                 </div>
                 
-                <!-- Details -->
                 <div class="flex flex-col">
                     <div class="text-xs text-secondary font-bold uppercase tracking-wider mb-1" id="m-cat">Category</div>
                     <h2 class="text-xl sm:text-2xl font-bold text-dark mb-2 leading-tight" id="m-name">Product Name</h2>
@@ -331,29 +325,37 @@
     </div>
     <div id="cart-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="app.toggleCart()"></div>
 
-    <!-- App Logic -->
+    <!-- App Logic with Fetch API -->
     <script>
         const app = {
             products: [], cart: [], settings: { accountNo: "000", shopName: "Shop" }, currentProduct: null,
             timerInterval: null, uploadedBase64: null, orderId: "",
 
-            init: function() {
-                if (typeof google !== 'undefined' && google.script) {
-                    google.script.run.withSuccessHandler((res) => {
-                        if(res.success) {
-                            this.products = res.products;
-                            this.settings = res.settings;
-                            this.applySettings();
-                            this.renderCategories();
-                            this.renderProducts(this.products);
-                            document.getElementById('product-grid').classList.remove('hidden');
-                            document.getElementById('loading-products').classList.add('hidden');
-                        } else {
-                            Swal.fire('ข้อผิดพลาด', res.message, 'error');
-                        }
-                    }).getInitialData();
-                } else {
-                    Swal.fire('คำเตือน', 'กรุณารันผ่านลิงก์ Google Web App เพื่อดึงข้อมูลจริง', 'warning');
+            init: async function() {
+                if(!GAS_URL || GAS_URL.includes("https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec")) {
+                    document.getElementById('loading-products').innerHTML = `<div class="text-red-500 font-bold text-xl"><i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>กรุณาใส่ลิงก์ Web App ในโค้ดก่อน</div>`;
+                    return Swal.fire('คำเตือน', 'กรุณานำ URL จาก Google Apps Script มาใส่ที่ตัวแปร GAS_URL ในไฟล์ HTML ก่อนรันระบบ', 'warning');
+                }
+
+                try {
+                    const response = await fetch(GAS_URL + "?action=getData");
+                    const res = await response.json();
+                    
+                    if(res.success) {
+                        this.products = res.products;
+                        this.settings = res.settings;
+                        this.applySettings();
+                        this.renderCategories();
+                        this.renderProducts(this.products);
+                        document.getElementById('product-grid').classList.remove('hidden');
+                        document.getElementById('loading-products').classList.add('hidden');
+                    } else {
+                        Swal.fire('ข้อผิดพลาดจากฐานข้อมูล', res.message, 'error');
+                        document.getElementById('loading-products').innerHTML = `<div class="text-red-500 font-bold">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
+                    }
+                } catch (e) {
+                    Swal.fire('ข้อผิดพลาดการเชื่อมต่อ', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาตรวจสอบลิงก์ Web App', 'error');
+                    document.getElementById('loading-products').innerHTML = `<div class="text-red-500 font-bold">เชื่อมต่อเซิร์ฟเวอร์ไม่ได้</div>`;
                 }
             },
 
@@ -471,7 +473,6 @@
                 document.getElementById('cart-drawer').classList.add('translate-x-full'); document.getElementById('cart-overlay').classList.add('hidden');
                 this.hideAllViews(); document.getElementById('view-checkout').classList.remove('hidden');
                 
-                // Reset Forms
                 document.getElementById('chk-step1').classList.remove('hidden');
                 document.getElementById('chk-step2').classList.add('hidden');
                 
@@ -521,7 +522,6 @@
                 document.getElementById('pay-amount').innerText = total.toLocaleString('th-TH', {minimumFractionDigits: 2});
                 document.getElementById('ref-no-display').innerText = this.orderId;
                 
-                // Generate QR
                 const payload = window.promptpayQr(this.settings.accountNo.replace(/-/g, ''), { amount: total });
                 document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(payload)}&size=300x300&margin=0`;
 
@@ -554,7 +554,8 @@
                 reader.readAsDataURL(file);
             },
 
-            submitOrder: function() {
+            // ใช้ Fetch ยิง API ไปที่ Backend (แทน google.script.run)
+            submitOrder: async function() {
                 const orderData = {
                     orderId: this.orderId, totalAmount: document.getElementById('chk-total').dataset.val,
                     customerName: document.getElementById('c-name').value + " " + document.getElementById('c-lname').value,
@@ -564,14 +565,24 @@
                     cart: this.cart, slipBase64: this.uploadedBase64
                 };
 
-                if (typeof google !== 'undefined' && google.script) {
-                    google.script.run.withSuccessHandler(res => {
-                        if(res.success) {
-                            Swal.fire({ title: 'ชำระเงินสำเร็จ!', html: `ทำรายการเรียบร้อยแล้ว<br><b>รหัสออเดอร์: ${res.orderId}</b><br>ระบบได้จัดส่งข้อมูลไปที่${res.delivery === 'email' ? 'อีเมลของคุณแล้ว' : 'ระบบเตรียมจัดส่งแล้ว'}`, icon: 'success', confirmButtonColor: '#1a3b63' }).then(() => {
-                                app.cart = []; app.updateCartUI(); document.getElementById('view-payment').style.display = 'none'; app.showHome();
-                            });
-                        } else { Swal.fire({title: 'ตรวจสอบสลิปไม่ผ่าน', text: res.message, icon: 'error', confirmButtonColor: '#e34444'}).then(()=>app.startTimer(180)); }
-                    }).processCheckout(orderData);
+                try {
+                    // ส่งแบบ text/plain เพื่อหลีกเลี่ยง CORS Preflight Options Request ของเบราว์เซอร์
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'checkout', payload: orderData })
+                    });
+                    
+                    const res = await response.json();
+                    
+                    if(res.success) {
+                        Swal.fire({ title: 'ชำระเงินสำเร็จ!', html: `ทำรายการเรียบร้อยแล้ว<br><b>รหัสออเดอร์: ${res.orderId}</b><br>ระบบได้จัดส่งข้อมูลไปที่${res.delivery === 'email' ? 'อีเมลของคุณแล้ว' : 'ระบบเตรียมจัดส่งแล้ว'}`, icon: 'success', confirmButtonColor: '#1a3b63' }).then(() => {
+                            app.cart = []; app.updateCartUI(); document.getElementById('view-payment').style.display = 'none'; app.showHome();
+                        });
+                    } else { 
+                        Swal.fire({title: 'ตรวจสอบสลิปไม่ผ่าน', text: res.message, icon: 'error', confirmButtonColor: '#e34444'}).then(()=>app.startTimer(180)); 
+                    }
+                } catch (e) {
+                    Swal.fire('ข้อผิดพลาดการเชื่อมต่อ', 'ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง', 'error').then(()=>app.startTimer(180));
                 }
             }
         };
