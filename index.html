@@ -22,7 +22,7 @@
         // ==========================================
         // ใส่ลิงก์ Web App จาก Google Apps Script ตรงนี้ 👇
         // ==========================================
-        const GAS_URL = "https://script.google.com/macros/s/AKfycby.../exec"; // <--- นำ URL Web app ของคุณมาวาง
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec"; // <--- นำ URL Web app ของคุณมาวาง
         
         tailwind.config = {
             theme: {
@@ -332,7 +332,7 @@
             timerInterval: null, uploadedBase64: null, orderId: "",
 
             init: async function() {
-                if(!GAS_URL || GAS_URL.includes("https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec")) {
+                if(!GAS_URL || GAS_URL.includes("URL_ของ_เว็บแอป_GOOGLE")) {
                     document.getElementById('loading-products').innerHTML = `<div class="text-red-500 font-bold text-xl"><i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>กรุณาใส่ลิงก์ Web App ในโค้ดก่อน</div>`;
                     return Swal.fire('คำเตือน', 'กรุณานำ URL จาก Google Apps Script มาใส่ที่ตัวแปร GAS_URL ในไฟล์ HTML ก่อนรันระบบ', 'warning');
                 }
