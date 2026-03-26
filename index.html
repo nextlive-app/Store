@@ -303,8 +303,7 @@
             <button onclick="proceedToCheckout()" class="w-full bg-primary text-white font-bold py-3" id="btn-checkout">Checkout</button>
         </div>
     </div>
-
-    <script>
+<script>
         // ==========================================
         // ตั้งค่า URL ของ APPS SCRIPT
         // ==========================================
@@ -358,7 +357,6 @@
                         </div>
                         <button onclick="logout()" class="text-xs text-red-500 hover:text-red-700 ml-2"><i data-lucide="log-out" class="w-4 h-4"></i></button>
                     </div>`;
-                // ใส่เบอร์โทรในหน้า history
                 document.getElementById('hist-phone').value = loggedInUser.phone;
             } else {
                 navAuth.innerHTML = `
@@ -444,7 +442,7 @@
                     <img src="${p.image}" class="w-full h-32 object-contain mb-2">
                     <h3 class="font-bold text-sm line-clamp-2">${p.name.th}</h3>
                     <p class="text-primary font-bold mt-2">฿${p.price}</p>
-                    <button onclick="addToCart('${p.id}'); event.stopPropagation();" class="mt-3 w-full border border-primary text-primary py-1 text-xs hover:bg-primary hover:text-white">เพิ่มลงตะกร้า</button>
+                    <button onclick="addToCart('${p.id}'); event.stopPropagation();" class="mt-3 w-full border border-primary text-primary py-1 text-xs hover:bg-primary hover:text-white transition-colors">เพิ่มลงตะกร้า</button>
                 `;
                 grid.appendChild(div);
             });
@@ -465,9 +463,9 @@
             let total = 0;
             cart.forEach(item => {
                 total += item.product.price * item.qty;
-                container.innerHTML += `<div class="flex justify-between text-sm mb-2 pb-2 border-b">
-                    <span>${item.product.name.th} x${item.qty}</span>
-                    <span class="font-bold">฿${item.product.price * item.qty}</span>
+                container.innerHTML += `<div class="flex justify-between text-sm mb-2 pb-2 border-b border-gray-100 dark:border-gray-800">
+                    <span class="text-gray-700 dark:text-gray-300">${item.product.name.th} x${item.qty}</span>
+                    <span class="font-bold text-gray-900 dark:text-white">฿${item.product.price * item.qty}</span>
                 </div>`;
             });
             document.getElementById('cart-total-price').innerText = '฿' + total;
@@ -498,17 +496,25 @@
         }
 
         function processOrder() {
+            if(!loggedInUser || !loggedInUser.phone) {
+                Swal.fire('ข้อผิดพลาด', 'ไม่พบข้อมูลเบอร์โทรศัพท์ กรุณาเข้าสู่ระบบใหม่', 'error');
+                return;
+            }
+
             let total = cart.reduce((a,b)=>a+(b.product.price*b.qty), 0);
             
+            // ป้องกันบัค Error หากเบอร์โทรที่ดึงมาจาก Sheet เป็น Number
+            let phoneStr = String(loggedInUser.phone);
+            let phone4 = phoneStr.length >= 4 ? phoneStr.slice(-4) : "0000";
+
             // สร้าง Order ID: TH + สุ่ม 6 ตัว + เบอร์ 4 ตัวท้าย
             let random6 = Math.floor(100000 + Math.random() * 900000);
-            let phone4 = loggedInUser.phone.slice(-4);
             activeOrderId = `TH${random6}${phone4}`;
 
             // สร้าง QR Data
             let d = new Date();
             let dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}/${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-            let qzone = `${loggedInUser.phone}/${dateStr}`;
+            let qzone = `${phoneStr}/${dateStr}`;
             
             let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=00020101021229390016A00000067701011103151400006218032995802TH530376454074500.0063041CF1&size=500x500&margin=10&qzone=${encodeURIComponent(qzone)}`;
             
@@ -532,7 +538,7 @@
                     action: 'checkout',
                     orderId: activeOrderId,
                     customerName: loggedInUser.fname + " " + loggedInUser.lname,
-                    customerPhone: loggedInUser.phone,
+                    customerPhone: String(loggedInUser.phone),
                     customerEmail: loggedInUser.email,
                     items: cart.map(i => ({name: i.product.name.th, qty: i.qty})),
                     totalPrice: total,
@@ -586,11 +592,10 @@
                 if(historyData.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8">ไม่พบประวัติการสั่งซื้อ</td></tr>`;
                 } else {
-                    // เรียงจากใหม่ไปเก่า
                     historyData.reverse().forEach(h => {
                         let statusColor = h.status === 'ชำระแล้ว' ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100';
                         tbody.innerHTML += `
-                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50">
+                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <td class="px-6 py-4">${h.date}</td>
                                 <td class="px-6 py-4 font-mono font-bold text-primary">${h.orderId}</td>
                                 <td class="px-6 py-4 text-xs">${h.products}</td>
@@ -605,7 +610,7 @@
         }
 
         // ==========================================
-        // UI Navigation Utils
+        // UI Navigation Utils & Sidebars
         // ==========================================
         function navigate(view) {
             ['view-home', 'view-history', 'view-auth', 'view-checkout', 'view-payment', 'view-privacy', 'view-return'].forEach(v => {
@@ -629,11 +634,46 @@
             }
         }
 
+        // แก้ไข: เพิ่มฟังก์ชัน Sidebar เมนูหมวดหมู่ (มือถือ)
+        function toggleCategorySidebar() {
+            let ov = document.getElementById('category-overlay');
+            let sb = document.getElementById('category-sidebar');
+            if(ov.classList.contains('hidden')) { 
+                ov.classList.remove('hidden'); 
+                sb.classList.remove('hidden'); 
+                setTimeout(()=> {
+                    ov.classList.add('overlay-enter-active'); 
+                    sb.classList.add('left-sidebar-enter-active');
+                }, 10); 
+            } else { 
+                ov.classList.remove('overlay-enter-active'); 
+                sb.classList.remove('left-sidebar-enter-active'); 
+                setTimeout(()=> {
+                    ov.classList.add('hidden'); 
+                    sb.classList.add('hidden');
+                }, 300); 
+            }
+        }
+
+        // แก้ไข: ฟังก์ชันตะกร้าสินค้า
         function toggleCart() {
             let ov = document.getElementById('cart-overlay');
             let sb = document.getElementById('cart-sidebar');
-            if(ov.classList.contains('hidden')) { ov.classList.remove('hidden'); sb.classList.remove('hidden'); setTimeout(()=> {ov.classList.add('overlay-enter-active'); sb.classList.add('sidebar-enter-active');}, 10); }
-            else { ov.classList.remove('overlay-enter-active'); sb.classList.remove('sidebar-enter-active'); setTimeout(()=> {ov.classList.add('hidden'); sb.classList.add('hidden');}, 300); }
+            if(ov.classList.contains('hidden')) { 
+                ov.classList.remove('hidden'); 
+                sb.classList.remove('hidden'); 
+                setTimeout(()=> {
+                    ov.classList.add('overlay-enter-active'); 
+                    sb.classList.add('sidebar-enter-active');
+                }, 10); 
+            } else { 
+                ov.classList.remove('overlay-enter-active'); 
+                sb.classList.remove('sidebar-enter-active'); 
+                setTimeout(()=> {
+                    ov.classList.add('hidden'); 
+                    sb.classList.add('hidden');
+                }, 300); 
+            }
         }
 
         function toggleTheme() { document.documentElement.classList.toggle('dark'); }
