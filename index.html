@@ -106,7 +106,7 @@
     <!-- Global Full Page Loader -->
     <div id="global-loader" class="fixed inset-0 bg-white dark:bg-[#121212] z-[100001] flex flex-col items-center justify-center">
         <div class="dotted-spinner mb-4"></div>
-        <p class="text-gray-500 font-kanit">กำลังโหลดระบบ...</p>
+        <p class="text-gray-500 font-kanit" id="loader-text">กำลังโหลดระบบ...</p>
     </div>
 
     <!-- Maintenance Screen -->
@@ -214,7 +214,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6" id="product-grid"></div>
             </div>
 
-            <!-- View: Profile (NEW) -->
+            <!-- View: Profile -->
             <div id="view-profile" class="hidden max-w-4xl mx-auto px-4 py-12">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-primary">ข้อมูลโปรไฟล์</h2>
@@ -383,7 +383,7 @@
                 </div>
             </div>
 
-            <!-- View: Payment (QR Code อัปเดตใหม่เป๊ะๆ ตามที่ขอ) -->
+            <!-- View: Payment -->
             <div id="view-payment" class="hidden w-full mx-auto px-4 py-12 flex flex-col items-center">
                 <button onclick="navigate('checkout')" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> ย้อนกลับเพื่อแก้ไขข้อมูล</button>
 
@@ -461,7 +461,7 @@
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
             
-            <!-- Policy Views (เนื้อหากลับมาครบ 100%) -->
+            <!-- Policy Views -->
             <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
@@ -564,7 +564,7 @@
                 </div>
             </div>
             
-            <!-- Mobile Menu: ดึงไอคอน "ช่องยอดเงิน" ใส่ในมือถือตามที่ขอ -->
+            <!-- Mobile Menu: Profile & Wallet -->
             <div id="mobile-profile-section" class="hidden md:hidden border-b border-gray-100 pb-2 mb-2">
                 <div class="p-4 bg-gray-50 flex items-center justify-between">
                     <div class="flex items-center">
@@ -643,7 +643,7 @@
         </div>
     </div>
 
-    <!-- Custom Popup Container (ตามโค้ดของคุณ) -->
+    <!-- Custom Popup Container -->
     <div class="popup-container" id="custom-popup">
         <div class="popup-box">
             <h1 id="popup-title">Hello!</h1>
@@ -665,11 +665,13 @@
         let searchQuery = '';
         let currentUser = null; 
         
+        // Data from Sheet
         let siteSettings = {};
         let categories = [{ id: 'all', name: 'สินค้าทั้งหมด' }];
         let products = [];
         let optionsDB = [];
         
+        // Checkout Logic
         let currentSubtotal = 0;
         let currentDiscount = 0;
         let currentVat = 0;
@@ -680,6 +682,27 @@
             { img: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" },
             { img: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" }
         ];
+
+        // --- Helper Function: Call Backend ---
+        // ป้องกัน Error จาก CORS และอ่านการคืนค่าของ Apps Script แบบครอบคลุม
+        async function callBackend(payload) {
+            try {
+                const response = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const text = await response.text();
+                try {
+                    return JSON.parse(text);
+                } catch (err) {
+                    console.error("Server Error Response:", text);
+                    throw new Error("ไม่สามารถอ่านข้อมูลจากเซิร์ฟเวอร์ได้ (โปรดตรวจสอบการตั้งค่า Deploy Web App ให้เป็น 'ทุกคน')");
+                }
+            } catch (err) {
+                throw new Error(err.message || "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
+            }
+        }
 
         // --- Custom Popup ---
         function showCustomPopup(title, text) {
@@ -695,10 +718,9 @@
         function init() {
             try { lucide.createIcons(); } catch(e) {}
             initSlider();
-            updateLiveClock(); // นาฬิกาในหน้าโปรไฟล์
+            updateLiveClock(); 
             
-            fetch(GAS_WEBAPP_URL, { method: 'POST', body: JSON.stringify({action: 'init'}) })
-            .then(r => r.json())
+            callBackend({action: 'init'})
             .then(res => {
                 document.getElementById('global-loader').style.display = 'none'; 
                 
@@ -716,6 +738,8 @@
                     }
 
                     applySettingsToUI();
+                    
+                    categories = [{ id: 'all', name: 'สินค้าทั้งหมด' }];
                     res.categories.forEach(c => categories.push({id: c, name: c}));
                     products = res.products;
                     optionsDB = res.options;
@@ -726,11 +750,11 @@
                     
                     document.getElementById('product-search-desktop').addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderProducts(); });
                 } else {
-                    showCustomPopup("Error", "โหลดข้อมูลไม่สำเร็จ: " + res.message);
+                    showCustomPopup("ข้อผิดพลาด", "โหลดข้อมูลไม่สำเร็จ: " + res.message);
                 }
             }).catch(e => {
                 document.getElementById('global-loader').style.display = 'none';
-                showCustomPopup("Error", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
+                showCustomPopup("ข้อผิดพลาดระบบ", e.message);
             });
         }
 
@@ -790,7 +814,6 @@
                 if(document.getElementById('chk-email')) document.getElementById('chk-email').value = currentUser.email;
                 if(document.getElementById('chk-phone')) document.getElementById('chk-phone').value = currentUser.phone;
 
-                // Render Profile Data in view-profile
                 renderProfileView();
             } else {
                 currentUser = null;
@@ -832,8 +855,7 @@
                 addr7: document.getElementById('reg-addr7').value
             };
 
-            fetch(GAS_WEBAPP_URL, { method: 'POST', body: JSON.stringify(payload) })
-            .then(r => r.json())
+            callBackend(payload)
             .then(res => {
                 btn.innerText = "สร้างบัญชี"; btn.disabled = false;
                 if(res.status === 'success') {
@@ -842,7 +864,7 @@
                     checkLoginState();
                     navigate('home');
                 } else { showCustomPopup("ข้อผิดพลาด", res.message); }
-            }).catch(e => { btn.innerText = "สร้างบัญชี"; btn.disabled = false; showCustomPopup("Error", e); });
+            }).catch(e => { btn.innerText = "สร้างบัญชี"; btn.disabled = false; showCustomPopup("ข้อผิดพลาด", e.message); });
         }
 
         function submitLogin() {
@@ -854,8 +876,7 @@
 
             const payload = { action: 'login', username: document.getElementById('log-username').value, password: document.getElementById('log-password').value };
 
-            fetch(GAS_WEBAPP_URL, { method: 'POST', body: JSON.stringify(payload) })
-            .then(r => r.json())
+            callBackend(payload)
             .then(res => {
                 btn.innerText = "ลงชื่อเข้าใช้งาน"; btn.disabled = false;
                 if(res.status === 'success') {
@@ -864,10 +885,9 @@
                     showCustomPopup("ยินดีต้อนรับ", "เข้าสู่ระบบสำเร็จ");
                     navigate('home');
                 } else { showCustomPopup("ข้อผิดพลาด", res.message); }
-            }).catch(e => { btn.innerText = "ลงชื่อเข้าใช้งาน"; btn.disabled = false; showCustomPopup("Error", e); });
+            }).catch(e => { btn.innerText = "ลงชื่อเข้าใช้งาน"; btn.disabled = false; showCustomPopup("ข้อผิดพลาด", e.message); });
         }
 
-        // --- Render Profile View ---
         function renderProfileView() {
             if(!currentUser) return;
             document.getElementById('vp-name').innerText = currentUser.fname + " " + currentUser.lname;
@@ -924,7 +944,6 @@
             if (view === 'payment') {
                 document.getElementById('slip-total-amount').innerText = currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 
-                // ใช้ promptpayQr library สร้าง QR Code เป๊ะๆ โดยดึงโลโก้ตามที่คุณระบุ
                 if (window.promptpayQr && siteSettings.BankAccount) {
                     const acc = siteSettings.BankAccount.replace(/-/g, '');
                     const qrDataStr = window.promptpayQr(acc, { amount: currentNetTotal });
@@ -1184,8 +1203,7 @@
                         type: file.type
                     };
 
-                    fetch(GAS_WEBAPP_URL, { method: 'POST', body: JSON.stringify(payload) })
-                    .then(r => r.json())
+                    callBackend(payload)
                     .then(res => {
                         overlay.classList.add('hidden');
                         if (res.status === "success") {
@@ -1198,7 +1216,7 @@
                     })
                     .catch(e => {
                         overlay.classList.add('hidden');
-                        showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+                        showCustomPopup("ระบบมีปัญหา", e.message);
                         document.getElementById('upload-section').classList.remove('hidden');
                     });
                 }
@@ -1216,8 +1234,7 @@
 
             btn.innerHTML = `<div class="dotted-spinner" style="width:20px;height:20px;border-width:3px;border-color:white;"></div>`; btn.disabled = true;
 
-            fetch(GAS_WEBAPP_URL, { method: 'POST', body: JSON.stringify({ action: 'getHistory', phone: phone }) })
-            .then(r => r.json())
+            callBackend({ action: 'getHistory', phone: phone })
             .then(res => {
                 btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; lucide.createIcons();
                 
@@ -1246,7 +1263,7 @@
                 }
             }).catch(e => {
                 btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; lucide.createIcons();
-                showCustomPopup("Error", "เชื่อมต่อฐานข้อมูลล้มเหลว");
+                showCustomPopup("ข้อผิดพลาด", e.message);
             });
         }
 
