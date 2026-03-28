@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
     
     <!-- Icons & jQuery & QR Library -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -29,6 +29,7 @@
                         sans: ['Inter', 'Kanit', 'sans-serif'],
                         kanit: ['Kanit', 'sans-serif'],
                         poppins: ['Poppins', 'sans-serif'],
+                        sarabun: ['Sarabun', 'sans-serif'],
                     },
                     colors: { primary: '#e43a3d', primaryHover: '#cc2d30', secondary: '#f26522' },
                     animation: {
@@ -65,12 +66,11 @@
         .left-sidebar-enter { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .left-sidebar-enter-active { transform: translateX(0); }
 
-        /* EXACT STYLES FROM USER FOR QR SLIP PAGE */
+        /* Slip Styles */
         .slip-container { width: 100%; max-width: 420px; background-color: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden; font-family: 'Kanit', sans-serif; margin: 0 auto; position: relative; }
         .slip-container * { color: initial; } 
-        .header-icon-box { width: 36px; height: 36px; background-color: white; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
-        /* Loading Dotted Spinner (ไข่ปลาหมุน) */
+        /* Loading Dotted Spinner */
         .dotted-spinner { width: 60px; height: 60px; border: 6px dotted #e43a3d; border-radius: 50%; animation: spin 2s linear infinite; }
 
         /* Custom Popup Container */
@@ -85,6 +85,20 @@
         /* Maintenance Overlay */
         #maintenance-screen { position: fixed; inset: 0; background: #fff; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .dark #maintenance-screen { background: #121212; color: white; }
+
+        /* PROFILE ADDRESS TEMPLATE CSS */
+        .template-container { width: 100%; max-width: 550px; background-color: white; border: 4px solid #f83a32; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); margin: 0 auto; font-family: 'Sarabun', sans-serif; }
+        .template-header { display: flex; border-bottom: 4px solid #f83a32; background-color: white; }
+        .header-title { background-color: #f83a32; color: white; padding: 10px 24px; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; }
+        .header-datetime { flex-grow: 1; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: #374151; font-weight: 600; font-size: 1rem; }
+        .template-body { padding: 30px 35px; }
+        .detail-row { display: flex; align-items: flex-start; margin-bottom: 25px; flex-wrap: wrap; }
+        .detail-label { background-color: #f83a32; color: white; padding: 6px 18px; font-size: 1.2rem; font-weight: 700; margin-right: 20px; border-radius: 4px; white-space: nowrap; margin-bottom: 10px;}
+        .address-text { color: #171b85; font-size: 1.5rem; font-weight: 700; line-height: 1.6; word-break: break-word; }
+        .zip-section { display: flex; align-items: center; gap: 15px; margin-top: 40px; flex-wrap: wrap;}
+        .zip-label { background-color: #f83a32; color: white; padding: 6px 18px; font-size: 1.2rem; font-weight: 700; border-radius: 4px; }
+        .zip-grid { display: flex; gap: 8px; }
+        .zip-cell { width: 42px; height: 52px; border: 3px solid #f83a32; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: #171b85; background-color: white; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
@@ -104,7 +118,7 @@
 
     <!-- Main Wrapper -->
     <div id="app-wrapper" class="hidden flex-col min-h-screen">
-        <!-- Top Bar (Dark) -->
+        <!-- Top Bar -->
         <div class="bg-[#333333] dark:bg-[#000000] text-gray-300 text-xs py-2 hidden md:block transition-colors">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
                 <div>Sale special too good to miss in every gear category</div>
@@ -154,23 +168,10 @@
 
                         <!-- Profile Menu -->
                         <div id="user-profile-menu" class="hidden relative group z-50 mr-2 border-r border-gray-200 dark:border-gray-700 pr-4">
-                            <button class="flex items-center space-x-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
+                            <button onclick="navigate('profile')" class="flex items-center space-x-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
                                 <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold" id="profile-icon">U</div>
                                 <span class="hidden sm:inline" id="profile-name">User</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
                             </button>
-                            <div class="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 rounded-sm overflow-hidden">
-                                <div class="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                                    <p class="font-bold text-gray-800 dark:text-white text-sm" id="dd-fullname">Name</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="dd-email">email</p>
-                                </div>
-                                <button onclick="navigate('history')" class="w-full text-left px-4 py-3 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white flex items-center">
-                                    <i data-lucide="history" class="w-4 h-4 mr-2"></i> ประวัติการสั่งซื้อ
-                                </button>
-                                <button onclick="logout()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 flex items-center border-t border-gray-100 dark:border-gray-700">
-                                    <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> ออกจากระบบ
-                                </button>
-                            </div>
                         </div>
 
                         <!-- Theme Toggle -->
@@ -213,7 +214,56 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6" id="product-grid"></div>
             </div>
 
-            <!-- View: History -->
+            <!-- View: Profile (NEW) -->
+            <div id="view-profile" class="hidden max-w-4xl mx-auto px-4 py-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-primary">ข้อมูลโปรไฟล์</h2>
+                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-sm text-sm flex items-center font-bold">
+                        <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> ออกจากระบบ
+                    </button>
+                </div>
+
+                <!-- Personal Info Box -->
+                <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><p class="text-xs text-gray-500">ชื่อ-นามสกุล</p><p class="font-bold text-lg" id="vp-name">-</p></div>
+                        <div><p class="text-xs text-gray-500">อีเมล</p><p class="font-bold text-lg" id="vp-email">-</p></div>
+                        <div><p class="text-xs text-gray-500">เบอร์โทรศัพท์</p><p class="font-bold text-lg" id="vp-phone">-</p></div>
+                        <div><p class="text-xs text-gray-500">วันที่สมัครสมาชิก</p><p class="font-bold text-lg" id="vp-date">-</p></div>
+                    </div>
+                </div>
+
+                <!-- Address Template -->
+                <div class="template-container">
+                    <div class="template-header">
+                        <div class="header-title">ข้อมูลที่อยู่ของคุณ</div>
+                        <div class="header-datetime" id="current-time"></div>
+                    </div>
+                    <div class="template-body">
+                        <div class="detail-row">
+                            <div class="detail-label">รายละเอียด</div>
+                            <div class="address-text">
+                                <div id="prof-name-text">ชื่อ นามสกุล</div>
+                                <div id="prof-addr-text1">บ้านเลขที่ ซอย</div>
+                                <div id="prof-addr-text2">ถนน แขวง เขต</div>
+                                <div id="prof-addr-text3">จังหวัด</div>
+                            </div>
+                        </div>
+                        <div class="zip-section">
+                            <div class="zip-label">รหัสไปรษณีย์</div>
+                            <div class="zip-grid">
+                                <div class="zip-cell" id="zip-1">0</div>
+                                <div class="zip-cell" id="zip-2">0</div>
+                                <div class="zip-cell" id="zip-3">0</div>
+                                <div class="zip-cell" id="zip-4">0</div>
+                                <div class="zip-cell" id="zip-5">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: History (ประวัติ) -->
             <div id="view-history" class="hidden max-w-5xl mx-auto px-4 py-12">
                 <h2 class="text-2xl font-bold mb-6 uppercase text-gray-800 dark:text-white border-b pb-3">ประวัติการสั่งซื้อ</h2>
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm mb-8 shadow-sm">
@@ -333,19 +383,18 @@
                 </div>
             </div>
 
-            <!-- View: Payment -->
+            <!-- View: Payment (QR Code อัปเดตใหม่เป๊ะๆ ตามที่ขอ) -->
             <div id="view-payment" class="hidden w-full mx-auto px-4 py-12 flex flex-col items-center">
                 <button onclick="navigate('checkout')" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> ย้อนกลับเพื่อแก้ไขข้อมูล</button>
 
                 <div class="slip-container" id="user-slip-element">
+                    <!-- หัวบิล Thai QR Payment -->
                     <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-4 border-white">
                         <div class="header-icon-box flex-shrink-0">
-                            <div class="w-full h-[6px] bg-[#10355a] absolute top-1/2 -translate-y-1/2"></div>
-                            <div class="w-[6px] h-full bg-[#10355a] absolute left-1/2 -translate-x-1/2"></div>
-                            <div class="absolute bottom-0 right-0 w-0 h-0 border-l-[18px] border-l-transparent border-b-[18px] border-b-[#00a599]"></div>
+                            <img src="https://img2.pic.in.th/pic/1000008216.jpg" class="w-full h-full object-contain">
                         </div>
                         <div class="text-[24px] font-bold leading-none tracking-wide flex items-baseline gap-1 mt-1 text-white">
-                            Pay <span id="slip-shop-name">Shop</span>
+                            Thai QR <span class="text-[14px] font-normal tracking-normal text-white">Payment</span>
                         </div>
                     </div>
 
@@ -361,12 +410,8 @@
 
                     <div class="flex justify-center mb-8 relative px-10 bg-white">
                         <div class="relative inline-block border-[1px] border-gray-100 p-1 shadow-sm qr-wiggle hover:animate-none">
-                            <!-- รูป QR Code -->
+                            <!-- รูป QR Code ที่สร้างด้วย API -->
                             <img src="" id="promptpay-qr-img" class="w-[240px] h-[240px]">
-                            <!-- ไอคอนตรงกลาง -->
-                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-md p-[2px] shadow-md flex items-center justify-center">
-                                <img src="https://img1.pic.in.th/images/IMG_1065-removebg.png" class="w-7 h-7 object-contain">
-                            </div>
                             
                             <div id="verification-overlay" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300 z-10">
                                 <div class="dotted-spinner mb-3"></div>
@@ -391,6 +436,7 @@
                         <div class="bg-white w-[85px] h-[45px] flex-shrink-0 flex items-center justify-center p-1"><img src="https://img2.pic.in.th/IMG_05936a5ac8fe11ed9919.jpeg" class="w-full h-full object-contain"></div>
                         <div class="text-white text-[9.5px] leading-[1.4] opacity-95 font-light pr-2">
                             ใช้สำหรับซื้อสินค้าบนเว็บไซต์เท่านั้น การชำระห้ามปัดเศษเด็ดขาด ระบบตรวจสอบตามยอดของท่าน ระบบจะไม่ทราบว่าท่านได้โอนเข้ามาแล้ว 
+                            <span class="text-blue-300 underline cursor-pointer font-medium ml-1" onclick="openPaymentSteps()">ขั้นตอนการชำระ</span>
                         </div>
                     </div>
                 </div>
@@ -415,15 +461,58 @@
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
             
-            <!-- Policy Views -->
-            <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12">
-                <h2 class="text-2xl font-bold mb-6 text-primary">PRIVACY POLICY</h2>
-                <div class="space-y-4 text-sm leading-relaxed"><p>ข้อมูลทั้งหมดของท่านจะถูกเก็บเป็นความลับ...</p></div>
+            <!-- Policy Views (เนื้อหากลับมาครบ 100%) -->
+            <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
+                <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
+                <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
+                    <h3 class="font-semibold text-lg">การเปิดเผยข้อมูลส่วนบุคคล</h3>
+                    <p>เราจะไม่ขายหรือเผยแพร่ข้อมูลส่วนตัวของคุณให้แก่บุคคลที่สามอื่น หรือองค์กรอื่นใด การเปิดเผยข้อมูลจะเกิดขึ้นก็ต่อเมื่อคุณเป็นผู้ร้องขอและให้ความยินยอมให้เราดำเนินการให้ หรือ การเปิดเผยข้อมูลนั้นเป็นไปตามที่กฎหมายอนุญาต หรือเป็นไปตามที่กฎหมายกำหนด อาทิ การเปิดเผยข้อมูลตามคำสั่งเจ้าหน้าที่ของรัฐซึ่งกฎหมายได้ให้อำนาจไว้ ตามคำสั่งศาล หรือตามหมายศาล</p>
+                    <p>เพื่อการพัฒนาและบำรุงรักษาระบบการของเราให้มีความปลอดภัยและมีประสิทธิภาพสูงสุด เราอาจทำความตกลงไว้กับบุคคลที่สามเพื่อให้ดำเนินงานกับเรา หรือดำเนินการในนามของเรา ทั้งนี้บุคคลที่สามนั้นจะต้องยอมรับข้อตกลงคุ้มครองข้อมูลส่วนตัวของคุณไว้เป็นความลับเช่นเดียวกัน</p>
+                    <p>ในบางกรณี เราอาจดำเนินการนโยบายการตลาดหรือโฆษณาส่งเสริมบริการร่วมกับบุคคลที่สามสำหรับกลุ่มผู้ที่ยังไม่เคยใช้บริการ เราจึงสงวนสิทธิในการยืนยันรับรองกับบุคคลที่สามว่าคุณได้ใช้บริการกับเราแล้ว</p>
+                    <h3 class="font-semibold text-lg mt-6">การเก็บรักษาข้อมูล</h3>
+                    <p>ข้อมูลที่เราจำเป็นต้องร้องขอเพื่อใช้สำหรับยืนยันตัวตนจากคุณได้แก่ ชื่อนามสกุล และ อีเมล นอกจากนี้อาจมีการเก็บข้อมูล ไอพีแอดเดรส เพื่อให้เป็นไปตามข้อกำหนดทางกฎหมาย</p>
+                    <p>เราจะไม่ใช้ข้อมูลส่วนตัวของคุณเพื่อวัตถุประสงค์ใดนอกจากให้บริการหรือเท่าที่กฎหมายกำหนด เราเคารพและคำนึงถึงความเป็นส่วนตัวของลูกค้าของเราอย่างสูงสุด สิ่งที่สำคัญที่สุดคือความสัมพันธ์ระหว่างคุณและเรา เราต้องการให้คุณสบายใจและมั่นใจใช้ผลิตภัณฑ์และบริการของเราและเชื่อถือความปลอดภัยของข้อมูลส่วนตัวและแบบแสดงรายการที่คุณกรอกไว้ให้เรา</p>
+                    <p>คุณมีหน้าที่ปกป้องข้อมูลบนอุปกรณ์ของคุณเช่นการใช้โปรแกรมป้องกันไวรัส, การอัพเดตซอฟท์แวร์, เปลี่ยนรหัสผ่าน, และไม่ให้บุคคลที่สามเข้าถึงอุปกรณ์ของคุณได้ไม่ว่าทางใด</p>
+                    <h3 class="font-semibold text-lg mt-6">การลบข้อมูล</h3>
+                    <p>Next Live Shop มีเจตนารักษาข้อมูลบุคคลของคุณให้ถูกต้องและอัพเดทอยู่เสมอ โดยเราจะลบข้อมูลของคุณทั้งหมดหากไม่จำเป็นต้องใช้ข้อมูลเหล่านั้นแล้ว</p>
+                    <p>คุณมีสิทธิขอลบหรือทำลายข้อมูลส่วนบุคคลของคุณได้ตลอดเวลา หากคุณต้องการใช้สิทธิ์นี้กรุณาติดต่อผ่านช่องทางของเรา และแจ้งคำร้องขอให้ทำลายข้อมูลของคุณ โดยเจ้าหน้าที่อาจมีการขอให้แสดงตัวเพื่อยืนยันความเป็นเจ้าของข้อมูล</p>
+                    <h3 class="font-semibold text-lg mt-6">ความปลอดภัยของข้อมูล</h3>
+                    <p>เพราะข้อมูลของคุณเป็นสิ่งที่มีค่ามากที่สุด เราให้ความสำคัญกับความเชื่อมั่นของคุณเป็นอันดับหนึ่งสำหรับเรา เราระลึกอยู่เสมอว่าคุณต้องการความปลอดภัยสูงสุดในการใช้บริการและรักษาความลับของข้อมูลส่วนตัว เราจึงดำเนินการอย่างเข้มงวดเพื่อรักษาความปลอดภัยและป้องกันการนำข้อมูลของคุณโดยไม่ได้รับอนุญาตด้วยมาตรฐานขั้นสูง</p>
+                    <p>เราใช้ระบบรักษาความปลอดภัยของข้อมูลที่มีมาตรฐานระดับเดียวกับธนาคารและสายการบินที่เป็นที่ยอมรับในระดับสากลทั้งในส่วนของเทคโนโลยีและกระบวนการเพื่อป้องกันการโจรกรรมข้อมูลที่เป็นความลับโดยคำนึงถึงประสิทธิภาพสูงสุด เราได้จัดสรรเวลา บุคลากร และทรัพยากรต่างๆ อย่างเต็มที่เพื่อให้คุณมั่นใจในการรักษาความปลอดภัยที่ได้มาตรฐานสูงสุดของเรา ซึ่งรวมถึงเทคโนโลยีเข้ารหัสข้อมูลในระดับ 256 บิท (256-bit Encryption) ซึ่งเป็นการเข้ารหัสระดับสูงสุดของให้บริการมาตรฐานเดียวกับการทำธุรกรรมทางอินเทอร์เน็ตของธนาคารและสายการบิน</p>
+                    <p>เราทำการทดสอบและปรับปรุงเทคโนโลยีรักษาความปลอดภัยของเราอย่างต่อเนื่องและสม่ำเสมอเพื่อให้คุณมั่นใจว่าข้อมูลส่วนตัวของคุณได้รับการดูแลด้วยมาตรการรักษาความปลอดภัยสูงสุด</p>
+                </div>
             </div>
-            <div id="view-return" class="hidden max-w-4xl mx-auto px-4 py-12">
-                <h2 class="text-2xl font-bold mb-6 text-primary">RETURN POLICY</h2>
-                <div class="space-y-4 text-sm leading-relaxed"><p>สินค้าดิจิทัลไม่สามารถคืนเงินได้ในทุกกรณี...</p></div>
+
+            <div id="view-return" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
+                <h2 class="text-2xl font-bold mb-6 text-primary">RETURN POLICY (นโยบายการคืนสินค้าและคืนเงิน)</h2>
+                <div class="space-y-4 text-sm leading-relaxed" id="return-content">
+                    <p>เว็บไซต์ Next Live Shop ขอแจ้งนโยบายการคืนเงินเพื่อเป็นข้อตกลงและสร้างความเข้าใจเกี่ยวกับการใช้บริการเว็บไซต์ ดังนี้</p>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>สินค้าที่ เว็บไซต์ จัดจำหน่ายบนเว็บไซด์ เป็นสินค้าดิจิตอลที่ไม่สามารถคืนสินค้า และไม่สามารถคืนเงินได้</li>
+                        <li>เว็บไซต์ จะทำการคืนเงินค่าสินค้าให้กับลูกค้า ในกรณีที่เว็บไซต์ ไม่สามารถจัดส่งสินค้าให้ลูกค้าได้เท่านั้น (โดยจะทำการคืนเงินให้ในส่วนที่ เว็บไซต์ ไม่ได้จัดส่งสินค้าให้ลูกค้า)</li>
+                    </ul>
+                    <h3 class="font-semibold text-lg mt-6">ระยะเวลาการคืนเงินค่าสินค้า มีรายละเอียดดังนี้</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>กรณีลูกค้าชำระเงินเต็มจำนวนหรือผ่อนชำระ ตัดผ่านบัตรเครดิตของธนาคารพาณิชย์ที่จดทะเบียนในประเทศไทย เว็บไซต์จะส่งเรื่องขอคืนเงินไปยังธนาคาร โดยการคืนเงินจะขึ้นอยู่กับนโยบายของแต่ละธนาคาร ตามปกติแล้วผู้ถือบัตรจะได้รับเงินคืนในรอบบิลถัดไป</li>
+                        <li>กรณีลูกค้าชำระเงินเต็มจำนวน ตัดผ่านช่องทาง True Money Wallet จะทำการคืนเงินกลับไปยัง True Money Wallet ที่ลูกค้าใช้ในการชำระเงิน โดยใช้ระยะเวลาประมาณ 7-14 วันทำการ</li>
+                        <li>กรณีลูกค้าชำระเงินเต็มจำนวน ตัดผ่านบัตรเดบิตของธนาคารพาณิชย์ที่จดทะเบียนในประเทศไทย เว็บไซต์จะส่งเรื่องขอคืนเงินไปยังธนาคาร โดยการคืนเงินจะขึ้นอยู่กับนโยบายของแต่ละธนาคาร ซึ่งจะใช้ระยะเวลาในการคืนเงินตั้งแต่ 30-60 วัน นับจากวันที่ลูกค้าได้รับการแจ้งจาก Call Center</li>
+                    </ul>
+                    <h3 class="font-semibold text-lg mt-6">ไม่สามารถดำเนินการยกเลิก เปลี่ยนแปลง แก้ไข รายการสั่งซื้อสินค้า ในกรณีต่างๆ ดังนี้</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>กรณีที่เกิดขึ้นจากความผิดพลาดในการสั่งซื้อสินค้า ผิดรุ่น, ผิดประเภทฯ</li>
+                        <li>กรณีที่เกิดขึ้นจากการเปลี่ยนแปลงของราคาสินค้าที่อาจเกิดขึ้นได้ในอนาคต รวมถึง Gift Voucher ต่างๆ ทุกกรณี</li>
+                        <li>กรณีที่เกิดขึ้นจากความต้องการใส่ส่วนลดเพิ่มเติม, ลืมใส่ส่วนลด, Coupon</li>
+                        <li>กรณีที่เกิดขึ้นจากการเปลี่ยนใจ (Change of mind) ของผู้สั่งซื้อสินค้าทุกกรณี</li>
+                    </ul>
+                    <h3 class="font-semibold text-lg mt-6">เว็บไซต์ จะไม่ดำเนินการจัดส่งสินค้า และต้องทำการคืนเงินเท่านั้น เนื่องจากกรณีต่างๆ ดังนี้</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>กรณีที่เกิดขึ้นจากสินค้าหมด (เช่น สินค้าหมด Stock, สินค้ายกเลิกการผลิตฯ)</li>
+                        <li>กรณีที่เกิดขึ้นจากเหตุสุดวิสัย (System Error) ที่อาจเกิดขึ้น</li>
+                    </ul>
+                    <p class="mt-4 font-semibold text-red-500">เว็บไซต์ ขอสงวนสิทธิ์ในการคืนเงินเกินระยะเวลาที่กำหนด หากเกิดเหตุสุดวิสัย – เว็บไซต์ ขอสงวนสิทธิในการเปลี่ยนแปลงเงื่อนไขใดๆ โดยไม่จำต้องแจ้งให้ทราบล่วงหน้า</p>
+                </div>
             </div>
+
         </main>
 
         <!-- Footer -->
@@ -474,12 +563,18 @@
                     <button onclick="openAuth('register'); toggleCategorySidebar()" class="bg-primary text-white py-2 text-sm font-bold">สมัครใช้งาน</button>
                 </div>
             </div>
+            
+            <!-- Mobile Menu: ดึงไอคอน "ช่องยอดเงิน" ใส่ในมือถือตามที่ขอ -->
             <div id="mobile-profile-section" class="hidden md:hidden border-b border-gray-100 pb-2 mb-2">
-                <div class="p-4">
-                    <p class="font-bold" id="mob-name">User</p>
-                    <p class="text-xs text-gray-500" id="mob-email">Email</p>
+                <div class="p-4 bg-gray-50 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i data-lucide="coins" class="w-8 h-8 text-primary mr-3"></i>
+                        <div><p class="font-bold text-sm">ยอดเงิน / พอยท์</p><p class="font-bold text-lg text-primary">฿0.00</p></div>
+                    </div>
+                    <button class="text-gray-400 hover:text-primary"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
                 </div>
                 <ul class="text-sm">
+                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50" onclick="navigate('profile'); toggleCategorySidebar()"><i data-lucide="user" class="w-4 h-4 mr-3"></i>ข้อมูลโปรไฟล์</li>
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50" onclick="navigate('history'); toggleCategorySidebar()"><i data-lucide="history" class="w-4 h-4 mr-3"></i>ประวัติการสั่งซื้อ</li>
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 text-red-500" onclick="logout(); toggleCategorySidebar()"><i data-lucide="log-out" class="w-4 h-4 mr-3"></i>ออกจากระบบ</li>
                 </ul>
@@ -533,7 +628,22 @@
         </div>
     </div>
 
-    <!-- Custom Popup Container (แบบที่คุณให้มา) -->
+    <!-- Payment Steps Modal -->
+    <div id="payment-steps-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 overlay-enter flex items-center justify-center p-4">
+        <div id="payment-steps-modal" class="bg-white dark:bg-[#1e1e1e] rounded-md shadow-2xl w-full max-w-md p-6 transform scale-95 opacity-0 transition-all duration-300">
+            <h3 class="text-xl font-bold mb-4 text-primary">ขั้นตอนการชำระเงิน</h3>
+            <ol class="list-decimal pl-5 space-y-3 text-sm text-gray-700 dark:text-gray-300 font-kanit">
+                <li>คลิก "QR Code" เพื่อบันทึกรูปหรือแคปหน้าจอ</li>
+                <li>เปิดแอปพลิเคชันธนาคารบนอุปกรณ์ของท่าน</li>
+                <li>เลือกไปที่ปุ่ม "สแกนจ่าย" หรือ “QR Code” และกดที่ “รูปภาพ”</li>
+                <li>เลือกรูปภาพที่ท่านแคปไว้และทำการชำระเงิน โดยตรวจสอบชื่อบัญชีให้ถูกต้อง</li>
+                <li>หลังจากชำระเงินเสร็จสิ้น ให้ทำการอัปโหลดสลิปที่หน้านี้</li>
+            </ol>
+            <button onclick="closePaymentSteps()" class="mt-6 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition-colors">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+
+    <!-- Custom Popup Container (ตามโค้ดของคุณ) -->
     <div class="popup-container" id="custom-popup">
         <div class="popup-box">
             <h1 id="popup-title">Hello!</h1>
@@ -555,13 +665,11 @@
         let searchQuery = '';
         let currentUser = null; 
         
-        // Data from Sheet
         let siteSettings = {};
         let categories = [{ id: 'all', name: 'สินค้าทั้งหมด' }];
         let products = [];
         let optionsDB = [];
         
-        // Checkout Logic
         let currentSubtotal = 0;
         let currentDiscount = 0;
         let currentVat = 0;
@@ -587,34 +695,28 @@
         function init() {
             try { lucide.createIcons(); } catch(e) {}
             initSlider();
+            updateLiveClock(); // นาฬิกาในหน้าโปรไฟล์
             
-            // Fetch All Data on Load
             fetch(GAS_WEBAPP_URL, { method: 'POST', body: JSON.stringify({action: 'init'}) })
             .then(r => r.json())
             .then(res => {
-                document.getElementById('global-loader').style.display = 'none'; // Hide loader
+                document.getElementById('global-loader').style.display = 'none'; 
                 
                 if(res.status === 'success') {
                     siteSettings = res.settings;
                     
-                    // เช็คสวิตช์ปิดเว็บ (แปลงค่าเป็น String ตัวพิมพ์ใหญ่ให้เช็คได้ชัวร์ 100%)
                     let isActive = String(siteSettings.SiteActive).trim().toUpperCase() === "TRUE";
                     if(!isActive) {
                         document.getElementById('maintenance-screen').style.display = 'flex';
                         document.getElementById('app-wrapper').style.display = 'none';
-                        return; // หยุดทำงาน
+                        return; 
                     } else {
                         document.getElementById('maintenance-screen').style.display = 'none';
                         document.getElementById('app-wrapper').style.display = 'flex';
                     }
 
-                    // อัปเดตข้อมูล Settings เข้า UI
                     applySettingsToUI();
-
-                    // รับ Categories
                     res.categories.forEach(c => categories.push({id: c, name: c}));
-                    
-                    // รับ Products และ Options
                     products = res.products;
                     optionsDB = res.options;
 
@@ -633,7 +735,6 @@
         }
 
         function applySettingsToUI() {
-            // ชื่อเว็บ
             document.title = siteSettings.SiteName + " | E-Commerce";
             let nameParts = siteSettings.SiteName.split(" ");
             document.getElementById('nav-logo-text1').innerText = nameParts[0] || "NEXT";
@@ -643,16 +744,13 @@
             document.getElementById('slip-shop-name').innerText = siteSettings.SiteName;
             document.getElementById('footer-copy').innerHTML = `&copy; 2026 ${siteSettings.SiteName}. All Rights Reserved.`;
 
-            // ข้อมูลติดต่อ
             document.getElementById('f-phone').innerText = siteSettings.AdminPhone || "000";
             document.getElementById('f-email').innerText = siteSettings.AdminEmail || "email";
             document.getElementById('f-fb').href = siteSettings.FacebookLink || "#";
             document.getElementById('f-line').href = siteSettings.LineLink || "#";
 
-            // สลิป QR Code
             document.getElementById('slip-admin-name').innerText = siteSettings.AdminName;
             
-            // Mask เลขบัญชี 140-X-XXXX9-X
             let acc = siteSettings.BankAccount || "0000000000";
             if(acc.length >= 10) {
                 let masked = acc.substring(0,3) + "-X-XXXX" + acc.substring(acc.length-2, acc.length-1) + "-X";
@@ -686,14 +784,14 @@
                 document.getElementById('profile-name').innerText = currentUser.fname;
                 document.getElementById('dd-fullname').innerText = currentUser.fname + " " + currentUser.lname;
                 document.getElementById('dd-email').innerText = currentUser.email;
-                
-                if(document.getElementById('mob-name')) document.getElementById('mob-name').innerText = currentUser.fname;
-                if(document.getElementById('mob-email')) document.getElementById('mob-email').innerText = currentUser.email;
 
                 if(document.getElementById('chk-fname')) document.getElementById('chk-fname').value = currentUser.fname;
                 if(document.getElementById('chk-lname')) document.getElementById('chk-lname').value = currentUser.lname;
                 if(document.getElementById('chk-email')) document.getElementById('chk-email').value = currentUser.email;
                 if(document.getElementById('chk-phone')) document.getElementById('chk-phone').value = currentUser.phone;
+
+                // Render Profile Data in view-profile
+                renderProfileView();
             } else {
                 currentUser = null;
                 authWrapper.style.display = 'block';
@@ -763,9 +861,41 @@
                 if(res.status === 'success') {
                     localStorage.setItem('nextLiveUser', JSON.stringify(res.user));
                     checkLoginState();
+                    showCustomPopup("ยินดีต้อนรับ", "เข้าสู่ระบบสำเร็จ");
                     navigate('home');
                 } else { showCustomPopup("ข้อผิดพลาด", res.message); }
             }).catch(e => { btn.innerText = "ลงชื่อเข้าใช้งาน"; btn.disabled = false; showCustomPopup("Error", e); });
+        }
+
+        // --- Render Profile View ---
+        function renderProfileView() {
+            if(!currentUser) return;
+            document.getElementById('vp-name').innerText = currentUser.fname + " " + currentUser.lname;
+            document.getElementById('vp-email').innerText = currentUser.email;
+            document.getElementById('vp-phone').innerText = currentUser.phone;
+            document.getElementById('vp-date').innerText = currentUser.regDate || "N/A";
+
+            let addr = currentUser.address || {};
+            document.getElementById('prof-name-text').innerText = currentUser.fname + " " + currentUser.lname;
+            document.getElementById('prof-addr-text1').innerText = `${addr.addr1 || ''} ${addr.addr2 || ''}`;
+            document.getElementById('prof-addr-text2').innerText = `ถนน${addr.addr3 || ''} แขวง/ตำบล${addr.addr4 || ''} เขต/อำเภอ${addr.addr5 || ''}`;
+            document.getElementById('prof-addr-text3').innerText = `จังหวัด${addr.addr6 || ''}`;
+
+            let zip = (addr.addr7 || "00000").toString();
+            if(zip.length > 5) zip = zip.substring(0,5);
+            else if(zip.length < 5) zip = zip.padEnd(5, '0');
+            
+            for(let i=0; i<5; i++) {
+                let cell = document.getElementById('zip-'+(i+1));
+                if(cell) cell.innerText = zip[i];
+            }
+        }
+
+        function updateLiveClock() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('current-time').innerText = now.toLocaleDateString('th-TH', options) + ' น.';
+            setTimeout(updateLiveClock, 1000);
         }
 
         function formatPrice(price) {
@@ -773,7 +903,7 @@
         }
 
         function navigate(view) {
-            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-privacy', 'view-return', 'view-history', 'view-auth'];
+            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-profile'];
             views.forEach(v => {
                 const el = document.getElementById(v);
                 if(el) el.classList.add('hidden');
@@ -788,20 +918,32 @@
                 document.getElementById('history-phone-input').value = currentUser.phone;
                 searchHistory();
             }
+            if (view === 'profile' && currentUser) {
+                renderProfileView();
+            }
             if (view === 'payment') {
                 document.getElementById('slip-total-amount').innerText = currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 
-                // ใช้ promptpayQr library สร้าง QR Code ของแท้
+                // ใช้ promptpayQr library สร้าง QR Code เป๊ะๆ โดยดึงโลโก้ตามที่คุณระบุ
                 if (window.promptpayQr && siteSettings.BankAccount) {
-                    const qrDataStr = window.promptpayQr(siteSettings.BankAccount.replace(/-/g, ''), { amount: currentNetTotal });
-                    // ลิงก์รูปภาพ QR
-                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrDataStr)}&size=500x500&margin=10&qzone=1`;
+                    const acc = siteSettings.BankAccount.replace(/-/g, '');
+                    const qrDataStr = window.promptpayQr(acc, { amount: currentNetTotal });
+                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrDataStr)}&size=500x500&margin=10&qzone=1&logo=https://img2.pic.in.th/pic/1000008216.jpg`;
                     $('#promptpay-qr-img').attr('src', qrUrl);
                 }
 
                 document.getElementById('verification-overlay').classList.add('hidden');
                 document.getElementById('upload-section').classList.remove('hidden');
             }
+        }
+
+        function openPaymentSteps() {
+            document.getElementById('payment-steps-overlay').classList.add('overlay-enter-active');
+            document.getElementById('payment-steps-modal').classList.remove('opacity-0', 'scale-95');
+        }
+        function closePaymentSteps() {
+            document.getElementById('payment-steps-modal').classList.add('opacity-0', 'scale-95');
+            document.getElementById('payment-steps-overlay').classList.remove('overlay-enter-active');
         }
 
         // --- Render UI ---
@@ -973,9 +1115,7 @@
                 currentSubtotal += p * item.qty;
             });
             
-            // ใช้ส่วนลดที่หาได้ (ห้ามเกินราคาสินค้า)
             currentDiscount = Math.min(currentDiscount, currentSubtotal);
-
             let afterDiscount = currentSubtotal - currentDiscount;
             currentVat = afterDiscount * 0.07;
             currentNetTotal = afterDiscount + currentVat; 
