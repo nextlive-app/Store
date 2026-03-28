@@ -166,7 +166,7 @@
                             </div>
                         </div>
 
-                        <!-- Profile Menu -->
+                        <!-- Profile Menu (ปุ่มกดเพื่อไปหน้าโปรไฟล์) -->
                         <div id="user-profile-menu" class="hidden relative group z-50 mr-2 border-r border-gray-200 dark:border-gray-700 pr-4">
                             <button onclick="navigate('profile')" class="flex items-center space-x-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
                                 <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold" id="profile-icon">U</div>
@@ -214,7 +214,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6" id="product-grid"></div>
             </div>
 
-            <!-- View: Profile (NEW) -->
+            <!-- View: Profile (ข้อมูลส่วนตัว + ที่อยู่แบบฟอร์มซองจดหมาย) -->
             <div id="view-profile" class="hidden max-w-4xl mx-auto px-4 py-12">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-primary">ข้อมูลโปรไฟล์</h2>
@@ -233,7 +233,7 @@
                     </div>
                 </div>
 
-                <!-- Address Template -->
+                <!-- Address Template (ซองจดหมาย) -->
                 <div class="template-container">
                     <div class="template-header">
                         <div class="header-title">ข้อมูลที่อยู่ของคุณ</div>
@@ -388,6 +388,7 @@
                 <button onclick="navigate('checkout')" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> ย้อนกลับเพื่อแก้ไขข้อมูล</button>
 
                 <div class="slip-container" id="user-slip-element">
+                    <!-- หัวบิล Thai QR Payment -->
                     <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-4 border-white">
                         <div class="header-icon-box flex-shrink-0">
                             <img src="https://img2.pic.in.th/pic/1000008216.jpg" class="w-full h-full object-contain">
@@ -460,7 +461,7 @@
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
             
-            <!-- Policy Views (เนื้อหากลับมาครบ 100%) -->
+            <!-- Policy Views -->
             <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
@@ -682,8 +683,25 @@
             { img: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" }
         ];
 
+        // =========================================================================
+        // SAFE SETTERS: ฟังก์ชันป้องกันบัค "Cannot set properties of null" 100%
+        // =========================================================================
+        function safeSetText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = text;
+        }
+
+        function safeSetHTML(id, htmlString) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = htmlString;
+        }
+
+        function safeSetValue(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.value = val;
+        }
+
         // --- Helper Function: Call Backend ---
-        // ป้องกัน Error จาก CORS และอ่านการคืนค่าของ Apps Script แบบครอบคลุม
         async function callBackend(payload) {
             try {
                 const response = await fetch(GAS_WEBAPP_URL, {
@@ -705,12 +723,14 @@
 
         // --- Custom Popup ---
         function showCustomPopup(title, text) {
-            document.getElementById('popup-title').innerText = title;
-            document.getElementById('popup-desc').innerText = text;
-            document.getElementById('custom-popup').classList.add('active');
+            safeSetText('popup-title', title);
+            safeSetText('popup-desc', text);
+            const popup = document.getElementById('custom-popup');
+            if(popup) popup.classList.add('active');
         }
         function closeCustomPopup() {
-            document.getElementById('custom-popup').classList.remove('active');
+            const popup = document.getElementById('custom-popup');
+            if(popup) popup.classList.remove('active');
         }
 
         // --- Core Functions & Init ---
@@ -721,19 +741,24 @@
             
             callBackend({action: 'init'})
             .then(res => {
-                document.getElementById('global-loader').style.display = 'none'; 
+                const loader = document.getElementById('global-loader');
+                if(loader) loader.style.display = 'none'; 
                 
                 if(res.status === 'success') {
                     siteSettings = res.settings;
                     
                     let isActive = String(siteSettings.SiteActive).trim().toUpperCase() === "TRUE";
                     if(!isActive) {
-                        document.getElementById('maintenance-screen').style.display = 'flex';
-                        document.getElementById('app-wrapper').style.display = 'none';
+                        const mScreen = document.getElementById('maintenance-screen');
+                        const appWrapper = document.getElementById('app-wrapper');
+                        if(mScreen) mScreen.style.display = 'flex';
+                        if(appWrapper) appWrapper.style.display = 'none';
                         return; 
                     } else {
-                        document.getElementById('maintenance-screen').style.display = 'none';
-                        document.getElementById('app-wrapper').style.display = 'flex';
+                        const mScreen = document.getElementById('maintenance-screen');
+                        const appWrapper = document.getElementById('app-wrapper');
+                        if(mScreen) mScreen.style.display = 'none';
+                        if(appWrapper) appWrapper.style.display = 'flex';
                     }
 
                     applySettingsToUI();
@@ -747,12 +772,19 @@
                     renderProducts();
                     checkLoginState();
                     
-                    document.getElementById('product-search-desktop').addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderProducts(); });
+                    const searchBox = document.getElementById('product-search-desktop');
+                    if(searchBox) {
+                        searchBox.addEventListener('input', (e) => { 
+                            searchQuery = e.target.value.toLowerCase(); 
+                            renderProducts(); 
+                        });
+                    }
                 } else {
                     showCustomPopup("ข้อผิดพลาด", "โหลดข้อมูลไม่สำเร็จ: " + res.message);
                 }
             }).catch(e => {
-                document.getElementById('global-loader').style.display = 'none';
+                const loader = document.getElementById('global-loader');
+                if(loader) loader.style.display = 'none';
                 showCustomPopup("ข้อผิดพลาดระบบ", e.message);
             });
         }
@@ -760,26 +792,28 @@
         function applySettingsToUI() {
             document.title = siteSettings.SiteName + " | E-Commerce";
             let nameParts = siteSettings.SiteName.split(" ");
-            document.getElementById('nav-logo-text1').innerText = nameParts[0] || "NEXT";
-            document.getElementById('nav-logo-text2').innerText = nameParts.slice(1).join(" ") || "LIVE";
-            document.getElementById('footer-logo1').innerText = nameParts[0] || "NEXT";
-            document.getElementById('footer-logo2').innerText = nameParts.slice(1).join(" ") || "LIVE";
-            document.getElementById('slip-shop-name').innerText = siteSettings.SiteName;
-            document.getElementById('footer-copy').innerHTML = `&copy; 2026 ${siteSettings.SiteName}. All Rights Reserved.`;
+            
+            safeSetText('nav-logo-text1', nameParts[0] || "NEXT");
+            safeSetText('nav-logo-text2', nameParts.slice(1).join(" ") || "LIVE");
+            safeSetText('footer-logo1', nameParts[0] || "NEXT");
+            safeSetText('footer-logo2', nameParts.slice(1).join(" ") || "LIVE");
+            safeSetText('slip-shop-name', siteSettings.SiteName);
+            safeSetHTML('footer-copy', `&copy; 2026 ${siteSettings.SiteName}. All Rights Reserved.`);
 
-            document.getElementById('f-phone').innerText = siteSettings.AdminPhone || "000";
-            document.getElementById('f-email').innerText = siteSettings.AdminEmail || "email";
-            document.getElementById('f-fb').href = siteSettings.FacebookLink || "#";
-            document.getElementById('f-line').href = siteSettings.LineLink || "#";
+            safeSetText('f-phone', siteSettings.AdminPhone || "000");
+            safeSetText('f-email', siteSettings.AdminEmail || "email");
+            
+            const fb = document.getElementById('f-fb'); if(fb) fb.href = siteSettings.FacebookLink || "#";
+            const ln = document.getElementById('f-line'); if(ln) ln.href = siteSettings.LineLink || "#";
 
-            document.getElementById('slip-admin-name').innerText = siteSettings.AdminName;
+            safeSetText('slip-admin-name', siteSettings.AdminName);
             
             let acc = siteSettings.BankAccount || "0000000000";
             if(acc.length >= 10) {
                 let masked = acc.substring(0,3) + "-X-XXXX" + acc.substring(acc.length-2, acc.length-1) + "-X";
-                document.getElementById('slip-admin-acc').innerText = masked;
+                safeSetText('slip-admin-acc', masked);
             } else {
-                document.getElementById('slip-admin-acc').innerText = acc;
+                safeSetText('slip-admin-acc', acc);
             }
         }
 
@@ -799,22 +833,21 @@
             if(savedUser) {
                 currentUser = JSON.parse(savedUser);
                 
-                // ใช้ if() ครอบ เพื่อป้องกันบัค null ในกรณีหน้าจอมือถือ/คอม
                 if(authWrapper) authWrapper.style.display = 'none'; 
                 if(profMenu) profMenu.classList.remove('hidden'); 
                 if(mobileAuth) mobileAuth.style.display = 'none'; 
                 if(mobileProf) mobileProf.style.display = 'block';
                 
-                if(document.getElementById('profile-icon')) document.getElementById('profile-icon').innerText = currentUser.fname.charAt(0).toUpperCase();
-                if(document.getElementById('profile-name')) document.getElementById('profile-name').innerText = currentUser.fname;
+                safeSetText('profile-icon', currentUser.fname.charAt(0).toUpperCase());
+                safeSetText('profile-name', currentUser.fname);
                 
-                if(document.getElementById('mob-name')) document.getElementById('mob-name').innerText = currentUser.fname;
-                if(document.getElementById('mob-email')) document.getElementById('mob-email').innerText = currentUser.email;
+                safeSetText('mob-name', currentUser.fname);
+                safeSetText('mob-email', currentUser.email);
 
-                if(document.getElementById('chk-fname')) document.getElementById('chk-fname').value = currentUser.fname;
-                if(document.getElementById('chk-lname')) document.getElementById('chk-lname').value = currentUser.lname;
-                if(document.getElementById('chk-email')) document.getElementById('chk-email').value = currentUser.email;
-                if(document.getElementById('chk-phone')) document.getElementById('chk-phone').value = currentUser.phone;
+                safeSetValue('chk-fname', currentUser.fname);
+                safeSetValue('chk-lname', currentUser.lname);
+                safeSetValue('chk-email', currentUser.email);
+                safeSetValue('chk-phone', currentUser.phone);
 
                 renderProfileView();
             } else {
@@ -836,87 +869,100 @@
         function submitRegister() {
             const form1 = document.getElementById('reg-form-1');
             const form2 = document.getElementById('reg-form-2');
-            if(!form1.checkValidity() || !form2.checkValidity()) { showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน"); return; }
+            if(form1 && form2 && (!form1.checkValidity() || !form2.checkValidity())) { 
+                showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน"); 
+                return; 
+            }
             
             const btn = document.getElementById('btn-submit-register');
-            btn.innerText = "กำลังสร้างบัญชี..."; btn.disabled = true;
+            if(btn) { btn.innerText = "กำลังสร้างบัญชี..."; btn.disabled = true; }
 
             const payload = {
                 action: 'register',
-                fname: document.getElementById('reg-fname').value,
-                lname: document.getElementById('reg-lname').value,
-                email: document.getElementById('reg-email').value,
-                phone: document.getElementById('reg-phone').value,
-                password: document.getElementById('reg-pass').value,
-                addr1: document.getElementById('reg-addr1').value,
-                addr2: document.getElementById('reg-addr2').value,
-                addr3: document.getElementById('reg-addr3').value,
-                addr4: document.getElementById('reg-addr4').value,
-                addr5: document.getElementById('reg-addr5').value,
-                addr6: document.getElementById('reg-addr6').value,
-                addr7: document.getElementById('reg-addr7').value
+                fname: document.getElementById('reg-fname') ? document.getElementById('reg-fname').value : "",
+                lname: document.getElementById('reg-lname') ? document.getElementById('reg-lname').value : "",
+                email: document.getElementById('reg-email') ? document.getElementById('reg-email').value : "",
+                phone: document.getElementById('reg-phone') ? document.getElementById('reg-phone').value : "",
+                password: document.getElementById('reg-pass') ? document.getElementById('reg-pass').value : "",
+                addr1: document.getElementById('reg-addr1') ? document.getElementById('reg-addr1').value : "",
+                addr2: document.getElementById('reg-addr2') ? document.getElementById('reg-addr2').value : "",
+                addr3: document.getElementById('reg-addr3') ? document.getElementById('reg-addr3').value : "",
+                addr4: document.getElementById('reg-addr4') ? document.getElementById('reg-addr4').value : "",
+                addr5: document.getElementById('reg-addr5') ? document.getElementById('reg-addr5').value : "",
+                addr6: document.getElementById('reg-addr6') ? document.getElementById('reg-addr6').value : "",
+                addr7: document.getElementById('reg-addr7') ? document.getElementById('reg-addr7').value : ""
             };
 
             callBackend(payload)
             .then(res => {
-                btn.innerText = "สร้างบัญชี"; btn.disabled = false;
+                if(btn) { btn.innerText = "สร้างบัญชี"; btn.disabled = false; }
                 if(res.status === 'success') {
                     showCustomPopup("สำเร็จ!", "สมัครสมาชิกและเข้าสู่ระบบเรียบร้อย ระบบได้ส่งอีเมลยืนยันแล้ว");
                     localStorage.setItem('nextLiveUser', JSON.stringify(res.user));
                     checkLoginState();
                     navigate('home');
                 } else { showCustomPopup("ข้อผิดพลาด", res.message); }
-            }).catch(e => { btn.innerText = "สร้างบัญชี"; btn.disabled = false; showCustomPopup("ข้อผิดพลาด", e.message); });
+            }).catch(e => { 
+                if(btn) { btn.innerText = "สร้างบัญชี"; btn.disabled = false; }
+                showCustomPopup("ข้อผิดพลาด", e.message); 
+            });
         }
 
         function submitLogin() {
             const form = document.getElementById('login-form');
-            if(!form.checkValidity()) { form.reportValidity(); return; }
+            if(form && !form.checkValidity()) { form.reportValidity(); return; }
             
             const btn = document.getElementById('btn-submit-login');
-            btn.innerText = "กำลังเข้าสู่ระบบ..."; btn.disabled = true;
+            if(btn) { btn.innerText = "กำลังเข้าสู่ระบบ..."; btn.disabled = true; }
 
-            const payload = { action: 'login', username: document.getElementById('log-username').value, password: document.getElementById('log-password').value };
+            const payload = { 
+                action: 'login', 
+                username: document.getElementById('log-username') ? document.getElementById('log-username').value : "", 
+                password: document.getElementById('log-password') ? document.getElementById('log-password').value : "" 
+            };
 
             callBackend(payload)
             .then(res => {
-                btn.innerText = "ลงชื่อเข้าใช้งาน"; btn.disabled = false;
+                if(btn) { btn.innerText = "ลงชื่อเข้าใช้งาน"; btn.disabled = false; }
                 if(res.status === 'success') {
                     localStorage.setItem('nextLiveUser', JSON.stringify(res.user));
                     checkLoginState();
                     showCustomPopup("ยินดีต้อนรับ", "เข้าสู่ระบบสำเร็จ");
                     navigate('home');
                 } else { showCustomPopup("ข้อผิดพลาด", res.message); }
-            }).catch(e => { btn.innerText = "ลงชื่อเข้าใช้งาน"; btn.disabled = false; showCustomPopup("ข้อผิดพลาด", e.message); });
+            }).catch(e => { 
+                if(btn) { btn.innerText = "ลงชื่อเข้าใช้งาน"; btn.disabled = false; }
+                showCustomPopup("ข้อผิดพลาด", e.message); 
+            });
         }
 
         function renderProfileView() {
             if(!currentUser) return;
-            document.getElementById('vp-name').innerText = currentUser.fname + " " + currentUser.lname;
-            document.getElementById('vp-email').innerText = currentUser.email;
-            document.getElementById('vp-phone').innerText = currentUser.phone;
-            document.getElementById('vp-date').innerText = currentUser.regDate || "N/A";
+            
+            safeSetText('vp-name', currentUser.fname + " " + currentUser.lname);
+            safeSetText('vp-email', currentUser.email);
+            safeSetText('vp-phone', currentUser.phone);
+            safeSetText('vp-date', currentUser.regDate || "N/A");
 
             let addr = currentUser.address || {};
-            document.getElementById('prof-name-text').innerText = currentUser.fname + " " + currentUser.lname;
-            document.getElementById('prof-addr-text1').innerText = `${addr.addr1 || ''} ${addr.addr2 || ''}`;
-            document.getElementById('prof-addr-text2').innerText = `ถนน${addr.addr3 || ''} แขวง/ตำบล${addr.addr4 || ''} เขต/อำเภอ${addr.addr5 || ''}`;
-            document.getElementById('prof-addr-text3').innerText = `จังหวัด${addr.addr6 || ''}`;
+            safeSetText('prof-name-text', currentUser.fname + " " + currentUser.lname);
+            safeSetText('prof-addr-text1', `${addr.addr1 || ''} ${addr.addr2 || ''}`);
+            safeSetText('prof-addr-text2', `ถนน${addr.addr3 || ''} แขวง/ตำบล${addr.addr4 || ''} เขต/อำเภอ${addr.addr5 || ''}`);
+            safeSetText('prof-addr-text3', `จังหวัด${addr.addr6 || ''}`);
 
             let zip = (addr.addr7 || "00000").toString();
             if(zip.length > 5) zip = zip.substring(0,5);
             else if(zip.length < 5) zip = zip.padEnd(5, '0');
             
             for(let i=0; i<5; i++) {
-                let cell = document.getElementById('zip-'+(i+1));
-                if(cell) cell.innerText = zip[i];
+                safeSetText('zip-'+(i+1), zip[i]);
             }
         }
 
         function updateLiveClock() {
             const now = new Date();
             const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            document.getElementById('current-time').innerText = now.toLocaleDateString('th-TH', options) + ' น.';
+            safeSetText('current-time', now.toLocaleDateString('th-TH', options) + ' น.');
             setTimeout(updateLiveClock, 1000);
         }
 
@@ -937,14 +983,14 @@
 
             if (view === 'checkout') renderCheckoutItems();
             if (view === 'history' && currentUser) {
-                document.getElementById('history-phone-input').value = currentUser.phone;
+                safeSetValue('history-phone-input', currentUser.phone);
                 searchHistory();
             }
             if (view === 'profile' && currentUser) {
                 renderProfileView();
             }
             if (view === 'payment') {
-                document.getElementById('slip-total-amount').innerText = currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                safeSetText('slip-total-amount', currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 
                 if (window.promptpayQr && siteSettings.BankAccount) {
                     const acc = siteSettings.BankAccount.replace(/-/g, '');
@@ -953,23 +999,28 @@
                     $('#promptpay-qr-img').attr('src', qrUrl);
                 }
 
-                document.getElementById('verification-overlay').classList.add('hidden');
-                document.getElementById('upload-section').classList.remove('hidden');
+                const ver = document.getElementById('verification-overlay'); if(ver) ver.classList.add('hidden');
+                const upl = document.getElementById('upload-section'); if(upl) upl.classList.remove('hidden');
             }
         }
 
         function openPaymentSteps() {
-            document.getElementById('payment-steps-overlay').classList.add('overlay-enter-active');
-            document.getElementById('payment-steps-modal').classList.remove('opacity-0', 'scale-95');
+            const overlay = document.getElementById('payment-steps-overlay');
+            const modal = document.getElementById('payment-steps-modal');
+            if(overlay) overlay.classList.add('overlay-enter-active');
+            if(modal) modal.classList.remove('opacity-0', 'scale-95');
         }
         function closePaymentSteps() {
-            document.getElementById('payment-steps-modal').classList.add('opacity-0', 'scale-95');
-            document.getElementById('payment-steps-overlay').classList.remove('overlay-enter-active');
+            const overlay = document.getElementById('payment-steps-overlay');
+            const modal = document.getElementById('payment-steps-modal');
+            if(modal) modal.classList.add('opacity-0', 'scale-95');
+            if(overlay) overlay.classList.remove('overlay-enter-active');
         }
 
         // --- Render UI ---
         function renderCategoryMenu() {
             const list = document.getElementById('category-list');
+            if(!list) return;
             let htmlStr = '';
             categories.forEach(cat => {
                 const isActive = activeCategory === cat.id;
@@ -983,7 +1034,7 @@
 
         function selectCategory(id, name) {
             activeCategory = id; 
-            document.getElementById('section-title').innerText = name;
+            safeSetText('section-title', name);
             navigate('home'); 
             renderCategoryMenu(); 
             renderProducts(); 
@@ -992,6 +1043,7 @@
 
         function renderProducts() {
             const grid = document.getElementById('product-grid');
+            if(!grid) return;
             grid.innerHTML = '';
             let filtered = activeCategory === 'all' ? products : products.filter(p => p.category === activeCategory);
             if (searchQuery) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery));
@@ -1021,38 +1073,49 @@
         // --- Modal & Cart ---
         function openModal(id) {
             const product = products.find(p => p.id === id);
+            if(!product) return;
             selectedProductForModal = product;
             selectedOptions = []; 
-            document.getElementById('modal-img').src = product.image;
-            document.getElementById('modal-title').innerText = product.name;
-            document.getElementById('modal-desc').innerText = product.desc;
-            document.getElementById('modal-price').innerText = formatPrice(product.price);
+            
+            const mImg = document.getElementById('modal-img'); if(mImg) mImg.src = product.image;
+            safeSetText('modal-title', product.name);
+            safeSetText('modal-desc', product.desc);
+            safeSetText('modal-price', formatPrice(product.price));
             
             const optsContainer = document.getElementById('modal-options');
-            optsContainer.innerHTML = '';
-            optionsDB.forEach(opt => {
-                const div = document.createElement('label');
-                div.className = "flex items-center justify-between py-2 border-b border-gray-100 cursor-pointer hover:bg-gray-50 px-2";
-                div.innerHTML = `
-                    <div class="flex items-center">
-                        <input type="checkbox" class="w-4 h-4 text-primary" onchange="toggleOption('${opt.id}', this.checked)">
-                        <span class="ml-3 text-sm">${opt.name}</span>
-                    </div>
-                    <span class="text-sm text-gray-500">+${formatPrice(opt.price)}</span>
-                `;
-                optsContainer.appendChild(div);
-            });
+            if(optsContainer) {
+                optsContainer.innerHTML = '';
+                optionsDB.forEach(opt => {
+                    const div = document.createElement('label');
+                    div.className = "flex items-center justify-between py-2 border-b border-gray-100 cursor-pointer hover:bg-gray-50 px-2";
+                    div.innerHTML = `
+                        <div class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-primary" onchange="toggleOption('${opt.id}', this.checked)">
+                            <span class="ml-3 text-sm">${opt.name}</span>
+                        </div>
+                        <span class="text-sm text-gray-500">+${formatPrice(opt.price)}</span>
+                    `;
+                    optsContainer.appendChild(div);
+                });
+            }
 
-            document.getElementById('modal-add-btn').onclick = () => { addToCartData(product, selectedOptions); closeModal(); showCustomPopup("สำเร็จ", "เพิ่มสินค้าลงรถเข็นแล้ว"); };
-            document.getElementById('modal-buy-btn').onclick = () => { addToCartData(product, selectedOptions); closeModal(); navigate('checkout'); };
+            const addBtn = document.getElementById('modal-add-btn');
+            if(addBtn) addBtn.onclick = () => { addToCartData(product, selectedOptions); closeModal(); showCustomPopup("สำเร็จ", "เพิ่มสินค้าลงรถเข็นแล้ว"); };
+            
+            const buyBtn = document.getElementById('modal-buy-btn');
+            if(buyBtn) buyBtn.onclick = () => { addToCartData(product, selectedOptions); closeModal(); navigate('checkout'); };
 
-            document.getElementById('modal-overlay').classList.add('overlay-enter-active');
-            document.getElementById('product-modal').classList.remove('opacity-0');
+            const overlay = document.getElementById('modal-overlay');
+            const pModal = document.getElementById('product-modal');
+            if(overlay) overlay.classList.add('overlay-enter-active');
+            if(pModal) pModal.classList.remove('opacity-0');
         }
 
         function closeModal() {
-            document.getElementById('product-modal').classList.add('opacity-0');
-            document.getElementById('modal-overlay').classList.remove('overlay-enter-active');
+            const pModal = document.getElementById('product-modal');
+            const overlay = document.getElementById('modal-overlay');
+            if(pModal) pModal.classList.add('opacity-0');
+            if(overlay) overlay.classList.remove('overlay-enter-active');
         }
 
         function toggleOption(optId, isChecked) {
@@ -1060,7 +1123,7 @@
             else selectedOptions = selectedOptions.filter(o => o.id !== optId);
             let total = selectedProductForModal.price;
             selectedOptions.forEach(o => total += o.price);
-            document.getElementById('modal-price').innerText = formatPrice(total);
+            safeSetText('modal-price', formatPrice(total));
         }
 
         function addToCartData(product, options) {
@@ -1071,10 +1134,15 @@
             updateCartBadge(); renderCart(); 
         }
 
-        function updateCartBadge() { document.getElementById('cart-badge').innerText = cart.reduce((sum, item) => sum + item.qty, 0); }
+        function updateCartBadge() { 
+            safeSetText('cart-badge', cart.reduce((sum, item) => sum + item.qty, 0)); 
+        }
+
         function toggleCart() {
             const overlay = document.getElementById('cart-overlay');
             const sidebar = document.getElementById('cart-sidebar');
+            if(!overlay || !sidebar) return;
+
             if (overlay.classList.contains('overlay-enter-active')) {
                 sidebar.classList.remove('sidebar-enter-active'); overlay.classList.remove('overlay-enter-active');
             } else {
@@ -1084,11 +1152,18 @@
 
         function renderCart() {
             const container = document.getElementById('cart-items-container');
+            const btnCheck = document.getElementById('btn-checkout');
+            if(!container) return;
+
             if (cart.length === 0) {
                 container.innerHTML = `<div class="text-center mt-10 text-gray-400">รถเข็นว่างเปล่า</div>`;
-                document.getElementById('btn-checkout').disabled = true; return;
+                if(btnCheck) btnCheck.disabled = true; 
+                safeSetText('cart-total-price', '฿0.00');
+                return;
             }
-            document.getElementById('btn-checkout').disabled = false; container.innerHTML = '';
+            
+            if(btnCheck) btnCheck.disabled = false; 
+            container.innerHTML = '';
             let total = 0;
             cart.forEach(item => {
                 let itemPrice = item.product.price;
@@ -1102,14 +1177,16 @@
                 `;
                 container.appendChild(div);
             });
-            document.getElementById('cart-total-price').innerText = formatPrice(total);
+            safeSetText('cart-total-price', formatPrice(total));
         }
 
         // --- Checkout & Calculation ---
         function proceedToCheckout() { toggleCart(); navigate('checkout'); }
 
         function applyDiscountCode() {
-            let inputCode = document.getElementById('discount-input').value.toUpperCase().trim();
+            const inputEl = document.getElementById('discount-input');
+            if(!inputEl) return;
+            let inputCode = inputEl.value.toUpperCase().trim();
             if(!inputCode) return;
 
             let discountFound = 0;
@@ -1124,7 +1201,7 @@
                 updateCheckoutTotals();
             } else {
                 showCustomPopup("ข้อผิดพลาด", "รหัสส่วนลดไม่ถูกต้องหรือหมดอายุ");
-                document.getElementById('discount-input').value = "";
+                inputEl.value = "";
             }
         }
 
@@ -1141,14 +1218,16 @@
             currentVat = afterDiscount * 0.07;
             currentNetTotal = afterDiscount + currentVat; 
 
-            document.getElementById('chk-subtotal').innerText = formatPrice(currentSubtotal);
-            document.getElementById('chk-discount').innerText = "- " + formatPrice(currentDiscount);
-            document.getElementById('chk-vat').innerText = formatPrice(currentVat);
-            document.getElementById('chk-net-total').innerText = formatPrice(currentNetTotal);
+            safeSetText('chk-subtotal', formatPrice(currentSubtotal));
+            safeSetText('chk-discount', "- " + formatPrice(currentDiscount));
+            safeSetText('chk-vat', formatPrice(currentVat));
+            safeSetText('chk-net-total', formatPrice(currentNetTotal));
         }
 
         function renderCheckoutItems() {
-            const container = document.getElementById('checkout-items'); container.innerHTML = '';
+            const container = document.getElementById('checkout-items');
+            if(!container) return;
+            container.innerHTML = '';
             cart.forEach(item => {
                 let itemPrice = item.product.price;
                 let optHtml = '';
@@ -1174,7 +1253,7 @@
 
         function processOrder() {
             const form = document.getElementById('checkout-form');
-            if(!form.checkValidity()) { showCustomPopup("แจ้งเตือน","กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
+            if(form && !form.checkValidity()) { showCustomPopup("แจ้งเตือน","กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
             if(cart.length === 0) { showCustomPopup("แจ้งเตือน","ไม่มีสินค้าในรถเข็น"); return; }
             navigate('payment');
         }
@@ -1185,17 +1264,23 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('promptpay-qr-img').src = e.target.result;
-                    document.getElementById('upload-section').classList.add('hidden');
+                    const qrImg = document.getElementById('promptpay-qr-img');
+                    if(qrImg) qrImg.src = e.target.result;
+                    
+                    const upl = document.getElementById('upload-section');
+                    if(upl) upl.classList.add('hidden');
+                    
                     const overlay = document.getElementById('verification-overlay');
-                    overlay.classList.remove('hidden');
-                    setTimeout(() => overlay.classList.add('opacity-100'), 50);
+                    if(overlay) {
+                        overlay.classList.remove('hidden');
+                        setTimeout(() => overlay.classList.add('opacity-100'), 50);
+                    }
 
                     const payload = {
                         action: 'submitOrder',
-                        buyname: document.getElementById('chk-fname').value + " " + document.getElementById('chk-lname').value,
-                        buyemail: document.getElementById('chk-email').value,
-                        phone: document.getElementById('chk-phone').value,
+                        buyname: (document.getElementById('chk-fname') ? document.getElementById('chk-fname').value : "") + " " + (document.getElementById('chk-lname') ? document.getElementById('chk-lname').value : ""),
+                        buyemail: document.getElementById('chk-email') ? document.getElementById('chk-email').value : "",
+                        phone: document.getElementById('chk-phone') ? document.getElementById('chk-phone').value : "",
                         cart: cart.map(c => ({ qty: c.qty, product: { name: c.product.name }, options: c.options.map(o=>({name: o.name})) })),
                         discount: currentDiscount,
                         vat: currentVat.toFixed(2),
@@ -1207,19 +1292,19 @@
 
                     callBackend(payload)
                     .then(res => {
-                        overlay.classList.add('hidden');
+                        if(overlay) overlay.classList.add('hidden');
                         if (res.status === "success") {
-                            document.getElementById('display-order-id').innerText = res.orderRef;
+                            safeSetText('display-order-id', res.orderRef);
                             cart = []; currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); navigate('success');
                         } else {
                             showCustomPopup("สลิปมีปัญหา", res.message);
-                            document.getElementById('upload-section').classList.remove('hidden');
+                            if(upl) upl.classList.remove('hidden');
                         }
                     })
                     .catch(e => {
-                        overlay.classList.add('hidden');
+                        if(overlay) overlay.classList.add('hidden');
                         showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
-                        document.getElementById('upload-section').classList.remove('hidden');
+                        if(upl) upl.classList.remove('hidden');
                     });
                 }
                 reader.readAsDataURL(file);
@@ -1228,20 +1313,25 @@
 
         // --- History fetching ---
         function searchHistory() {
-            const phone = document.getElementById('history-phone-input').value;
+            const phoneEl = document.getElementById('history-phone-input');
+            const phone = phoneEl ? phoneEl.value : "";
             const container = document.getElementById('history-results-container');
             const btn = document.getElementById('btn-search-history');
             
             if(!phone) { showCustomPopup("แจ้งเตือน", "กรุณาระบุเบอร์โทรศัพท์"); return; }
 
-            btn.innerHTML = `<div class="dotted-spinner" style="width:20px;height:20px;border-width:3px;border-color:white;"></div>`; btn.disabled = true;
+            if(btn) {
+                btn.innerHTML = `<div class="dotted-spinner" style="width:20px;height:20px;border-width:3px;border-color:white;"></div>`; 
+                btn.disabled = true;
+            }
 
             callBackend({ action: 'getHistory', phone: phone })
             .then(res => {
-                btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; lucide.createIcons();
+                if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; }
+                try { lucide.createIcons(); } catch(e) {}
                 
                 if(res.status === 'success' && res.data.length > 0) {
-                    container.innerHTML = '';
+                    if(container) container.innerHTML = '';
                     res.data.forEach((item, idx) => {
                         let badgeClass = item.status === "การชำระเงินถูกต้อง" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700";
                         const div = document.createElement('div');
@@ -1258,19 +1348,21 @@
                                 <div><span class="text-gray-500">ยอดสุทธิ:</span> <span class="font-bold text-primary">฿${item.netTotal}</span></div>
                             </div>
                         `;
-                        container.appendChild(div);
+                        if(container) container.appendChild(div);
                     });
                 } else {
-                    container.innerHTML = `<div class="text-center py-12 text-gray-500"><p>ไม่พบประวัติการสั่งซื้อสำหรับเบอร์ ${phone}</p></div>`;
+                    if(container) container.innerHTML = `<div class="text-center py-12 text-gray-500"><p>ไม่พบประวัติการสั่งซื้อสำหรับเบอร์ ${phone}</p></div>`;
                 }
             }).catch(e => {
-                btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; lucide.createIcons();
+                if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; }
+                try { lucide.createIcons(); } catch(err) {}
                 showCustomPopup("ข้อผิดพลาด", "เชื่อมต่อฐานข้อมูลล้มเหลว");
             });
         }
 
         function initSlider() {
             const track = document.getElementById('slider-track');
+            if(!track) return;
             track.innerHTML = ''; 
             bannerData.forEach(banner => {
                 const slide = document.createElement('div');
@@ -1287,21 +1379,40 @@
         // --- Auth Modals toggle ---
         function openAuth(tab = 'login') { navigate('auth'); switchAuthTab(tab); }
         function switchAuthTab(tab) {
+            const fLog = document.getElementById('form-login-container');
+            const fReg = document.getElementById('form-register-container');
+            const tLog = document.getElementById('tab-login');
+            const tReg = document.getElementById('tab-register');
+
             if(tab === 'login') {
-                document.getElementById('form-login-container').classList.remove('hidden'); document.getElementById('form-register-container').classList.add('hidden');
-                document.getElementById('tab-login').className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white";
-                document.getElementById('tab-register').className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 text-gray-600";
+                if(fLog) fLog.classList.remove('hidden'); 
+                if(fReg) fReg.classList.add('hidden');
+                if(tLog) tLog.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white";
+                if(tReg) tReg.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 text-gray-600";
             } else {
-                document.getElementById('form-register-container').classList.remove('hidden'); document.getElementById('form-login-container').classList.add('hidden');
-                document.getElementById('tab-register').className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white";
-                document.getElementById('tab-login').className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 text-gray-600";
+                if(fReg) fReg.classList.remove('hidden'); 
+                if(fLog) fLog.classList.add('hidden');
+                if(tReg) tReg.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white";
+                if(tLog) tLog.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 text-gray-600";
             }
         }
-        function nextRegisterStep() { document.getElementById('register-step-1').classList.add('hidden'); document.getElementById('register-step-2').classList.remove('hidden'); }
-        function prevRegisterStep() { document.getElementById('register-step-2').classList.add('hidden'); document.getElementById('register-step-1').classList.remove('hidden'); }
+        function nextRegisterStep() { 
+            const s1 = document.getElementById('register-step-1');
+            const s2 = document.getElementById('register-step-2');
+            if(s1) s1.classList.add('hidden'); 
+            if(s2) s2.classList.remove('hidden'); 
+        }
+        function prevRegisterStep() { 
+            const s1 = document.getElementById('register-step-1');
+            const s2 = document.getElementById('register-step-2');
+            if(s2) s2.classList.add('hidden'); 
+            if(s1) s1.classList.remove('hidden'); 
+        }
         function toggleCategorySidebar() {
             const overlay = document.getElementById('category-overlay');
             const sidebar = document.getElementById('category-sidebar');
+            if(!overlay || !sidebar) return;
+
             if (overlay.classList.contains('overlay-enter-active')) {
                 sidebar.classList.remove('left-sidebar-enter-active'); overlay.classList.remove('overlay-enter-active');
             } else {
