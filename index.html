@@ -69,6 +69,7 @@
         /* Slip Styles */
         .slip-container { width: 100%; max-width: 420px; background-color: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden; font-family: 'Kanit', sans-serif; margin: 0 auto; position: relative; }
         .slip-container * { color: initial; } 
+        .header-icon-box { width: 36px; height: 36px; background-color: white; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
         /* Loading Dotted Spinner */
         .dotted-spinner { width: 60px; height: 60px; border: 6px dotted #e43a3d; border-radius: 50%; animation: spin 2s linear infinite; }
@@ -383,7 +384,7 @@
                 </div>
             </div>
 
-            <!-- View: Payment (QR Code ของแท้ 100%) -->
+            <!-- View: Payment -->
             <div id="view-payment" class="hidden w-full mx-auto px-4 py-12 flex flex-col items-center">
                 <button onclick="navigate('checkout')" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> ย้อนกลับเพื่อแก้ไขข้อมูล</button>
 
@@ -412,8 +413,12 @@
                         <div class="relative inline-block border-[1px] border-gray-100 p-1 shadow-sm qr-wiggle hover:animate-none">
                             <!-- QR Code สร้างจาก Library -->
                             <img src="" id="promptpay-qr-img" class="w-[240px] h-[240px]">
+                            <!-- ไอคอนตรงกลางยังอยู่ครบถ้วน -->
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-md p-[2px] shadow-md flex items-center justify-center z-20">
+                                <img src="https://img1.pic.in.th/images/IMG_1065-removebg.png" class="w-7 h-7 object-contain">
+                            </div>
                             
-                            <div id="verification-overlay" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300 z-10">
+                            <div id="verification-overlay" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300 z-30">
                                 <div class="dotted-spinner mb-3"></div>
                                 <h3 class="text-base font-bold text-gray-800 mb-1 font-sans">กำลังตรวจสอบ...</h3>
                                 <p class="text-xs text-gray-500 font-sans text-center px-4" id="verify-sub-text">โปรดรอสักครู่</p>
@@ -461,7 +466,7 @@
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
             
-            <!-- Policy Views -->
+            <!-- Policy Views (เนื้อหากลับมาครบ 100%) -->
             <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
@@ -552,10 +557,12 @@
     <div id="category-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overlay-enter" onclick="toggleCategorySidebar()"></div>
     <div id="category-sidebar" class="fixed top-0 left-0 h-full w-[280px] bg-white dark:bg-[#1e1e1e] shadow-2xl z-50 flex flex-col left-sidebar-enter transition-colors">
         <div class="px-4 py-4 bg-primary text-white flex justify-between items-center">
-            <h2 class="font-bold text-lg uppercase tracking-wide">หมวดหมู่สินค้า</h2>
+            <h2 class="font-bold text-lg uppercase tracking-wide">เมนูหลัก</h2>
             <button onclick="toggleCategorySidebar()" class="text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
-        <div class="flex-grow overflow-y-auto">
+        
+        <!-- เนื้อหาในแถบ Sidebar ให้ขยายเต็มความสูงและจัดเรียงเนื้อหา -->
+        <div class="flex-grow overflow-y-auto flex flex-col">
             <!-- Mobile Sidebar Auth/Profile -->
             <div id="mobile-auth-section" class="md:hidden border-b border-gray-100 dark:border-gray-800 pb-2 mb-2">
                 <div class="grid grid-cols-2 gap-2 p-4 pb-2">
@@ -575,17 +582,30 @@
                 </div>
                 <ul class="text-sm">
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50" onclick="navigate('profile'); toggleCategorySidebar()"><i data-lucide="user" class="w-4 h-4 mr-3"></i>ข้อมูลโปรไฟล์</li>
-                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50" onclick="navigate('history'); toggleCategorySidebar()"><i data-lucide="history" class="w-4 h-4 mr-3"></i>ประวัติการสั่งซื้อ</li>
-                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 text-red-500" onclick="logout(); toggleCategorySidebar()"><i data-lucide="log-out" class="w-4 h-4 mr-3"></i>ออกจากระบบ</li>
                 </ul>
             </div>
 
             <!-- หมวดหมู่ -->
-            <ul id="category-list" class="text-sm mt-2"></ul>
-            <div class="border-t border-gray-100 mt-4 pt-2">
+            <ul id="category-list" class="text-sm mt-2 border-b border-gray-100 pb-2"></ul>
+            
+            <!-- ประวัติการสั่งซื้อ (ย้ายมาอยู่ด้านล่างหมวดหมู่สินค้า) -->
+            <div id="mobile-history-section" class="md:hidden pt-2">
+                <ul class="text-sm">
+                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-gray-800 dark:text-white" onclick="navigate('history'); toggleCategorySidebar()"><i data-lucide="history" class="w-4 h-4 mr-3"></i>ประวัติการสั่งซื้อ</li>
+                </ul>
+            </div>
+
+            <div class="border-t border-gray-100 mt-2 pt-2 mb-4">
                 <ul class="text-sm">
                     <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('privacy'); toggleCategorySidebar()">Privacy Policy</li>
                     <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('return'); toggleCategorySidebar()">Return Policy</li>
+                </ul>
+            </div>
+
+            <!-- ออกจากระบบ (ย้ายมาอยู่ด้านล่างสุดของเมนูบาร์) -->
+            <div id="mobile-logout-section" class="hidden md:hidden border-t border-gray-100 mt-auto pt-2">
+                <ul class="text-sm">
+                    <li class="cursor-pointer px-4 py-4 flex items-center hover:bg-gray-50 text-red-500 font-bold" onclick="logout(); toggleCategorySidebar()"><i data-lucide="log-out" class="w-4 h-4 mr-3"></i>ออกจากระบบ</li>
                 </ul>
             </div>
         </div>
@@ -829,6 +849,7 @@
             const profMenu = document.getElementById('user-profile-menu');
             const mobileAuth = document.getElementById('mobile-auth-section');
             const mobileProf = document.getElementById('mobile-profile-section');
+            const mobileLogout = document.getElementById('mobile-logout-section');
 
             if(savedUser) {
                 currentUser = JSON.parse(savedUser);
@@ -837,13 +858,11 @@
                 if(profMenu) profMenu.classList.remove('hidden'); 
                 if(mobileAuth) mobileAuth.style.display = 'none'; 
                 if(mobileProf) mobileProf.style.display = 'block';
+                if(mobileLogout) mobileLogout.style.display = 'block';
                 
                 safeSetText('profile-icon', currentUser.fname.charAt(0).toUpperCase());
                 safeSetText('profile-name', currentUser.fname);
                 
-                safeSetText('mob-name', currentUser.fname);
-                safeSetText('mob-email', currentUser.email);
-
                 safeSetValue('chk-fname', currentUser.fname);
                 safeSetValue('chk-lname', currentUser.lname);
                 safeSetValue('chk-email', currentUser.email);
@@ -856,6 +875,7 @@
                 if(profMenu) profMenu.classList.add('hidden');
                 if(mobileAuth) mobileAuth.style.display = 'block';
                 if(mobileProf) mobileProf.style.display = 'none';
+                if(mobileLogout) mobileLogout.style.display = 'none';
             }
         }
 
@@ -992,12 +1012,22 @@
             if (view === 'payment') {
                 safeSetText('slip-total-amount', currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 
-                if (window.promptpayQr && siteSettings.BankAccount) {
-                    const acc = siteSettings.BankAccount.replace(/-/g, '');
-                    const qrDataStr = window.promptpayQr(acc, { amount: currentNetTotal });
-                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrDataStr)}&size=500x500&margin=10&qzone=1&logo=https://img2.pic.in.th/pic/1000008216.jpg`;
-                    $('#promptpay-qr-img').attr('src', qrUrl);
-                }
+                let paymentAmount = currentNetTotal;
+                let selectedAccount = siteSettings.BankAccount || "0000000000";
+                
+                // ใช้ promptpayQr library สร้าง QR Code เป๊ะๆตามที่ระบุ พร้อมระบบเช็คโหลด
+                const generateQR = () => {
+                    if (window.promptpayQr) {
+                        try {
+                            const qrData = window.promptpayQr(selectedAccount.replace(/-/g, ''), {amount: paymentAmount});
+                            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=500x500&margin=10&qzone=1&logo=https://img2.pic.in.th/pic/1000008216.jpg`;
+                            $('#promptpay-qr-img').attr('src', qrUrl);
+                        } catch(err) { console.error("QR Generate Error:", err); }
+                    } else {
+                        setTimeout(generateQR, 500); // วนลูปจนกว่า library จะโหลดเสร็จ
+                    }
+                };
+                generateQR();
 
                 const ver = document.getElementById('verification-overlay'); if(ver) ver.classList.add('hidden');
                 const upl = document.getElementById('upload-section'); if(upl) upl.classList.remove('hidden');
@@ -1025,7 +1055,7 @@
             categories.forEach(cat => {
                 const isActive = activeCategory === cat.id;
                 const cssClass = isActive ? 'bg-gray-50 text-primary font-semibold' : 'text-gray-600 hover:text-primary hover:bg-gray-50';
-                htmlStr += `<li class="border-b border-gray-100 cursor-pointer transition-colors ${cssClass}" onclick="selectCategory('${cat.id}', '${cat.name}')">
+                htmlStr += `<li class="cursor-pointer transition-colors ${cssClass}" onclick="selectCategory('${cat.id}', '${cat.name}')">
                                 <div class="px-4 py-3 flex items-center justify-between"><span>${cat.name}</span></div>
                             </li>`;
             });
