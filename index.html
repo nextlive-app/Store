@@ -390,12 +390,12 @@
 
                 <div class="slip-container" id="user-slip-element">
                     <!-- หัวบิล Thai QR Payment -->
-                    <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-4 border-white">
+                    <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-3 border-white">
                         <div class="header-icon-box flex-shrink-0">
-                            <img src="https://img2.pic.in.th/pic/1000008216.jpg" class="w-full h-full object-contain">
+                            <img src="https://img1.pic.in.th/images/IMG_1065-removebg.png" class="w-full h-full object-contain">
                         </div>
                         <div class="text-[24px] font-bold leading-none tracking-wide flex items-baseline gap-1 mt-1 text-white">
-                            Thai QR <span class="text-[14px] font-normal tracking-normal text-white">Payment</span>
+                            Thai QR Payment
                         </div>
                     </div>
 
@@ -829,7 +829,7 @@
             safeSetText('slip-admin-name', siteSettings.AdminName);
             
             // --- ระบบเซ็นเซอร์ (Masking) เลขบัญชี / เบอร์พร้อมเพย์ ---
-            let acc = siteSettings.BankAccount || "000-0-00000-0";
+            let acc = String(siteSettings.BankAccount || "000-0-00000-0");
             let cleanAcc = acc.replace(/[\s-]/g, ''); // ลบขีดและช่องว่างออกก่อนเพื่อให้คำนวณง่าย
             
             if(cleanAcc.length >= 10) {
@@ -1017,7 +1017,7 @@
                 safeSetText('slip-total-amount', currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 
                 let paymentAmount = currentNetTotal;
-                let rawAccount = siteSettings.BankAccount || "0000000000";
+                let rawAccount = String(siteSettings.BankAccount || "0000000000");
                 
                 // --- ระบบป้องกันบัคคิวอาร์โค้ดพัง ---
                 // ทำให้เหลือแต่ตัวเลขสำหรับสร้าง PromptPay เท่านั้น
