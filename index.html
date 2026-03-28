@@ -828,12 +828,16 @@
 
             safeSetText('slip-admin-name', siteSettings.AdminName);
             
-            let acc = siteSettings.BankAccount || "0000000000";
-            if(acc.length >= 10) {
-                let masked = acc.substring(0,3) + "-X-XXXX" + acc.substring(acc.length-2, acc.length-1) + "-X";
+            // --- ระบบเซ็นเซอร์ (Masking) เลขบัญชี / เบอร์พร้อมเพย์ ---
+            let acc = siteSettings.BankAccount || "000-0-00000-0";
+            let cleanAcc = acc.replace(/[\s-]/g, ''); // ลบขีดและช่องว่างออกก่อนเพื่อให้คำนวณง่าย
+            
+            if(cleanAcc.length >= 10) {
+                // แสดง 3 ตัวหน้า และ 4 ตัวหลัง ตรงกลางเป็น X หมด
+                let masked = cleanAcc.substring(0,3) + "-XXX-" + cleanAcc.substring(cleanAcc.length - 4);
                 safeSetText('slip-admin-acc', masked);
             } else {
-                safeSetText('slip-admin-acc', acc);
+                safeSetText('slip-admin-acc', acc); // ถ้าสั้นไปให้แสดงปกติ
             }
         }
 
@@ -1013,15 +1017,32 @@
                 safeSetText('slip-total-amount', currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 
                 let paymentAmount = currentNetTotal;
-                let selectedAccount = siteSettings.BankAccount || "0000000000";
+                let rawAccount = siteSettings.BankAccount || "0000000000";
                 
-                // ใช้ promptpayQr library สร้าง QR Code เป๊ะๆตามที่ระบุ พร้อมระบบเช็คโหลด
+                // --- ระบบป้องกันบัคคิวอาร์โค้ดพัง ---
+                // ทำให้เหลือแต่ตัวเลขสำหรับสร้าง PromptPay เท่านั้น
+                let cleanAccountForQR = rawAccount.replace(/\D/g, ''); 
+                
+                // ถ้าเบอร์ไม่ถูกต้องตามมาตรฐานพร้อมเพย์ (ปกติต้อง 10, 13 หรือ 15 หลัก) 
+                // ให้ใช้เบอร์จำลองกันพัง (เพื่อให้ QR แสดงขึ้นมาก่อน ไม่เกิด error หน้าขาว)
+                if (cleanAccountForQR.length < 10) {
+                    cleanAccountForQR = "0000000000";
+                }
+                
                 const generateQR = () => {
                     if (window.promptpayQr) {
                         try {
-                            const qrData = window.promptpayQr(selectedAccount.replace(/-/g, ''), {amount: paymentAmount});
-                            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=500x500&margin=10&qzone=1&logo=https://img2.pic.in.th/pic/1000008216.jpg`;
-                            $('#promptpay-qr-img').attr('src', qrUrl);
+                            const qrData = window.promptpayQr(cleanAccountForQR, {amount: paymentAmount});
+                            // นำพารามิเตอร์ logo ออกเพื่อแก้ไขปัญหารูปไม่แสดง
+                            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=500x500&margin=10&qzone=1`;
+                            
+                            // เปลี่ยนจากการใช้ jQuery เป็น Vanilla JS แบบปลอดภัยและรอโหลด
+                            const imgEl = document.getElementById('promptpay-qr-img');
+                            if(imgEl) {
+                                imgEl.onload = () => { /* โหลดเสร็จ */ };
+                                imgEl.onerror = () => { console.error("โหลดรูป QR ไม่สำเร็จ ให้ตรวจสอบลิงก์ API"); };
+                                imgEl.src = qrUrl;
+                            }
                         } catch(err) { console.error("QR Generate Error:", err); }
                     } else {
                         setTimeout(generateQR, 500); // วนลูปจนกว่า library จะโหลดเสร็จ
