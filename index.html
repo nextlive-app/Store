@@ -597,11 +597,14 @@
                 if(res.status === 'success') {
                     siteSettings = res.settings;
                     
-                    // เช็คสวิตช์ปิดเว็บ
-                    if(siteSettings.SiteActive === "FALSE" || siteSettings.SiteActive === false) {
+                    // เช็คสวิตช์ปิดเว็บ (แปลงค่าเป็น String ตัวพิมพ์ใหญ่ให้เช็คได้ชัวร์ 100%)
+                    let isActive = String(siteSettings.SiteActive).trim().toUpperCase() === "TRUE";
+                    if(!isActive) {
                         document.getElementById('maintenance-screen').style.display = 'flex';
+                        document.getElementById('app-wrapper').style.display = 'none';
                         return; // หยุดทำงาน
                     } else {
+                        document.getElementById('maintenance-screen').style.display = 'none';
                         document.getElementById('app-wrapper').style.display = 'flex';
                     }
 
