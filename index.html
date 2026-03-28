@@ -214,22 +214,22 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6" id="product-grid"></div>
             </div>
 
-            <!-- View: Profile -->
+            <!-- View: Profile (NEW) -->
             <div id="view-profile" class="hidden max-w-4xl mx-auto px-4 py-12">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-primary">ข้อมูลโปรไฟล์</h2>
-                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-sm text-sm flex items-center font-bold">
+                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-sm text-sm flex items-center font-bold shadow-md">
                         <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> ออกจากระบบ
                     </button>
                 </div>
 
                 <!-- Personal Info Box -->
-                <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm mb-8">
+                <div class="bg-white dark:bg-[#1e1e1e] p-6 border border-gray-200 dark:border-gray-800 rounded-sm shadow-sm mb-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div><p class="text-xs text-gray-500">ชื่อ-นามสกุล</p><p class="font-bold text-lg" id="vp-name">-</p></div>
-                        <div><p class="text-xs text-gray-500">อีเมล</p><p class="font-bold text-lg" id="vp-email">-</p></div>
-                        <div><p class="text-xs text-gray-500">เบอร์โทรศัพท์</p><p class="font-bold text-lg" id="vp-phone">-</p></div>
-                        <div><p class="text-xs text-gray-500">วันที่สมัครสมาชิก</p><p class="font-bold text-lg" id="vp-date">-</p></div>
+                        <div><p class="text-xs text-gray-500">ชื่อ-นามสกุล</p><p class="font-bold text-lg dark:text-white" id="vp-name">-</p></div>
+                        <div><p class="text-xs text-gray-500">อีเมล</p><p class="font-bold text-lg dark:text-white" id="vp-email">-</p></div>
+                        <div><p class="text-xs text-gray-500">เบอร์โทรศัพท์</p><p class="font-bold text-lg dark:text-white" id="vp-phone">-</p></div>
+                        <div><p class="text-xs text-gray-500">วันที่สมัครสมาชิก</p><p class="font-bold text-lg dark:text-white" id="vp-date">-</p></div>
                     </div>
                 </div>
 
@@ -273,7 +273,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="phone" class="w-5 h-5 text-gray-400"></i></div>
                             <input type="tel" id="history-phone-input" class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] outline-none text-sm rounded-sm" placeholder="08X-XXX-XXXX">
                         </div>
-                        <button id="btn-search-history" onclick="searchHistory()" class="bg-primary hover:bg-primaryHover text-white font-bold py-3 px-8 rounded-sm flex items-center justify-center">
+                        <button id="btn-search-history" onclick="searchHistory()" class="bg-primary hover:bg-primaryHover text-white font-bold py-3 px-8 rounded-sm flex items-center justify-center shadow-md">
                             <i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา
                         </button>
                     </div>
@@ -297,7 +297,7 @@
                         <form class="space-y-4" id="login-form">
                             <div><label class="block text-xs font-semibold mb-1">อีเมล / หมายเลขโทรศัพท์</label><input type="text" id="log-username" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
                             <div><label class="block text-xs font-semibold mb-1">รหัสผ่าน</label><input type="password" id="log-password" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                            <button type="button" onclick="submitLogin()" class="w-full bg-primary text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-login">ลงชื่อเข้าใช้งาน</button>
+                            <button type="button" onclick="submitLogin()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-login">ลงชื่อเข้าใช้งาน</button>
                         </form>
                     </div>
 
@@ -332,7 +332,7 @@
                                     <div><label class="block text-xs font-semibold mb-1">จังหวัด *</label><input type="text" id="reg-addr6" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
                                     <div><label class="block text-xs font-semibold mb-1">รหัสไปรษณีย์ *</label><input type="text" id="reg-addr7" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
                                 </div>
-                                <button type="button" onclick="submitRegister()" id="btn-submit-register" class="w-full bg-primary text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md">สร้างบัญชี</button>
+                                <button type="button" onclick="submitRegister()" id="btn-submit-register" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md">สร้างบัญชี</button>
                             </form>
                         </div>
                     </div>
@@ -365,7 +365,7 @@
                             <div id="checkout-items" class="space-y-4 mb-4 max-h-80 overflow-y-auto pr-2"></div>
                             <div class="flex gap-2 mb-6 mt-4">
                                 <input type="text" id="discount-input" placeholder="ใส่รหัสส่วนลด..." class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm uppercase">
-                                <button type="button" onclick="applyDiscountCode()" class="bg-[#333333] text-white px-4 py-2 text-sm rounded-sm whitespace-nowrap">ใช้รหัส</button>
+                                <button type="button" onclick="applyDiscountCode()" class="bg-[#333333] hover:bg-black text-white px-4 py-2 text-sm rounded-sm whitespace-nowrap shadow-md">ใช้รหัส</button>
                             </div>
                             <div class="border-t pt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
                                 <div class="flex justify-between"><span>ยอดรวมสินค้า</span><span id="chk-subtotal">฿0.00</span></div>
@@ -375,7 +375,7 @@
                                     <span>ยอดสุทธิ (Net Total)</span><span id="chk-net-total" class="text-primary">฿0.00</span>
                                 </div>
                             </div>
-                            <button onclick="processOrder()" class="w-full bg-primary text-white font-bold py-4 px-4 mt-6 uppercase text-sm rounded-sm shadow-md">
+                            <button onclick="processOrder()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 mt-6 uppercase text-sm rounded-sm shadow-md">
                                 ยืนยันการสั่งซื้อ
                             </button>
                         </div>
@@ -383,12 +383,11 @@
                 </div>
             </div>
 
-            <!-- View: Payment -->
+            <!-- View: Payment (QR Code ของแท้ 100%) -->
             <div id="view-payment" class="hidden w-full mx-auto px-4 py-12 flex flex-col items-center">
                 <button onclick="navigate('checkout')" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> ย้อนกลับเพื่อแก้ไขข้อมูล</button>
 
                 <div class="slip-container" id="user-slip-element">
-                    <!-- หัวบิล Thai QR Payment -->
                     <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-4 border-white">
                         <div class="header-icon-box flex-shrink-0">
                             <img src="https://img2.pic.in.th/pic/1000008216.jpg" class="w-full h-full object-contain">
@@ -410,7 +409,7 @@
 
                     <div class="flex justify-center mb-8 relative px-10 bg-white">
                         <div class="relative inline-block border-[1px] border-gray-100 p-1 shadow-sm qr-wiggle hover:animate-none">
-                            <!-- รูป QR Code ที่สร้างด้วย API -->
+                            <!-- QR Code สร้างจาก Library -->
                             <img src="" id="promptpay-qr-img" class="w-[240px] h-[240px]">
                             
                             <div id="verification-overlay" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300 z-10">
@@ -443,7 +442,7 @@
 
                 <div id="upload-section" class="mt-6 w-full max-w-[420px]">
                     <input type="file" id="slip-upload" class="hidden" accept="image/*" onchange="handleSlipUpload(event)">
-                    <button onclick="document.getElementById('slip-upload').click()" class="w-full bg-primary text-white font-bold py-4 px-4 uppercase text-sm rounded-sm shadow-md flex items-center justify-center font-sans">
+                    <button onclick="document.getElementById('slip-upload').click()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 uppercase text-sm rounded-sm shadow-md flex items-center justify-center font-sans">
                         <i data-lucide="upload" class="w-5 h-5 mr-2"></i> อัปโหลดสลิปชำระเงิน
                     </button>
                 </div>
@@ -461,7 +460,7 @@
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
             
-            <!-- Policy Views -->
+            <!-- Policy Views (เนื้อหากลับมาครบ 100%) -->
             <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
@@ -559,8 +558,8 @@
             <!-- Mobile Sidebar Auth/Profile -->
             <div id="mobile-auth-section" class="md:hidden border-b border-gray-100 dark:border-gray-800 pb-2 mb-2">
                 <div class="grid grid-cols-2 gap-2 p-4 pb-2">
-                    <button onclick="openAuth('login'); toggleCategorySidebar()" class="bg-gray-100 text-gray-800 py-2 text-sm font-bold">ลงชื่อเข้าใช้</button>
-                    <button onclick="openAuth('register'); toggleCategorySidebar()" class="bg-primary text-white py-2 text-sm font-bold">สมัครใช้งาน</button>
+                    <button onclick="openAuth('login'); toggleCategorySidebar()" class="bg-gray-100 text-gray-800 py-2 text-sm font-bold shadow-sm">ลงชื่อเข้าใช้</button>
+                    <button onclick="openAuth('register'); toggleCategorySidebar()" class="bg-primary text-white py-2 text-sm font-bold shadow-sm">สมัครใช้งาน</button>
                 </div>
             </div>
             
@@ -584,8 +583,8 @@
             <ul id="category-list" class="text-sm mt-2"></ul>
             <div class="border-t border-gray-100 mt-4 pt-2">
                 <ul class="text-sm">
-                    <li class="cursor-pointer px-4 py-3" onclick="navigate('privacy'); toggleCategorySidebar()">Privacy Policy</li>
-                    <li class="cursor-pointer px-4 py-3" onclick="navigate('return'); toggleCategorySidebar()">Return Policy</li>
+                    <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('privacy'); toggleCategorySidebar()">Privacy Policy</li>
+                    <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('return'); toggleCategorySidebar()">Return Policy</li>
                 </ul>
             </div>
         </div>
@@ -601,7 +600,7 @@
         <div class="flex-grow overflow-y-auto p-4" id="cart-items-container"></div>
         <div class="border-t p-4 bg-gray-50">
             <div class="flex justify-between font-bold text-lg mb-4"><span>Total</span><span id="cart-total-price" class="text-primary">฿0.00</span></div>
-            <button onclick="proceedToCheckout()" class="w-full bg-primary text-white font-bold py-3 px-4 uppercase text-sm rounded-sm disabled:opacity-50" id="btn-checkout" disabled>Checkout</button>
+            <button onclick="proceedToCheckout()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 px-4 uppercase text-sm rounded-sm disabled:opacity-50 shadow-md" id="btn-checkout" disabled>Checkout</button>
         </div>
     </div>
 
@@ -615,14 +614,14 @@
             <div class="md:w-1/2 p-6 md:p-8 flex flex-col bg-gray-50">
                 <div class="flex justify-between items-start mb-2">
                     <h3 id="modal-title" class="text-xl sm:text-2xl font-bold"></h3>
-                    <button onclick="closeModal()" class="hidden md:block text-gray-400"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <button onclick="closeModal()" class="hidden md:block text-gray-400 hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
                 <div class="flex items-end space-x-3 mb-4 pb-4 border-b"><span id="modal-price" class="text-3xl font-bold text-primary"></span></div>
                 <p id="modal-desc" class="text-gray-600 text-sm mb-6 leading-relaxed flex-grow"></p>
                 <div class="mb-6"><h4 class="font-semibold text-sm mb-2 uppercase">ตัวเลือกเพิ่มเติม</h4><div class="space-y-2 text-sm" id="modal-options"></div></div>
                 <div class="mt-auto pt-4 flex flex-row gap-2">
-                    <button id="modal-add-btn" class="flex-1 border-2 border-primary text-primary font-bold py-3 px-2 rounded-sm text-xs"><i data-lucide="shopping-bag" class="w-4 h-4 mr-2 inline"></i> เพิ่มลงรถเข็น</button>
-                    <button id="modal-buy-btn" class="flex-1 bg-primary text-white font-bold py-3 px-2 rounded-sm text-xs shadow-sm"><i data-lucide="zap" class="w-4 h-4 mr-2 inline"></i> สั่งซื้อทันที</button>
+                    <button id="modal-add-btn" class="flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold py-3 px-2 rounded-sm text-xs transition-colors"><i data-lucide="shopping-bag" class="w-4 h-4 mr-2 inline"></i> เพิ่มลงรถเข็น</button>
+                    <button id="modal-buy-btn" class="flex-1 bg-primary hover:bg-primaryHover text-white font-bold py-3 px-2 rounded-sm text-xs shadow-sm transition-colors"><i data-lucide="zap" class="w-4 h-4 mr-2 inline"></i> สั่งซื้อทันที</button>
                 </div>
             </div>
         </div>
@@ -639,7 +638,7 @@
                 <li>เลือกรูปภาพที่ท่านแคปไว้และทำการชำระเงิน โดยตรวจสอบชื่อบัญชีให้ถูกต้อง</li>
                 <li>หลังจากชำระเงินเสร็จสิ้น ให้ทำการอัปโหลดสลิปที่หน้านี้</li>
             </ol>
-            <button onclick="closePaymentSteps()" class="mt-6 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition-colors">ปิดหน้าต่าง</button>
+            <button onclick="closePaymentSteps()" class="mt-6 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition-colors shadow-sm">ปิดหน้าต่าง</button>
         </div>
     </div>
 
@@ -648,7 +647,7 @@
         <div class="popup-box">
             <h1 id="popup-title">Hello!</h1>
             <p id="popup-desc">This is a message.</p>
-            <button class="close-btn" onclick="closeCustomPopup()">ตกลง</button>
+            <button class="close-btn hover:bg-primaryHover transition-colors" onclick="closeCustomPopup()">ตกลง</button>
         </div>
     </div>
 
@@ -799,15 +798,18 @@
 
             if(savedUser) {
                 currentUser = JSON.parse(savedUser);
-                authWrapper.style.display = 'none'; 
-                profMenu.classList.remove('hidden'); 
+                
+                // ใช้ if() ครอบ เพื่อป้องกันบัค null ในกรณีหน้าจอมือถือ/คอม
+                if(authWrapper) authWrapper.style.display = 'none'; 
+                if(profMenu) profMenu.classList.remove('hidden'); 
                 if(mobileAuth) mobileAuth.style.display = 'none'; 
                 if(mobileProf) mobileProf.style.display = 'block';
                 
-                document.getElementById('profile-icon').innerText = currentUser.fname.charAt(0).toUpperCase();
-                document.getElementById('profile-name').innerText = currentUser.fname;
-                document.getElementById('dd-fullname').innerText = currentUser.fname + " " + currentUser.lname;
-                document.getElementById('dd-email').innerText = currentUser.email;
+                if(document.getElementById('profile-icon')) document.getElementById('profile-icon').innerText = currentUser.fname.charAt(0).toUpperCase();
+                if(document.getElementById('profile-name')) document.getElementById('profile-name').innerText = currentUser.fname;
+                
+                if(document.getElementById('mob-name')) document.getElementById('mob-name').innerText = currentUser.fname;
+                if(document.getElementById('mob-email')) document.getElementById('mob-email').innerText = currentUser.email;
 
                 if(document.getElementById('chk-fname')) document.getElementById('chk-fname').value = currentUser.fname;
                 if(document.getElementById('chk-lname')) document.getElementById('chk-lname').value = currentUser.lname;
@@ -817,8 +819,8 @@
                 renderProfileView();
             } else {
                 currentUser = null;
-                authWrapper.style.display = 'block';
-                profMenu.classList.add('hidden');
+                if(authWrapper) authWrapper.style.display = 'block';
+                if(profMenu) profMenu.classList.add('hidden');
                 if(mobileAuth) mobileAuth.style.display = 'block';
                 if(mobileProf) mobileProf.style.display = 'none';
             }
@@ -1216,7 +1218,7 @@
                     })
                     .catch(e => {
                         overlay.classList.add('hidden');
-                        showCustomPopup("ระบบมีปัญหา", e.message);
+                        showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
                         document.getElementById('upload-section').classList.remove('hidden');
                     });
                 }
@@ -1263,7 +1265,7 @@
                 }
             }).catch(e => {
                 btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; lucide.createIcons();
-                showCustomPopup("ข้อผิดพลาด", e.message);
+                showCustomPopup("ข้อผิดพลาด", "เชื่อมต่อฐานข้อมูลล้มเหลว");
             });
         }
 
