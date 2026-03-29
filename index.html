@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="page-title">กำลังโหลด... | E-Commerce Shop</title>
-
-
+    <title id="page-title">Loading... | E-Commerce Shop</title>
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,6 +50,11 @@
         }
     </script>
 
+    <script>
+        // กำหนดไว้บนสุด ป้องกันปัญหา formatPrice is not defined
+        function formatPrice(price) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(price).replace('$', '฿'); }
+    </script>
+
     <style>
         body { background-color: #f5f5f5; color: #333333; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
         .dark body { background-color: #121212; color: #e5e7eb; }
@@ -69,15 +73,11 @@
         .left-sidebar-enter { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .left-sidebar-enter-active { transform: translateX(0); }
 
-        /* Slip Styles */
         .slip-container { width: 100%; max-width: 420px; background-color: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden; font-family: 'Kanit', sans-serif; margin: 0 auto; position: relative; }
         .slip-container * { color: initial; } 
         .header-icon-box { width: 36px; height: 36px; background-color: white; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-
-        /* Loading Dotted Spinner */
         .dotted-spinner { width: 60px; height: 60px; border: 6px dotted #e43a3d; border-radius: 50%; animation: spin 2s linear infinite; }
 
-        /* Custom Popup Container */
         .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .5); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; z-index: 99999; }
         .popup-container.active { opacity: 1; pointer-events: auto; transition: .4s ease; }
         .popup-container .popup-box { width: 90%; max-width: 400px; background: #f2f2f2; border-radius: 6px; box-shadow: 0 0 10px rgba(0, 0, 0, .1); padding: 30px; transform: scale(0); text-align: center; font-family: "Poppins", 'Kanit', sans-serif; white-space: pre-line; line-height: 1.5; }
@@ -86,56 +86,36 @@
         .popup-box p { color: #555; margin: 12px 0 20px; font-size: 14px; }
         .popup-box .close-btn { width: 100%; height: 45px; background: #e43a3d; border-radius: 6px; border: none; outline: none; box-shadow: 0 0 10px rgba(0, 0, 0, .1); cursor: pointer; font-size: 16px; color: #f2f2f2; font-weight: 600; }
 
-        /* Maintenance Overlay */
         #maintenance-screen { position: fixed; inset: 0; background: #fff; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .dark #maintenance-screen { background: #121212; color: white; }
-
-        /* PROFILE ADDRESS TEMPLATE CSS */
-        .template-container { width: 100%; max-width: 550px; background-color: white; border: 4px solid #f83a32; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); margin: 0 auto; font-family: 'Sarabun', sans-serif; }
-        .template-header { display: flex; border-bottom: 4px solid #f83a32; background-color: white; }
-        .header-title { background-color: #f83a32; color: white; padding: 10px 24px; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; }
-        .header-datetime { flex-grow: 1; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: #374151; font-weight: 600; font-size: 1rem; }
-        .template-body { padding: 30px 35px; }
-        .detail-row { display: flex; align-items: flex-start; margin-bottom: 25px; flex-wrap: wrap; }
-        .detail-label { background-color: #f83a32; color: white; padding: 6px 18px; font-size: 1.2rem; font-weight: 700; margin-right: 20px; border-radius: 4px; white-space: nowrap; margin-bottom: 10px;}
-        .address-text { color: #171b85; font-size: 1.5rem; font-weight: 700; line-height: 1.6; word-break: break-word; }
-        .zip-section { display: flex; align-items: center; gap: 15px; margin-top: 40px; flex-wrap: wrap;}
-        .zip-label { background-color: #f83a32; color: white; padding: 6px 18px; font-size: 1.2rem; font-weight: 700; border-radius: 4px; }
-        .zip-grid { display: flex; gap: 8px; }
-        .zip-cell { width: 42px; height: 52px; border: 3px solid #f83a32; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: #171b85; background-color: white; }
         
-        /* Radio Button Custom */
         .custom-radio:checked + div { border-color: #e43a3d; background-color: #fef2f2; }
         .dark .custom-radio:checked + div { background-color: rgba(228, 58, 61, 0.1); }
         
-        /* Bank Card Style */
         .bank-card { background: linear-gradient(135deg, #e43a3d 0%, #991b1b 100%); position: relative; overflow: hidden; }
         .bank-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; }
 
-        /* Statement Page Template */
-        .statement-page-container { width: 100%; max-width: 210mm; background-color: #ffffff; margin: 0 auto; padding: 15mm 15mm 20mm 15mm; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
+        .statement-page-container { width: 100%; max-width: 700px; background-color: #ffffff; margin: 0 auto; padding: 30px; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
         .stmt-theme-red { color: #ff0000; }
         .stmt-table-header { border-bottom: 2px solid #1a1a1a; }
+        .stmt-table { width: 100%; font-size: 12px; }
+        .stmt-table th, .stmt-table td { padding: 6px 4px; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
 
-    <!-- Global Full Page Loader -->
     <div id="global-loader" class="fixed inset-0 bg-white dark:bg-[#121212] z-[100001] flex flex-col items-center justify-center">
         <div class="dotted-spinner mb-4"></div>
-        <p class="text-gray-500 font-kanit" id="loader-text">กลังเชื่อมต่อ API...</p>
+        <p class="text-gray-500 font-kanit" id="loader-text">กำลังเชื่อต่อ API . . .</p>
     </div>
 
-    <!-- Maintenance Screen -->
     <div id="maintenance-screen" class="hidden">
         <i data-lucide="settings" class="w-20 h-20 text-gray-400 mb-6 animate-spin-slow"></i>
         <h1 class="text-3xl font-bold mb-2">ขณะนี้ระบบปิดปรับปรุง</h1>
         <p class="text-gray-500">ขออภัยในความไม่สะดวก และจะพร้อมเปิดให้บริการในเร็วๆนี้</p>
     </div>
 
-    <!-- Main Wrapper -->
     <div id="app-wrapper" class="hidden flex-col min-h-screen">
-        <!-- Top Bar -->
         <div class="bg-[#333333] dark:bg-[#000000] text-gray-300 text-xs py-2 hidden md:block transition-colors">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
                 <div>Sale special too good to miss in every gear category</div>
@@ -145,7 +125,6 @@
             </div>
         </div>
 
-        <!-- Main Navbar -->
         <nav class="bg-white dark:bg-[#1e1e1e] border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40 shadow-sm transition-colors">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-20">
@@ -205,10 +184,18 @@
                         </button>
                     </div>
                 </div>
+                
+                <div class="md:hidden pb-4">
+                    <div class="relative w-full">
+                        <input type="text" id="product-search-mobile" class="w-full pl-4 pr-10 py-2 border-2 border-primary bg-white dark:bg-gray-800 dark:text-white outline-none text-sm rounded-sm" placeholder="ค้นหาสินค้า...">
+                        <button class="absolute right-0 top-0 h-full px-4 text-primary flex items-center justify-center">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </nav>
 
-        <!-- Main Content Area -->
         <main id="main-content" class="flex-grow">
             <!-- View: Home -->
             <div id="view-home" class="block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-hidden">
@@ -282,8 +269,8 @@
                                 <p class="text-sm opacity-80 uppercase tracking-wider mb-1">บัญชีรับเงินของคุณ</p>
                                 <h3 class="text-xl font-bold font-mono tracking-widest" id="wd-card-acc">XXX-X-XXXXX-X</h3>
                             </div>
-                            <div class="w-12 h-12 flex items-center justify-center text-white" id="wd-card-logo-container">
-                                <i class="bank bank-kbank m text-4xl"></i>
+                            <div class="w-16 h-16 flex items-center justify-center text-white" id="wd-card-logo-container">
+                                <i class="bank bank-kbank m text-[80px]" style="line-height: 1; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></i>
                             </div>
                         </div>
                         <div class="flex justify-between items-end relative z-10">
@@ -321,36 +308,17 @@
                         <div><p class="text-xs text-gray-500">ยอดเงิน / เครดิตคงเหลือ</p><p class="font-bold text-2xl text-green-600 dark:text-green-400" id="vp-balance">฿0.00</p></div>
                         <div><p class="text-xs text-gray-500">อีเมล</p><p class="font-bold text-lg dark:text-white" id="vp-email">-</p></div>
                         <div><p class="text-xs text-gray-500">เบอร์โทรศัพท์</p><p class="font-bold text-lg dark:text-white" id="vp-phone">-</p></div>
-                        <div><p class="text-xs text-gray-500">วันที่สมัครสมาชิก</p><p class="font-bold text-lg dark:text-white" id="vp-date">-</p></div>
                     </div>
                 </div>
-
-                <div class="template-container">
-                    <div class="template-header">
-                        <div class="header-title">ข้อมูลที่อยู่ของคุณ</div>
-                        <div class="header-datetime" id="current-time"></div>
-                    </div>
-                    <div class="template-body">
-                        <div class="detail-row">
-                            <div class="detail-label">รายละเอียด</div>
-                            <div class="address-text">
-                                <div id="prof-name-text">ชื่อ นามสกุล</div>
-                                <div id="prof-addr-text1">บ้านเลขที่ ซอย</div>
-                                <div id="prof-addr-text2">ถนน แขวง เขต</div>
-                                <div id="prof-addr-text3">จังหวัด</div>
-                            </div>
-                        </div>
-                        <div class="zip-section">
-                            <div class="zip-label">รหัสไปรษณีย์</div>
-                            <div class="zip-grid">
-                                <div class="zip-cell" id="zip-1">0</div>
-                                <div class="zip-cell" id="zip-2">0</div>
-                                <div class="zip-cell" id="zip-3">0</div>
-                                <div class="zip-cell" id="zip-4">0</div>
-                                <div class="zip-cell" id="zip-5">0</div>
-                            </div>
-                        </div>
-                    </div>
+                
+                <div class="bg-white dark:bg-[#1e1e1e] p-6 border border-gray-200 dark:border-gray-800 rounded-sm shadow-sm">
+                    <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">เปลี่ยนรหัสผ่าน</h3>
+                    <form id="change-pass-form" class="space-y-4 max-w-sm">
+                        <div><label class="block text-xs font-semibold mb-1">รหัสผ่านปัจจุบัน *</label><input type="password" id="cp-old" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                        <div><label class="block text-xs font-semibold mb-1">รหัสผ่านใหม่ *</label><input type="password" id="cp-new" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                        <div><label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่านใหม่ *</label><input type="password" id="cp-confirm" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                        <button type="button" onclick="submitChangePassword()" id="btn-submit-cp" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-6 uppercase text-sm rounded-sm shadow-md w-full">เปลี่ยนรหัสผ่าน</button>
+                    </form>
                 </div>
             </div>
 
@@ -400,114 +368,109 @@
             </div>
 
             <!-- View: Statement Page -->
-            <div id="view-statement" class="hidden w-full mx-auto py-12 overflow-x-auto bg-gray-100 dark:bg-[#121212]">
-                <button onclick="navigate('history')" class="flex items-center text-gray-500 hover:text-primary mb-6 ml-4 sm:ml-auto max-w-4xl transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าประวัติ</button>
+            <div id="view-statement" class="hidden w-full mx-auto py-8 sm:py-12 overflow-x-auto bg-gray-100 dark:bg-[#121212]">
+                <button onclick="navigate('history')" class="flex items-center text-gray-500 hover:text-primary mb-6 ml-4 sm:ml-auto max-w-3xl transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าประวัติ</button>
                 
-                <div id="statement-capture-area" class="statement-page-container shadow-xl">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="flex items-end space-x-2">
-                            <span class="text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
-                        </div>
-                        <div class="text-[13px] text-right w-[60%] leading-snug">
-                            <p>เว็บไซต์ เน็กซ์ ไลฟ์ ช็อป </p>
-                            <p>เว็บไซต์ จำหน่ายสินค้าอิเล็กทรอนิกส์ และสินค้าพรีเมี่ยม</p>
-                        </div>
+                <div id="statement-capture-area" class="statement-page-container shadow-xl relative">
+                    <div class="absolute top-6 right-6 text-right" id="stmt-total-balance-display" style="font-size: 14px; font-weight: bold; color: #28a745;">
+                        ยอดเงินคงเหลือปัจจุบัน: ฿0.00
                     </div>
 
-                    <div class="flex justify-between items-end mb-8">
-                        <div class="text-[15px] font-semibold" id="stmt-ref">เลขที่ NX-0000-0000-XXXXXX</div>
-                        <div class="flex flex-col items-end text-[14px]">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex items-end space-x-2">
+                            <span class="text-3xl sm:text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
+                        </div>
+                    </div>
+                    <div class="text-[11px] sm:text-[12px] text-right leading-snug mb-2">
+                        <p>เว็บไซต์ เน็กซ์ ไลฟ์ ช็อป </p>
+                        <p>เว็บไซต์ จำหน่ายสินค้าอิเล็กทรอนิกส์ และสินค้าพรีเมี่ยม</p>
+                    </div>
+
+                    <div class="flex justify-between items-end mb-6">
+                        <div class="text-[13px] sm:text-[14px] font-semibold" id="stmt-ref">เลขที่ NX-0000-0000-XXXXXX</div>
+                        <div class="flex flex-col items-end text-[12px] sm:text-[13px]">
                             <div class="flex items-center space-x-2 mb-1">
                                 <div class="text-right leading-tight ml-4">
                                     <div class="font-bold">ต้นฉบับ ใบเสร็จรับเงิน</div>
                                     <div>Original Receipt</div>
                                 </div>
                             </div>
-                            <div class="text-[13px]">
+                            <div class="text-[11px] sm:text-[12px]">
                                 <span class="mr-4">Digitally signed by NEXT</span>
-                                <span id="stmt-date">วันที่ XX/XX/XXXX</span>
+                                <span id="stmt-date">วันที่ XX-XX-XXXX / XX:XX</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-8 mb-10 text-[13px] leading-relaxed">
+                    <div class="mb-8 text-[12px] sm:text-[13px] leading-relaxed">
                         <div>
-                            <h3 class="font-bold text-[16px] mb-1 stmt-theme-red">ชื่อและข้อมูลสำหรับจัดส่งเอกสาร</h3>
+                            <h3 class="font-bold text-[14px] sm:text-[15px] mb-1 stmt-theme-red">ข้อมูลอ้างอิงและติดต่อผู้ใช้</h3>
                             <p id="stmt-name">ชื่อ-สกุล : -</p>
-                            <p id="stmt-email">อีเมลจัดส่ง : -</p>
+                            <p id="stmt-email">อีเมล : -</p>
                             <p id="stmt-phone">หมายเลขโทรศัพท์ : -</p>
                         </div>
                     </div>
 
-                    <div class="w-full text-[13px]">
-                        <table class="w-full">
+                    <div class="w-full mb-6">
+                        <table class="stmt-table">
                             <thead>
                                 <tr class="stmt-table-header">
-                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการสั่งซื้อสินค้า</th>
+                                    <th colspan="7" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการสั่งซื้อสินค้า</th>
                                 </tr>
                                 <tr class="stmt-table-header">
-                                    <th class="text-left font-bold py-2 stmt-theme-red w-[40%]">รายการ/Description</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">ราคาสินค้า</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">จำนวน</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ส่วนลด</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ยอดสุทธิ</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ภาษี(VAT)</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ยอดชำระ</th>
+                                    <th class="text-left font-bold stmt-theme-red w-[40%]">รายการ/Description</th>
+                                    <th class="text-center font-bold stmt-theme-red">ราคา</th>
+                                    <th class="text-center font-bold stmt-theme-red">จำนวน</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">ส่วนลด</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">ยอดสุทธิ</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">ภาษี(VAT)</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">ยอดชำระ</th>
                                 </tr>
                             </thead>
-                            <tbody id="stmt-orders-tbody">
-                                <!-- JS iniects here -->
-                            </tbody>
+                            <tbody id="stmt-orders-tbody"></tbody>
                         </table>
                     </div>
 
-                    <br><br>
-                    <div class="w-full text-[13px]">
-                        <table class="w-full">
+                    <div class="w-full mb-6">
+                        <table class="stmt-table">
                             <thead>
                                 <tr class="stmt-table-header">
-                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการ การฝากเงิน/เติมเครดิต (Deposit)</th>
+                                    <th colspan="5" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการ การฝากเงิน/เติมเครดิต (Deposit)</th>
                                 </tr>
                                 <tr class="stmt-table-header">
-                                    <th class="text-left font-bold py-2 stmt-theme-red w-[25%]">วันที่เวลา/Date Time</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">จำนวนเงิน</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">ฟรีโบนัส</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">เครดิตรวม</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">สถานะ</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">หลักฐาน</th>
+                                    <th class="text-left font-bold stmt-theme-red w-[30%]">วันที่/เวลา</th>
+                                    <th class="text-center font-bold stmt-theme-red">จำนวนเงิน</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตรวม (รวมโบนัส)</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">สถานะ</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตคงเหลือ</th>
                                 </tr>
                             </thead>
-                            <tbody id="stmt-deposits-tbody">
-                                <!-- JS iniects here -->
-                            </tbody>
+                            <tbody id="stmt-deposits-tbody"></tbody>
                         </table>
                     </div>
 
-                    <br><br>
-                    <div class="w-full text-[13px]">
-                        <table class="w-full">
+                    <div class="w-full">
+                        <table class="stmt-table">
                             <thead>
                                 <tr class="stmt-table-header">
-                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการ การถอนเงิน/ถอนเครดิต (Withdraw)</th>
+                                    <th colspan="7" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการ การถอนเงิน/ถอนเครดิต (Withdraw)</th>
                                 </tr>
                                 <tr class="stmt-table-header">
-                                    <th class="text-left font-bold py-2 stmt-theme-red w-[25%]">วันที่เวลา/Date Time</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">ชื่อ นามสกุล</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">ธนาคาร</th>
-                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">เลขที่บัญชี</th>
-                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">จำนวนเงิน</th>
-                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">สถานะ</th>
+                                    <th class="text-left font-bold stmt-theme-red w-[20%]">วันที่/เวลา</th>
+                                    <th class="text-center font-bold stmt-theme-red">ชื่อ นามสกุล</th>
+                                    <th class="text-center font-bold stmt-theme-red">ธนาคาร</th>
+                                    <th class="text-center font-bold leading-tight stmt-theme-red">เลขบัญชี</th>
+                                    <th class="text-center font-bold leading-tight stmt-theme-red">จำนวนเงิน</th>
+                                    <th class="text-center font-bold leading-tight stmt-theme-red">สถานะ</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตคงเหลือ</th>
                                 </tr>
                             </thead>
-                            <tbody id="stmt-withdraws-tbody">
-                                <!-- JS iniects here -->
-                            </tbody>
+                            <tbody id="stmt-withdraws-tbody"></tbody>
                         </table>
                     </div>
 
-                    <!-- Bottom Section (Pushed to bottom) -->
-                    <div class="mt-auto pt-20">
-                        <div class="flex justify-between items-end mb-8 text-[13px]">
+                    <div class="mt-8 pt-8">
+                        <div class="flex justify-between items-end mb-4 text-[11px] sm:text-[12px]">
                             <div class="flex">
                                 <span class="font-bold mr-2 stmt-theme-red">ข้อมูลอ้างอิง</span>
                                 <div>
@@ -515,20 +478,20 @@
                                     ใช้สำหรับอ้างอิงการทำรายการบนแพลตฟอร์มเท่านั้น
                                 </div>
                             </div>
-                            <div class="font-bold text-[15px]" id="stmt-admin-name">
+                            <div class="font-bold text-[13px] sm:text-[14px]" id="stmt-admin-name">
                                 ผู้รับเงิน ชื่อ นามสกุลแอดมิน
                             </div>
                         </div>
 
-                        <div class="text-[11px] text-gray-600 border-t border-gray-300 pt-2">
+                        <div class="text-[10px] text-gray-500 border-t border-gray-300 pt-2 leading-tight">
                             หมายเหตุ : หากเอกสารฉบับนี้ มีข้อมูลรายการไม่ถูกต้อง กรุณาติดต่อเจ้าหน้าที่เพื่อแก้ไขข้อมูลและทำการออกประวัติรายการอีกครั้ง<br>เอกสารฉบับนี้ใช้ภายใต้การให้บริการส่วนบุคคลเท่านั้น ไม่เกี่ยวข้องกับบุคคลที่สาม หรือผู้ให้บริการหน่วยงานอื่นๆ 
                         </div>
                     </div>
                 </div>
 
-                <div class="max-w-4xl mx-auto mt-8 text-center px-4">
-                    <button onclick="downloadAndEmailStatement()" id="btn-dl-statement" class="w-full sm:w-auto bg-primary hover:bg-primaryHover text-white font-bold py-4 px-10 uppercase text-sm rounded-sm shadow-md inline-flex items-center justify-center">
-                        <i data-lucide="download" class="w-5 h-5 mr-2"></i> ดาวน์โหลดไฟล์ (พร้อมส่งอีเมล)
+                <div class="max-w-3xl mx-auto mt-6 text-center px-4">
+                    <button onclick="emailStatementOnly()" id="btn-dl-statement" class="w-full sm:w-auto bg-primary hover:bg-primaryHover text-white font-bold py-3 px-8 uppercase text-sm rounded-sm shadow-md inline-flex items-center justify-center">
+                        <i data-lucide="mail" class="w-5 h-5 mr-2"></i> ส่งบิลไปยังอีเมล
                     </button>
                 </div>
             </div>
@@ -537,63 +500,68 @@
             <div id="view-failure" class="hidden max-w-xl mx-auto px-4 py-20 text-center animate-fade-in">
                 <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="x" class="w-8 h-8"></i></div>
                 <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white">ทำรายการไม่สำเร็จ!</h2>
-                <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm mt-6">
-                    <p class="text-red-500 font-bold text-sm whitespace-pre-line" id="failure-desc">ข้อผิดพลาด</p>
+                <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm mt-6 shadow-sm">
+                    <p class="text-red-600 font-medium text-[15px] whitespace-pre-line leading-relaxed" id="failure-desc">ข้อผิดพลาด</p>
                 </div>
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
 
-            <!-- View: Auth -->
-            <div id="view-auth" class="hidden max-w-lg mx-auto px-4 py-12">
-                <div class="bg-white dark:bg-[#1e1e1e] border shadow-lg rounded-sm overflow-hidden">
-                    <div class="flex border-b">
-                        <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white">ลงชื่อเข้าใช้</button>
-                        <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">สมัครใช้งาน</button>
-                    </div>
-
-                    <div id="form-login-container" class="p-6 md:p-8">
-                        <h2 class="text-2xl font-bold mb-6">ลงชื่อเข้าใช้</h2>
+            <!-- View: Auth (Full width like Privacy Policy) -->
+            <div id="view-auth" class="hidden max-w-4xl mx-auto px-4 py-12">
+                <div class="bg-white dark:bg-[#1e1e1e] border shadow-lg rounded-sm overflow-hidden max-w-lg mx-auto p-6 md:p-8">
+                    <!-- Login Form -->
+                    <div id="form-login-container">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-primary">ลงชื่อเข้าใช้</h2>
                         <form class="space-y-4" id="login-form">
                             <div><label class="block text-xs font-semibold mb-1">อีเมล / หมายเลขโทรศัพท์</label><input type="text" id="log-username" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
                             <div><label class="block text-xs font-semibold mb-1">รหัสผ่าน</label><input type="password" id="log-password" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                            <button type="button" onclick="submitLogin()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-login">ลงชื่อเข้าใช้งาน</button>
+                            <div class="text-right"><button type="button" onclick="navigate('forgot-password')" class="text-sm text-primary hover:underline">ลืมรหัสผ่าน?</button></div>
+                            <button type="button" onclick="submitLogin()" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-login">ลงชื่อเข้าใช้งาน</button>
                         </form>
+                        <div class="mt-6 text-center border-t pt-6">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">ยังไม่มีบัญชี? <button type="button" onclick="switchAuthTab('register')" class="text-primary font-bold hover:underline ml-1">สร้างบัญชีใหม่</button></p>
+                        </div>
                     </div>
 
-                    <div id="form-register-container" class="hidden p-6 md:p-8">
-                        <div id="register-step-1">
-                            <h2 class="text-2xl font-bold mb-2">สร้างบัญชีใหม่</h2>
-                            <form class="space-y-4" id="reg-form-1">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="block text-xs font-semibold mb-1">ชื่อ *</label><input type="text" id="reg-fname" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                    <div><label class="block text-xs font-semibold mb-1">นามสกุล *</label><input type="text" id="reg-lname" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                </div>
-                                <div><label class="block text-xs font-semibold mb-1">อีเมล *</label><input type="email" id="reg-email" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                <div><label class="block text-xs font-semibold mb-1">เบอร์โทรศัพท์ *</label><input type="tel" id="reg-phone" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                <div><label class="block text-xs font-semibold mb-1">รหัสผ่าน *</label><input type="password" id="reg-pass" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                <button type="button" onclick="nextRegisterStep()" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-2 text-sm rounded-sm shadow-md flex justify-center items-center">ถัดไป <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i></button>
-                            </form>
-                        </div>
-                        <div id="register-step-2" class="hidden">
-                            <div class="flex items-center mb-6"><button onclick="prevRegisterStep()" class="mr-3 text-gray-400 hover:text-primary"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><h2 class="text-2xl font-bold">ข้อมูลที่อยู่</h2></div>
-                            <form class="space-y-4" id="reg-form-2">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="block text-xs font-semibold mb-1">บ้านเลขที่ *</label><input type="text" id="reg-addr1" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                    <div><label class="block text-xs font-semibold mb-1">ซอย / แยก</label><input type="text" id="reg-addr2" class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                </div>
-                                <div><label class="block text-xs font-semibold mb-1">ถนน</label><input type="text" id="reg-addr3" class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="block text-xs font-semibold mb-1">แขวง / ตำบล *</label><input type="text" id="reg-addr4" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                    <div><label class="block text-xs font-semibold mb-1">เขต / อำเภอ *</label><input type="text" id="reg-addr5" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="block text-xs font-semibold mb-1">จังหวัด *</label><input type="text" id="reg-addr6" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                    <div><label class="block text-xs font-semibold mb-1">รหัสไปรษณีย์ *</label><input type="text" id="reg-addr7" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                </div>
-                                <button type="button" onclick="submitRegister()" id="btn-submit-register" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md">สร้างบัญชี</button>
-                            </form>
+                    <!-- Register Form -->
+                    <div id="form-register-container" class="hidden">
+                        <h2 class="text-2xl font-bold mb-6 text-center text-primary">ข้อมูลส่วนตัว</h2>
+                        <form class="space-y-4" id="reg-form-1">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-xs font-semibold mb-1">ชื่อ *</label><input type="text" id="reg-fname" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                                <div><label class="block text-xs font-semibold mb-1">นามสกุล *</label><input type="text" id="reg-lname" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                            </div>
+                            <div><label class="block text-xs font-semibold mb-1">อีเมล *</label><input type="email" id="reg-email" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                            <div><label class="block text-xs font-semibold mb-1">เบอร์โทรศัพท์ *</label><input type="tel" id="reg-phone" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                            <div><label class="block text-xs font-semibold mb-1">รหัสผ่าน *</label><input type="password" id="reg-pass" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                            <div><label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่าน *</label><input type="password" id="reg-pass-confirm" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                            <button type="button" onclick="submitRegister()" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-register">สร้างบัญชี</button>
+                        </form>
+                        <div class="mt-6 text-center border-t pt-6">
+                            <p class="text-sm text-gray-600 dark:text-gray-400">มีบัญชีอยู่แล้ว? <button type="button" onclick="switchAuthTab('login')" class="text-primary font-bold hover:underline ml-1">เข้าสู่ระบบ</button></p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- View: Forgot Password -->
+            <div id="view-forgot-password" class="hidden max-w-4xl mx-auto px-4 py-12">
+                <div class="bg-white dark:bg-[#1e1e1e] border shadow-lg rounded-sm overflow-hidden p-6 md:p-8 max-w-lg mx-auto">
+                    <button onclick="navigate('auth')" class="flex items-center text-gray-500 hover:text-primary mb-6 transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าเข้าสู่ระบบ</button>
+                    <h2 class="text-2xl font-bold mb-6 text-center text-primary">ลืมรหัสผ่าน</h2>
+                    <form class="space-y-4" id="forgot-pass-form">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">อีเมลของคุณ *</label>
+                            <div class="flex gap-2">
+                                <input type="email" id="fp-email" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <button type="button" onclick="sendOtp()" id="btn-send-otp" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 text-xs rounded-sm whitespace-nowrap">ส่งรหัส</button>
+                            </div>
+                        </div>
+                        <div><label class="block text-xs font-semibold mb-1">รหัส OTP (ตรวจสอบในอีเมล) *</label><input type="text" id="fp-otp" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm text-center tracking-widest text-lg font-bold"></div>
+                        <div><label class="block text-xs font-semibold mb-1">รหัสผ่านใหม่ *</label><input type="password" id="fp-new-pass" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                        <div><label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่านใหม่ *</label><input type="password" id="fp-confirm-pass" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                        <button type="button" onclick="submitResetPassword()" id="btn-reset-pass" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md">เปลี่ยนรหัสผ่าน</button>
+                    </form>
                 </div>
             </div>
 
@@ -844,7 +812,6 @@
         </div>
         
         <div class="flex-grow overflow-y-auto flex flex-col">
-            <!-- Mobile Sidebar Auth/Profile -->
             <div id="mobile-auth-section" class="md:hidden border-b border-gray-100 dark:border-gray-800 pb-2 mb-2">
                 <div class="grid grid-cols-2 gap-2 p-4 pb-2">
                     <button onclick="openAuth('login'); toggleCategorySidebar()" class="bg-gray-100 text-gray-800 py-2 text-sm font-bold shadow-sm">ลงชื่อเข้าใช้</button>
@@ -852,7 +819,6 @@
                 </div>
             </div>
             
-            <!-- Mobile Menu: Profile & Wallet -->
             <div id="mobile-profile-section" class="hidden md:hidden border-b border-gray-100 pb-2 mb-2">
                 <div class="p-4 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
                     <div class="flex items-center">
@@ -867,7 +833,6 @@
                 </ul>
             </div>
 
-            <!-- หมวดหมู่ -->
             <ul id="category-list" class="text-sm mt-2 border-b border-gray-100 pb-2"></ul>
             
             <div id="mobile-history-section" class="md:hidden pt-2">
@@ -974,7 +939,7 @@
         let appliedDiscountCode = "";
         
         let currentFlow = 'order'; 
-        let globalHistoryData = null; // ไว้เก็บประวัติสำหรับทำ Statement
+        let globalHistoryData = null; 
 
         const bannerData = [
             { img: "https://img1.pic.in.th/images/IMG_1083.png" },
@@ -1023,7 +988,7 @@
 
         function init() {
             try { lucide.createIcons(); } catch(e) {}
-            initSlider(); updateLiveClock(); populateBankOptions();
+            initSlider(); populateBankOptions();
             
             callBackend({action: 'init'}).then(res => {
                 const loader = document.getElementById('global-loader'); if(loader) loader.style.display = 'none'; 
@@ -1130,19 +1095,66 @@
             if(currentUser) { currentUser.balance = newBal; localStorage.setItem('nextLiveUser', JSON.stringify(currentUser)); checkLoginState(); }
         }
 
+        // --- Forgot Password & Register & Pass ---
+        function sendOtp() {
+            const email = document.getElementById('fp-email').value;
+            if(!email) { showCustomPopup("แจ้งเตือน", "กรุณาระบุอีเมล"); return; }
+            const btn = document.getElementById('btn-send-otp');
+            btn.innerText = "..."; btn.disabled = true;
+            callBackend({action: 'sendOtp', email: email}).then(res => {
+                btn.innerText = "ส่งรหัส"; btn.disabled = false;
+                if(res.status === 'success') showCustomPopup("สำเร็จ", res.message);
+                else showCustomPopup("ข้อผิดพลาด", res.message);
+            }).catch(e => { btn.innerText = "ส่งรหัส"; btn.disabled = false; showCustomPopup("ข้อผิดพลาด", "ไม่สามารถส่ง OTP ได้"); });
+        }
+
+        function submitResetPassword() {
+            const email = document.getElementById('fp-email').value;
+            const otp = document.getElementById('fp-otp').value;
+            const newPass = document.getElementById('fp-new-pass').value;
+            const confirmPass = document.getElementById('fp-confirm-pass').value;
+
+            if(!email || !otp || !newPass || !confirmPass) { showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
+            if(newPass !== confirmPass) { showCustomPopup("แจ้งเตือน", "รหัสผ่านไม่ตรงกัน"); return; }
+
+            const btn = document.getElementById('btn-reset-pass'); btn.innerText = "กำลังเปลี่ยน..."; btn.disabled = true;
+            callBackend({action: 'resetPassword', email: email, otp: otp, newPass: newPass}).then(res => {
+                btn.innerText = "เปลี่ยนรหัสผ่าน"; btn.disabled = false;
+                if(res.status === 'success') { showCustomPopup("สำเร็จ", res.message); navigate('auth'); switchAuthTab('login'); } 
+                else { showCustomPopup("ข้อผิดพลาด", res.message); }
+            }).catch(e => { btn.innerText = "เปลี่ยนรหัสผ่าน"; btn.disabled = false; showCustomPopup("ข้อผิดพลาด", "การเชื่อมต่อล้มเหลว"); });
+        }
+
+        function submitChangePassword() {
+            if(!currentUser) return;
+            const oldPass = document.getElementById('cp-old').value;
+            const newPass = document.getElementById('cp-new').value;
+            const confirmPass = document.getElementById('cp-confirm').value;
+
+            if(!oldPass || !newPass || !confirmPass) { showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
+            if(newPass !== confirmPass) { showCustomPopup("แจ้งเตือน", "รหัสผ่านใหม่ไม่ตรงกัน"); return; }
+
+            const btn = document.getElementById('btn-submit-cp'); btn.innerText = "กำลังเปลี่ยน..."; btn.disabled = true;
+            callBackend({action: 'changePassword', email: currentUser.email, oldPass: oldPass, newPass: newPass}).then(res => {
+                btn.innerText = "เปลี่ยนรหัสผ่าน"; btn.disabled = false;
+                if(res.status === 'success') { showCustomPopup("สำเร็จ", res.message); document.getElementById('change-pass-form').reset(); } 
+                else { showCustomPopup("ข้อผิดพลาด", res.message); }
+            }).catch(e => { btn.innerText = "เปลี่ยนรหัสผ่าน"; btn.disabled = false; showCustomPopup("ข้อผิดพลาด", "การเชื่อมต่อล้มเหลว"); });
+        }
+
         function submitRegister() {
-            const form1 = document.getElementById('reg-form-1'); const form2 = document.getElementById('reg-form-2');
-            if(form1 && form2 && (!form1.checkValidity() || !form2.checkValidity())) { showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
-            
+            const form1 = document.getElementById('reg-form-1');
+            if(form1 && !form1.checkValidity()) { showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
+            if(document.getElementById('reg-pass').value !== document.getElementById('reg-pass-confirm').value) {
+                showCustomPopup("แจ้งเตือน", "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน"); return;
+            }
+
             const btn = document.getElementById('btn-submit-register'); if(btn) { btn.innerText = "กำลังสร้างบัญชี..."; btn.disabled = true; }
 
             const payload = {
                 action: 'register', fname: document.getElementById('reg-fname').value, lname: document.getElementById('reg-lname').value,
                 email: document.getElementById('reg-email').value, phone: document.getElementById('reg-phone').value,
-                password: document.getElementById('reg-pass').value, addr1: document.getElementById('reg-addr1').value,
-                addr2: document.getElementById('reg-addr2').value, addr3: document.getElementById('reg-addr3').value,
-                addr4: document.getElementById('reg-addr4').value, addr5: document.getElementById('reg-addr5').value,
-                addr6: document.getElementById('reg-addr6').value, addr7: document.getElementById('reg-addr7').value
+                password: document.getElementById('reg-pass').value
             };
 
             callBackend(payload).then(res => {
@@ -1170,23 +1182,9 @@
         function renderProfileView() {
             if(!currentUser) return;
             safeSetText('vp-name', currentUser.fname + " " + currentUser.lname); safeSetText('vp-email', currentUser.email);
-            safeSetText('vp-phone', currentUser.phone); safeSetText('vp-date', currentUser.regDate || "N/A");
+            safeSetText('vp-phone', currentUser.phone); safeSetText('vp-date', currentUser.regDate || "-");
             safeSetText('vp-balance', `฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
-
-            let addr = currentUser.address || {};
-            safeSetText('prof-name-text', currentUser.fname + " " + currentUser.lname); safeSetText('prof-addr-text1', `${addr.addr1 || ''} ${addr.addr2 || ''}`);
-            safeSetText('prof-addr-text2', `ถนน${addr.addr3 || ''} แขวง/ตำบล${addr.addr4 || ''} เขต/อำเภอ${addr.addr5 || ''}`); safeSetText('prof-addr-text3', `จังหวัด${addr.addr6 || ''}`);
-
-            let zip = (addr.addr7 || "00000").toString(); if(zip.length > 5) zip = zip.substring(0,5); else if(zip.length < 5) zip = zip.padEnd(5, '0');
-            for(let i=0; i<5; i++) { safeSetText('zip-'+(i+1), zip[i]); }
         }
-
-        function updateLiveClock() {
-            const now = new Date(); const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            safeSetText('current-time', now.toLocaleDateString('th-TH', options) + ' น.'); setTimeout(updateLiveClock, 1000);
-        }
-
-        function formatPrice(price) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(price).replace('$', '฿'); }
 
         function navigate(view) {
             // เมนูที่บังคับให้ล็อกอิน
@@ -1194,7 +1192,7 @@
                 showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้งานฟังก์ชันนี้"); openAuth('login'); return;
             }
 
-            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-failure', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-profile', 'view-deposit', 'view-withdraw', 'view-statement'];
+            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-failure', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-forgot-password', 'view-profile', 'view-deposit', 'view-withdraw', 'view-statement'];
             views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -1241,7 +1239,7 @@
                 safeSetText('wd-card-balance', `฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
                 
                 const logoCont = document.getElementById('wd-card-logo-container');
-                if(logoCont) logoCont.innerHTML = `<i class="bank ${currentUser.bankName} m text-4xl"></i>`;
+                if(logoCont) logoCont.innerHTML = `<i class="bank ${currentUser.bankName} m text-[80px]" style="line-height: 1; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></i>`;
             } else {
                 if(setupSec) setupSec.classList.remove('hidden'); if(actSec) actSec.classList.add('hidden');
                 safeSetValue('wd-fname', currentUser.fname); safeSetValue('wd-lname', currentUser.lname);
@@ -1394,10 +1392,9 @@
                 if(btn) { btn.innerText = "..."; btn.disabled = true; }
 
                 let bName = document.getElementById('chk-fname').value + " " + document.getElementById('chk-lname').value;
-                let bEmail = document.getElementById('chk-email').value;
                 let bPhone = document.getElementById('chk-phone').value;
 
-                callBackend({action: 'checkDiscountCode', code: inputCode, name: bName, email: bEmail, phone: bPhone})
+                callBackend({action: 'checkDiscountCode', code: inputCode, name: bName, phone: bPhone})
                 .then(res => {
                     if(btn) { btn.innerText = "ใช้รหัส"; btn.disabled = false; }
                     if(res.status === 'success') {
@@ -1520,6 +1517,13 @@
         }
 
         // --- History fetching & Statement ---
+        function formatShortStatus(status) {
+            if(!status) return "-";
+            if(status.includes("ไม่สำเร็จ") || status.includes("ยกเลิก")) return "ไม่สำเร็จ";
+            if(status.includes("รอดำเนินการ")) return "รอดำเนินการ";
+            return "สำเร็จ";
+        }
+
         function searchHistory() {
             const phoneEl = document.getElementById('history-phone-input'); const phone = phoneEl ? phoneEl.value : "";
             const ordContainer = document.getElementById('history-orders-container'); const depContainer = document.getElementById('history-deposits-container'); const wdContainer = document.getElementById('history-withdraws-container');
@@ -1580,11 +1584,17 @@
 
             // Populate Info
             safeSetText('stmt-ref', `เลขที่ NX-${Date.now().toString().slice(-4)}-${Math.floor(Math.random()*9000)+1000}-${currentUser.phone.slice(-6)}`);
-            safeSetText('stmt-date', `วันที่ ${new Date().toLocaleDateString('th-TH')}`);
+            let dParts = new Date().toLocaleDateString('th-TH').split('/');
+            let tStr = new Date().toTimeString().substring(0,5);
+            let y = parseInt(dParts[2]); if(y < 2500) y += 543;
+            safeSetText('stmt-date', `วันที่ ${("0"+dParts[0]).slice(-2)}-${("0"+dParts[1]).slice(-2)}-${y} / ${tStr}`);
+            
             safeSetText('stmt-name', `ชื่อ-สกุล : ${currentUser.fname} ${currentUser.lname}`);
             safeSetText('stmt-email', `อีเมลจัดส่ง : ${currentUser.email}`);
             safeSetText('stmt-phone', `หมายเลขโทรศัพท์ : ${currentUser.phone}`);
             safeSetText('stmt-admin-name', `ผู้รับเงิน ${siteSettings.AdminName}`);
+            
+            safeSetText('stmt-total-balance-display', `ยอดเงินคงเหลือปัจจุบัน: ฿${(globalHistoryData.balance || 0).toLocaleString('en-US',{minimumFractionDigits:2})}`);
 
             // Populate Orders
             const oBody = document.getElementById('stmt-orders-tbody'); oBody.innerHTML = '';
@@ -1615,8 +1625,8 @@
                         <td class="text-center py-2 border-b border-gray-200">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
                         <td class="text-center py-2 border-b border-gray-200">-</td>
                         <td class="text-right py-2 border-b border-gray-200">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-right py-2 border-b border-gray-200">${d.status}</td>
-                        <td class="text-right py-2 border-b border-gray-200">ดูสลิป</td>
+                        <td class="text-right py-2 border-b border-gray-200">${formatShortStatus(d.status)}</td>
+                        <td class="text-right py-2 border-b border-gray-200">-</td>
                     `;
                     dBody.appendChild(tr);
                 });
@@ -1633,16 +1643,17 @@
                         <td class="text-center py-2 border-b border-gray-200">${w.items.split('(')[0].replace('ไปยัง:','').trim()}</td>
                         <td class="text-center py-2 border-b border-gray-200">${w.items.split('(')[1] ? w.items.split('(')[1].replace(')','') : '-'}</td>
                         <td class="text-center py-2 border-b border-gray-200 font-bold">${parseFloat(w.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-center py-2 border-b border-gray-200">${w.status}</td>
+                        <td class="text-center py-2 border-b border-gray-200">${formatShortStatus(w.status)}</td>
+                        <td class="text-right py-2 border-b border-gray-200">-</td>
                     `;
                     wBody.appendChild(tr);
                 });
-            } else { wBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
+            } else { wBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
             navigate('statement');
         }
 
-        function downloadAndEmailStatement() {
+        function emailStatementOnly() {
             const btn = document.getElementById('btn-dl-statement');
             const origText = btn.innerHTML;
             btn.innerHTML = `<div class="dotted-spinner w-5 h-5 border-[3px] border-white inline-block align-middle mr-2"></div> กำลังประมวลผล...`;
@@ -1650,18 +1661,10 @@
 
             const element = document.getElementById('statement-capture-area');
             
-            // รอให้ฟอนต์/UI จัดเรียงเสร็จก่อนแคป
             setTimeout(() => {
-                html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                html2canvas(element, { scale: 1.5, useCORS: true }).then(canvas => {
                     const imgData = canvas.toDataURL('image/png');
                     
-                    // 1. ดาวน์โหลดลงเครื่อง
-                    const link = document.createElement('a');
-                    link.download = `Statement_${currentUser.phone}_${new Date().getTime()}.png`;
-                    link.href = imgData;
-                    link.click();
-
-                    // 2. ส่งไปให้ Backend ส่งอีเมล
                     callBackend({
                         action: 'emailStatement',
                         email: currentUser.email,
@@ -1671,13 +1674,13 @@
                     }).then(res => {
                         btn.innerHTML = origText; btn.disabled = false;
                         if(res.status === 'success') {
-                            showCustomPopup("สำเร็จ", "บันทึกรูปภาพและส่งไปยังอีเมลของคุณเรียบร้อยแล้ว");
+                            showCustomPopup("สำเร็จ", "ส่งบิลไปยังอีเมลของคุณเรียบร้อยแล้ว");
                         } else {
-                            showCustomPopup("แจ้งเตือน", "บันทึกรูปสำเร็จ แต่ไม่สามารถส่งอีเมลได้");
+                            showCustomPopup("แจ้งเตือน", "ไม่สามารถส่งอีเมลได้: " + res.message);
                         }
                     }).catch(e => {
                         btn.innerHTML = origText; btn.disabled = false;
-                        showCustomPopup("แจ้งเตือน", "บันทึกรูปสำเร็จ แต่ไม่สามารถเชื่อมต่อระบบอีเมลได้");
+                        showCustomPopup("แจ้งเตือน", "ไม่สามารถเชื่อมต่อระบบอีเมลได้");
                     });
                 });
             }, 500);
@@ -1696,19 +1699,12 @@
         function openAuth(tab = 'login') { navigate('auth'); switchAuthTab(tab); }
         function switchAuthTab(tab) {
             const fLog = document.getElementById('form-login-container'); const fReg = document.getElementById('form-register-container');
-            const tLog = document.getElementById('tab-login'); const tReg = document.getElementById('tab-register');
             if(tab === 'login') {
                 if(fLog) fLog.classList.remove('hidden'); if(fReg) fReg.classList.add('hidden');
-                if(tLog) tLog.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white";
-                if(tReg) tReg.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 text-gray-600";
             } else {
                 if(fReg) fReg.classList.remove('hidden'); if(fLog) fLog.classList.add('hidden');
-                if(tReg) tReg.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white";
-                if(tLog) tLog.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 text-gray-600";
             }
         }
-        function nextRegisterStep() { const s1 = document.getElementById('register-step-1'); const s2 = document.getElementById('register-step-2'); if(s1) s1.classList.add('hidden'); if(s2) s2.classList.remove('hidden'); }
-        function prevRegisterStep() { const s1 = document.getElementById('register-step-1'); const s2 = document.getElementById('register-step-2'); if(s2) s2.classList.add('hidden'); if(s1) s1.classList.remove('hidden'); }
         function toggleCategorySidebar() {
             const overlay = document.getElementById('category-overlay'); const sidebar = document.getElementById('category-sidebar'); if(!overlay || !sidebar) return;
             if (overlay.classList.contains('overlay-enter-active')) { sidebar.classList.remove('left-sidebar-enter-active'); overlay.classList.remove('overlay-enter-active'); } 
