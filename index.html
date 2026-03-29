@@ -8,14 +8,13 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Icons & jQuery & QR Library -->
+    <!-- Icons & jQuery & QR Library & Html2Canvas -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bank Icons CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/allaboutitappscript/fontbank/banks.min.css">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script type="module">
         import promptpayQr from 'https://fastly.jsdelivr.net/npm/promptpay-qr@0.5.0/+esm'
         window.promptpayQr = promptpayQr
@@ -109,21 +108,13 @@
         .dark .custom-radio:checked + div { background-color: rgba(228, 58, 61, 0.1); }
         
         /* Bank Card Style */
-        .bank-card {
-            background: linear-gradient(135deg, #e43a3d 0%, #991b1b 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        .bank-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 300px;
-            height: 300px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
-        }
+        .bank-card { background: linear-gradient(135deg, #e43a3d 0%, #991b1b 100%); position: relative; overflow: hidden; }
+        .bank-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+
+        /* Statement Page Template */
+        .statement-page-container { width: 100%; max-width: 210mm; background-color: #ffffff; margin: 0 auto; padding: 15mm 15mm 20mm 15mm; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
+        .stmt-theme-red { color: #ff0000; }
+        .stmt-table-header { border-bottom: 2px solid #1a1a1a; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
@@ -170,7 +161,6 @@
 
                     <div class="hidden lg:flex items-center space-x-6 mx-6">
                         <a href="#" onclick="navigate('home')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">หน้าหลัก</a>
-                        <!-- นำเมนูประวัติกลับมาแสดงตรงนี้ให้ชัดเจนสำหรับทุกคน -->
                         <a href="#" onclick="navigate('history')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ประวัติการทำรายการ</a>
                         <a href="#" onclick="navigate('deposit')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ฝากเงิน</a>
                         <a href="#" onclick="navigate('withdraw')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ถอนเงิน</a>
@@ -184,7 +174,6 @@
                     </div>
 
                     <div class="flex items-center space-x-3 sm:space-x-5">
-                        <!-- Auth Buttons -->
                         <div id="auth-buttons-wrapper" class="mr-2 border-r border-gray-200 dark:border-gray-700 pr-4">
                             <div class="hidden md:flex items-center space-x-2">
                                 <button onclick="openAuth('login')" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">ลงชื่อเข้าใช้</button>
@@ -193,7 +182,6 @@
                             </div>
                         </div>
 
-                        <!-- Profile Menu -->
                         <div id="user-profile-menu" class="hidden relative group z-50 mr-2 border-r border-gray-200 dark:border-gray-700 pr-4">
                             <button onclick="navigate('profile')" class="flex items-center space-x-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
                                 <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold" id="profile-icon">U</div>
@@ -204,26 +192,15 @@
                             </button>
                         </div>
 
-                        <!-- Theme Toggle -->
                         <button onclick="toggleTheme()" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
                             <i data-lucide="moon" id="icon-moon" class="w-5 h-5 block dark:hidden"></i>
                             <i data-lucide="sun" id="icon-sun" class="w-5 h-5 hidden dark:block"></i>
                         </button>
 
-                        <!-- Cart Icon -->
                         <button onclick="toggleCart()" class="flex items-center bg-primary hover:bg-primaryHover text-white px-3 py-2 sm:px-4 sm:py-2.5 rounded-sm transition-colors group">
                             <i data-lucide="shopping-bag" class="w-5 h-5 mr-0 sm:mr-2"></i>
                             <span class="font-semibold text-sm mr-2 hidden sm:inline">MY CART</span>
                             <span id="cart-badge" class="bg-white text-primary text-xs font-bold px-2 py-0.5 rounded-sm">0</span>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="md:hidden pb-4">
-                    <div class="relative w-full">
-                        <input type="text" id="product-search-mobile" class="w-full pl-4 pr-10 py-2 border-2 border-primary bg-white dark:bg-gray-800 dark:text-white outline-none text-sm rounded-sm" placeholder="ค้นหาสินค้า...">
-                        <button class="absolute right-0 top-0 h-full px-4 text-primary flex items-center justify-center">
-                            <i data-lucide="search" class="w-5 h-5"></i>
                         </button>
                     </div>
                 </div>
@@ -304,8 +281,7 @@
                                 <p class="text-sm opacity-80 uppercase tracking-wider mb-1">บัญชีรับเงินของคุณ</p>
                                 <h3 class="text-xl font-bold font-mono tracking-widest" id="wd-card-acc">XXX-X-XXXXX-X</h3>
                             </div>
-                            <!-- นำพื้นหลังสีขาวของการ์ดออก ให้โลโก้กลมกลืน -->
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center" id="wd-card-logo-container">
+                            <div class="w-12 h-12 flex items-center justify-center text-white" id="wd-card-logo-container">
                                 <i class="bank bank-kbank m text-4xl"></i>
                             </div>
                         </div>
@@ -393,7 +369,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                     <div>
                         <h3 class="text-lg font-bold mb-4 flex items-center text-primary"><div class="w-8 h-8 bg-red-100 rounded-sm flex items-center justify-center mr-2"><i data-lucide="shopping-cart" class="w-4 h-4 text-primary"></i></div> ประวัติการสั่งซื้อ</h3>
                         <div id="history-orders-container" class="space-y-4">
@@ -413,6 +389,157 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="text-center border-t border-gray-200 dark:border-gray-800 pt-8 mt-8">
+                    <button onclick="openStatement()" class="bg-[#333333] hover:bg-black text-white font-bold py-4 px-10 uppercase text-sm rounded-sm shadow-md flex items-center justify-center mx-auto">
+                        <i data-lucide="file-text" class="w-5 h-5 mr-2"></i> File Statement
+                    </button>
+                    <p class="text-xs text-gray-500 mt-2">พิมพ์ใบเสร็จรับเงินรวมจากประวัติการทำรายการ</p>
+                </div>
+            </div>
+
+            <!-- View: Statement Page -->
+            <div id="view-statement" class="hidden w-full mx-auto py-12 overflow-x-auto bg-gray-100 dark:bg-[#121212]">
+                <button onclick="navigate('history')" class="flex items-center text-gray-500 hover:text-primary mb-6 ml-4 sm:ml-auto max-w-4xl transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าประวัติ</button>
+                
+                <div id="statement-capture-area" class="statement-page-container shadow-xl">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex items-end space-x-2">
+                            <span class="text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
+                        </div>
+                        <div class="text-[13px] text-right w-[60%] leading-snug">
+                            <p>เว็บไซต์ เน็กซ์ ไลฟ์ ช็อป </p>
+                            <p>เว็บไซต์ จำหน่ายสินค้าอิเล็กทรอนิกส์ และสินค้าพรีเมี่ยม</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-end mb-8">
+                        <div class="text-[15px] font-semibold" id="stmt-ref">เลขที่ NX-0000-0000-XXXXXX</div>
+                        <div class="flex flex-col items-end text-[14px]">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <div class="text-right leading-tight ml-4">
+                                    <div class="font-bold">ต้นฉบับ ใบเสร็จรับเงิน</div>
+                                    <div>Original Receipt</div>
+                                </div>
+                            </div>
+                            <div class="text-[13px]">
+                                <span class="mr-4">Digitally signed by NEXT</span>
+                                <span id="stmt-date">วันที่ XX/XX/XXXX</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-8 mb-10 text-[13px] leading-relaxed">
+                        <div>
+                            <h3 class="font-bold text-[16px] mb-1 stmt-theme-red">ชื่อและข้อมูลสำหรับจัดส่งเอกสาร</h3>
+                            <p id="stmt-name">ชื่อ-สกุล : -</p>
+                            <p id="stmt-email">อีเมลจัดส่ง : -</p>
+                            <p id="stmt-phone">หมายเลขโทรศัพท์ : -</p>
+                        </div>
+                    </div>
+
+                    <div class="w-full text-[13px]">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="stmt-table-header">
+                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการสั่งซื้อสินค้า</th>
+                                </tr>
+                                <tr class="stmt-table-header">
+                                    <th class="text-left font-bold py-2 stmt-theme-red w-[40%]">รายการ/Description</th>
+                                    <th class="text-center font-bold py-2 stmt-theme-red">ราคาสินค้า</th>
+                                    <th class="text-center font-bold py-2 stmt-theme-red">จำนวน</th>
+                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ส่วนลด</th>
+                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ยอดสุทธิ</th>
+                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ภาษี(VAT)</th>
+                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ยอดชำระ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stmt-orders-tbody">
+                                <!-- JS iniects here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <br><br>
+                    <div class="w-full text-[13px]">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="stmt-table-header">
+                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการ การฝากเงิน/เติมเครดิต (Deposit)</th>
+                                </tr>
+                                <tr class="stmt-table-header">
+                                    <th class="text-left font-bold py-2 stmt-theme-red w-[25%]">วันที่เวลา/Date Time</th>
+                                    <th class="text-center font-bold py-2 stmt-theme-red">จำนวนเงิน</th>
+                                    <th class="text-center font-bold py-2 stmt-theme-red">ฟรีโบนัส</th>
+                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">เครดิตรวม</th>
+                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">สถานะ</th>
+                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">หลักฐาน</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stmt-deposits-tbody">
+                                <!-- JS iniects here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <br><br>
+                    <div class="w-full text-[13px]">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="stmt-table-header">
+                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการ การถอนเงิน/ถอนเครดิต (Withdraw)</th>
+                                </tr>
+                                <tr class="stmt-table-header">
+                                    <th class="text-left font-bold py-2 stmt-theme-red w-[25%]">วันที่เวลา/Date Time</th>
+                                    <th class="text-center font-bold py-2 stmt-theme-red">ชื่อ นามสกุล</th>
+                                    <th class="text-center font-bold py-2 stmt-theme-red">ธนาคาร</th>
+                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">เลขที่บัญชี</th>
+                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">จำนวนเงิน</th>
+                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stmt-withdraws-tbody">
+                                <!-- JS iniects here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Bottom Section (Pushed to bottom) -->
+                    <div class="mt-auto pt-20">
+                        <div class="flex justify-between items-end mb-8 text-[13px]">
+                            <div class="flex">
+                                <span class="font-bold mr-2 stmt-theme-red">ข้อมูลอ้างอิง</span>
+                                <div>
+                                    ออกโดยระบบอัตโนมัติ<br>
+                                    ใช้สำหรับอ้างอิงการทำรายการบนแพลตฟอร์มเท่านั้น
+                                </div>
+                            </div>
+                            <div class="font-bold text-[15px]" id="stmt-admin-name">
+                                ผู้รับเงิน ชื่อ นามสกุลแอดมิน
+                            </div>
+                        </div>
+
+                        <div class="text-[11px] text-gray-600 border-t border-gray-300 pt-2">
+                            หมายเหตุ : หากเอกสารฉบับนี้ มีข้อมูลรายการไม่ถูกต้อง กรุณาติดต่อเจ้าหน้าที่เพื่อแก้ไขข้อมูลและทำการออกประวัติรายการอีกครั้ง<br>เอกสารฉบับนี้ใช้ภายใต้การให้บริการส่วนบุคคลเท่านั้น ไม่เกี่ยวข้องกับบุคคลที่สาม หรือผู้ให้บริการหน่วยงานอื่นๆ 
+                        </div>
+                    </div>
+                </div>
+
+                <div class="max-w-4xl mx-auto mt-8 text-center px-4">
+                    <button onclick="downloadAndEmailStatement()" id="btn-dl-statement" class="w-full sm:w-auto bg-primary hover:bg-primaryHover text-white font-bold py-4 px-10 uppercase text-sm rounded-sm shadow-md inline-flex items-center justify-center">
+                        <i data-lucide="download" class="w-5 h-5 mr-2"></i> ดาวน์โหลดไฟล์ (พร้อมส่งอีเมล)
+                    </button>
+                </div>
+            </div>
+
+            <!-- View: Failure -->
+            <div id="view-failure" class="hidden max-w-xl mx-auto px-4 py-20 text-center animate-fade-in">
+                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="x" class="w-8 h-8"></i></div>
+                <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white">ทำรายการไม่สำเร็จ!</h2>
+                <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm mt-6">
+                    <p class="text-red-500 font-bold text-sm whitespace-pre-line" id="failure-desc">ข้อผิดพลาด</p>
+                </div>
+                <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
 
             <!-- View: Auth -->
@@ -524,7 +651,7 @@
                             <div id="checkout-items" class="space-y-4 mb-4 max-h-80 overflow-y-auto pr-2"></div>
                             <div class="flex gap-2 mb-6 mt-4">
                                 <input type="text" id="discount-input" placeholder="ใส่รหัสส่วนลด..." class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm uppercase">
-                                <button type="button" onclick="applyDiscountCode()" class="bg-[#333333] hover:bg-black text-white px-4 py-2 text-sm rounded-sm whitespace-nowrap shadow-md">ใช้รหัส</button>
+                                <button type="button" onclick="applyDiscountCode()" class="bg-[#333333] hover:bg-black text-white px-4 py-2 text-sm rounded-sm whitespace-nowrap shadow-md" id="btn-apply-code">ใช้รหัส</button>
                             </div>
                             <div class="border-t pt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
                                 <div class="flex justify-between"><span>ยอดรวมสินค้า</span><span id="chk-subtotal">฿0.00</span></div>
@@ -744,7 +871,7 @@
             
             <div id="mobile-history-section" class="md:hidden pt-2">
                 <ul class="text-sm">
-                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-gray-800 dark:text-white" onclick="navigate('history'); toggleCategorySidebar()"><i data-lucide="history" class="w-4 h-4 mr-3 text-gray-500"></i>ประวัติของฉัน</li>
+                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-gray-800 dark:text-white" onclick="navigate('history'); toggleCategorySidebar()"><i data-lucide="history" class="w-4 h-4 mr-3 text-gray-500"></i>ประวัติการทำรายการ</li>
                 </ul>
             </div>
 
@@ -846,6 +973,7 @@
         let appliedDiscountCode = "";
         
         let currentFlow = 'order'; 
+        let globalHistoryData = null; // ไว้เก็บประวัติสำหรับทำ Statement
 
         const bannerData = [
             { img: "https://img1.pic.in.th/images/IMG_1083.png" },
@@ -1061,11 +1189,11 @@
 
         function navigate(view) {
             // เมนูที่บังคับให้ล็อกอิน
-            if ((view === 'deposit' || view === 'withdraw' || view === 'profile') && !currentUser) {
+            if ((view === 'deposit' || view === 'withdraw' || view === 'profile' || view === 'statement') && !currentUser) {
                 showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้งานฟังก์ชันนี้"); openAuth('login'); return;
             }
 
-            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-profile', 'view-deposit', 'view-withdraw'];
+            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-failure', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-profile', 'view-deposit', 'view-withdraw', 'view-statement'];
             views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -1249,13 +1377,40 @@
 
         // --- Checkout ---
         function proceedToCheckout() { toggleCart(); navigate('checkout'); }
+        
         function applyDiscountCode() {
-            const inputEl = document.getElementById('discount-input'); if(!inputEl) return; let inputCode = inputEl.value.toUpperCase().trim(); if(!inputCode) return;
+            const inputEl = document.getElementById('discount-input'); if(!inputEl) return; 
+            let inputCode = inputEl.value.toUpperCase().trim(); if(!inputCode) return;
+            
             let discountFound = 0;
-            if(inputCode === siteSettings.Code1) discountFound = parseFloat(siteSettings.Discount1); else if(inputCode === siteSettings.Code2) discountFound = parseFloat(siteSettings.Discount2); else if(inputCode === siteSettings.Code3) discountFound = parseFloat(siteSettings.Discount3);
+            if(inputCode === siteSettings.Code1) discountFound = parseFloat(siteSettings.Discount1); 
+            else if(inputCode === siteSettings.Code2) discountFound = parseFloat(siteSettings.Discount2); 
+            else if(inputCode === siteSettings.Code3) discountFound = parseFloat(siteSettings.Discount3);
 
             if(discountFound > 0) {
-                appliedDiscountCode = inputCode; currentDiscount = discountFound; showCustomPopup("สำเร็จ", `ใช้โค้ดส่วนลด ${formatPrice(currentDiscount)} สำเร็จ`); updateCheckoutTotals();
+                // ตรวจสอบการใช้โค้ดซ้ำผ่าน Backend
+                const btn = document.getElementById('btn-apply-code');
+                if(btn) { btn.innerText = "..."; btn.disabled = true; }
+
+                let bName = document.getElementById('chk-fname').value + " " + document.getElementById('chk-lname').value;
+                let bEmail = document.getElementById('chk-email').value;
+                let bPhone = document.getElementById('chk-phone').value;
+
+                callBackend({action: 'checkDiscountCode', code: inputCode, name: bName, email: bEmail, phone: bPhone})
+                .then(res => {
+                    if(btn) { btn.innerText = "ใช้รหัส"; btn.disabled = false; }
+                    if(res.status === 'success') {
+                        appliedDiscountCode = inputCode; currentDiscount = discountFound; 
+                        showCustomPopup("สำเร็จ", `ใช้โค้ดส่วนลด ${formatPrice(currentDiscount)} สำเร็จ`); 
+                        updateCheckoutTotals();
+                    } else {
+                        showCustomPopup("ไม่สามารถใช้โค้ดได้", res.message); inputEl.value = "";
+                    }
+                }).catch(e => {
+                    if(btn) { btn.innerText = "ใช้รหัส"; btn.disabled = false; }
+                    showCustomPopup("ข้อผิดพลาด", "ไม่สามารถตรวจสอบโค้ดได้");
+                });
+
             } else { showCustomPopup("ข้อผิดพลาด", "รหัสส่วนลดไม่ถูกต้องหรือหมดอายุ"); inputEl.value = ""; }
         }
 
@@ -1346,7 +1501,14 @@
                             }
                             navigate('success');
                         } else { 
-                            showCustomPopup("ไม่สำเร็จ", res.message); 
+                            // กรณียกเลิกออเดอร์ หรือสลิปผิดพลาด
+                            if(currentFlow === 'order') {
+                                cart = []; currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); 
+                                safeSetText('failure-desc', res.message);
+                                navigate('failure');
+                            } else {
+                                showCustomPopup("ไม่สำเร็จ", res.message); 
+                            }
                             if(res.newBalance !== undefined && currentUser) { updateBalanceUI(res.newBalance); }
                             if(upl) upl.classList.remove('hidden'); 
                         }
@@ -1356,7 +1518,7 @@
             }
         }
 
-        // --- History fetching ---
+        // --- History fetching & Statement ---
         function searchHistory() {
             const phoneEl = document.getElementById('history-phone-input'); const phone = phoneEl ? phoneEl.value : "";
             const ordContainer = document.getElementById('history-orders-container'); const depContainer = document.getElementById('history-deposits-container'); const wdContainer = document.getElementById('history-withdraws-container');
@@ -1370,6 +1532,8 @@
                 try { lucide.createIcons(); } catch(e) {}
                 
                 if(res.status === 'success') {
+                    globalHistoryData = res; // เก็บไว้ทำ Statement
+
                     // Orders
                     if(res.orders.length > 0) {
                         if(ordContainer) ordContainer.innerHTML = '';
@@ -1406,6 +1570,116 @@
                     try { lucide.createIcons(); } catch(e) {}
                 }
             }).catch(e => { if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; } showCustomPopup("ข้อผิดพลาด", "เชื่อมต่อฐานข้อมูลล้มเหลว"); });
+        }
+
+        // --- Statement Logic ---
+        function openStatement() {
+            if(!globalHistoryData) { showCustomPopup("แจ้งเตือน", "กรุณาค้นหาประวัติก่อนทำรายการ Statement"); return; }
+            if(!currentUser) { showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนดึงข้อมูล Statement"); return; }
+
+            // Populate Info
+            safeSetText('stmt-ref', `เลขที่ NX-${Date.now().toString().slice(-4)}-${Math.floor(Math.random()*9000)+1000}-${currentUser.phone.slice(-6)}`);
+            safeSetText('stmt-date', `วันที่ ${new Date().toLocaleDateString('th-TH')}`);
+            safeSetText('stmt-name', `ชื่อ-สกุล : ${currentUser.fname} ${currentUser.lname}`);
+            safeSetText('stmt-email', `อีเมลจัดส่ง : ${currentUser.email}`);
+            safeSetText('stmt-phone', `หมายเลขโทรศัพท์ : ${currentUser.phone}`);
+            safeSetText('stmt-admin-name', `ผู้รับเงิน ${siteSettings.AdminName}`);
+
+            // Populate Orders
+            const oBody = document.getElementById('stmt-orders-tbody'); oBody.innerHTML = '';
+            if(globalHistoryData.orders.length > 0) {
+                globalHistoryData.orders.forEach((o, i) => {
+                    let itemsStr = o.items.replace(/\n/g, ' / ');
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${o.date} (${o.ref})</span></td>
+                        <td class="text-center py-2 border-b border-gray-200">-</td>
+                        <td class="text-center py-2 border-b border-gray-200">-</td>
+                        <td class="text-right py-2 border-b border-gray-200">-</td>
+                        <td class="text-right py-2 border-b border-gray-200">-</td>
+                        <td class="text-right py-2 border-b border-gray-200">-</td>
+                        <td class="text-right py-2 border-b border-gray-200 font-bold">${parseFloat(o.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                    `;
+                    oBody.appendChild(tr);
+                });
+            } else { oBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
+
+            // Populate Deposits
+            const dBody = document.getElementById('stmt-deposits-tbody'); dBody.innerHTML = '';
+            if(globalHistoryData.deposits.length > 0) {
+                globalHistoryData.deposits.forEach((d, i) => {
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${d.date}</td>
+                        <td class="text-center py-2 border-b border-gray-200">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-center py-2 border-b border-gray-200">-</td>
+                        <td class="text-right py-2 border-b border-gray-200">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-right py-2 border-b border-gray-200">${d.status}</td>
+                        <td class="text-right py-2 border-b border-gray-200">ดูสลิป</td>
+                    `;
+                    dBody.appendChild(tr);
+                });
+            } else { dBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
+
+            // Populate Withdraws
+            const wBody = document.getElementById('stmt-withdraws-tbody'); wBody.innerHTML = '';
+            if(globalHistoryData.withdraws.length > 0) {
+                globalHistoryData.withdraws.forEach((w, i) => {
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${w.date}</td>
+                        <td class="text-center py-2 border-b border-gray-200">${currentUser.fname} ${currentUser.lname}</td>
+                        <td class="text-center py-2 border-b border-gray-200">${w.items.split('(')[0].replace('ไปยัง:','').trim()}</td>
+                        <td class="text-center py-2 border-b border-gray-200">${w.items.split('(')[1] ? w.items.split('(')[1].replace(')','') : '-'}</td>
+                        <td class="text-center py-2 border-b border-gray-200 font-bold">${parseFloat(w.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-center py-2 border-b border-gray-200">${w.status}</td>
+                    `;
+                    wBody.appendChild(tr);
+                });
+            } else { wBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
+
+            navigate('statement');
+        }
+
+        function downloadAndEmailStatement() {
+            const btn = document.getElementById('btn-dl-statement');
+            const origText = btn.innerHTML;
+            btn.innerHTML = `<div class="dotted-spinner w-5 h-5 border-[3px] border-white inline-block align-middle mr-2"></div> กำลังประมวลผล...`;
+            btn.disabled = true;
+
+            const element = document.getElementById('statement-capture-area');
+            
+            // รอให้ฟอนต์/UI จัดเรียงเสร็จก่อนแคป
+            setTimeout(() => {
+                html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    // 1. ดาวน์โหลดลงเครื่อง
+                    const link = document.createElement('a');
+                    link.download = `Statement_${currentUser.phone}_${new Date().getTime()}.png`;
+                    link.href = imgData;
+                    link.click();
+
+                    // 2. ส่งไปให้ Backend ส่งอีเมล
+                    callBackend({
+                        action: 'emailStatement',
+                        email: currentUser.email,
+                        phone: currentUser.phone,
+                        name: `${currentUser.fname} ${currentUser.lname}`,
+                        base64: imgData.split(',')[1]
+                    }).then(res => {
+                        btn.innerHTML = origText; btn.disabled = false;
+                        if(res.status === 'success') {
+                            showCustomPopup("สำเร็จ", "บันทึกรูปภาพและส่งไปยังอีเมลของคุณเรียบร้อยแล้ว");
+                        } else {
+                            showCustomPopup("แจ้งเตือน", "บันทึกรูปสำเร็จ แต่ไม่สามารถส่งอีเมลได้");
+                        }
+                    }).catch(e => {
+                        btn.innerHTML = origText; btn.disabled = false;
+                        showCustomPopup("แจ้งเตือน", "บันทึกรูปสำเร็จ แต่ไม่สามารถเชื่อมต่อระบบอีเมลได้");
+                    });
+                });
+            }, 500);
         }
 
         let currentSlide = 0;
