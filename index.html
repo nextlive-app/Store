@@ -111,10 +111,22 @@
         .bank-card { background: linear-gradient(135deg, #e43a3d 0%, #991b1b 100%); position: relative; overflow: hidden; }
         .bank-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; }
 
-        /* Statement Page Template */
-        .statement-page-container { width: 100%; max-width: 210mm; background-color: #ffffff; margin: 0 auto; padding: 15mm 15mm 20mm 15mm; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
+        /* Statement Page Template (Adjusted for better mobile/image capture) */
+        .statement-page-container { 
+            width: 100%; 
+            max-width: 700px; /* Reduced width for a more compact receipt look */
+            background-color: #ffffff; 
+            margin: 0 auto; 
+            padding: 30px; 
+            color: #1a1a1a; 
+            font-family: 'Sarabun', sans-serif; 
+            box-sizing: border-box; 
+        }
         .stmt-theme-red { color: #ff0000; }
         .stmt-table-header { border-bottom: 2px solid #1a1a1a; }
+        /* Make tables smaller inside the statement */
+        .stmt-table { width: 100%; font-size: 12px; }
+        .stmt-table th, .stmt-table td { padding: 6px 4px; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
@@ -399,59 +411,59 @@
             </div>
 
             <!-- View: Statement Page -->
-            <div id="view-statement" class="hidden w-full mx-auto py-12 overflow-x-auto bg-gray-100 dark:bg-[#121212]">
-                <button onclick="navigate('history')" class="flex items-center text-gray-500 hover:text-primary mb-6 ml-4 sm:ml-auto max-w-4xl transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าประวัติ</button>
+            <div id="view-statement" class="hidden w-full mx-auto py-8 sm:py-12 overflow-x-auto bg-gray-100 dark:bg-[#121212]">
+                <button onclick="navigate('history')" class="flex items-center text-gray-500 hover:text-primary mb-6 ml-4 sm:ml-auto max-w-3xl transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าประวัติ</button>
                 
                 <div id="statement-capture-area" class="statement-page-container shadow-xl">
                     <div class="flex justify-between items-start mb-6">
                         <div class="flex items-end space-x-2">
-                            <span class="text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
+                            <span class="text-3xl sm:text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
                         </div>
-                        <div class="text-[13px] text-right w-[60%] leading-snug">
+                        <div class="text-[11px] sm:text-[12px] text-right w-[60%] leading-snug">
                             <p>เว็บไซต์ เน็กซ์ ไลฟ์ ช็อป </p>
                             <p>เว็บไซต์ จำหน่ายสินค้าอิเล็กทรอนิกส์ และสินค้าพรีเมี่ยม</p>
                         </div>
                     </div>
 
-                    <div class="flex justify-between items-end mb-8">
-                        <div class="text-[15px] font-semibold" id="stmt-ref">เลขที่ NX-0000-0000-XXXXXX</div>
-                        <div class="flex flex-col items-end text-[14px]">
+                    <div class="flex justify-between items-end mb-6">
+                        <div class="text-[13px] sm:text-[14px] font-semibold" id="stmt-ref">เลขที่ NX-0000-0000-XXXXXX</div>
+                        <div class="flex flex-col items-end text-[12px] sm:text-[13px]">
                             <div class="flex items-center space-x-2 mb-1">
                                 <div class="text-right leading-tight ml-4">
                                     <div class="font-bold">ต้นฉบับ ใบเสร็จรับเงิน</div>
                                     <div>Original Receipt</div>
                                 </div>
                             </div>
-                            <div class="text-[13px]">
+                            <div class="text-[11px] sm:text-[12px]">
                                 <span class="mr-4">Digitally signed by NEXT</span>
-                                <span id="stmt-date">วันที่ XX/XX/XXXX</span>
+                                <span id="stmt-date">วันที่ XX-XX-XXXX / XX:XX</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-8 mb-10 text-[13px] leading-relaxed">
+                    <div class="mb-8 text-[12px] sm:text-[13px] leading-relaxed">
                         <div>
-                            <h3 class="font-bold text-[16px] mb-1 stmt-theme-red">ชื่อและข้อมูลสำหรับจัดส่งเอกสาร</h3>
+                            <h3 class="font-bold text-[14px] sm:text-[15px] mb-1 stmt-theme-red">ชื่อและข้อมูลสำหรับจัดส่งเอกสาร</h3>
                             <p id="stmt-name">ชื่อ-สกุล : -</p>
                             <p id="stmt-email">อีเมลจัดส่ง : -</p>
                             <p id="stmt-phone">หมายเลขโทรศัพท์ : -</p>
                         </div>
                     </div>
 
-                    <div class="w-full text-[13px]">
-                        <table class="w-full">
+                    <div class="w-full mb-6">
+                        <table class="stmt-table">
                             <thead>
                                 <tr class="stmt-table-header">
-                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการสั่งซื้อสินค้า</th>
+                                    <th colspan="7" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการสั่งซื้อสินค้า</th>
                                 </tr>
                                 <tr class="stmt-table-header">
-                                    <th class="text-left font-bold py-2 stmt-theme-red w-[40%]">รายการ/Description</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">ราคาสินค้า</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">จำนวน</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ส่วนลด</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ยอดสุทธิ</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ภาษี(VAT)</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">ยอดชำระ</th>
+                                    <th class="text-left font-bold stmt-theme-red w-[40%]">รายการ/Description</th>
+                                    <th class="text-center font-bold stmt-theme-red">ราคา</th>
+                                    <th class="text-center font-bold stmt-theme-red">จำนวน</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">ส่วนลด</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">ยอดสุทธิ</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">ภาษี(VAT)</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">ยอดชำระ</th>
                                 </tr>
                             </thead>
                             <tbody id="stmt-orders-tbody">
@@ -460,20 +472,19 @@
                         </table>
                     </div>
 
-                    <br><br>
-                    <div class="w-full text-[13px]">
-                        <table class="w-full">
+                    <div class="w-full mb-6">
+                        <table class="stmt-table">
                             <thead>
                                 <tr class="stmt-table-header">
-                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการ การฝากเงิน/เติมเครดิต (Deposit)</th>
+                                    <th colspan="6" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการ การฝากเงิน/เติมเครดิต (Deposit)</th>
                                 </tr>
                                 <tr class="stmt-table-header">
-                                    <th class="text-left font-bold py-2 stmt-theme-red w-[25%]">วันที่เวลา/Date Time</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">จำนวนเงิน</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">ฟรีโบนัส</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">เครดิตรวม</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">สถานะ</th>
-                                    <th class="text-right font-bold py-2 leading-tight stmt-theme-red">หลักฐาน</th>
+                                    <th class="text-left font-bold stmt-theme-red w-[30%]">วันที่/เวลา</th>
+                                    <th class="text-center font-bold stmt-theme-red">จำนวนเงิน</th>
+                                    <th class="text-center font-bold stmt-theme-red">ฟรีโบนัส</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตรวม</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">สถานะ</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตคงเหลือ</th>
                                 </tr>
                             </thead>
                             <tbody id="stmt-deposits-tbody">
@@ -482,20 +493,20 @@
                         </table>
                     </div>
 
-                    <br><br>
-                    <div class="w-full text-[13px]">
-                        <table class="w-full">
+                    <div class="w-full">
+                        <table class="stmt-table">
                             <thead>
                                 <tr class="stmt-table-header">
-                                    <th colspan="7" class="text-left font-bold pb-2">ประวัติรายการ การถอนเงิน/ถอนเครดิต (Withdraw)</th>
+                                    <th colspan="7" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการ การถอนเงิน/ถอนเครดิต (Withdraw)</th>
                                 </tr>
                                 <tr class="stmt-table-header">
-                                    <th class="text-left font-bold py-2 stmt-theme-red w-[25%]">วันที่เวลา/Date Time</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">ชื่อ นามสกุล</th>
-                                    <th class="text-center font-bold py-2 stmt-theme-red">ธนาคาร</th>
-                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">เลขที่บัญชี</th>
-                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">จำนวนเงิน</th>
-                                    <th class="text-center font-bold py-2 leading-tight stmt-theme-red">สถานะ</th>
+                                    <th class="text-left font-bold stmt-theme-red w-[20%]">วันที่/เวลา</th>
+                                    <th class="text-center font-bold stmt-theme-red">ชื่อ นามสกุล</th>
+                                    <th class="text-center font-bold stmt-theme-red">ธนาคาร</th>
+                                    <th class="text-center font-bold leading-tight stmt-theme-red">เลขบัญชี</th>
+                                    <th class="text-center font-bold leading-tight stmt-theme-red">จำนวนเงิน</th>
+                                    <th class="text-center font-bold leading-tight stmt-theme-red">สถานะ</th>
+                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตคงเหลือ</th>
                                 </tr>
                             </thead>
                             <tbody id="stmt-withdraws-tbody">
@@ -505,8 +516,8 @@
                     </div>
 
                     <!-- Bottom Section (Pushed to bottom) -->
-                    <div class="mt-auto pt-20">
-                        <div class="flex justify-between items-end mb-8 text-[13px]">
+                    <div class="mt-8 pt-8">
+                        <div class="flex justify-between items-end mb-4 text-[11px] sm:text-[12px]">
                             <div class="flex">
                                 <span class="font-bold mr-2 stmt-theme-red">ข้อมูลอ้างอิง</span>
                                 <div>
@@ -514,20 +525,20 @@
                                     ใช้สำหรับอ้างอิงการทำรายการบนแพลตฟอร์มเท่านั้น
                                 </div>
                             </div>
-                            <div class="font-bold text-[15px]" id="stmt-admin-name">
+                            <div class="font-bold text-[13px] sm:text-[14px]" id="stmt-admin-name">
                                 ผู้รับเงิน ชื่อ นามสกุลแอดมิน
                             </div>
                         </div>
 
-                        <div class="text-[11px] text-gray-600 border-t border-gray-300 pt-2">
+                        <div class="text-[10px] text-gray-500 border-t border-gray-300 pt-2 leading-tight">
                             หมายเหตุ : หากเอกสารฉบับนี้ มีข้อมูลรายการไม่ถูกต้อง กรุณาติดต่อเจ้าหน้าที่เพื่อแก้ไขข้อมูลและทำการออกประวัติรายการอีกครั้ง<br>เอกสารฉบับนี้ใช้ภายใต้การให้บริการส่วนบุคคลเท่านั้น ไม่เกี่ยวข้องกับบุคคลที่สาม หรือผู้ให้บริการหน่วยงานอื่นๆ 
                         </div>
                     </div>
                 </div>
 
-                <div class="max-w-4xl mx-auto mt-8 text-center px-4">
-                    <button onclick="downloadAndEmailStatement()" id="btn-dl-statement" class="w-full sm:w-auto bg-primary hover:bg-primaryHover text-white font-bold py-4 px-10 uppercase text-sm rounded-sm shadow-md inline-flex items-center justify-center">
-                        <i data-lucide="download" class="w-5 h-5 mr-2"></i> ดาวน์โหลดไฟล์ (พร้อมส่งอีเมล)
+                <div class="max-w-3xl mx-auto mt-6 text-center px-4">
+                    <button onclick="emailStatementOnly()" id="btn-dl-statement" class="w-full sm:w-auto bg-primary hover:bg-primaryHover text-white font-bold py-3 px-8 uppercase text-sm rounded-sm shadow-md inline-flex items-center justify-center">
+                        <i data-lucide="mail" class="w-5 h-5 mr-2"></i> ส่งบิลไปยังอีเมล
                     </button>
                 </div>
             </div>
@@ -536,8 +547,8 @@
             <div id="view-failure" class="hidden max-w-xl mx-auto px-4 py-20 text-center animate-fade-in">
                 <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="x" class="w-8 h-8"></i></div>
                 <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white">ทำรายการไม่สำเร็จ!</h2>
-                <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm mt-6">
-                    <p class="text-red-500 font-bold text-sm whitespace-pre-line" id="failure-desc">ข้อผิดพลาด</p>
+                <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm mt-6 shadow-sm">
+                    <p class="text-red-600 font-medium text-[15px] whitespace-pre-line leading-relaxed" id="failure-desc">ข้อผิดพลาด</p>
                 </div>
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
@@ -593,209 +604,6 @@
                             </form>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- View: Checkout -->
-            <div id="view-checkout" class="hidden max-w-5xl mx-auto px-4 py-12">
-                <button onclick="navigate('home')" class="flex items-center text-gray-500 hover:text-primary mb-6 transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> เลือกซื้อสินค้าต่อ</button>
-                <h2 class="text-2xl font-bold mb-6 uppercase">Checkout</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-                    <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm">
-                            <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">ข้อมูลลูกค้า</h3>
-                            <form id="checkout-form" class="space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="block text-xs font-semibold mb-1">ชื่อ *</label><input type="text" id="chk-fname" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                    <div><label class="block text-xs font-semibold mb-1">นามสกุล *</label><input type="text" id="chk-lname" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                </div>
-                                <div><label class="block text-xs font-semibold mb-1">อีเมล *</label><input type="email" id="chk-email" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                                <div><label class="block text-xs font-semibold mb-1">เบอร์โทรศัพท์ *</label><input type="tel" id="chk-phone" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                            </form>
-                        </div>
-
-                        <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm" id="payment-method-container">
-                            <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">ช่องทางการชำระเงิน</h3>
-                            <div class="space-y-3">
-                                <label class="relative block cursor-pointer group">
-                                    <input type="radio" name="payment_method" value="qr" class="peer sr-only custom-radio" checked>
-                                    <div class="border rounded-sm p-4 flex items-center transition-all">
-                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-primary peer-checked:bg-primary mr-3 flex items-center justify-center">
-                                            <div class="w-2.5 h-2.5 bg-white rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
-                                        </div>
-                                        <i data-lucide="qr-code" class="w-6 h-6 mr-3 text-gray-500"></i>
-                                        <span class="font-semibold text-sm">สแกน QR Code</span>
-                                    </div>
-                                </label>
-                                <label class="relative block cursor-pointer group" id="method-credit-wrapper">
-                                    <input type="radio" name="payment_method" value="credit" class="peer sr-only custom-radio">
-                                    <div class="border rounded-sm p-4 flex items-center transition-all">
-                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-primary peer-checked:bg-primary mr-3 flex items-center justify-center">
-                                            <div class="w-2.5 h-2.5 bg-white rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
-                                        </div>
-                                        <i data-lucide="wallet" class="w-6 h-6 mr-3 text-green-600"></i>
-                                        <div>
-                                            <span class="font-semibold text-sm block">หักเครดิตอัตโนมัติ</span>
-                                            <span class="text-xs text-gray-500" id="chk-display-balance">คงเหลือ: ฿0.00</span>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-3">
-                        <div class="bg-gray-50 dark:bg-[#1e1e1e] p-6 border rounded-sm">
-                            <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">สรุปคำสั่งซื้อ</h3>
-                            <div id="checkout-items" class="space-y-4 mb-4 max-h-80 overflow-y-auto pr-2"></div>
-                            <div class="flex gap-2 mb-6 mt-4">
-                                <input type="text" id="discount-input" placeholder="ใส่รหัสส่วนลด..." class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm uppercase">
-                                <button type="button" onclick="applyDiscountCode()" class="bg-[#333333] hover:bg-black text-white px-4 py-2 text-sm rounded-sm whitespace-nowrap shadow-md" id="btn-apply-code">ใช้รหัส</button>
-                            </div>
-                            <div class="border-t pt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                                <div class="flex justify-between"><span>ยอดรวมสินค้า</span><span id="chk-subtotal">฿0.00</span></div>
-                                <div class="flex justify-between text-secondary"><span>ส่วนลดรวม</span><span id="chk-discount">- ฿0.00</span></div>
-                                <div class="flex justify-between"><span>ภาษีมูลค่าเพิ่ม (VAT 7%)</span><span id="chk-vat">฿0.00</span></div>
-                                <div class="flex justify-between font-bold text-lg text-gray-800 dark:text-white pt-2 border-t mt-2">
-                                    <span>ยอดสุทธิ (Net Total)</span><span id="chk-net-total" class="text-primary">฿0.00</span>
-                                </div>
-                            </div>
-                            <button onclick="processOrder()" id="btn-process-order" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 mt-6 uppercase text-sm rounded-sm shadow-md">
-                                ยืนยันการสั่งซื้อ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- View: Payment -->
-            <div id="view-payment" class="hidden w-full mx-auto px-4 py-12 flex flex-col items-center">
-                <button onclick="goBackFromPayment()" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> ย้อนกลับเพื่อแก้ไขข้อมูล</button>
-
-                <div class="slip-container" id="user-slip-element">
-                    <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-4 border-white">
-                        <div class="header-icon-box flex-shrink-0">
-                            <img src="https://img2.pic.in.th/pic/1000008216.jpg" class="w-full h-full object-contain">
-                        </div>
-                        <div class="text-[24px] font-bold leading-none tracking-wide flex items-baseline gap-1 mt-1 text-white">
-                            Thai QR <span class="text-[14px] font-normal tracking-normal text-white">Payment</span>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center py-6 gap-5 bg-white">
-                        <div class="flex justify-center w-full"><img src="https://www.designil.com/wp-content/uploads/2020/04/prompt-pay-logo.png" class="h-9 object-contain"></div>
-                        <div class="flex justify-center items-center gap-5 w-full px-6">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/JCB_logo.svg/960px-JCB_logo.svg.png" class="h-6 object-contain">
-                            <img src="https://logos-world.net/wp-content/uploads/2020/06/Visa-Logo-2006.png" class="h-5 object-contain">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/1280px-MasterCard_Logo.svg.png" class="h-8 object-contain">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/UnionPay_logo.svg/330px-UnionPay_logo.svg.png" class="h-7 object-contain">
-                        </div>
-                    </div>
-
-                    <div class="flex justify-center mb-8 relative px-10 bg-white">
-                        <div class="relative inline-block border-[1px] border-gray-100 p-1 shadow-sm qr-wiggle hover:animate-none">
-                            <img src="" id="promptpay-qr-img" class="w-[240px] h-[240px]">
-                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-md p-[2px] shadow-md flex items-center justify-center z-20">
-                                <img src="https://img1.pic.in.th/images/IMG_1065-removebg.png" class="w-7 h-7 object-contain">
-                            </div>
-                            <div id="verification-overlay" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300 z-30">
-                                <div class="dotted-spinner mb-3"></div>
-                                <h3 class="text-base font-bold text-gray-800 mb-1 font-sans">กำลังตรวจสอบ...</h3>
-                                <p class="text-xs text-gray-500 font-sans text-center px-4" id="verify-sub-text">โปรดรอสักครู่</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center px-8 pb-8 bg-white">
-                        <div class="flex flex-col gap-1 mt-2">
-                            <div class="text-[16px] font-medium tracking-[0.1em] text-gray-900 leading-none" id="slip-admin-name">แอดมิน</div>
-                            <div class="text-[14px] font-bold tracking-[0.1em] text-gray-600 leading-none mt-1" id="slip-admin-acc">000-0-00000-0</div>
-                        </div>
-                        <div class="flex flex-col items-end border-b-2 border-gray-300 pb-1 px-2">
-                            <div class="text-3xl sm:text-4xl font-bold text-gray-900 leading-none mb-1" id="slip-total-amount">0.00</div>
-                            <div class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">บาท(BAHT)</div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#5a5d62] p-4 flex items-center gap-4">
-                        <div class="bg-white w-[85px] h-[45px] flex-shrink-0 flex items-center justify-center p-1"><img src="https://img2.pic.in.th/IMG_05936a5ac8fe11ed9919.jpeg" class="w-full h-full object-contain"></div>
-                        <div class="text-white text-[9.5px] leading-[1.4] opacity-95 font-light pr-2">
-                            ใช้สำหรับเติมเงิน/สั่งซื้อ บนเว็บไซต์เท่านั้น การชำระห้ามปัดเศษเด็ดขาด ระบบตรวจสอบตามยอดของท่าน ระบบจะไม่ทราบว่าท่านได้โอนเข้ามาแล้ว 
-                            <span class="text-blue-300 underline cursor-pointer font-medium ml-1" onclick="openPaymentSteps()">ขั้นตอนการชำระ</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="upload-section" class="mt-6 w-full max-w-[420px]">
-                    <input type="file" id="slip-upload" class="hidden" accept="image/*" onchange="handleSlipUpload(event)">
-                    <button onclick="document.getElementById('slip-upload').click()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 uppercase text-sm rounded-sm shadow-md flex items-center justify-center font-sans">
-                        <i data-lucide="upload" class="w-5 h-5 mr-2"></i> อัปโหลดสลิปชำระเงิน
-                    </button>
-                </div>
-            </div>
-
-            <!-- View: Success -->
-            <div id="view-success" class="hidden max-w-xl mx-auto px-4 py-20 text-center animate-fade-in">
-                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check" class="w-8 h-8"></i></div>
-                <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white" id="success-title">ทำรายการเรียบร้อย!</h2>
-                <p class="text-gray-500 mb-6 text-sm" id="success-desc">ระบบได้ดำเนินการและส่งรายละเอียดไปยังอีเมลของคุณแล้ว</p>
-                <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm">
-                    <div class="mb-2"><span class="text-gray-500 text-xs uppercase" id="success-ref-label">รหัสอ้างอิง (Ref)</span><p class="text-lg font-mono font-bold text-primary" id="display-order-id">#NX-00000</p></div>
-                    <div class="pt-4 mt-4 border-t text-sm text-gray-600 dark:text-gray-400"><p>กรุณาตรวจสอบกล่องจดหมาย หรือโฟลเดอร์ Junk/Spam หากไม่ได้รับอีเมลภายใน 5 นาที</p></div>
-                </div>
-                <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
-            </div>
-            
-            <!-- Policy Views -->
-            <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
-                <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
-                <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
-                    <h3 class="font-semibold text-lg">การเปิดเผยข้อมูลส่วนบุคคล</h3>
-                    <p>เราจะไม่ขายหรือเผยแพร่ข้อมูลส่วนตัวของคุณให้แก่บุคคลที่สามอื่น หรือองค์กรอื่นใด การเปิดเผยข้อมูลจะเกิดขึ้นก็ต่อเมื่อคุณเป็นผู้ร้องขอและให้ความยินยอมให้เราดำเนินการให้ หรือ การเปิดเผยข้อมูลนั้นเป็นไปตามที่กฎหมายอนุญาต หรือเป็นไปตามที่กฎหมายกำหนด อาทิ การเปิดเผยข้อมูลตามคำสั่งเจ้าหน้าที่ของรัฐซึ่งกฎหมายได้ให้อำนาจไว้ ตามคำสั่งศาล หรือตามหมายศาล</p>
-                    <p>เพื่อการพัฒนาและบำรุงรักษาระบบการของเราให้มีความปลอดภัยและมีประสิทธิภาพสูงสุด เราอาจทำความตกลงไว้กับบุคคลที่สามเพื่อให้ดำเนินงานกับเรา หรือดำเนินการในนามของเรา ทั้งนี้บุคคลที่สามนั้นจะต้องยอมรับข้อตกลงคุ้มครองข้อมูลส่วนตัวของคุณไว้เป็นความลับเช่นเดียวกัน</p>
-                    <p>ในบางกรณี เราอาจดำเนินการนโยบายการตลาดหรือโฆษณาส่งเสริมบริการร่วมกับบุคคลที่สามสำหรับกลุ่มผู้ที่ยังไม่เคยใช้บริการ เราจึงสงวนสิทธิในการยืนยันรับรองกับบุคคลที่สามว่าคุณได้ใช้บริการกับเราแล้ว</p>
-                    <h3 class="font-semibold text-lg mt-6">การเก็บรักษาข้อมูล</h3>
-                    <p>ข้อมูลที่เราจำเป็นต้องร้องขอเพื่อใช้สำหรับยืนยันตัวตนจากคุณได้แก่ ชื่อนามสกุล และ อีเมล นอกจากนี้อาจมีการเก็บข้อมูล ไอพีแอดเดรส เพื่อให้เป็นไปตามข้อกำหนดทางกฎหมาย</p>
-                    <p>เราจะไม่ใช้ข้อมูลส่วนตัวของคุณเพื่อวัตถุประสงค์ใดนอกจากให้บริการหรือเท่าที่กฎหมายกำหนด เราเคารพและคำนึงถึงความเป็นส่วนตัวของลูกค้าของเราอย่างสูงสุด สิ่งที่สำคัญที่สุดคือความสัมพันธ์ระหว่างคุณและเรา เราต้องการให้คุณสบายใจและมั่นใจใช้ผลิตภัณฑ์และบริการของเราและเชื่อถือความปลอดภัยของข้อมูลส่วนตัวและแบบแสดงรายการที่คุณกรอกไว้ให้เรา</p>
-                    <p>คุณมีหน้าที่ปกป้องข้อมูลบนอุปกรณ์ของคุณเช่นการใช้โปรแกรมป้องกันไวรัส, การอัพเดตซอฟท์แวร์, เปลี่ยนรหัสผ่าน, และไม่ให้บุคคลที่สามเข้าถึงอุปกรณ์ของคุณได้ไม่ว่าทางใด</p>
-                    <h3 class="font-semibold text-lg mt-6">การลบข้อมูล</h3>
-                    <p>Next Live Shop มีเจตนารักษาข้อมูลบุคคลของคุณให้ถูกต้องและอัพเดทอยู่เสมอ โดยเราจะลบข้อมูลของคุณทั้งหมดหากไม่จำเป็นต้องใช้ข้อมูลเหล่านั้นแล้ว</p>
-                    <p>คุณมีสิทธิขอลบหรือทำลายข้อมูลส่วนบุคคลของคุณได้ตลอดเวลา หากคุณต้องการใช้สิทธิ์นี้กรุณาติดต่อผ่านช่องทางของเรา และแจ้งคำร้องขอให้ทำลายข้อมูลของคุณ โดยเจ้าหน้าที่อาจมีการขอให้แสดงตัวเพื่อยืนยันความเป็นเจ้าของข้อมูล</p>
-                    <h3 class="font-semibold text-lg mt-6">ความปลอดภัยของข้อมูล</h3>
-                    <p>เพราะข้อมูลของคุณเป็นสิ่งที่มีค่ามากที่สุด เราให้ความสำคัญกับความเชื่อมั่นของคุณเป็นอันดับหนึ่งสำหรับเรา เราระลึกอยู่เสมอว่าคุณต้องการความปลอดภัยสูงสุดในการใช้บริการและรักษาความลับของข้อมูลส่วนตัว เราจึงดำเนินการอย่างเข้มงวดเพื่อรักษาความปลอดภัยและป้องกันการนำข้อมูลของคุณโดยไม่ได้รับอนุญาตด้วยมาตรฐานขั้นสูง</p>
-                    <p>เราใช้ระบบรักษาความปลอดภัยของข้อมูลที่มีมาตรฐานระดับเดียวกับธนาคารและสายการบินที่เป็นที่ยอมรับในระดับสากลทั้งในส่วนของเทคโนโลยีและกระบวนการเพื่อป้องกันการโจรกรรมข้อมูลที่เป็นความลับโดยคำนึงถึงประสิทธิภาพสูงสุด เราได้จัดสรรเวลา บุคลากร และทรัพยากรต่างๆ อย่างเต็มที่เพื่อให้คุณมั่นใจในการรักษาความปลอดภัยที่ได้มาตรฐานสูงสุดของเรา ซึ่งรวมถึงเทคโนโลยีเข้ารหัสข้อมูลในระดับ 256 บิท (256-bit Encryption) ซึ่งเป็นการเข้ารหัสระดับสูงสุดของให้บริการมาตรฐานเดียวกับการทำธุรกรรมทางอินเทอร์เน็ตของธนาคารและสายการบิน</p>
-                    <p>เราทำการทดสอบและปรับปรุงเทคโนโลยีรักษาความปลอดภัยของเราอย่างต่อเนื่องและสม่ำเสมอเพื่อให้คุณมั่นใจว่าข้อมูลส่วนตัวของคุณได้รับการดูแลด้วยมาตรการรักษาความปลอดภัยสูงสุด</p>
-                </div>
-            </div>
-
-            <div id="view-return" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
-                <h2 class="text-2xl font-bold mb-6 text-primary">RETURN POLICY (นโยบายการคืนสินค้าและคืนเงิน)</h2>
-                <div class="space-y-4 text-sm leading-relaxed" id="return-content">
-                    <p>เว็บไซต์ Next Live Shop ขอแจ้งนโยบายการคืนเงินเพื่อเป็นข้อตกลงและสร้างความเข้าใจเกี่ยวกับการใช้บริการเว็บไซต์ ดังนี้</p>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>สินค้าที่ เว็บไซต์ จัดจำหน่ายบนเว็บไซด์ เป็นสินค้าดิจิตอลที่ไม่สามารถคืนสินค้า และไม่สามารถคืนเงินได้</li>
-                        <li>เว็บไซต์ จะทำการคืนเงินค่าสินค้าให้กับลูกค้า ในกรณีที่เว็บไซต์ ไม่สามารถจัดส่งสินค้าให้ลูกค้าได้เท่านั้น (โดยจะทำการคืนเงินให้ในส่วนที่ เว็บไซต์ ไม่ได้จัดส่งสินค้าให้ลูกค้า)</li>
-                    </ul>
-                    <h3 class="font-semibold text-lg mt-6">ระยะเวลาการคืนเงินค่าสินค้า มีรายละเอียดดังนี้</h3>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>กรณีลูกค้าชำระเงินเต็มจำนวนหรือผ่อนชำระ ตัดผ่านบัตรเครดิตของธนาคารพาณิชย์ที่จดทะเบียนในประเทศไทย เว็บไซต์จะส่งเรื่องขอคืนเงินไปยังธนาคาร โดยการคืนเงินจะขึ้นอยู่กับนโยบายของแต่ละธนาคาร ตามปกติแล้วผู้ถือบัตรจะได้รับเงินคืนในรอบบิลถัดไป</li>
-                        <li>กรณีลูกค้าชำระเงินเต็มจำนวน ตัดผ่านช่องทาง True Money Wallet จะทำการคืนเงินกลับไปยัง True Money Wallet ที่ลูกค้าใช้ในการชำระเงิน โดยใช้ระยะเวลาประมาณ 7-14 วันทำการ</li>
-                        <li>กรณีลูกค้าชำระเงินเต็มจำนวน ตัดผ่านบัตรเดบิตของธนาคารพาณิชย์ที่จดทะเบียนในประเทศไทย เว็บไซต์จะส่งเรื่องขอคืนเงินไปยังธนาคาร โดยการคืนเงินจะขึ้นอยู่กับนโยบายของแต่ละธนาคาร ซึ่งจะใช้ระยะเวลาในการคืนเงินตั้งแต่ 30-60 วัน นับจากวันที่ลูกค้าได้รับการแจ้งจาก Call Center</li>
-                    </ul>
-                    <h3 class="font-semibold text-lg mt-6">ไม่สามารถดำเนินการยกเลิก เปลี่ยนแปลง แก้ไข รายการสั่งซื้อสินค้า ในกรณีต่างๆ ดังนี้</h3>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>กรณีที่เกิดขึ้นจากความผิดพลาดในการสั่งซื้อสินค้า ผิดรุ่น, ผิดประเภทฯ</li>
-                        <li>กรณีที่เกิดขึ้นจากการเปลี่ยนแปลงของราคาสินค้าที่อาจเกิดขึ้นได้ในอนาคต รวมถึง Gift Voucher ต่างๆ ทุกกรณี</li>
-                        <li>กรณีที่เกิดขึ้นจากความต้องการใส่ส่วนลดเพิ่มเติม, ลืมใส่ส่วนลด, Coupon</li>
-                        <li>กรณีที่เกิดขึ้นจากการเปลี่ยนใจ (Change of mind) ของผู้สั่งซื้อสินค้าทุกกรณี</li>
-                    </ul>
-                    <h3 class="font-semibold text-lg mt-6">เว็บไซต์ จะไม่ดำเนินการจัดส่งสินค้า และต้องทำการคืนเงินเท่านั้น เนื่องจากกรณีต่างๆ ดังนี้</h3>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>กรณีที่เกิดขึ้นจากสินค้าหมด (เช่น สินค้าหมด Stock, สินค้ายกเลิกการผลิตฯ)</li>
-                        <li>กรณีที่เกิดขึ้นจากเหตุสุดวิสัย (System Error) ที่อาจเกิดขึ้น</li>
-                    </ul>
-                    <p class="mt-4 font-semibold text-red-500">เว็บไซต์ ขอสงวนสิทธิ์ในการคืนเงินเกินระยะเวลาที่กำหนด หากเกิดเหตุสุดวิสัย – เว็บไซต์ ขอสงวนสิทธิในการเปลี่ยนแปลงเงื่อนไขใดๆ โดยไม่จำต้องแจ้งให้ทราบล่วงหน้า</p>
                 </div>
             </div>
 
@@ -1519,6 +1327,27 @@
         }
 
         // --- History fetching & Statement ---
+        function formatShortStatus(status) {
+            if(!status) return "-";
+            if(status.includes("ไม่สำเร็จ") || status.includes("ยกเลิก")) return "ไม่สำเร็จ";
+            if(status.includes("รอดำเนินการ")) return "รอดำเนินการ";
+            return "สำเร็จ";
+        }
+
+        function formatThaiDate(dateStr) {
+            if(!dateStr) return "-";
+            let parts = dateStr.split(' ');
+            if(parts.length < 2) return dateStr.replace(/\//g, '-');
+            let dParts = parts[0].split('/');
+            let time = parts[1].substring(0,5);
+            if(dParts.length === 3) {
+                let y = parseInt(dParts[2]);
+                if(y < 2500) y += 543;
+                return `${dParts[0]}-${dParts[1]}-${y} / ${time}`;
+            }
+            return dateStr;
+        }
+
         function searchHistory() {
             const phoneEl = document.getElementById('history-phone-input'); const phone = phoneEl ? phoneEl.value : "";
             const ordContainer = document.getElementById('history-orders-container'); const depContainer = document.getElementById('history-deposits-container'); const wdContainer = document.getElementById('history-withdraws-container');
@@ -1579,7 +1408,11 @@
 
             // Populate Info
             safeSetText('stmt-ref', `เลขที่ NX-${Date.now().toString().slice(-4)}-${Math.floor(Math.random()*9000)+1000}-${currentUser.phone.slice(-6)}`);
-            safeSetText('stmt-date', `วันที่ ${new Date().toLocaleDateString('th-TH')}`);
+            let dParts = new Date().toLocaleDateString('th-TH').split('/');
+            let tStr = new Date().toTimeString().substring(0,5);
+            let y = parseInt(dParts[2]); if(y < 2500) y += 543;
+            safeSetText('stmt-date', `วันที่ ${dParts[0]}-${dParts[1]}-${y} / ${tStr}`);
+            
             safeSetText('stmt-name', `ชื่อ-สกุล : ${currentUser.fname} ${currentUser.lname}`);
             safeSetText('stmt-email', `อีเมลจัดส่ง : ${currentUser.email}`);
             safeSetText('stmt-phone', `หมายเลขโทรศัพท์ : ${currentUser.phone}`);
@@ -1592,7 +1425,7 @@
                     let itemsStr = o.items.replace(/\n/g, ' / ');
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${o.date} (${o.ref})</span></td>
+                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${formatThaiDate(o.date)} (${o.ref})</span></td>
                         <td class="text-center py-2 border-b border-gray-200">-</td>
                         <td class="text-center py-2 border-b border-gray-200">-</td>
                         <td class="text-right py-2 border-b border-gray-200">-</td>
@@ -1610,12 +1443,12 @@
                 globalHistoryData.deposits.forEach((d, i) => {
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${d.date}</td>
+                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${formatThaiDate(d.date)}</td>
                         <td class="text-center py-2 border-b border-gray-200">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
                         <td class="text-center py-2 border-b border-gray-200">-</td>
                         <td class="text-right py-2 border-b border-gray-200">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-right py-2 border-b border-gray-200">${d.status}</td>
-                        <td class="text-right py-2 border-b border-gray-200">ดูสลิป</td>
+                        <td class="text-right py-2 border-b border-gray-200">${formatShortStatus(d.status)}</td>
+                        <td class="text-right py-2 border-b border-gray-200">-</td>
                     `;
                     dBody.appendChild(tr);
                 });
@@ -1627,21 +1460,22 @@
                 globalHistoryData.withdraws.forEach((w, i) => {
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${w.date}</td>
+                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${formatThaiDate(w.date)}</td>
                         <td class="text-center py-2 border-b border-gray-200">${currentUser.fname} ${currentUser.lname}</td>
                         <td class="text-center py-2 border-b border-gray-200">${w.items.split('(')[0].replace('ไปยัง:','').trim()}</td>
                         <td class="text-center py-2 border-b border-gray-200">${w.items.split('(')[1] ? w.items.split('(')[1].replace(')','') : '-'}</td>
                         <td class="text-center py-2 border-b border-gray-200 font-bold">${parseFloat(w.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-center py-2 border-b border-gray-200">${w.status}</td>
+                        <td class="text-center py-2 border-b border-gray-200">${formatShortStatus(w.status)}</td>
+                        <td class="text-right py-2 border-b border-gray-200">-</td>
                     `;
                     wBody.appendChild(tr);
                 });
-            } else { wBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
+            } else { wBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
             navigate('statement');
         }
 
-        function downloadAndEmailStatement() {
+        function emailStatementOnly() {
             const btn = document.getElementById('btn-dl-statement');
             const origText = btn.innerHTML;
             btn.innerHTML = `<div class="dotted-spinner w-5 h-5 border-[3px] border-white inline-block align-middle mr-2"></div> กำลังประมวลผล...`;
@@ -1651,16 +1485,9 @@
             
             // รอให้ฟอนต์/UI จัดเรียงเสร็จก่อนแคป
             setTimeout(() => {
-                html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                html2canvas(element, { scale: 1.5, useCORS: true }).then(canvas => {
                     const imgData = canvas.toDataURL('image/png');
                     
-                    // 1. ดาวน์โหลดลงเครื่อง
-                    const link = document.createElement('a');
-                    link.download = `Statement_${currentUser.phone}_${new Date().getTime()}.png`;
-                    link.href = imgData;
-                    link.click();
-
-                    // 2. ส่งไปให้ Backend ส่งอีเมล
                     callBackend({
                         action: 'emailStatement',
                         email: currentUser.email,
@@ -1670,13 +1497,13 @@
                     }).then(res => {
                         btn.innerHTML = origText; btn.disabled = false;
                         if(res.status === 'success') {
-                            showCustomPopup("สำเร็จ", "บันทึกรูปภาพและส่งไปยังอีเมลของคุณเรียบร้อยแล้ว");
+                            showCustomPopup("สำเร็จ", "ส่งบิลไปยังอีเมลของคุณเรียบร้อยแล้ว");
                         } else {
-                            showCustomPopup("แจ้งเตือน", "บันทึกรูปสำเร็จ แต่ไม่สามารถส่งอีเมลได้");
+                            showCustomPopup("แจ้งเตือน", "ไม่สามารถส่งอีเมลได้: " + res.message);
                         }
                     }).catch(e => {
                         btn.innerHTML = origText; btn.disabled = false;
-                        showCustomPopup("แจ้งเตือน", "บันทึกรูปสำเร็จ แต่ไม่สามารถเชื่อมต่อระบบอีเมลได้");
+                        showCustomPopup("แจ้งเตือน", "ไม่สามารถเชื่อมต่อระบบอีเมลได้");
                     });
                 });
             }, 500);
