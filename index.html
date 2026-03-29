@@ -170,7 +170,8 @@
 
                     <div class="hidden lg:flex items-center space-x-6 mx-6">
                         <a href="#" onclick="navigate('home')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">หน้าหลัก</a>
-                        <a href="#" onclick="navigate('history')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ประวัติ</a>
+                        <!-- นำเมนูประวัติกลับมาแสดงตรงนี้ให้ชัดเจนสำหรับทุกคน -->
+                        <a href="#" onclick="navigate('history')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ประวัติการทำรายการ</a>
                         <a href="#" onclick="navigate('deposit')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ฝากเงิน</a>
                         <a href="#" onclick="navigate('withdraw')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ถอนเงิน</a>
                     </div>
@@ -260,7 +261,7 @@
                         <button onclick="setDepositAmount(50000)" class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 py-2 rounded-sm text-sm font-bold border">50,000</button>
                     </div>
 
-                    <p class="text-xs text-gray-400 mb-6">*ยอดเงินจะเข้าสู่ระบบอัตโนมัติเมื่อทำรายการชำระสำเร็จ</p>
+                    <p class="text-xs text-gray-400 mb-6">*ยอดเงินและโบนัสจะถูกบวกเข้าเครดิตในระบบอัตโนมัติเมื่อทำรายการชำระสำเร็จ</p>
                     <button onclick="confirmDeposit()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 uppercase text-sm rounded-sm shadow-md">ยืนยันรายการทำรายการฝาก</button>
                 </div>
             </div>
@@ -303,8 +304,9 @@
                                 <p class="text-sm opacity-80 uppercase tracking-wider mb-1">บัญชีรับเงินของคุณ</p>
                                 <h3 class="text-xl font-bold font-mono tracking-widest" id="wd-card-acc">XXX-X-XXXXX-X</h3>
                             </div>
-                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-inner" id="wd-card-logo-container">
-                                <i class="bank bank-kbank m text-2xl"></i>
+                            <!-- นำพื้นหลังสีขาวของการ์ดออก ให้โลโก้กลมกลืน -->
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center" id="wd-card-logo-container">
+                                <i class="bank bank-kbank m text-4xl"></i>
                             </div>
                         </div>
                         <div class="flex justify-between items-end relative z-10">
@@ -1110,7 +1112,7 @@
                 safeSetText('wd-card-balance', `฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
                 
                 const logoCont = document.getElementById('wd-card-logo-container');
-                if(logoCont) logoCont.innerHTML = `<i class="bank ${currentUser.bankName} m text-3xl"></i>`;
+                if(logoCont) logoCont.innerHTML = `<i class="bank ${currentUser.bankName} m text-4xl"></i>`;
             } else {
                 if(setupSec) setupSec.classList.remove('hidden'); if(actSec) actSec.classList.add('hidden');
                 safeSetValue('wd-fname', currentUser.fname); safeSetValue('wd-lname', currentUser.lname);
@@ -1345,7 +1347,6 @@
                             navigate('success');
                         } else { 
                             showCustomPopup("ไม่สำเร็จ", res.message); 
-                            // รับยอดคงเหลือใหม่กรณีคืนเครดิต
                             if(res.newBalance !== undefined && currentUser) { updateBalanceUI(res.newBalance); }
                             if(upl) upl.classList.remove('hidden'); 
                         }
