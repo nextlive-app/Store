@@ -171,7 +171,7 @@
                             </div>
                         </div>
 
-                        <!-- Profile Menu (ปุ่มกดเพื่อไปหน้าโปรไฟล์) -->
+                        <!-- Profile Menu -->
                         <div id="user-profile-menu" class="hidden relative group z-50 mr-2 border-r border-gray-200 dark:border-gray-700 pr-4">
                             <button onclick="navigate('profile')" class="flex items-center space-x-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
                                 <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold" id="profile-icon">U</div>
@@ -228,7 +228,7 @@
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm text-center">
                     <p class="text-sm text-gray-500 mb-6">เครดิตปัจจุบันของคุณ: <span class="font-bold text-lg text-green-600 dark:text-green-400" id="deposit-current-balance">฿0.00</span></p>
                     
-                    <label class="block text-sm font-semibold mb-2 text-left">ระบุจำนวนเงินที่ต้องการฝาก (โบนัส 0.5%)</label>
+                    <label class="block text-sm font-semibold mb-2 text-left">ระบุจำนวนเงินที่ต้องการฝาก (โบนัส 0.5%) ขั้นต่ำ 100 บาท</label>
                     <input type="number" id="deposit-amount-input" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] outline-none text-2xl font-bold text-center rounded-sm mb-4 text-primary" placeholder="0.00">
                     
                     <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-6">
@@ -244,7 +244,7 @@
                 </div>
             </div>
 
-            <!-- View: Profile (ข้อมูลส่วนตัว + ที่อยู่แบบฟอร์มซองจดหมาย) -->
+            <!-- View: Profile -->
             <div id="view-profile" class="hidden max-w-4xl mx-auto px-4 py-12">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-primary">ข้อมูลโปรไฟล์</h2>
@@ -264,7 +264,7 @@
                     </div>
                 </div>
 
-                <!-- Address Template (ซองจดหมาย) -->
+                <!-- Address Template -->
                 <div class="template-container">
                     <div class="template-header">
                         <div class="header-title">ข้อมูลที่อยู่ของคุณ</div>
@@ -294,7 +294,7 @@
                 </div>
             </div>
 
-            <!-- View: History (ประวัติการสั่งซื้อ และ ประวัติฝากเงิน) -->
+            <!-- View: History -->
             <div id="view-history" class="hidden max-w-5xl mx-auto px-4 py-12">
                 <h2 class="text-2xl font-bold mb-6 uppercase text-gray-800 dark:text-white border-b pb-3">ประวัติของฉัน</h2>
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm mb-8 shadow-sm">
@@ -311,14 +311,12 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- ประวัติสั่งซื้อ -->
                     <div>
                         <h3 class="text-lg font-bold mb-4 flex items-center text-primary"><div class="w-8 h-8 bg-red-100 rounded-sm flex items-center justify-center mr-2"><i data-lucide="shopping-cart" class="w-4 h-4 text-primary"></i></div> ประวัติการสั่งซื้อ</h3>
                         <div id="history-orders-container" class="space-y-4">
                             <div class="text-center py-12 text-gray-400 border border-dashed rounded-sm"><i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-50"></i><p>ไม่พบประวัติสั่งซื้อ</p></div>
                         </div>
                     </div>
-                    <!-- ประวัติฝากเงิน -->
                     <div>
                         <h3 class="text-lg font-bold mb-4 flex items-center text-green-600"><div class="w-8 h-8 bg-green-100 rounded-sm flex items-center justify-center mr-2"><i data-lucide="wallet" class="w-4 h-4 text-green-600"></i></div> ประวัติการฝากเงิน</h3>
                         <div id="history-deposits-container" class="space-y-4">
@@ -336,7 +334,6 @@
                         <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">สมัครใช้งาน</button>
                     </div>
 
-                    <!-- Form Login -->
                     <div id="form-login-container" class="p-6 md:p-8">
                         <h2 class="text-2xl font-bold mb-6">ลงชื่อเข้าใช้</h2>
                         <form class="space-y-4" id="login-form">
@@ -346,7 +343,6 @@
                         </form>
                     </div>
 
-                    <!-- Form Register -->
                     <div id="form-register-container" class="hidden p-6 md:p-8">
                         <div id="register-step-1">
                             <h2 class="text-2xl font-bold mb-2">สร้างบัญชีใหม่</h2>
@@ -457,12 +453,11 @@
                 </div>
             </div>
 
-            <!-- View: Payment (ใช้ได้ทั้ง Order และ Deposit) -->
+            <!-- View: Payment -->
             <div id="view-payment" class="hidden w-full mx-auto px-4 py-12 flex flex-col items-center">
                 <button onclick="goBackFromPayment()" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> ย้อนกลับเพื่อแก้ไขข้อมูล</button>
 
                 <div class="slip-container" id="user-slip-element">
-                    <!-- หัวบิล Thai QR Payment -->
                     <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-4 border-white">
                         <div class="header-icon-box flex-shrink-0">
                             <img src="https://img2.pic.in.th/pic/1000008216.jpg" class="w-full h-full object-contain">
@@ -484,13 +479,10 @@
 
                     <div class="flex justify-center mb-8 relative px-10 bg-white">
                         <div class="relative inline-block border-[1px] border-gray-100 p-1 shadow-sm qr-wiggle hover:animate-none">
-                            <!-- QR Code สร้างจาก Library -->
                             <img src="" id="promptpay-qr-img" class="w-[240px] h-[240px]">
-                            <!-- ไอคอนตรงกลางยังอยู่ครบถ้วน -->
                             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-md p-[2px] shadow-md flex items-center justify-center z-20">
                                 <img src="https://img1.pic.in.th/images/IMG_1065-removebg.png" class="w-7 h-7 object-contain">
                             </div>
-                            
                             <div id="verification-overlay" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300 z-30">
                                 <div class="dotted-spinner mb-3"></div>
                                 <h3 class="text-base font-bold text-gray-800 mb-1 font-sans">กำลังตรวจสอบ...</h3>
@@ -766,7 +758,7 @@
         // Flow Control: 'order' หรือ 'deposit'
         let currentFlow = 'order'; 
 
-        // Banner Data (อัปเดตใหม่)
+        // Banner Data
         const bannerData = [
             { img: "https://img1.pic.in.th/images/IMG_1083.png" },
             { img: "https://img2.pic.in.th/IMG_1086.png" }
@@ -836,6 +828,9 @@
                     renderCategoryMenu();
                     renderProducts();
                     checkLoginState();
+
+                    // ดึงข้อมูลผู้ใช้ล่าสุดเพื่ออัปเดตยอดเงินตามชีตทันทีที่เปิดเว็บ
+                    if (currentUser) { refreshUserData(); }
                     
                     const searchBox = document.getElementById('product-search-desktop');
                     if(searchBox) {
@@ -852,6 +847,19 @@
                 if(loader) loader.style.display = 'none';
                 showCustomPopup("ข้อผิดพลาดระบบ", e.message);
             });
+        }
+
+        // ฟังก์ชันดึงยอดเงินจากชีตแบบ Real-time
+        function refreshUserData() {
+            if(!currentUser) return;
+            callBackend({action: 'getUserData', email: currentUser.email, phone: currentUser.phone})
+            .then(res => {
+                if(res.status === 'success') {
+                    currentUser = res.user;
+                    localStorage.setItem('nextLiveUser', JSON.stringify(currentUser));
+                    checkLoginState(); // อัปเดต UI ให้แสดงยอดใหม่ทันที
+                }
+            }).catch(e => console.error("Refresh User Error:", e));
         }
 
         function applySettingsToUI() {
@@ -913,6 +921,7 @@
                 safeSetValue('chk-phone', currentUser.phone);
 
                 renderProfileView();
+                updateCheckoutTotals(); // อัปเดตยอดคงเหลือในหน้า Checkout ด้วยถ้าเปิดอยู่
             } else {
                 currentUser = null;
                 if(authWrapper) authWrapper.style.display = 'block';
@@ -925,7 +934,7 @@
 
         function logout() {
             if(currentUser) {
-                callBackend({action: 'logout', email: currentUser.email, phone: currentUser.phone}); // แจ้งแอดมินเงียบๆ
+                callBackend({action: 'logout', email: currentUser.email, phone: currentUser.phone}); 
             }
             localStorage.removeItem('nextLiveUser');
             checkLoginState();
@@ -1037,6 +1046,7 @@
             if (view === 'checkout') renderCheckoutItems();
             if (view === 'history' && currentUser) { safeSetValue('history-phone-input', currentUser.phone); searchHistory(); }
             if (view === 'profile' && currentUser) { renderProfileView(); }
+            if (view === 'deposit' && currentUser) { refreshUserData(); } // ดึงยอดเงินล่าสุดเมื่อเข้าหน้าฝากเงิน
             if (view === 'payment') {
                 safeSetText('slip-total-amount', currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 let paymentAmount = currentNetTotal;
@@ -1068,6 +1078,8 @@
         function confirmDeposit() {
             let val = parseFloat(document.getElementById('deposit-amount-input').value);
             if(isNaN(val) || val <= 0) { showCustomPopup("แจ้งเตือน", "กรุณาระบุจำนวนเงินให้ถูกต้อง"); return; }
+            if(val < 100) { showCustomPopup("แจ้งเตือน", "ขั้นต่ำการเติมเครดิต 100.00 บาท"); return; } // เพิ่มการตรวจสอบขั้นต่ำ 100
+            
             currentFlow = 'deposit';
             currentNetTotal = val;
             navigate('payment');
@@ -1250,6 +1262,7 @@
                 container.appendChild(div);
             });
             updateCheckoutTotals();
+            refreshUserData(); // ดึงยอดล่าสุดมาด้วยเพื่อความมั่นใจ
         }
 
         function processOrder() {
@@ -1303,7 +1316,7 @@
             });
         }
 
-        // --- Slip Upload (Handle both Order and Deposit) ---
+        // --- Slip Upload ---
         function handleSlipUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -1427,12 +1440,16 @@
             });
         }
 
+        // --- Slider (อัปเดต object-contain) ---
         let currentSlide = 0;
         function initSlider() {
             const track = document.getElementById('slider-track'); if(!track) return; track.innerHTML = ''; 
             bannerData.forEach(banner => {
-                const slide = document.createElement('div'); slide.className = "w-full flex-shrink-0 relative h-full bg-black";
-                slide.innerHTML = `<img src="${banner.img}" class="w-full h-full object-cover">`; track.appendChild(slide);
+                const slide = document.createElement('div'); 
+                // ใช้ flex center กับ object-contain เพื่อให้แสดงผลเต็มรูปพอดีโดยไม่ครอปและจัดกึ่งกลาง
+                slide.className = "w-full flex-shrink-0 relative h-full flex items-center justify-center";
+                slide.innerHTML = `<img src="${banner.img}" class="w-full h-full object-contain">`; 
+                track.appendChild(slide);
             });
             setInterval(() => { currentSlide = (currentSlide + 1) % bannerData.length; track.style.transform = `translateX(-${currentSlide * 100}%)`; }, 4000);
         }
