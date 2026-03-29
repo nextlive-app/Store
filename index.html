@@ -95,7 +95,7 @@
         .template-body { padding: 30px 35px; }
         .detail-row { display: flex; align-items: flex-start; margin-bottom: 25px; flex-wrap: wrap; }
         .detail-label { background-color: #f83a32; color: white; padding: 6px 18px; font-size: 1.2rem; font-weight: 700; margin-right: 20px; border-radius: 4px; white-space: nowrap; margin-bottom: 10px;}
-        .address-text { color: #171b85; font-size: 1.5rem; font-weight: 700; line-height: 1.6; word-break: break-word; }
+        .address-text { color: #171b85; font-size: 1.3rem; font-weight: 600; line-height: 1.6; word-break: break-word; }
         .zip-section { display: flex; align-items: center; gap: 15px; margin-top: 40px; flex-wrap: wrap;}
         .zip-label { background-color: #f83a32; color: white; padding: 6px 18px; font-size: 1.2rem; font-weight: 700; border-radius: 4px; }
         .zip-grid { display: flex; gap: 8px; }
@@ -146,6 +146,8 @@
 
                     <div class="hidden lg:flex items-center space-x-6 mx-6">
                         <a href="#" onclick="navigate('home')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">หน้าหลัก</a>
+                        <!-- ปุ่มฝากเงิน (Desktop) แสดงเฉพาะตอนล็อกอิน -->
+                        <a href="#" id="nav-desktop-deposit" onclick="navigate('deposit')" class="hidden text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium"><i data-lucide="wallet" class="w-4 h-4 inline mr-1"></i>ฝากเงิน</a>
                         <a href="#" onclick="navigate('history')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ประวัติ</a>
                         <a href="#" onclick="navigate('privacy')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">Privacy Policy</a>
                     </div>
@@ -167,8 +169,13 @@
                             </div>
                         </div>
 
-                        <!-- Profile Menu (ปุ่มกดเพื่อไปหน้าโปรไฟล์) -->
-                        <div id="user-profile-menu" class="hidden relative group z-50 mr-2 border-r border-gray-200 dark:border-gray-700 pr-4">
+                        <!-- Profile Menu -->
+                        <div id="user-profile-menu" class="hidden relative group z-50 mr-2 border-r border-gray-200 dark:border-gray-700 pr-4 flex items-center space-x-3">
+                            <!-- ยอดเครดิต Desktop -->
+                            <div class="hidden md:flex flex-col items-end mr-2">
+                                <span class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">เครดิต</span>
+                                <span class="text-sm font-bold text-primary" id="desktop-credit-display">฿0.00</span>
+                            </div>
                             <button onclick="navigate('profile')" class="flex items-center space-x-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
                                 <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold" id="profile-icon">U</div>
                                 <span class="hidden sm:inline" id="profile-name">User</span>
@@ -205,7 +212,8 @@
         <main id="main-content" class="flex-grow">
             <!-- View: Home -->
             <div id="view-home" class="block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-hidden">
-                <div class="relative w-full h-[180px] sm:h-[300px] md:h-[400px] overflow-hidden rounded-sm mb-8 group bg-gray-200 dark:bg-gray-800 shadow-sm" id="banner-slider">
+                <!-- แบนเนอร์ปรับเป็นอัตราส่วนและไม่โดนตัดภาพ -->
+                <div class="relative w-full overflow-hidden rounded-sm mb-8 group shadow-sm bg-black dark:bg-[#121212]" style="aspect-ratio: 21/7;" id="banner-slider">
                     <div class="flex h-full w-full transition-transform duration-700 ease-in-out" id="slider-track"></div>
                 </div>
 
@@ -215,7 +223,63 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6" id="product-grid"></div>
             </div>
 
-            <!-- View: Profile (ข้อมูลส่วนตัว + ที่อยู่แบบฟอร์มซองจดหมาย) -->
+            <!-- View: Deposit (ฝากเงิน) -->
+            <div id="view-deposit" class="hidden max-w-3xl mx-auto px-4 py-12">
+                <div class="bg-white dark:bg-[#1e1e1e] p-6 md:p-10 border rounded-sm shadow-sm">
+                    <div class="flex flex-col items-center justify-center mb-8 text-center border-b pb-8">
+                        <div class="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
+                            <i data-lucide="wallet" class="w-8 h-8"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold uppercase text-gray-800 dark:text-white mb-2">ฝากเงินเข้าระบบ</h2>
+                        <p class="text-gray-500">เติมเครดิตเพื่อใช้ชำระค่าสินค้า รับโบนัสพิเศษเพิ่มทันที <span class="text-green-500 font-bold">0.5%</span> ทุกยอดฝาก!</p>
+                    </div>
+
+                    <div class="space-y-6 max-w-md mx-auto">
+                        <!-- เลือกยอดด่วน -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-3">เลือกจำนวนเงินที่ต้องการฝาก</label>
+                            <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                                <button onclick="setDepositAmount(100)" class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary text-gray-700 dark:text-gray-300 py-3 rounded-sm font-bold text-sm transition-colors text-center">100.00</button>
+                                <button onclick="setDepositAmount(300)" class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary text-gray-700 dark:text-gray-300 py-3 rounded-sm font-bold text-sm transition-colors text-center">300.00</button>
+                                <button onclick="setDepositAmount(500)" class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary text-gray-700 dark:text-gray-300 py-3 rounded-sm font-bold text-sm transition-colors text-center">500.00</button>
+                                <button onclick="setDepositAmount(1500)" class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary text-gray-700 dark:text-gray-300 py-3 rounded-sm font-bold text-sm transition-colors text-center">1,500.00</button>
+                                <button onclick="setDepositAmount(50000)" class="border-2 border-gray-200 dark:border-gray-700 hover:border-primary text-gray-700 dark:text-gray-300 py-3 rounded-sm font-bold text-sm transition-colors text-center col-span-2">50,000.00</button>
+                            </div>
+                        </div>
+
+                        <!-- ระบุยอดเอง -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">ระบุจำนวนเงินเอง (บาท)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none font-bold text-gray-500">฿</div>
+                                <input type="number" id="deposit-input" oninput="calculateDepositBonus()" class="w-full pl-10 pr-4 py-4 border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] outline-none text-xl font-bold rounded-sm text-primary" placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <!-- สรุปยอดโบนัส -->
+                        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-sm border border-gray-100 dark:border-gray-700">
+                            <div class="flex justify-between text-sm mb-2 text-gray-600 dark:text-gray-300">
+                                <span>ยอดเงินฝาก:</span>
+                                <span id="dep-calc-base">฿0.00</span>
+                            </div>
+                            <div class="flex justify-between text-sm mb-2 text-green-600 font-medium">
+                                <span>โบนัสเพิ่ม (0.5%):</span>
+                                <span id="dep-calc-bonus">+ ฿0.00</span>
+                            </div>
+                            <div class="flex justify-between text-lg font-bold border-t border-gray-200 dark:border-gray-700 pt-2 mt-2 text-gray-800 dark:text-white">
+                                <span>เครดิตที่จะได้รับ:</span>
+                                <span id="dep-calc-total" class="text-primary">฿0.00</span>
+                            </div>
+                        </div>
+
+                        <button onclick="processDepositPayment()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 mt-6 uppercase text-base rounded-sm shadow-md flex justify-center items-center">
+                            ยืนยันรายการฝากเงิน <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Profile -->
             <div id="view-profile" class="hidden max-w-4xl mx-auto px-4 py-12">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-primary">ข้อมูลโปรไฟล์</h2>
@@ -230,14 +294,14 @@
                         <div><p class="text-xs text-gray-500">ชื่อ-นามสกุล</p><p class="font-bold text-lg dark:text-white" id="vp-name">-</p></div>
                         <div><p class="text-xs text-gray-500">อีเมล</p><p class="font-bold text-lg dark:text-white" id="vp-email">-</p></div>
                         <div><p class="text-xs text-gray-500">เบอร์โทรศัพท์</p><p class="font-bold text-lg dark:text-white" id="vp-phone">-</p></div>
-                        <div><p class="text-xs text-gray-500">วันที่สมัครสมาชิก</p><p class="font-bold text-lg dark:text-white" id="vp-date">-</p></div>
+                        <div><p class="text-xs text-gray-500">เครดิตคงเหลือ</p><p class="font-bold text-lg text-primary" id="vp-credit">฿0.00</p></div>
                     </div>
                 </div>
 
-                <!-- Address Template (ซองจดหมาย) -->
+                <!-- Address Template (ซองจดหมาย) แบบข้อความเดี่ยว -->
                 <div class="template-container">
                     <div class="template-header">
-                        <div class="header-title">ข้อมูลที่อยู่ของคุณ</div>
+                        <div class="header-title">ข้อมูลที่อยู่จัดส่ง</div>
                         <div class="header-datetime" id="current-time"></div>
                     </div>
                     <div class="template-body">
@@ -245,9 +309,9 @@
                             <div class="detail-label">รายละเอียด</div>
                             <div class="address-text">
                                 <div id="prof-name-text">ชื่อ นามสกุล</div>
-                                <div id="prof-addr-text1">บ้านเลขที่ ซอย</div>
-                                <div id="prof-addr-text2">ถนน แขวง เขต</div>
-                                <div id="prof-addr-text3">จังหวัด</div>
+                                <div id="prof-addr-text1" class="mt-2 text-xl font-normal text-gray-800">ที่อยู่เต็ม</div>
+                                <div id="prof-addr-text2" class="hidden"></div>
+                                <div id="prof-addr-text3" class="hidden"></div>
                             </div>
                         </div>
                         <div class="zip-section">
@@ -264,11 +328,17 @@
                 </div>
             </div>
 
-            <!-- View: History (ประวัติ) -->
+            <!-- View: History (ประวัติการสั่งซื้อ/เติมเงิน) -->
             <div id="view-history" class="hidden max-w-5xl mx-auto px-4 py-12">
-                <h2 class="text-2xl font-bold mb-6 uppercase text-gray-800 dark:text-white border-b pb-3">ประวัติการสั่งซื้อ</h2>
+                <h2 class="text-2xl font-bold mb-6 uppercase text-gray-800 dark:text-white border-b pb-3">ประวัติการทำรายการ</h2>
+                
+                <div class="flex border-b mb-6">
+                    <button id="tab-history-order" onclick="switchHistoryTab('order')" class="px-6 py-3 font-bold text-sm uppercase text-primary border-b-2 border-primary">ประวัติการสั่งซื้อ</button>
+                    <button id="tab-history-deposit" onclick="switchHistoryTab('deposit')" class="px-6 py-3 font-bold text-sm uppercase text-gray-500 hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors">ประวัติการเติมเครดิต</button>
+                </div>
+
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm mb-8 shadow-sm">
-                    <label class="block text-sm font-semibold mb-2">ระบุหมายเลขโทรศัพท์เพื่อค้นหาประวัติ</label>
+                    <label class="block text-sm font-semibold mb-2" id="history-search-label">ระบุหมายเลขโทรศัพท์เพื่อค้นหาประวัติการสั่งซื้อ</label>
                     <div class="flex flex-col sm:flex-row gap-3">
                         <div class="relative flex-grow">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="phone" class="w-5 h-5 text-gray-400"></i></div>
@@ -279,8 +349,10 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- คอนเทนเนอร์แสดงประวัติ -->
                 <div id="history-results-container" class="space-y-4">
-                    <div class="text-center py-12 text-gray-400 border border-dashed rounded-sm"><i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-50"></i><p>กรุณาระบุหมายเลขโทรศัพท์เพื่อดูประวัติ</p></div>
+                    <div class="text-center py-12 text-gray-400 border border-dashed rounded-sm bg-white"><i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-50"></i><p>กรุณาระบุหมายเลขโทรศัพท์เพื่อดูประวัติ</p></div>
                 </div>
             </div>
 
@@ -358,6 +430,24 @@
                                 <div><label class="block text-xs font-semibold mb-1">เบอร์โทรศัพท์ *</label><input type="tel" id="chk-phone" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
                             </form>
                         </div>
+
+                        <!-- เพิ่มช่องทางการชำระเงิน -->
+                        <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm">
+                            <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">ช่องทางการชำระเงิน</h3>
+                            <div class="space-y-3">
+                                <label class="flex items-center p-3 border rounded-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                    <input type="radio" name="payment-method" value="qr" checked class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary">
+                                    <span class="ml-3 font-medium text-sm flex items-center"><i data-lucide="qr-code" class="w-4 h-4 mr-2 text-gray-500"></i> โอนเงินผ่าน Thai QR Payment</span>
+                                </label>
+                                <label class="flex items-center p-3 border rounded-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                    <input type="radio" name="payment-method" value="credit" class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary">
+                                    <div class="ml-3 flex flex-col">
+                                        <span class="font-medium text-sm flex items-center"><i data-lucide="coins" class="w-4 h-4 mr-2 text-primary"></i> หักเครดิตในระบบอัตโนมัติ</span>
+                                        <span class="text-xs text-gray-500 mt-1">ยอดเครดิตคงเหลือ: <span id="chk-display-credit" class="font-bold text-primary">฿0.00</span></span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="lg:col-span-3">
@@ -376,26 +466,29 @@
                                     <span>ยอดสุทธิ (Net Total)</span><span id="chk-net-total" class="text-primary">฿0.00</span>
                                 </div>
                             </div>
-                            <button onclick="processOrder()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 mt-6 uppercase text-sm rounded-sm shadow-md">
-                                ยืนยันการสั่งซื้อ
+                            <button id="btn-process-order" onclick="processOrder()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 mt-6 uppercase text-sm rounded-sm shadow-md transition-colors flex justify-center items-center">
+                                ยืนยันการสั่งซื้อ <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- View: Payment -->
+            <!-- View: Payment (สแกนคิวอาร์ สำหรับซื้อสินค้า และ ฝากเงิน) -->
             <div id="view-payment" class="hidden w-full mx-auto px-4 py-12 flex flex-col items-center">
-                <button onclick="navigate('checkout')" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> ย้อนกลับเพื่อแก้ไขข้อมูล</button>
+                <button onclick="navigate('home')" class="text-gray-500 hover:text-primary mb-6 text-sm font-medium self-start md:self-auto flex items-center"><i data-lucide="x" class="w-4 h-4 mr-1"></i> ยกเลิกรายการ</button>
+
+                <!-- หัวข้อเปลี่ยนไปตามประเภท (สั่งซื้อ หรือ ฝากเงิน) -->
+                <h2 id="payment-heading" class="text-2xl font-bold mb-6 text-gray-800 dark:text-white uppercase">ชำระเงินค่าสินค้า</h2>
 
                 <div class="slip-container" id="user-slip-element">
                     <!-- หัวบิล Thai QR Payment -->
-                    <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-3 border-white">
+                    <div class="bg-[#10355a] text-white flex items-center justify-center py-5 px-4 gap-3 border-b-4 border-white">
                         <div class="header-icon-box flex-shrink-0">
-                            <img src="https://img1.pic.in.th/images/IMG_1065-removebg.png" class="w-full h-full object-contain">
+                            <img src="https://img2.pic.in.th/pic/1000008216.jpg" class="w-full h-full object-contain">
                         </div>
                         <div class="text-[24px] font-bold leading-none tracking-wide flex items-baseline gap-1 mt-1 text-white">
-                            Thai QR Payment
+                            Thai QR <span class="text-[14px] font-normal tracking-normal text-white">Payment</span>
                         </div>
                     </div>
 
@@ -440,7 +533,7 @@
                     <div class="bg-[#5a5d62] p-4 flex items-center gap-4">
                         <div class="bg-white w-[85px] h-[45px] flex-shrink-0 flex items-center justify-center p-1"><img src="https://img2.pic.in.th/IMG_05936a5ac8fe11ed9919.jpeg" class="w-full h-full object-contain"></div>
                         <div class="text-white text-[9.5px] leading-[1.4] opacity-95 font-light pr-2">
-                            ใช้สำหรับซื้อสินค้าบนเว็บไซต์เท่านั้น การชำระห้ามปัดเศษเด็ดขาด ระบบตรวจสอบตามยอดของท่าน ระบบจะไม่ทราบว่าท่านได้โอนเข้ามาแล้ว 
+                            กรุณาโอนเงินให้ตรงกับยอดที่ระบุ ระบบตรวจสอบตามยอดของท่าน หากยอดไม่ตรงระบบจะไม่ทำรายการสำเร็จ 
                             <span class="text-blue-300 underline cursor-pointer font-medium ml-1" onclick="openPaymentSteps()">ขั้นตอนการชำระ</span>
                         </div>
                     </div>
@@ -449,7 +542,7 @@
                 <div id="upload-section" class="mt-6 w-full max-w-[420px]">
                     <input type="file" id="slip-upload" class="hidden" accept="image/*" onchange="handleSlipUpload(event)">
                     <button onclick="document.getElementById('slip-upload').click()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 uppercase text-sm rounded-sm shadow-md flex items-center justify-center font-sans">
-                        <i data-lucide="upload" class="w-5 h-5 mr-2"></i> อัปโหลดสลิปชำระเงิน
+                        <i data-lucide="upload" class="w-5 h-5 mr-2"></i> อัปโหลดสลิปยืนยัน
                     </button>
                 </div>
             </div>
@@ -457,16 +550,16 @@
             <!-- View: Success -->
             <div id="view-success" class="hidden max-w-xl mx-auto px-4 py-20 text-center animate-fade-in">
                 <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check" class="w-8 h-8"></i></div>
-                <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white">ทำรายการเรียบร้อย!</h2>
-                <p class="text-gray-500 mb-6 text-sm">ระบบได้ดำเนินการและส่งรายละเอียดไปยังอีเมลของคุณแล้ว</p>
+                <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white" id="success-heading">ทำรายการเรียบร้อย!</h2>
+                <p class="text-gray-500 mb-6 text-sm" id="success-subtext">ระบบได้ดำเนินการและส่งรายละเอียดไปยังอีเมลของคุณแล้ว</p>
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm">
-                    <div class="mb-2"><span class="text-gray-500 text-xs uppercase">รหัสอ้างอิงออเดอร์ (Order Ref)</span><p class="text-lg font-mono font-bold text-primary" id="display-order-id">#NX-00000</p></div>
-                    <div class="pt-4 mt-4 border-t text-sm text-gray-600 dark:text-gray-400"><p>กรุณาตรวจสอบกล่องจดหมาย หรือโฟลเดอร์ Junk/Spam หากไม่ได้รับอีเมลภายใน 5 นาที</p></div>
+                    <div class="mb-2"><span class="text-gray-500 text-xs uppercase" id="success-ref-label">รหัสอ้างอิงออเดอร์ (Order Ref)</span><p class="text-lg font-mono font-bold text-primary" id="display-order-id">#NX-00000</p></div>
+                    <div class="pt-4 mt-4 border-t text-sm text-gray-600 dark:text-gray-400"><p>ขอบคุณที่ใช้บริการของเรา หากมีปัญหาการใช้งานกรุณาติดต่อแอดมิน</p></div>
                 </div>
-                <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
+                <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm shadow-sm">กลับหน้าหลัก</button>
             </div>
             
-            <!-- Policy Views (เนื้อหากลับมาครบ 100%) -->
+            <!-- Policy Views -->
             <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
@@ -561,49 +654,48 @@
             <button onclick="toggleCategorySidebar()" class="text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         
-        <!-- เนื้อหาในแถบ Sidebar ให้ขยายเต็มความสูงและจัดเรียงเนื้อหา -->
         <div class="flex-grow overflow-y-auto flex flex-col">
             <!-- Mobile Sidebar Auth/Profile -->
             <div id="mobile-auth-section" class="md:hidden border-b border-gray-100 dark:border-gray-800 pb-2 mb-2">
                 <div class="grid grid-cols-2 gap-2 p-4 pb-2">
-                    <button onclick="openAuth('login'); toggleCategorySidebar()" class="bg-gray-100 text-gray-800 py-2 text-sm font-bold shadow-sm">ลงชื่อเข้าใช้</button>
-                    <button onclick="openAuth('register'); toggleCategorySidebar()" class="bg-primary text-white py-2 text-sm font-bold shadow-sm">สมัครใช้งาน</button>
+                    <button onclick="openAuth('login'); toggleCategorySidebar()" class="bg-gray-100 text-gray-800 py-2 text-sm font-bold shadow-sm rounded-sm">ลงชื่อเข้าใช้</button>
+                    <button onclick="openAuth('register'); toggleCategorySidebar()" class="bg-primary text-white py-2 text-sm font-bold shadow-sm rounded-sm">สมัครใช้งาน</button>
                 </div>
             </div>
             
             <!-- Mobile Menu: Profile & Wallet -->
-            <div id="mobile-profile-section" class="hidden md:hidden border-b border-gray-100 pb-2 mb-2">
-                <div class="p-4 bg-gray-50 flex items-center justify-between">
+            <div id="mobile-profile-section" class="hidden md:hidden border-b border-gray-100 dark:border-gray-800 pb-2 mb-2">
+                <div class="p-4 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
                     <div class="flex items-center">
                         <i data-lucide="coins" class="w-8 h-8 text-primary mr-3"></i>
-                        <div><p class="font-bold text-sm">ยอดเงิน / พอยท์</p><p class="font-bold text-lg text-primary">฿0.00</p></div>
+                        <div><p class="font-bold text-xs text-gray-500 uppercase">ยอดเครดิต</p><p class="font-bold text-lg text-primary" id="mobile-credit-display">฿0.00</p></div>
                     </div>
-                    <button class="text-gray-400 hover:text-primary"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
                 </div>
                 <ul class="text-sm">
+                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-bold text-primary" onclick="navigate('deposit'); toggleCategorySidebar()"><i data-lucide="wallet" class="w-4 h-4 mr-3"></i>ฝากเงิน / เติมเครดิต</li>
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50" onclick="navigate('profile'); toggleCategorySidebar()"><i data-lucide="user" class="w-4 h-4 mr-3"></i>ข้อมูลโปรไฟล์</li>
                 </ul>
             </div>
 
             <!-- หมวดหมู่ -->
-            <ul id="category-list" class="text-sm mt-2 border-b border-gray-100 pb-2"></ul>
+            <ul id="category-list" class="text-sm mt-2 border-b border-gray-100 dark:border-gray-800 pb-2"></ul>
             
-            <!-- ประวัติการสั่งซื้อ (ย้ายมาอยู่ด้านล่างหมวดหมู่สินค้า) -->
+            <!-- ประวัติการสั่งซื้อ -->
             <div id="mobile-history-section" class="md:hidden pt-2">
                 <ul class="text-sm">
-                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-gray-800 dark:text-white" onclick="navigate('history'); toggleCategorySidebar()"><i data-lucide="history" class="w-4 h-4 mr-3"></i>ประวัติการสั่งซื้อ</li>
+                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-gray-800 dark:text-white" onclick="navigate('history'); toggleCategorySidebar()"><i data-lucide="history" class="w-4 h-4 mr-3"></i>ประวัติการทำรายการ</li>
                 </ul>
             </div>
 
-            <div class="border-t border-gray-100 mt-2 pt-2 mb-4">
-                <ul class="text-sm">
+            <div class="border-t border-gray-100 dark:border-gray-800 mt-2 pt-2 mb-4">
+                <ul class="text-sm text-gray-600 dark:text-gray-400">
                     <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('privacy'); toggleCategorySidebar()">Privacy Policy</li>
                     <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('return'); toggleCategorySidebar()">Return Policy</li>
                 </ul>
             </div>
 
-            <!-- ออกจากระบบ (ย้ายมาอยู่ด้านล่างสุดของเมนูบาร์) -->
-            <div id="mobile-logout-section" class="hidden md:hidden border-t border-gray-100 mt-auto pt-2">
+            <!-- ออกจากระบบ -->
+            <div id="mobile-logout-section" class="hidden md:hidden border-t border-gray-100 dark:border-gray-800 mt-auto pt-2">
                 <ul class="text-sm">
                     <li class="cursor-pointer px-4 py-4 flex items-center hover:bg-gray-50 text-red-500 font-bold" onclick="logout(); toggleCategorySidebar()"><i data-lucide="log-out" class="w-4 h-4 mr-3"></i>ออกจากระบบ</li>
                 </ul>
@@ -691,16 +783,23 @@
         let products = [];
         let optionsDB = [];
         
-        // Checkout Logic
+        // Logic Vars
         let currentSubtotal = 0;
         let currentDiscount = 0;
         let currentVat = 0;
         let currentNetTotal = 0;
         let appliedDiscountCode = "";
+        
+        let paymentContext = 'order'; // 'order' or 'deposit'
+        let depositAmount = 0;
+        let depositBonus = 0;
+        
+        let historyTabActive = 'order'; // 'order' or 'deposit'
 
+        // แบนเนอร์สไลด์ ปรับขนาดและรูปภาพตามที่กำหนด
         const bannerData = [
-            { img: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" },
-            { img: "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" }
+            { img: "https://img1.pic.in.th/images/IMG_1083.png" },
+            { img: "https://img2.pic.in.th/IMG_1086.png" }
         ];
 
         // =========================================================================
@@ -734,11 +833,16 @@
                     return JSON.parse(text);
                 } catch (err) {
                     console.error("Server Error Response:", text);
-                    throw new Error("ไม่สามารถอ่านข้อมูลจากเซิร์ฟเวอร์ได้ (โปรดตรวจสอบการตั้งค่า Deploy Web App ให้เป็น 'ทุกคน')");
+                    throw new Error("ไม่สามารถอ่านข้อมูลจากเซิร์ฟเวอร์ได้ (โปรดตรวจสอบการตั้งค่า Deploy Web App)");
                 }
             } catch (err) {
                 throw new Error(err.message || "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
             }
+        }
+
+        // แจ้งเตือนแอดมินเงียบๆ (ไม่ต้องรอให้เสร็จ)
+        function notifyAdminSilent(subject, detail) {
+            callBackend({action: 'notifyAdmin', subject: subject, detail: detail}).catch(e=>console.log("Notify error:", e));
         }
 
         // --- Custom Popup ---
@@ -830,14 +934,13 @@
             
             // --- ระบบเซ็นเซอร์ (Masking) เลขบัญชี / เบอร์พร้อมเพย์ ---
             let acc = String(siteSettings.BankAccount || "000-0-00000-0");
-            let cleanAcc = acc.replace(/[\s-]/g, ''); // ลบขีดและช่องว่างออกก่อนเพื่อให้คำนวณง่าย
+            let cleanAcc = acc.replace(/[\s-]/g, ''); 
             
             if(cleanAcc.length >= 10) {
-                // แสดง 3 ตัวหน้า และ 4 ตัวหลัง ตรงกลางเป็น X หมด
                 let masked = cleanAcc.substring(0,3) + "-XXX-" + cleanAcc.substring(cleanAcc.length - 4);
                 safeSetText('slip-admin-acc', masked);
             } else {
-                safeSetText('slip-admin-acc', acc); // ถ้าสั้นไปให้แสดงปกติ
+                safeSetText('slip-admin-acc', acc);
             }
         }
 
@@ -846,7 +949,7 @@
             document.documentElement.classList.toggle('dark', isDarkMode);
         }
 
-        // --- Auth System ---
+        // --- Auth System & User Credits ---
         function checkLoginState() {
             const savedUser = localStorage.getItem('nextLiveUser');
             const authWrapper = document.getElementById('auth-buttons-wrapper');
@@ -854,15 +957,18 @@
             const mobileAuth = document.getElementById('mobile-auth-section');
             const mobileProf = document.getElementById('mobile-profile-section');
             const mobileLogout = document.getElementById('mobile-logout-section');
+            const navDesktopDeposit = document.getElementById('nav-desktop-deposit');
 
             if(savedUser) {
                 currentUser = JSON.parse(savedUser);
+                if(currentUser.credit === undefined) currentUser.credit = 0; // ป้องกันเครดิตเป็น null
                 
                 if(authWrapper) authWrapper.style.display = 'none'; 
                 if(profMenu) profMenu.classList.remove('hidden'); 
                 if(mobileAuth) mobileAuth.style.display = 'none'; 
                 if(mobileProf) mobileProf.style.display = 'block';
                 if(mobileLogout) mobileLogout.style.display = 'block';
+                if(navDesktopDeposit) navDesktopDeposit.classList.remove('hidden');
                 
                 safeSetText('profile-icon', currentUser.fname.charAt(0).toUpperCase());
                 safeSetText('profile-name', currentUser.fname);
@@ -871,7 +977,8 @@
                 safeSetValue('chk-lname', currentUser.lname);
                 safeSetValue('chk-email', currentUser.email);
                 safeSetValue('chk-phone', currentUser.phone);
-
+                
+                updateCreditDisplays();
                 renderProfileView();
             } else {
                 currentUser = null;
@@ -880,10 +987,21 @@
                 if(mobileAuth) mobileAuth.style.display = 'block';
                 if(mobileProf) mobileProf.style.display = 'none';
                 if(mobileLogout) mobileLogout.style.display = 'none';
+                if(navDesktopDeposit) navDesktopDeposit.classList.add('hidden');
             }
+        }
+        
+        function updateCreditDisplays() {
+            if(!currentUser) return;
+            let creditStr = formatPrice(currentUser.credit);
+            safeSetText('desktop-credit-display', creditStr);
+            safeSetText('mobile-credit-display', creditStr);
+            safeSetText('chk-display-credit', creditStr);
+            safeSetText('vp-credit', creditStr);
         }
 
         function logout() {
+            if(currentUser) notifyAdminSilent('มีการออกจากระบบ', `ผู้ใช้งาน: ${currentUser.email} ได้ออกจากระบบแล้ว`);
             localStorage.removeItem('nextLiveUser');
             checkLoginState();
             showCustomPopup("สำเร็จ", "ออกจากระบบเรียบร้อยแล้ว");
@@ -960,6 +1078,37 @@
             });
         }
 
+        // --- ระบบฝากเงิน ---
+        function setDepositAmount(amount) {
+            safeSetValue('deposit-input', amount);
+            calculateDepositBonus();
+        }
+        
+        function calculateDepositBonus() {
+            const val = parseFloat(document.getElementById('deposit-input').value) || 0;
+            depositAmount = val;
+            depositBonus = val * 0.005; // 0.5% โบนัส
+            let total = depositAmount + depositBonus;
+            
+            safeSetText('dep-calc-base', formatPrice(depositAmount));
+            safeSetText('dep-calc-bonus', '+ ' + formatPrice(depositBonus));
+            safeSetText('dep-calc-total', formatPrice(total));
+        }
+
+        function processDepositPayment() {
+            if(!currentUser) {
+                showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนทำรายการฝากเงิน");
+                openAuth('login');
+                return;
+            }
+            if(depositAmount <= 0) {
+                showCustomPopup("แจ้งเตือน", "กรุณาระบุจำนวนเงินให้ถูกต้อง");
+                return;
+            }
+            paymentContext = 'deposit';
+            navigate('payment');
+        }
+
         function renderProfileView() {
             if(!currentUser) return;
             
@@ -968,15 +1117,14 @@
             safeSetText('vp-phone', currentUser.phone);
             safeSetText('vp-date', currentUser.regDate || "N/A");
 
-            let addr = currentUser.address || {};
+            // การแสดงผลที่อยู่แบบข้อความยาว (Plain Text)
+            let addrText = currentUser.address || "ไม่มีข้อมูลที่อยู่";
             safeSetText('prof-name-text', currentUser.fname + " " + currentUser.lname);
-            safeSetText('prof-addr-text1', `${addr.addr1 || ''} ${addr.addr2 || ''}`);
-            safeSetText('prof-addr-text2', `ถนน${addr.addr3 || ''} แขวง/ตำบล${addr.addr4 || ''} เขต/อำเภอ${addr.addr5 || ''}`);
-            safeSetText('prof-addr-text3', `จังหวัด${addr.addr6 || ''}`);
-
-            let zip = (addr.addr7 || "00000").toString();
-            if(zip.length > 5) zip = zip.substring(0,5);
-            else if(zip.length < 5) zip = zip.padEnd(5, '0');
+            safeSetText('prof-addr-text1', addrText);
+            
+            // ดึง 5 ตัวสุดท้ายมาใส่ในช่องรหัสไปรษณีย์
+            let zipMatch = addrText.match(/\d{5}$/);
+            let zip = zipMatch ? zipMatch[0] : "00000";
             
             for(let i=0; i<5; i++) {
                 safeSetText('zip-'+(i+1), zip[i]);
@@ -995,7 +1143,7 @@
         }
 
         function navigate(view) {
-            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-profile'];
+            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-profile', 'view-deposit'];
             views.forEach(v => {
                 const el = document.getElementById(v);
                 if(el) el.classList.add('hidden');
@@ -1014,38 +1162,38 @@
                 renderProfileView();
             }
             if (view === 'payment') {
-                safeSetText('slip-total-amount', currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                // เซ็ตค่าหน้า Payment ตามบริบท (สั่งซื้อ หรือ ฝากเงิน)
+                let paymentAmount = 0;
                 
-                let paymentAmount = currentNetTotal;
-                let rawAccount = String(siteSettings.BankAccount || "0000000000");
-                
-                // --- ระบบป้องกันบัคคิวอาร์โค้ดพัง ---
-                // ทำให้เหลือแต่ตัวเลขสำหรับสร้าง PromptPay เท่านั้น
-                let cleanAccountForQR = rawAccount.replace(/\D/g, ''); 
-                
-                // ถ้าเบอร์ไม่ถูกต้องตามมาตรฐานพร้อมเพย์ (ปกติต้อง 10, 13 หรือ 15 หลัก) 
-                // ให้ใช้เบอร์จำลองกันพัง (เพื่อให้ QR แสดงขึ้นมาก่อน ไม่เกิด error หน้าขาว)
-                if (cleanAccountForQR.length < 10) {
-                    cleanAccountForQR = "0000000000";
+                if (paymentContext === 'order') {
+                    safeSetText('payment-heading', 'ชำระเงินค่าสินค้า');
+                    paymentAmount = currentNetTotal;
+                } else if (paymentContext === 'deposit') {
+                    safeSetText('payment-heading', 'ชำระเงินเพื่อเติมเครดิต');
+                    paymentAmount = depositAmount;
                 }
+                
+                safeSetText('slip-total-amount', paymentAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                
+                let rawAccount = String(siteSettings.BankAccount || "0000000000");
+                let cleanAccountForQR = rawAccount.replace(/\D/g, ''); 
+                if (cleanAccountForQR.length < 10) cleanAccountForQR = "0000000000";
                 
                 const generateQR = () => {
                     if (window.promptpayQr) {
                         try {
                             const qrData = window.promptpayQr(cleanAccountForQR, {amount: paymentAmount});
-                            // นำพารามิเตอร์ logo ออกเพื่อแก้ไขปัญหารูปไม่แสดง
                             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrData)}&size=500x500&margin=10&qzone=1`;
                             
-                            // เปลี่ยนจากการใช้ jQuery เป็น Vanilla JS แบบปลอดภัยและรอโหลด
                             const imgEl = document.getElementById('promptpay-qr-img');
                             if(imgEl) {
-                                imgEl.onload = () => { /* โหลดเสร็จ */ };
-                                imgEl.onerror = () => { console.error("โหลดรูป QR ไม่สำเร็จ ให้ตรวจสอบลิงก์ API"); };
+                                imgEl.onload = () => { };
+                                imgEl.onerror = () => { console.error("โหลดรูป QR ไม่สำเร็จ"); };
                                 imgEl.src = qrUrl;
                             }
                         } catch(err) { console.error("QR Generate Error:", err); }
                     } else {
-                        setTimeout(generateQR, 500); // วนลูปจนกว่า library จะโหลดเสร็จ
+                        setTimeout(generateQR, 500);
                     }
                 };
                 generateQR();
@@ -1055,19 +1203,6 @@
             }
         }
 
-        function openPaymentSteps() {
-            const overlay = document.getElementById('payment-steps-overlay');
-            const modal = document.getElementById('payment-steps-modal');
-            if(overlay) overlay.classList.add('overlay-enter-active');
-            if(modal) modal.classList.remove('opacity-0', 'scale-95');
-        }
-        function closePaymentSteps() {
-            const overlay = document.getElementById('payment-steps-overlay');
-            const modal = document.getElementById('payment-steps-modal');
-            if(modal) modal.classList.add('opacity-0', 'scale-95');
-            if(overlay) overlay.classList.remove('overlay-enter-active');
-        }
-
         // --- Render UI ---
         function renderCategoryMenu() {
             const list = document.getElementById('category-list');
@@ -1075,7 +1210,7 @@
             let htmlStr = '';
             categories.forEach(cat => {
                 const isActive = activeCategory === cat.id;
-                const cssClass = isActive ? 'bg-gray-50 text-primary font-semibold' : 'text-gray-600 hover:text-primary hover:bg-gray-50';
+                const cssClass = isActive ? 'bg-gray-50 dark:bg-gray-800 text-primary font-semibold' : 'text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800';
                 htmlStr += `<li class="cursor-pointer transition-colors ${cssClass}" onclick="selectCategory('${cat.id}', '${cat.name}')">
                                 <div class="px-4 py-3 flex items-center justify-between"><span>${cat.name}</span></div>
                             </li>`;
@@ -1108,13 +1243,17 @@
                 const card = document.createElement('div');
                 card.className = `product-card bg-white dark:bg-[#1e1e1e] overflow-hidden flex flex-col cursor-pointer group relative`;
                 card.onclick = () => openModal(product.id);
+                
+                // ถ้าราคา 0 ให้แสดงคำว่า Free
+                let priceDisplay = product.price === 0 ? '<span class="text-green-500">ฟรี (Free)</span>' : formatPrice(product.price);
+
                 card.innerHTML = `
                     <div class="p-4 flex-grow flex flex-col items-center text-center">
                         <div class="w-full h-32 mb-4 flex items-center justify-center overflow-hidden bg-white p-2">
                             <img src="${product.image}" class="max-w-full max-h-full object-contain transition-transform group-hover:scale-105">
                         </div>
                         <h3 class="font-medium text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary mb-1 line-clamp-2">${product.name}</h3>
-                        <div class="mt-auto font-bold text-primary">${formatPrice(product.price)}</div>
+                        <div class="mt-auto font-bold text-primary">${priceDisplay}</div>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -1131,7 +1270,7 @@
             const mImg = document.getElementById('modal-img'); if(mImg) mImg.src = product.image;
             safeSetText('modal-title', product.name);
             safeSetText('modal-desc', product.desc);
-            safeSetText('modal-price', formatPrice(product.price));
+            safeSetText('modal-price', product.price === 0 ? "ฟรี (Free)" : formatPrice(product.price));
             
             const optsContainer = document.getElementById('modal-options');
             if(optsContainer) {
@@ -1174,7 +1313,7 @@
             else selectedOptions = selectedOptions.filter(o => o.id !== optId);
             let total = selectedProductForModal.price;
             selectedOptions.forEach(o => total += o.price);
-            safeSetText('modal-price', formatPrice(total));
+            safeSetText('modal-price', total === 0 ? "ฟรี (Free)" : formatPrice(total));
         }
 
         function addToCartData(product, options) {
@@ -1272,7 +1411,18 @@
             safeSetText('chk-subtotal', formatPrice(currentSubtotal));
             safeSetText('chk-discount', "- " + formatPrice(currentDiscount));
             safeSetText('chk-vat', formatPrice(currentVat));
-            safeSetText('chk-net-total', formatPrice(currentNetTotal));
+            
+            // กรณีเป็นสินค้าฟรี
+            if (currentNetTotal === 0) {
+                safeSetText('chk-net-total', "ฟรี (Free)");
+                const btn = document.getElementById('btn-process-order');
+                if(btn) btn.innerHTML = `รับสินค้าฟรี <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i>`;
+            } else {
+                safeSetText('chk-net-total', formatPrice(currentNetTotal));
+                const btn = document.getElementById('btn-process-order');
+                if(btn) btn.innerHTML = `ยืนยันการสั่งซื้อ <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i>`;
+            }
+            try { lucide.createIcons(); } catch(e) {}
         }
 
         function renderCheckoutItems() {
@@ -1302,14 +1452,118 @@
             updateCheckoutTotals();
         }
 
+        // กระบวนการกด ยืนยันคำสั่งซื้อ
         function processOrder() {
             const form = document.getElementById('checkout-form');
-            if(form && !form.checkValidity()) { showCustomPopup("แจ้งเตือน","กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
+            if(form && !form.checkValidity()) { showCustomPopup("แจ้งเตือน","กรุณากรอกข้อมูลผู้ซื้อให้ครบถ้วน"); return; }
             if(cart.length === 0) { showCustomPopup("แจ้งเตือน","ไม่มีสินค้าในรถเข็น"); return; }
-            navigate('payment');
+            
+            // กรณีราคาสินค้าเป็น 0 (ฟรี)
+            if (currentNetTotal === 0) {
+                submitFreeOrder();
+                return;
+            }
+
+            const paymentMethodEl = document.querySelector('input[name="payment-method"]:checked');
+            const method = paymentMethodEl ? paymentMethodEl.value : 'qr';
+
+            if (method === 'credit') {
+                if(!currentUser) {
+                    showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบเพื่อชำระด้วยเครดิต");
+                    openAuth('login');
+                    return;
+                }
+                
+                if (currentUser.credit < currentNetTotal) {
+                    showCustomPopup("เครดิตไม่เพียงพอ", "เครดิตของคุณไม่เพียงพอ กรุณาเติมเครดิตเข้าระบบ หรือเปลี่ยนช่องทางการชำระเงิน");
+                    notifyAdminSilent("แจ้งเตือนแอดมิน: เครดิตลูกค้าไม่พอ", `ผู้ใช้ ${currentUser.email} ต้องการซื้อสินค้า ฿${currentNetTotal} แต่เครดิตคงเหลือ ฿${currentUser.credit}`);
+                    return;
+                }
+                
+                // ถ้ายอดพอ ให้ยิง API หักเงินเลย
+                submitCreditOrder();
+                
+            } else {
+                // กรณีจ่ายด้วย QR Code ให้ไปหน้า Payment
+                paymentContext = 'order';
+                navigate('payment');
+            }
         }
 
-        // --- Payment (Apps Script Connection) ---
+        // สั่งซื้อด้วยเครดิตอัตโนมัติ
+        function submitCreditOrder() {
+            const btn = document.getElementById('btn-process-order');
+            if(btn) { btn.innerText = "กำลังดำเนินการ..."; btn.disabled = true; }
+
+            const payload = {
+                action: 'payWithCredit',
+                userEmail: currentUser.email,
+                buyname: (document.getElementById('chk-fname') ? document.getElementById('chk-fname').value : "") + " " + (document.getElementById('chk-lname') ? document.getElementById('chk-lname').value : ""),
+                phone: document.getElementById('chk-phone') ? document.getElementById('chk-phone').value : "",
+                cart: cart.map(c => ({ qty: c.qty, product: { name: c.product.name }, options: c.options.map(o=>({name: o.name})) })),
+                discount: currentDiscount,
+                vat: currentVat.toFixed(2),
+                expectedPrice: currentNetTotal.toFixed(2)
+            };
+
+            callBackend(payload)
+            .then(res => {
+                if(btn) { btn.innerHTML = `ยืนยันการสั่งซื้อ <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i>`; btn.disabled = false; try{lucide.createIcons();}catch(e){} }
+                if (res.status === "success") {
+                    // อัปเดตเครดิตในเครื่อง
+                    currentUser.credit = res.newCredit;
+                    localStorage.setItem('nextLiveUser', JSON.stringify(currentUser));
+                    updateCreditDisplays();
+                    
+                    safeSetText('display-order-id', res.orderRef);
+                    safeSetText('success-heading', 'ชำระเงินด้วยเครดิตสำเร็จ!');
+                    safeSetText('success-subtext', 'ระบบได้หักเครดิตของคุณและส่งรายละเอียดออเดอร์ไปยังอีเมลแล้ว');
+                    cart = []; currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); navigate('success');
+                } else {
+                    showCustomPopup("เกิดข้อผิดพลาด", res.message);
+                }
+            })
+            .catch(e => {
+                if(btn) { btn.innerHTML = `ยืนยันการสั่งซื้อ <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i>`; btn.disabled = false; try{lucide.createIcons();}catch(err){} }
+                showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+            });
+        }
+
+        // สั่งซื้อฟรี (สินค้า 0 บาท)
+        function submitFreeOrder() {
+            const btn = document.getElementById('btn-process-order');
+            if(btn) { btn.innerText = "กำลังดำเนินการ..."; btn.disabled = true; }
+
+            const payload = {
+                action: 'freeOrder',
+                buyname: (document.getElementById('chk-fname') ? document.getElementById('chk-fname').value : "") + " " + (document.getElementById('chk-lname') ? document.getElementById('chk-lname').value : ""),
+                buyemail: document.getElementById('chk-email') ? document.getElementById('chk-email').value : "",
+                phone: document.getElementById('chk-phone') ? document.getElementById('chk-phone').value : "",
+                cart: cart.map(c => ({ qty: c.qty, product: { name: c.product.name }, options: c.options.map(o=>({name: o.name})) })),
+                discount: currentDiscount,
+                vat: currentVat.toFixed(2),
+                expectedPrice: 0.00
+            };
+
+            callBackend(payload)
+            .then(res => {
+                if(btn) { btn.innerHTML = `รับสินค้าฟรี <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i>`; btn.disabled = false; try{lucide.createIcons();}catch(e){} }
+                if (res.status === "success") {
+                    safeSetText('display-order-id', res.orderRef);
+                    safeSetText('success-heading', 'รับสินค้าฟรีสำเร็จ!');
+                    safeSetText('success-subtext', 'ระบบได้ส่งรายละเอียดสินค้าไปยังอีเมลของคุณแล้ว');
+                    cart = []; currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); navigate('success');
+                } else {
+                    showCustomPopup("เกิดข้อผิดพลาด", res.message);
+                }
+            })
+            .catch(e => {
+                if(btn) { btn.innerHTML = `รับสินค้าฟรี <i data-lucide="check-circle" class="w-4 h-4 ml-2"></i>`; btn.disabled = false; try{lucide.createIcons();}catch(err){} }
+                showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+            });
+        }
+
+        // --- Payment (อัปโหลดสลิป สำหรับสั่งซื้อและฝากเงิน) ---
         function handleSlipUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -1327,28 +1581,62 @@
                         setTimeout(() => overlay.classList.add('opacity-100'), 50);
                     }
 
-                    const payload = {
-                        action: 'submitOrder',
-                        buyname: (document.getElementById('chk-fname') ? document.getElementById('chk-fname').value : "") + " " + (document.getElementById('chk-lname') ? document.getElementById('chk-lname').value : ""),
-                        buyemail: document.getElementById('chk-email') ? document.getElementById('chk-email').value : "",
-                        phone: document.getElementById('chk-phone') ? document.getElementById('chk-phone').value : "",
-                        cart: cart.map(c => ({ qty: c.qty, product: { name: c.product.name }, options: c.options.map(o=>({name: o.name})) })),
-                        discount: currentDiscount,
-                        vat: currentVat.toFixed(2),
-                        expectedPrice: currentNetTotal.toFixed(2), 
-                        base64: e.target.result.split(',')[1],
-                        name: file.name,
-                        type: file.type
-                    };
+                    // สร้าง Payload ขึ้นอยู่กับ Context (ซื้อของ หรือ ฝากเงิน)
+                    let payload = {};
+                    
+                    if (paymentContext === 'order') {
+                        payload = {
+                            action: 'submitOrder',
+                            buyname: (document.getElementById('chk-fname') ? document.getElementById('chk-fname').value : "") + " " + (document.getElementById('chk-lname') ? document.getElementById('chk-lname').value : ""),
+                            buyemail: document.getElementById('chk-email') ? document.getElementById('chk-email').value : "",
+                            phone: document.getElementById('chk-phone') ? document.getElementById('chk-phone').value : "",
+                            cart: cart.map(c => ({ qty: c.qty, product: { name: c.product.name }, options: c.options.map(o=>({name: o.name})) })),
+                            discount: currentDiscount,
+                            vat: currentVat.toFixed(2),
+                            expectedPrice: currentNetTotal.toFixed(2), 
+                            base64: e.target.result.split(',')[1],
+                            name: file.name,
+                            type: file.type
+                        };
+                    } else if (paymentContext === 'deposit') {
+                        payload = {
+                            action: 'submitDeposit',
+                            userEmail: currentUser.email,
+                            userName: currentUser.fname + " " + currentUser.lname,
+                            userPhone: currentUser.phone,
+                            amount: depositAmount.toFixed(2),
+                            bonus: depositBonus.toFixed(2),
+                            expectedPrice: depositAmount.toFixed(2),
+                            base64: e.target.result.split(',')[1],
+                            name: file.name,
+                            type: file.type
+                        };
+                    }
 
                     callBackend(payload)
                     .then(res => {
                         if(overlay) overlay.classList.add('hidden');
                         if (res.status === "success") {
-                            safeSetText('display-order-id', res.orderRef);
-                            cart = []; currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); navigate('success');
+                            if (paymentContext === 'order') {
+                                safeSetText('display-order-id', res.orderRef);
+                                safeSetText('success-heading', 'ชำระเงินเรียบร้อย!');
+                                safeSetText('success-subtext', 'ระบบตรวจสอบสลิปสำเร็จ และส่งรายละเอียดไปยังอีเมลแล้ว');
+                                safeSetText('success-ref-label', 'รหัสอ้างอิงออเดอร์ (Order Ref)');
+                                cart = []; currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); 
+                            } else if (paymentContext === 'deposit') {
+                                // อัปเดตเครดิตในเครื่อง
+                                currentUser.credit = res.newCredit;
+                                localStorage.setItem('nextLiveUser', JSON.stringify(currentUser));
+                                updateCreditDisplays();
+                                
+                                safeSetText('display-order-id', res.transactionId);
+                                safeSetText('success-heading', 'เติมเงินสำเร็จ!');
+                                safeSetText('success-subtext', `เติมเงิน ${formatPrice(depositAmount)} โบนัส ${formatPrice(depositBonus)} เข้าสู่ระบบแล้ว`);
+                                safeSetText('success-ref-label', 'รหัสทำรายการ (Transaction ID)');
+                            }
+                            navigate('success');
                         } else {
-                            showCustomPopup("สลิปมีปัญหา", res.message);
+                            showCustomPopup("ทำรายการไม่สำเร็จ", res.message);
                             if(upl) upl.classList.remove('hidden');
                         }
                     })
@@ -1363,6 +1651,27 @@
         }
 
         // --- History fetching ---
+        function switchHistoryTab(tab) {
+            historyTabActive = tab;
+            const btnOrder = document.getElementById('tab-history-order');
+            const btnDeposit = document.getElementById('tab-history-deposit');
+            const label = document.getElementById('history-search-label');
+            const container = document.getElementById('history-results-container');
+            
+            if(container) container.innerHTML = `<div class="text-center py-12 text-gray-400 border border-dashed rounded-sm bg-white"><i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-50"></i><p>กรุณาระบุหมายเลขโทรศัพท์เพื่อดูประวัติ</p></div>`;
+            
+            if(tab === 'order') {
+                btnOrder.className = "px-6 py-3 font-bold text-sm uppercase text-primary border-b-2 border-primary transition-colors";
+                btnDeposit.className = "px-6 py-3 font-bold text-sm uppercase text-gray-500 hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors";
+                if(label) label.innerText = "ระบุหมายเลขโทรศัพท์เพื่อค้นหาประวัติการสั่งซื้อ";
+            } else {
+                btnDeposit.className = "px-6 py-3 font-bold text-sm uppercase text-primary border-b-2 border-primary transition-colors";
+                btnOrder.className = "px-6 py-3 font-bold text-sm uppercase text-gray-500 hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors";
+                if(label) label.innerText = "ระบุหมายเลขโทรศัพท์เพื่อค้นหาประวัติการเติมเครดิต";
+            }
+            try { lucide.createIcons(); } catch(e) {}
+        }
+
         function searchHistory() {
             const phoneEl = document.getElementById('history-phone-input');
             const phone = phoneEl ? phoneEl.value : "";
@@ -1376,7 +1685,8 @@
                 btn.disabled = true;
             }
 
-            callBackend({ action: 'getHistory', phone: phone })
+            // ส่ง context ไปให้ Backend รู้ว่าหา Order หรือ Deposit
+            callBackend({ action: 'getHistory', phone: phone, type: historyTabActive })
             .then(res => {
                 if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; }
                 try { lucide.createIcons(); } catch(e) {}
@@ -1384,26 +1694,53 @@
                 if(res.status === 'success' && res.data.length > 0) {
                     if(container) container.innerHTML = '';
                     res.data.forEach((item, idx) => {
-                        let badgeClass = item.status === "การชำระเงินถูกต้อง" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700";
+                        let isSuccess = item.status === "การชำระเงินถูกต้อง" || item.status === "สำเร็จ";
+                        let badgeClass = isSuccess ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700";
+                        
                         const div = document.createElement('div');
-                        div.className = "bg-white p-6 border rounded-sm shadow-sm animate-slide-up mb-4";
+                        div.className = "bg-white p-6 border rounded-sm shadow-sm animate-slide-up mb-4 flex gap-4";
                         div.style.animationDelay = `${idx * 0.1}s`;
-                        div.innerHTML = `
-                            <div class="flex justify-between items-start mb-4 border-b pb-2">
-                                <div><h3 class="font-bold text-lg">Order: ${item.orderNo}</h3><p class="text-xs text-gray-500">${item.date}</p></div>
-                                <span class="${badgeClass} px-3 py-1 text-xs font-bold rounded-sm">${item.status}</span>
-                            </div>
-                            <div class="text-sm text-gray-700 whitespace-pre-wrap mb-4 bg-gray-50 p-3 rounded-sm font-sans">${item.items}</div>
-                            <div class="flex justify-end gap-6 text-sm">
-                                <div><span class="text-gray-500">ส่วนลด:</span> <span class="font-medium">฿${item.discount}</span></div>
-                                <div><span class="text-gray-500">ยอดสุทธิ:</span> <span class="font-bold text-primary">฿${item.netTotal}</span></div>
-                            </div>
-                        `;
+                        
+                        if (historyTabActive === 'order') {
+                            div.innerHTML = `
+                                <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-sm flex items-center justify-center flex-shrink-0"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-2 border-b pb-2">
+                                        <div><h3 class="font-bold text-sm">Order: ${item.orderNo}</h3><p class="text-xs text-gray-500">${item.date}</p></div>
+                                        <span class="${badgeClass} px-3 py-1 text-xs font-bold rounded-sm">${item.status}</span>
+                                    </div>
+                                    <div class="text-sm text-gray-700 whitespace-pre-wrap mb-2 bg-gray-50 p-2 rounded-sm font-sans">${item.items}</div>
+                                    <div class="flex justify-end gap-6 text-sm">
+                                        <div><span class="text-gray-500">ส่วนลด:</span> <span class="font-medium">฿${item.discount}</span></div>
+                                        <div><span class="text-gray-500">ยอดสุทธิ:</span> <span class="font-bold text-primary">฿${item.netTotal}</span></div>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            // การแสดงผลประวัติฝากเงิน
+                            div.innerHTML = `
+                                <div class="w-12 h-12 bg-green-50 text-green-500 rounded-sm flex items-center justify-center flex-shrink-0"><i data-lucide="wallet" class="w-6 h-6"></i></div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-2 border-b pb-2">
+                                        <div><h3 class="font-bold text-sm">Ref: ${item.orderNo}</h3><p class="text-xs text-gray-500">${item.date}</p></div>
+                                        <span class="${badgeClass} px-3 py-1 text-xs font-bold rounded-sm">${item.status}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-500">ประเภทรายการ: <span class="font-bold text-gray-800">${item.type || 'ฝากเงินเครดิต'}</span></span>
+                                        <div class="text-right">
+                                            <div class="font-bold text-lg text-green-600">+ ฿${item.netTotal}</div>
+                                            ${item.note ? `<div class="text-xs text-gray-500">${item.note}</div>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
                         if(container) container.appendChild(div);
                     });
                 } else {
-                    if(container) container.innerHTML = `<div class="text-center py-12 text-gray-500"><p>ไม่พบประวัติการสั่งซื้อสำหรับเบอร์ ${phone}</p></div>`;
+                    if(container) container.innerHTML = `<div class="text-center py-12 text-gray-500 bg-white"><p>ไม่พบประวัติการทำรายการสำหรับเบอร์ ${phone}</p></div>`;
                 }
+                try { lucide.createIcons(); } catch(e) {}
             }).catch(e => {
                 if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; }
                 try { lucide.createIcons(); } catch(err) {}
@@ -1418,7 +1755,7 @@
             bannerData.forEach(banner => {
                 const slide = document.createElement('div');
                 slide.className = "w-full flex-shrink-0 relative h-full bg-black";
-                slide.innerHTML = `<img src="${banner.img}" class="w-full h-full object-cover opacity-80">`;
+                slide.innerHTML = `<img src="${banner.img}" class="w-full h-full object-contain opacity-90">`;
                 track.appendChild(slide);
             });
             setInterval(() => {
@@ -1472,7 +1809,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', init);
+        let currentSlide = 0;
     </script>
 </body>
 </html>
- 
