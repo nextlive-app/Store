@@ -269,7 +269,6 @@
             <div id="view-withdraw" class="hidden max-w-2xl mx-auto px-4 py-12">
                 <h2 class="text-2xl font-bold mb-6 text-center text-primary uppercase"><i data-lucide="arrow-up-circle" class="w-6 h-6 inline mr-2 -mt-1"></i>ถอนเงิน / แจ้งถอนเครดิต</h2>
                 
-                <!-- Section 1: Form เพิ่มบัญชี (ซ่อนถ้ามีบัญชีแล้ว) -->
                 <div id="wd-setup-bank-section" class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm">
                     <div class="text-center mb-6">
                         <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="landmark" class="w-8 h-8 text-gray-400"></i></div>
@@ -286,7 +285,6 @@
                             <div class="relative">
                                 <select id="wd-bank-name" required class="w-full px-3 py-2 pl-10 border bg-white dark:bg-[#121212] text-sm rounded-sm appearance-none">
                                     <option value="" disabled selected>เลือกธนาคาร</option>
-                                    <!-- ตัวเลือกธนาคารจะถูกสร้างด้วย JS -->
                                 </select>
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" id="wd-bank-icon-preview">
                                     <i data-lucide="landmark" class="w-4 h-4 text-gray-400"></i>
@@ -298,9 +296,7 @@
                     </form>
                 </div>
 
-                <!-- Section 2: ทำรายการถอน (ซ่อนถ้ายังไม่มีบัญชี) -->
                 <div id="wd-action-section" class="hidden space-y-6">
-                    <!-- Bank Card -->
                     <div class="bank-card rounded-lg p-6 text-white shadow-lg relative">
                         <div class="flex justify-between items-start mb-6 relative z-10">
                             <div>
@@ -323,11 +319,9 @@
                         </div>
                     </div>
 
-                    <!-- Withdraw Form -->
                     <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm text-center">
                         <label class="block text-sm font-semibold mb-2 text-left">ระบุจำนวนเงินที่ต้องการถอน (ขั้นต่ำ 100 บาท)</label>
                         <input type="number" id="withdraw-amount-input" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121212] outline-none text-2xl font-bold text-center rounded-sm mb-6 text-primary" placeholder="0.00">
-                        
                         <button onclick="requestWithdrawal()" id="btn-request-withdraw" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 px-4 uppercase text-sm rounded-sm shadow-md">ถอนเงิน</button>
                     </div>
                 </div>
@@ -381,7 +375,7 @@
                 </div>
             </div>
 
-            <!-- View: History (3 Sections) -->
+            <!-- View: History -->
             <div id="view-history" class="hidden max-w-7xl mx-auto px-4 py-12">
                 <h2 class="text-2xl font-bold mb-6 uppercase text-gray-800 dark:text-white border-b pb-3">ประวัติของฉัน</h2>
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm mb-8 shadow-sm">
@@ -505,7 +499,7 @@
                                         <span class="font-semibold text-sm">สแกน QR Code</span>
                                     </div>
                                 </label>
-                                <label class="relative block cursor-pointer group">
+                                <label class="relative block cursor-pointer group" id="method-credit-wrapper">
                                     <input type="radio" name="payment_method" value="credit" class="peer sr-only custom-radio">
                                     <div class="border rounded-sm p-4 flex items-center transition-all">
                                         <div class="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-primary peer-checked:bg-primary mr-3 flex items-center justify-center">
@@ -618,7 +612,7 @@
                 <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white" id="success-title">ทำรายการเรียบร้อย!</h2>
                 <p class="text-gray-500 mb-6 text-sm" id="success-desc">ระบบได้ดำเนินการและส่งรายละเอียดไปยังอีเมลของคุณแล้ว</p>
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm">
-                    <div class="mb-2"><span class="text-gray-500 text-xs uppercase" id="success-ref-label">รหัสอ้างอิงออเดอร์ (Order Ref)</span><p class="text-lg font-mono font-bold text-primary" id="display-order-id">#NX-00000</p></div>
+                    <div class="mb-2"><span class="text-gray-500 text-xs uppercase" id="success-ref-label">รหัสอ้างอิง (Ref)</span><p class="text-lg font-mono font-bold text-primary" id="display-order-id">#NX-00000</p></div>
                     <div class="pt-4 mt-4 border-t text-sm text-gray-600 dark:text-gray-400"><p>กรุณาตรวจสอบกล่องจดหมาย หรือโฟลเดอร์ Junk/Spam หากไม่ได้รับอีเมลภายใน 5 นาที</p></div>
                 </div>
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
@@ -1033,11 +1027,17 @@
                 safeSetValue('chk-email', currentUser.email); safeSetValue('chk-phone', currentUser.phone);
 
                 renderProfileView(); updateCheckoutTotals(); 
-                checkWithdrawalState(); // ตรวจสอบว่าต้องโชว์ฟอร์มผูกบัญชีหรือการ์ด
+                checkWithdrawalState(); 
             } else {
                 currentUser = null;
                 if(authWrapper) authWrapper.style.display = 'block'; if(profMenu) profMenu.classList.add('hidden');
                 if(mobileAuth) mobileAuth.style.display = 'block'; if(mobileProf) mobileProf.style.display = 'none'; if(mobileLogout) mobileLogout.style.display = 'none';
+                
+                // สำหรับ Guest ซ่อนการจ่ายด้วยเครดิต และบังคับติ๊ก QR
+                const creditWrapper = document.getElementById('method-credit-wrapper');
+                if(creditWrapper) creditWrapper.style.display = 'none';
+                const qrRadio = document.querySelector('input[name="payment_method"][value="qr"]');
+                if(qrRadio) qrRadio.checked = true;
             }
         }
 
@@ -1114,7 +1114,8 @@
         function formatPrice(price) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(price).replace('$', '฿'); }
 
         function navigate(view) {
-            if ((view === 'deposit' || view === 'withdraw' || view === 'checkout' || view === 'profile') && !currentUser) {
+            // อนุญาตให้เข้า checkout ได้แม้ไม่ล็อกอิน แต่ deposit/withdraw/profile ต้องล็อกอิน
+            if ((view === 'deposit' || view === 'withdraw' || view === 'profile') && !currentUser) {
                 showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้งานฟังก์ชันนี้"); openAuth('login'); return;
             }
 
@@ -1159,91 +1160,61 @@
             const actSec = document.getElementById('wd-action-section');
             
             if(currentUser.bankName && currentUser.bankAcc) {
-                // มีบัญชีแล้ว -> โชว์การ์ด
-                if(setupSec) setupSec.classList.add('hidden');
-                if(actSec) actSec.classList.remove('hidden');
+                if(setupSec) setupSec.classList.add('hidden'); if(actSec) actSec.classList.remove('hidden');
                 
-                // อัปเดตข้อมูลในการ์ด
                 let maskedAcc = currentUser.bankAcc;
                 if(maskedAcc.length > 4) maskedAcc = "XXX-X-XX" + maskedAcc.substring(maskedAcc.length - 3);
-                safeSetText('wd-card-acc', maskedAcc);
-                safeSetText('wd-card-name', `${currentUser.fname} ${currentUser.lname}`);
+                safeSetText('wd-card-acc', maskedAcc); safeSetText('wd-card-name', `${currentUser.fname} ${currentUser.lname}`);
                 safeSetText('wd-card-balance', `฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
                 
-                // อัปเดตโลโก้ธนาคาร
                 const logoCont = document.getElementById('wd-card-logo-container');
                 if(logoCont) logoCont.innerHTML = `<i class="bank ${currentUser.bankName} m text-3xl"></i>`;
                 
             } else {
-                // ยังไม่มีบัญชี -> โชว์ฟอร์ม
-                if(setupSec) setupSec.classList.remove('hidden');
-                if(actSec) actSec.classList.add('hidden');
-                
-                safeSetValue('wd-fname', currentUser.fname);
-                safeSetValue('wd-lname', currentUser.lname);
+                if(setupSec) setupSec.classList.remove('hidden'); if(actSec) actSec.classList.add('hidden');
+                safeSetValue('wd-fname', currentUser.fname); safeSetValue('wd-lname', currentUser.lname);
             }
         }
 
         function submitBankAccount() {
-            const form = document.getElementById('wd-bank-form');
-            if(form && !form.checkValidity()) { form.reportValidity(); return; }
-            
-            const bankName = document.getElementById('wd-bank-name').value;
-            const bankAcc = document.getElementById('wd-bank-acc').value;
-            
+            const form = document.getElementById('wd-bank-form'); if(form && !form.checkValidity()) { form.reportValidity(); return; }
+            const bankName = document.getElementById('wd-bank-name').value; const bankAcc = document.getElementById('wd-bank-acc').value;
             if(!bankName) { showCustomPopup("แจ้งเตือน", "กรุณาเลือกธนาคาร"); return; }
             if(!/^\d+$/.test(bankAcc)) { showCustomPopup("แจ้งเตือน", "เลขที่บัญชีต้องเป็นตัวเลขเท่านั้น"); return; }
 
-            const btn = document.getElementById('btn-submit-bank');
-            if(btn) { btn.innerText = "กำลังบันทึก..."; btn.disabled = true; }
+            const btn = document.getElementById('btn-submit-bank'); if(btn) { btn.innerText = "กำลังบันทึก..."; btn.disabled = true; }
 
             const payload = { action: 'addBankAccount', email: currentUser.email, phone: currentUser.phone, bankName: bankName, bankAcc: bankAcc };
             
             callBackend(payload).then(res => {
                 if(btn) { btn.innerText = "บันทึกข้อมูลบัญชี"; btn.disabled = false; }
                 if(res.status === 'success') {
-                    currentUser.bankName = res.bankName;
-                    currentUser.bankAcc = res.bankAcc;
+                    currentUser.bankName = res.bankName; currentUser.bankAcc = res.bankAcc;
                     localStorage.setItem('nextLiveUser', JSON.stringify(currentUser));
-                    showCustomPopup("สำเร็จ", "บันทึกข้อมูลบัญชีเรียบร้อยแล้ว");
-                    checkWithdrawalState();
+                    showCustomPopup("สำเร็จ", "บันทึกข้อมูลบัญชีเรียบร้อยแล้ว"); checkWithdrawalState();
                 } else { showCustomPopup("ข้อผิดพลาด", res.message); }
             }).catch(e => {
-                if(btn) { btn.innerText = "บันทึกข้อมูลบัญชี"; btn.disabled = false; }
-                showCustomPopup("ข้อผิดพลาด", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
+                if(btn) { btn.innerText = "บันทึกข้อมูลบัญชี"; btn.disabled = false; } showCustomPopup("ข้อผิดพลาด", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
             });
         }
 
         function requestWithdrawal() {
-            const inputEl = document.getElementById('withdraw-amount-input');
-            const amount = parseFloat(inputEl.value);
-            
+            const inputEl = document.getElementById('withdraw-amount-input'); const amount = parseFloat(inputEl.value);
             if(isNaN(amount) || amount <= 0) { showCustomPopup("แจ้งเตือน", "กรุณาระบุจำนวนเงินที่ต้องการถอน"); return; }
             if(amount < 100) { showCustomPopup("แจ้งเตือน", "ยอดขั้นต่ำในการถอนคือ 100 บาท"); return; }
             if(amount > currentUser.balance) { showCustomPopup("แจ้งเตือน", "ยอดเงินคงเหลือไม่เพียงพอสำหรับการถอน"); return; }
 
-            const btn = document.getElementById('btn-request-withdraw');
-            if(btn) { btn.innerText = "กำลังดำเนินการ..."; btn.disabled = true; }
+            const btn = document.getElementById('btn-request-withdraw'); if(btn) { btn.innerText = "กำลังดำเนินการ..."; btn.disabled = true; }
 
-            const payload = {
-                action: 'withdraw',
-                fullname: currentUser.fname + " " + currentUser.lname,
-                email: currentUser.email,
-                phone: currentUser.phone,
-                amount: amount
-            };
+            const payload = { action: 'withdraw', fullname: currentUser.fname + " " + currentUser.lname, email: currentUser.email, phone: currentUser.phone, amount: amount };
 
             callBackend(payload).then(res => {
                 if(btn) { btn.innerText = "ถอนเงิน"; btn.disabled = false; }
                 if(res.status === 'success') {
-                    inputEl.value = '';
-                    updateBalanceUI(res.newBalance);
-                    showCustomPopup("แจ้งเตือน", res.message); // แสดงข้อความทำรายการภายใน 24 ชม
-                    checkWithdrawalState(); // อัปเดตตัวเลขบนการ์ด
+                    inputEl.value = ''; updateBalanceUI(res.newBalance); showCustomPopup("แจ้งเตือน", res.message); checkWithdrawalState(); 
                 } else { showCustomPopup("ข้อผิดพลาด", res.message); }
             }).catch(e => {
-                if(btn) { btn.innerText = "ถอนเงิน"; btn.disabled = false; }
-                showCustomPopup("ข้อผิดพลาด", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+                if(btn) { btn.innerText = "ถอนเงิน"; btn.disabled = false; } showCustomPopup("ข้อผิดพลาด", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
             });
         }
 
@@ -1258,8 +1229,7 @@
         }
 
         function goBackFromPayment() {
-            if(currentFlow === 'deposit') navigate('deposit');
-            else navigate('checkout');
+            if(currentFlow === 'deposit') navigate('deposit'); else navigate('checkout');
         }
 
         // --- Categories & Products ---
@@ -1360,7 +1330,10 @@
             safeSetText('chk-subtotal', formatPrice(currentSubtotal)); safeSetText('chk-discount', "- " + formatPrice(currentDiscount));
             safeSetText('chk-vat', formatPrice(currentVat)); safeSetText('chk-net-total', formatPrice(currentNetTotal));
 
+            const creditWrapper = document.getElementById('method-credit-wrapper');
+            if(creditWrapper) creditWrapper.style.display = currentUser ? 'block' : 'none'; // ซ่อนตัดเครดิตถ้าไม่ใช่สมาชิก
             if(currentUser) safeSetText('chk-display-balance', `คงเหลือ: ฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
+            
             const methodCont = document.getElementById('payment-method-container');
             if(currentNetTotal === 0) { if(methodCont) methodCont.style.display = 'none'; } else { if(methodCont) methodCont.style.display = 'block'; }
         }
