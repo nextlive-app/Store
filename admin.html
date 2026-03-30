@@ -1,878 +1,537 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel | Next Live Shop</title>
-  
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'Kanit', 'sans-serif'] },
-          colors: {
-            brand: {
-              DEFAULT: '#e43a3d', // สีแดงหลัก
-              hover: '#cc2d30',
-              light: '#fef2f2',
-              dark: '#991b1b'
-            },
-            surface: '#f8fafc',
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Live Shop | Admin Dashboard</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Kanit', 'sans-serif'] },
+                    colors: {
+                        darkBase: '#1e1e2d',
+                        darkPanel: '#27293d',
+                        darkBorder: '#32325d',
+                        primary: '#e43a3d',
+                        success: '#00f2c3',
+                        info: '#1d8cf8',
+                        warning: '#ff8d72'
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
 
-  <!-- Chart.js & SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { font-family: 'Kanit', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #32325d; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #4a4a6a; }
+        
+        .panel { @apply bg-white dark:bg-darkPanel rounded-lg shadow-lg border border-gray-100 dark:border-darkBorder p-5 transition-colors; }
+        .table-container { @apply w-full overflow-x-auto; }
+        .admin-table { @apply w-full text-left border-collapse text-sm; }
+        .admin-table th { @apply p-3 border-b dark:border-darkBorder font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap; }
+        .admin-table td { @apply p-3 border-b border-gray-100 dark:border-darkBorder text-gray-700 dark:text-gray-300; }
+        .admin-table tr:hover { @apply bg-gray-50 dark:bg-[#2b2d42]; }
+        
+        .editable-input { @apply bg-transparent border-b border-gray-400 focus:border-primary outline-none px-1 w-full text-inherit; }
+        .editable-select { @apply bg-gray-100 dark:bg-darkBase border border-gray-300 dark:border-darkBorder rounded px-2 py-1 text-inherit outline-none; }
 
-  <style>
-    body { background-color: #f8fafc; color: #334155; overflow: hidden; }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* Login Overlay */
-    #admin-login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-    
-    /* Loader Spinner */
-    .loader { border: 3px solid #f3f3f3; border-top: 3px solid #e43a3d; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    /* Custom Tables */
-    .table-wrapper { overflow-x: auto; background: white; border-radius: 0.5rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-    .admin-table { width: 100%; text-align: left; border-collapse: collapse; min-width: 800px; }
-    .admin-table th { padding: 12px 16px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; background: #f8fafc; white-space: nowrap; }
-    .admin-table td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-    .admin-table tbody tr:hover { background-color: #fef2f2; transition: background-color 0.2s; }
-
-    /* Status Badges */
-    .badge { padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; display: inline-flex; items-center; white-space: nowrap; }
-    .badge-green { background-color: #dcfce7; color: #065f46; border: 1px solid #a7f3d0; }
-    .badge-red { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-    .badge-yellow { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-    .badge-gray { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-
-    /* Sidebar Menu */
-    .menu-item { display: flex; align-items: center; padding: 10px 16px; color: #64748b; border-radius: 8px; margin-bottom: 4px; cursor: pointer; transition: all 0.2s; font-weight: 500; font-size: 14px;}
-    .menu-item:hover { background-color: #fef2f2; color: #e43a3d; }
-    .menu-item.active { background-color: #e43a3d; color: white; box-shadow: 0 4px 6px -1px rgba(228, 58, 61, 0.2); }
-
-    /* Modal */
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 50; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
-    .modal-backdrop.show { display: flex; opacity: 1; }
-    .modal-content { background: white; border-radius: 12px; padding: 24px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: scale(0.95); transition: transform 0.3s ease; }
-    .modal-backdrop.show .modal-content { transform: scale(1); }
-
-    /* Form Inputs */
-    .form-input { width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; font-size: 14px; outline: none; transition: border-color 0.2s; }
-    .form-input:focus { border-color: #e43a3d; box-shadow: 0 0 0 3px rgba(228, 58, 61, 0.1); }
-    
-    .view-section { display: none; animation: fadeIn 0.3s ease-out; }
-    .view-section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Tab Buttons */
-    .tab-btn { padding: 8px 16px; font-size: 14px; font-weight: 500; color: #64748b; border-bottom: 2px solid transparent; transition: all 0.2s; cursor: pointer; }
-    .tab-btn.active { color: #e43a3d; border-bottom-color: #e43a3d; }
-  </style>
+        /* Toast Animation */
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast { animation: slideInRight 0.3s ease-out forwards; }
+    </style>
 </head>
-<body class="flex h-screen overflow-hidden text-sm bg-surface">
+<body class="bg-gray-100 dark:bg-darkBase text-gray-800 dark:text-white h-screen overflow-hidden flex">
 
-  <!-- ================= LOGIN OVERLAY ================= -->
-  <div id="admin-login-overlay">
-    <div class="bg-white p-10 rounded-2xl shadow-xl w-[400px] max-w-[90%] text-center relative overflow-hidden">
-      <div class="absolute top-0 left-0 w-full h-2 bg-brand"></div>
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-light text-brand rounded-full mb-4">
-        <i data-lucide="shield-check" class="w-8 h-8"></i>
-      </div>
-      <h1 class="text-2xl font-bold text-gray-800 mb-1">Admin Panel</h1>
-      <p class="text-gray-500 text-sm mb-8">ลงชื่อเข้าใช้เพื่อจัดการระบบ Next Live Shop</p>
-      
-      <form id="admin-login-form" class="space-y-5 text-left">
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">อีเมลแอดมิน</label>
-          <input type="email" id="login-email" required class="form-input bg-gray-50" placeholder="admin@example.com">
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="fixed inset-0 bg-gray-100 dark:bg-darkBase z-[100] flex items-center justify-center">
+        <div class="panel w-full max-w-md mx-4">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-primary mb-2">NEXT <span class="text-gray-800 dark:text-white">ADMIN</span></h1>
+                <p class="text-gray-500 text-sm">ระบบจัดการหลังบ้าน</p>
+            </div>
+            <form id="admin-login-form" class="space-y-5">
+                <div>
+                    <label class="block text-sm mb-1 text-gray-400">อีเมลแอดมิน</label>
+                    <input type="email" id="login-email" class="w-full bg-gray-50 dark:bg-darkBase border border-gray-200 dark:border-darkBorder rounded p-3 text-white outline-none focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1 text-gray-400">หมายเลขโทรศัพท์ (รหัสผ่าน)</label>
+                    <input type="password" id="login-phone" class="w-full bg-gray-50 dark:bg-darkBase border border-gray-200 dark:border-darkBorder rounded p-3 text-white outline-none focus:border-primary" required>
+                </div>
+                <button type="submit" class="w-full bg-primary hover:bg-red-600 text-white font-bold p-3 rounded transition-colors" id="btn-login">เข้าสู่ระบบจัดการ</button>
+            </form>
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">รหัสผ่าน (เบอร์โทรศัพท์)</label>
-          <input type="password" id="login-phone" required class="form-input bg-gray-50" placeholder="••••••••••">
-        </div>
-        <button type="submit" id="btn-admin-login" class="w-full bg-brand hover:bg-brand-hover text-white font-bold py-3 rounded-lg transition-colors flex justify-center items-center shadow-md shadow-red-200 mt-2">
-          เข้าสู่ระบบ
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ================= SIDEBAR ================= -->
-  <aside class="w-64 bg-white border-r border-gray-200 flex flex-col h-full flex-shrink-0 z-20 shadow-sm relative">
-    <div class="p-6 flex items-center justify-center border-b border-gray-100">
-      <span class="font-bold text-2xl tracking-tighter text-gray-800">NEXT</span>
-      <span class="font-bold text-2xl tracking-tighter text-brand">LIVE</span>
-      <span class="ml-2 text-[10px] bg-red-100 text-brand px-2 py-0.5 rounded uppercase font-bold">Admin</span>
     </div>
 
-    <div class="flex-1 overflow-y-auto p-4 hide-scrollbar">
-      <p class="text-[10px] font-bold text-gray-400 mb-2 mt-2 px-4 uppercase tracking-wider">แดชบอร์ดสรุป</p>
-      <div class="menu-item active" onclick="nav('dashboard')" id="menu-dashboard">
-        <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i> หน้าหลัก
-      </div>
-
-      <p class="text-[10px] font-bold text-gray-400 mb-2 mt-6 px-4 uppercase tracking-wider">ระบบจัดการ</p>
-      <div class="menu-item" onclick="nav('users')" id="menu-users">
-        <i data-lucide="users" class="w-5 h-5 mr-3"></i> ข้อมูลสมาชิก
-      </div>
-      <div class="menu-item" onclick="nav('orders')" id="menu-orders">
-        <i data-lucide="shopping-bag" class="w-5 h-5 mr-3"></i> รายการออเดอร์
-      </div>
-      <div class="menu-item" onclick="nav('wallet')" id="menu-wallet">
-        <i data-lucide="wallet" class="w-5 h-5 mr-3"></i> แจ้งฝาก / ถอนเงิน
-      </div>
-      <div class="menu-item" onclick="nav('products')" id="menu-products">
-        <i data-lucide="package" class="w-5 h-5 mr-3"></i> จัดการสินค้า
-      </div>
-
-      <p class="text-[10px] font-bold text-gray-400 mb-2 mt-6 px-4 uppercase tracking-wider">ตั้งค่าระบบ</p>
-      <div class="menu-item" onclick="nav('settings')" id="menu-settings">
-        <i data-lucide="settings" class="w-5 h-5 mr-3"></i> ตั้งค่าเว็บไซต์
-      </div>
-      <div class="menu-item" onclick="nav('otp')" id="menu-otp">
-        <i data-lucide="key-round" class="w-5 h-5 mr-3"></i> บันทึกรหัส OTP
-      </div>
-      <div class="menu-item" onclick="nav('broadcast')" id="menu-broadcast">
-        <i data-lucide="mail-volume" class="w-5 h-5 mr-3"></i> บรอดแคสต์อีเมล
-      </div>
-    </div>
-
-    <div class="p-4 border-t border-gray-100">
-      <button onclick="adminLogout()" class="w-full flex items-center justify-center p-3 rounded-lg text-red-600 hover:bg-red-50 font-semibold transition-colors">
-        <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> ออกจากระบบ
-      </button>
-    </div>
-  </aside>
-
-  <!-- ================= MAIN CONTENT ================= -->
-  <main class="flex-1 flex flex-col h-full relative">
-    
-    <!-- Top Header -->
-    <header class="h-16 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 z-10">
-      <div class="text-sm font-semibold text-gray-600 flex items-center">
-        <i data-lucide="home" class="w-4 h-4 mr-2 text-brand"></i>
-        <span id="header-breadcrumbs">ภาพรวมระบบ (Overview)</span>
-      </div>
-      <div class="flex items-center gap-4">
-        <div class="flex items-center text-xs text-gray-500 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">
-          <div class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></div>
-          อัปเดตล่าสุด: <span id="last-update-time" class="ml-1 font-medium">กำลังโหลด...</span>
-        </div>
-        <button onclick="fetchAdminData(true)" class="bg-brand text-white p-2 rounded-lg hover:bg-brand-hover transition-colors shadow-sm" title="รีเฟรชข้อมูล">
-          <i data-lucide="refresh-cw" class="w-4 h-4" id="refresh-icon"></i>
-        </button>
-      </div>
-    </header>
-
-    <!-- Content Area -->
-    <div class="flex-1 overflow-y-auto p-6 md:p-8 hide-scrollbar" id="main-scroll-area">
-      
-      <!-- ================= 1. DASHBOARD VIEW ================= -->
-      <div id="view-dashboard" class="view-section active">
-        <div class="mb-6">
-          <h2 class="text-2xl font-bold text-gray-800">แดชบอร์ด (Dashboard)</h2>
-          <p class="text-gray-500 text-sm">สรุปสถิติและภาพรวมการทำรายการของระบบในปัจจุบัน</p>
-        </div>
-
-        <!-- Stat Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-          <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center relative overflow-hidden">
-            <div class="absolute right-0 top-0 w-24 h-24 bg-brand-light rounded-bl-full -mr-4 -mt-4 opacity-50"></div>
-            <div class="w-12 h-12 rounded-full bg-brand-light text-brand flex items-center justify-center mr-4 z-10"><i data-lucide="users" class="w-6 h-6"></i></div>
-            <div class="z-10">
-              <p class="text-xs text-gray-500 font-semibold uppercase">ผู้ใช้งานทั้งหมด / Noname</p>
-              <h3 class="text-2xl font-bold text-gray-800 mt-1"><span id="stat-users">0</span> <span class="text-sm text-gray-400 font-normal">/ <span id="stat-noname">0</span></span></h3>
-            </div>
-          </div>
-          
-          <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center relative overflow-hidden">
-            <div class="absolute right-0 top-0 w-24 h-24 bg-green-50 rounded-bl-full -mr-4 -mt-4 opacity-50"></div>
-            <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-4 z-10"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
-            <div class="z-10">
-              <p class="text-xs text-gray-500 font-semibold uppercase">ยอดฝากรวม (สำเร็จ)</p>
-              <h3 class="text-2xl font-bold text-gray-800 mt-1" id="stat-deposit">฿0.00</h3>
-            </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center relative overflow-hidden">
-            <div class="absolute right-0 top-0 w-24 h-24 bg-blue-50 rounded-bl-full -mr-4 -mt-4 opacity-50"></div>
-            <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-4 z-10"><i data-lucide="shopping-cart" class="w-6 h-6"></i></div>
-            <div class="z-10">
-              <p class="text-xs text-gray-500 font-semibold uppercase">ยอดขายรวม (ออเดอร์)</p>
-              <h3 class="text-2xl font-bold text-gray-800 mt-1" id="stat-orders">฿0.00</h3>
-            </div>
-          </div>
-
-          <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center relative overflow-hidden">
-            <div class="absolute right-0 top-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-4 -mt-4 opacity-50"></div>
-            <div class="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-4 z-10"><i data-lucide="trending-down" class="w-6 h-6"></i></div>
-            <div class="z-10">
-              <p class="text-xs text-gray-500 font-semibold uppercase">ยอดถอนรวม (สำเร็จ)</p>
-              <h3 class="text-2xl font-bold text-gray-800 mt-1" id="stat-withdraw">฿0.00</h3>
-            </div>
-          </div>
-
-          <div class="bg-brand p-6 rounded-xl shadow-lg shadow-red-200 flex items-center text-white relative overflow-hidden xl:col-span-2">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-white rounded-bl-full -mr-8 -mt-8 opacity-10"></div>
-            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mr-4 z-10"><i data-lucide="wallet" class="w-6 h-6"></i></div>
-            <div class="z-10">
-              <p class="text-xs text-white/80 font-semibold uppercase">ยอดรายได้สุทธิระบบ (ฝาก - ถอน)</p>
-              <h3 class="text-3xl font-bold mt-1" id="stat-net">฿0.00</h3>
-            </div>
-          </div>
-        </div>
-
-        <!-- Charts Area -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-            <h3 class="text-base font-bold text-gray-800 mb-4">แนวโน้มรายได้ (Revenue Trend)</h3>
-            <div class="relative h-64 w-full"><canvas id="revenueChart"></canvas></div>
-          </div>
-          <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-            <h3 class="text-base font-bold text-gray-800 mb-4">สัดส่วน ฝาก-ถอน (Deposit/Withdraw)</h3>
-            <div class="relative h-64 w-full"><canvas id="dwChart"></canvas></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ================= 2. USERS VIEW ================= -->
-      <div id="view-users" class="view-section">
-        <div class="flex justify-between items-center mb-6">
-          <div><h2 class="text-2xl font-bold text-gray-800">ข้อมูลสมาชิก (Users)</h2><p class="text-gray-500 text-sm">จัดการข้อมูลผู้ใช้งานในระบบ</p></div>
-          <button onclick="openModal('modal-user')" class="bg-brand hover:bg-brand-hover text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-sm flex items-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i> เพิ่มสมาชิก</button>
-        </div>
-        <div class="table-wrapper">
-          <table class="admin-table" id="table-users">
-            <thead><tr><th>ID/Row</th><th>วันที่ลงทะเบียน</th><th>ชื่อ-นามสกุล</th><th>อีเมล</th><th>เบอร์โทร (รหัสผ่าน)</th><th>ข้อมูลบัญชี</th><th>ยอดเงินคงเหลือ</th><th>จัดการ</th></tr></thead>
-            <tbody><!-- Dynamic --></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ================= 3. ORDERS VIEW ================= -->
-      <div id="view-orders" class="view-section">
-        <div class="mb-6"><h2 class="text-2xl font-bold text-gray-800">รายการออเดอร์ (Orders)</h2><p class="text-gray-500 text-sm">ตรวจสอบและอัปเดตสถานะคำสั่งซื้อ</p></div>
-        <div class="table-wrapper">
-          <table class="admin-table" id="table-orders">
-            <thead><tr><th>Ref</th><th>วันที่/เวลา</th><th>ลูกค้า (เบอร์โทร)</th><th>รายการสินค้า</th><th>ยอดสุทธิ</th><th>ช่องทาง / สลิป</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
-            <tbody><!-- Dynamic --></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ================= 4. WALLET VIEW (Deposit/Withdraw) ================= -->
-      <div id="view-wallet" class="view-section">
-        <div class="mb-6"><h2 class="text-2xl font-bold text-gray-800">ฝาก / ถอนเงิน (Transactions)</h2><p class="text-gray-500 text-sm">ตรวจสอบสลิปและจัดการคำร้องขอถอนเงิน</p></div>
+    <!-- MAIN APP -->
+    <div id="app-screen" class="hidden w-full h-full flex">
         
-        <!-- Tabs -->
-        <div class="flex border-b border-gray-200 mb-6">
-          <button class="tab-btn active" id="tab-deposit" onclick="switchWalletTab('deposit')">ประวัติการฝากเงิน (Deposit)</button>
-          <button class="tab-btn" id="tab-withdraw" onclick="switchWalletTab('withdraw')">คำขอถอนเงิน (Withdraw)</button>
-        </div>
+        <!-- SIDEBAR -->
+        <aside class="w-64 bg-white dark:bg-darkPanel border-r border-gray-200 dark:border-darkBorder flex flex-col transition-colors z-20">
+            <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-darkBorder">
+                <h1 class="text-xl font-bold text-primary">NEXT <span class="text-gray-800 dark:text-white">ADMIN</span></h1>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4 space-y-1 px-3" id="sidebar-menu">
+                <!-- สร้างโดย JS -->
+            </nav>
+            <div class="p-4 border-t border-gray-200 dark:border-darkBorder">
+                <button onclick="logoutAdmin()" class="flex items-center text-red-500 hover:text-red-400 w-full px-3 py-2 rounded-lg transition-colors hover:bg-red-50 dark:hover:bg-red-500/10">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-3"></i> ออกจากระบบ
+                </button>
+            </div>
+        </aside>
 
-        <div id="wallet-deposit-area" class="block">
-          <div class="table-wrapper">
-            <table class="admin-table" id="table-deposit">
-              <thead><tr><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล</th><th>เบอร์โทร (อีเมล)</th><th>จำนวนเงิน</th><th>สลิป</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
-              <tbody><!-- Dynamic --></tbody>
-            </table>
-          </div>
-        </div>
+        <!-- CONTENT AREA -->
+        <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+            <!-- TOPBAR -->
+            <header class="h-16 bg-white dark:bg-darkPanel border-b border-gray-200 dark:border-darkBorder flex items-center justify-between px-6 transition-colors">
+                <div class="flex items-center">
+                    <h2 class="text-lg font-semibold capitalize" id="topbar-title">แดชบอร์ด</h2>
+                    <span class="ml-4 text-xs bg-success/20 text-success px-2 py-1 rounded-full flex items-center animate-pulse">
+                        <span class="w-2 h-2 bg-success rounded-full mr-1"></span> Real-time Connected
+                    </span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleTheme()" class="text-gray-400 hover:text-white transition-colors bg-gray-100 dark:bg-darkBase p-2 rounded-full">
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold mr-2">A</div>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">Admin</span>
+                    </div>
+                </div>
+            </header>
 
-        <div id="wallet-withdraw-area" class="hidden">
-          <div class="table-wrapper">
-            <table class="admin-table" id="table-withdraw">
-              <thead><tr><th>วันที่/เวลา</th><th>ชื่อ-นามสกุล (เบอร์)</th><th>ธนาคารปลายทาง</th><th>เลขที่บัญชี</th><th>จำนวนเงินถอน</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
-              <tbody><!-- Dynamic --></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+            <!-- VIEWS CONTAINER -->
+            <div class="flex-1 overflow-y-auto p-6" id="views-container">
+                
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="view-section space-y-6">
+                    <!-- Stats Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="panel flex items-center justify-between border-l-4 border-info">
+                            <div><p class="text-xs text-gray-400 mb-1">ยอดผู้ใช้งานรวม</p><h3 class="text-2xl font-bold" id="stat-users">0</h3></div>
+                            <div class="p-3 bg-info/10 text-info rounded-full"><i data-lucide="users" class="w-6 h-6"></i></div>
+                        </div>
+                        <div class="panel flex items-center justify-between border-l-4 border-success">
+                            <div><p class="text-xs text-gray-400 mb-1">ยอดออเดอร์ (สำเร็จ)</p><h3 class="text-2xl font-bold text-success" id="stat-orders">฿0</h3></div>
+                            <div class="p-3 bg-success/10 text-success rounded-full"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
+                        </div>
+                        <div class="panel flex items-center justify-between border-l-4 border-warning">
+                            <div><p class="text-xs text-gray-400 mb-1">ยอดฝากรวม</p><h3 class="text-2xl font-bold text-warning" id="stat-deposits">฿0</h3></div>
+                            <div class="p-3 bg-warning/10 text-warning rounded-full"><i data-lucide="arrow-down-circle" class="w-6 h-6"></i></div>
+                        </div>
+                        <div class="panel flex items-center justify-between border-l-4 border-primary">
+                            <div><p class="text-xs text-gray-400 mb-1">ยอดถอนรวม</p><h3 class="text-2xl font-bold text-primary" id="stat-withdraws">฿0</h3></div>
+                            <div class="p-3 bg-primary/10 text-primary rounded-full"><i data-lucide="arrow-up-circle" class="w-6 h-6"></i></div>
+                        </div>
+                    </div>
 
-      <!-- ================= 5. PRODUCTS VIEW ================= -->
-      <div id="view-products" class="view-section">
-        <div class="flex justify-between items-center mb-6">
-          <div><h2 class="text-2xl font-bold text-gray-800">จัดการสินค้า (Products)</h2><p class="text-gray-500 text-sm">เพิ่มลบแก้ไขสินค้าและตัวเลือกเสริม</p></div>
-        </div>
+                    <!-- Charts Row -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="panel lg:col-span-2">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-gray-400 text-sm">แนวโน้มการทำรายการ (Compare Date)</h3>
+                                <select class="bg-darkBase border border-darkBorder rounded text-xs px-2 py-1 text-gray-400 outline-none">
+                                    <option>รายวัน</option><option>รายสัปดาห์</option><option>รายเดือน</option><option>รายปี</option>
+                                </select>
+                            </div>
+                            <div class="h-64 w-full"><canvas id="lineChart"></canvas></div>
+                        </div>
+                        <div class="panel">
+                            <h3 class="font-bold text-gray-400 text-sm mb-4">ข้อมูลสรุปรายได้ (Cost & Spend)</h3>
+                            <div class="h-48 w-full"><canvas id="donutChart"></canvas></div>
+                            <div class="mt-4 text-center">
+                                <div class="flex justify-between text-xs mb-2"><span class="text-gray-400">ฝากเงิน (In)</span><span class="text-success" id="donut-in">฿0</span></div>
+                                <div class="flex justify-between text-xs"><span class="text-gray-400">ถอนเงิน (Out)</span><span class="text-primary" id="donut-out">฿0</span></div>
+                            </div>
+                        </div>
+                    </div>
 
-        <div class="flex border-b border-gray-200 mb-6">
-          <button class="tab-btn active" id="tab-prod-main" onclick="switchProdTab('main')">รายการสินค้า (Products)</button>
-          <button class="tab-btn" id="tab-prod-opt" onclick="switchProdTab('opt')">ตัวเลือกเสริม (Options)</button>
-        </div>
+                    <!-- Recent Activity Table -->
+                    <div class="panel">
+                        <h3 class="font-bold text-gray-400 text-sm mb-4">5 รายการล่าสุด</h3>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead><tr><th>ประเภท</th><th>ชื่อผู้ใช้</th><th>จำนวนเงิน</th><th>เวลา</th></tr></thead>
+                                <tbody id="recent-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-        <div id="prod-main-area" class="block">
-          <div class="mb-4 text-right"><button onclick="openModal('modal-product')" class="bg-brand text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow flex items-center inline-flex"><i data-lucide="plus" class="w-4 h-4 mr-1"></i> เพิ่มสินค้า</button></div>
-          <div class="table-wrapper">
-            <table class="admin-table" id="table-products">
-              <thead><tr><th>รูปภาพ</th><th>รหัส</th><th>หมวดหมู่</th><th>ชื่อสินค้า</th><th>ราคา</th><th>ลิงก์ไฟล์/คู่มือ</th><th>จัดการ</th></tr></thead>
-              <tbody><!-- Dynamic --></tbody>
-            </table>
-          </div>
-        </div>
+                <!-- DYNAMIC TABLE VIEWS (Users, Orders, etc.) -->
+                <div id="view-table" class="view-section hidden space-y-4">
+                    <div class="panel">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-lg" id="dynamic-table-title">หัวข้อ</h3>
+                            <div class="flex space-x-2">
+                                <input type="text" id="table-search" placeholder="ค้นหา..." class="bg-gray-50 dark:bg-darkBase border border-gray-200 dark:border-darkBorder rounded px-3 py-1 text-sm outline-none">
+                                <button onclick="fetchData()" class="bg-info text-white px-3 py-1 rounded text-sm hover:bg-blue-600"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                        <div class="table-container max-h-[70vh] overflow-y-auto">
+                            <table class="admin-table relative">
+                                <thead class="sticky top-0 bg-white dark:bg-darkPanel z-10" id="dynamic-thead"></thead>
+                                <tbody id="dynamic-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-        <div id="prod-opt-area" class="hidden">
-          <div class="mb-4 text-right"><button onclick="openModal('modal-option')" class="bg-brand text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow flex items-center inline-flex"><i data-lucide="plus" class="w-4 h-4 mr-1"></i> เพิ่ม Option</button></div>
-          <div class="table-wrapper max-w-2xl">
-            <table class="admin-table" id="table-options">
-              <thead><tr><th>รหัส Option</th><th>ชื่อตัวเลือก</th><th>ราคาบวกเพิ่ม</th><th>จัดการ</th></tr></thead>
-              <tbody><!-- Dynamic --></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+                <!-- VIEW: BROADCAST -->
+                <div id="view-broadcast" class="view-section hidden max-w-2xl mx-auto">
+                    <div class="panel">
+                        <h3 class="font-bold text-lg mb-6 text-primary flex items-center"><i data-lucide="mail" class="mr-2"></i> สร้างฟอร์ม Broadcast Email</h3>
+                        <form id="broadcast-form" class="space-y-4">
+                            <div><label class="block text-sm text-gray-400 mb-1">หัวข้อประกาศ</label><input type="text" id="bc-subject" class="w-full bg-gray-50 dark:bg-darkBase border dark:border-darkBorder rounded p-2 text-inherit" required></div>
+                            <div><label class="block text-sm text-gray-400 mb-1">ลิงก์รูปภาพ (URL)</label><input type="url" id="bc-img" class="w-full bg-gray-50 dark:bg-darkBase border dark:border-darkBorder rounded p-2 text-inherit" placeholder="https://..."></div>
+                            <div><label class="block text-sm text-gray-400 mb-1">รายละเอียด</label><textarea id="bc-details" rows="6" class="w-full bg-gray-50 dark:bg-darkBase border dark:border-darkBorder rounded p-2 text-inherit" required></textarea></div>
+                            <button type="button" onclick="sendBroadcast()" id="btn-bc" class="w-full bg-info hover:bg-blue-600 text-white font-bold p-3 rounded mt-4 shadow-lg"><i data-lucide="send" class="inline w-4 h-4 mr-2"></i> ส่งอีเมลถึงผู้ใช้ทุกคน</button>
+                        </form>
+                    </div>
+                </div>
 
-      <!-- ================= 6. SETTINGS VIEW ================= -->
-      <div id="view-settings" class="view-section">
-        <div class="mb-6"><h2 class="text-2xl font-bold text-gray-800">ตั้งค่าระบบ (Settings)</h2><p class="text-gray-500 text-sm">แก้ไขข้อมูลพื้นฐานของเว็บไซต์</p></div>
-        <div class="table-wrapper max-w-4xl">
-          <table class="admin-table" id="table-settings">
-            <thead><tr><th>หัวข้อการตั้งค่า</th><th>ค่าปัจจุบัน (Value)</th><th>คำอธิบาย</th><th>แก้ไข</th></tr></thead>
-            <tbody><!-- Dynamic --></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ================= 7. OTP VIEW ================= -->
-      <div id="view-otp" class="view-section">
-        <div class="mb-6"><h2 class="text-2xl font-bold text-gray-800">บันทึกรหัส OTP</h2><p class="text-gray-500 text-sm">ตรวจสอบประวัติการขอรหัส OTP ทั้งหมด</p></div>
-        <div class="table-wrapper">
-          <table class="admin-table" id="table-otps">
-            <thead><tr><th>วันที่ / เวลา</th><th>อีเมล</th><th>รหัส OTP</th><th>สถานะ</th></tr></thead>
-            <tbody><!-- Dynamic --></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ================= 8. BROADCAST VIEW ================= -->
-      <div id="view-broadcast" class="view-section">
-        <div class="mb-6"><h2 class="text-2xl font-bold text-gray-800">บรอดแคสต์อีเมล (Broadcast)</h2><p class="text-gray-500 text-sm">ส่งข้อความแจ้งเตือนหรือโปรโมชั่นไปยังสมาชิกทุกคนในระบบอัตโนมัติ</p></div>
+            </div>
+        </main>
         
-        <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm max-w-2xl">
-          <form id="form-broadcast" class="space-y-5" onsubmit="event.preventDefault(); sendBroadcast();">
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">หัวข้ออีเมล (Subject) *</label>
-              <input type="text" id="bc-subject" required class="form-input" placeholder="เช่น โปรโมชั่นพิเศษเดือนนี้!">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">ลิงก์รูปภาพประกอบ (Optional)</label>
-              <input type="url" id="bc-image" class="form-input" placeholder="https://example.com/image.jpg">
-            </div>
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">เนื้อหาข้อความ (Message) *</label>
-              <textarea id="bc-message" required class="form-input h-40 resize-y" placeholder="พิมพ์ข้อความที่ต้องการส่งถึงสมาชิก..."></textarea>
-            </div>
-            <div class="pt-4 border-t border-gray-100 flex justify-end">
-              <button type="submit" id="btn-broadcast" class="bg-brand hover:bg-brand-hover text-white font-bold py-2.5 px-6 rounded-lg shadow-md flex items-center">
-                <i data-lucide="send" class="w-4 h-4 mr-2"></i> ส่งอีเมลหาทุกคน
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
+        <!-- Toast Notification Container -->
+        <div id="toast-container" class="fixed bottom-5 right-5 z-[999] flex flex-col space-y-2"></div>
     </div>
-  </main>
 
-  <!-- ================= MODALS ================= -->
-  
-  <!-- Modal: Edit Data (Generic) -->
-  <div id="modal-generic" class="modal-backdrop">
-    <div class="modal-content">
-      <div class="flex justify-between items-center mb-5 border-b pb-3">
-        <h3 class="text-xl font-bold text-gray-800" id="modal-gen-title">แก้ไขข้อมูล</h3>
-        <button onclick="closeModal('modal-generic')" class="text-gray-400 hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <form id="form-generic" class="space-y-4">
-        <div id="modal-gen-fields" class="space-y-4"></div>
-        <div class="flex justify-end gap-3 pt-5 mt-5 border-t">
-          <button type="button" onclick="closeModal('modal-generic')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200">ยกเลิก</button>
-          <button type="submit" class="px-4 py-2 bg-brand text-white rounded-lg font-medium hover:bg-brand-hover shadow-sm" id="btn-gen-save">บันทึกข้อมูล</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal: Update Withdraw Status -->
-  <div id="modal-withdraw" class="modal-backdrop">
-    <div class="modal-content max-w-md">
-      <div class="flex justify-between items-center mb-5 border-b pb-3">
-        <h3 class="text-xl font-bold text-gray-800">จัดการคำขอถอนเงิน</h3>
-        <button onclick="closeModal('modal-withdraw')" class="text-gray-400 hover:text-red-500"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <div class="bg-gray-50 p-4 rounded-lg mb-4 text-sm">
-        <p><strong>ผู้ขอถอน:</strong> <span id="wd-m-name"></span></p>
-        <p><strong>บัญชี:</strong> <span id="wd-m-bank"></span></p>
-        <p><strong>ยอดถอน:</strong> <span id="wd-m-amt" class="text-red-600 font-bold text-lg"></span></p>
-      </div>
-      <form id="form-withdraw" class="space-y-4">
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1">อัปเดตสถานะ</label>
-          <select id="wd-m-status" class="form-input bg-white" onchange="toggleWdReason()">
-            <option value="สำเร็จ">สำเร็จ (โอนเงินแล้ว)</option>
-            <option value="ยกเลิก">ยกเลิกรายการ (คืนเครดิต)</option>
-          </select>
-        </div>
-        <div id="wd-reason-div" class="hidden">
-          <label class="block text-sm font-semibold text-gray-700 mb-1">เหตุผลที่ยกเลิก *</label>
-          <input type="text" id="wd-m-reason" class="form-input" placeholder="เช่น เลขบัญชีไม่ถูกต้อง">
-          <p class="text-[10px] text-red-500 mt-1">* หากยกเลิก แอดมินต้องไปบวกเครดิตคืนให้ลูกค้าเองในหน้าสมาชิก</p>
-        </div>
-        <div class="flex justify-end gap-3 pt-5 mt-5 border-t">
-          <button type="button" onclick="closeModal('modal-withdraw')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium">ยกเลิก</button>
-          <button type="button" onclick="saveWithdrawStatus()" class="px-4 py-2 bg-brand text-white rounded-lg font-medium shadow-sm">ยืนยัน</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Javascript Logic -->
-  <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec"; // เปลี่ยน URL ของคุณ
-    let adminToken = sessionStorage.getItem('adminToken');
-    let appData = {};
-    let isModalOpen = false;
-    let refreshInterval;
-    let chartsObj = {};
-
-    // --- Core Functions ---
-    async function apiCall(action, payload = {}) {
-      payload.action = action;
-      if(adminToken) payload.token = adminToken;
-      try {
-        const res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
-        const data = await res.json();
-        return data;
-      } catch(e) {
-        console.error(e);
-        return { status: 'error', message: 'Connection failed' };
-      }
-    }
-
-    function init() {
-      lucide.createIcons();
-      if(!adminToken) {
-        document.getElementById('admin-login-overlay').style.display = 'flex';
-      } else {
-        document.getElementById('admin-login-overlay').style.display = 'none';
-        fetchAdminData();
-        startAutoRefresh();
-      }
-    }
-
-    // --- Login System ---
-    document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('btn-admin-login');
-      const err = document.getElementById('login-error');
-      btn.innerHTML = `<div class="loader mr-2 border-white border-t-transparent"></div> Checking...`;
-      btn.disabled = true; err.classList.add('hidden');
-
-      const res = await apiCall('adminLogin', { 
-        username: document.getElementById('login-email').value, 
-        password: document.getElementById('login-phone').value 
-      });
-
-      btn.innerHTML = `เข้าสู่ระบบ`; btn.disabled = false;
-      if(res.status === 'success') {
-        sessionStorage.setItem('adminToken', res.token);
-        adminToken = res.token;
-        document.getElementById('admin-login-overlay').style.display = 'none';
-        fetchAdminData();
-        startAutoRefresh();
-      } else {
-        err.innerText = res.message; err.classList.remove('hidden');
-      }
-    });
-
-    function adminLogout() {
-      sessionStorage.removeItem('adminToken');
-      adminToken = null;
-      clearInterval(refreshInterval);
-      document.getElementById('admin-login-overlay').style.display = 'flex';
-      document.getElementById('login-phone').value = '';
-    }
-
-    // --- Data Fetching & Refresh ---
-    function startAutoRefresh() {
-      refreshInterval = setInterval(() => { if(!isModalOpen) fetchAdminData(false); }, 10000);
-    }
-
-    async function fetchAdminData(showLoading = false) {
-      if(showLoading) {
-        const icon = document.getElementById('refresh-icon');
-        icon.classList.add('animate-spin');
-      }
-      
-      const res = await apiCall('getAdminData');
-      
-      if(showLoading) document.getElementById('refresh-icon').classList.remove('animate-spin');
-      
-      if(res.status === 'success') {
-        appData = res;
-        document.getElementById('last-update-time').innerText = new Date().toLocaleTimeString('th-TH');
-        renderAll();
-      } else {
-        if(res.message.includes("Token")) adminLogout();
-        else Toast.fire({icon: 'error', title: 'โหลดข้อมูลล้มเหลว: ' + res.message});
-      }
-    }
-
-    // --- UI Navigation ---
-    const breadcrumbNames = {
-      'dashboard': 'ภาพรวมระบบ (Overview)',
-      'users': 'ข้อมูลสมาชิก (Customers)',
-      'orders': 'รายการออเดอร์ (Orders)',
-      'wallet': 'แจ้งฝาก/ถอนเงิน (Wallet)',
-      'products': 'จัดการสินค้า (Products)',
-      'settings': 'ตั้งค่าระบบ (Settings)',
-      'otp': 'บันทึกรหัส OTP',
-      'broadcast': 'บรอดแคสต์อีเมล (Broadcast)'
-    };
-
-    function nav(section) {
-      document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-      document.getElementById('menu-' + section).classList.add('active');
-      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      document.getElementById('view-' + section).classList.add('active');
-      document.getElementById('header-breadcrumbs').innerText = breadcrumbNames[section];
-    }
-
-    function switchWalletTab(tab) {
-      document.getElementById('tab-deposit').classList.remove('active');
-      document.getElementById('tab-withdraw').classList.remove('active');
-      document.getElementById('tab-' + tab).classList.add('active');
-      document.getElementById('wallet-deposit-area').style.display = tab === 'deposit' ? 'block' : 'none';
-      document.getElementById('wallet-withdraw-area').style.display = tab === 'withdraw' ? 'block' : 'none';
-    }
-
-    function switchProdTab(tab) {
-      document.getElementById('tab-prod-main').classList.remove('active');
-      document.getElementById('tab-prod-opt').classList.remove('active');
-      document.getElementById('tab-prod-' + tab).classList.add('active');
-      document.getElementById('prod-main-area').style.display = tab === 'main' ? 'block' : 'none';
-      document.getElementById('prod-opt-area').style.display = tab === 'opt' ? 'block' : 'none';
-    }
-
-    // --- Render Functions ---
-    function renderAll() {
-      renderDashboard();
-      renderTable('table-users', appData.users, ['วันที่', 'ชื่อ', 'อีเมล์', 'เบอร์โทรศัพท์', 'ธนาคาร', 'จำนวนเงิน'], 'Users');
-      renderTable('table-orders', appData.orders, ['วันที่', 'Ref', 'ชื่อ', 'รายการ', 'ยอดสุทธิ', 'ช่องทางชำระ', 'สถานะ'], 'Orders');
-      renderTable('table-deposit', appData.transactions.filter(t=>t['ประเภท'] === 'ฝากเงิน' || t['ประเภท'].includes('ปรับเครดิต')), ['วันที่', 'ชื่อ-นามสกุล', 'เบอร์โทร', 'จำนวนเงิน', 'สลิป/หมายเหตุ', 'สถานะ'], 'Transactions', true);
-      renderTable('table-withdraw', appData.transactions.filter(t=>t['ประเภท'] === 'ถอนเงิน'), ['วันที่', 'ชื่อ-นามสกุล', 'ธนาคาร', 'เบอร์โทร', 'จำนวนเงิน', 'สถานะ'], 'Transactions', true);
-      renderProductsTable();
-      renderTable('table-options', appData.options, ['รหัส', 'ชื่อ', 'ราคา'], 'OptionsList');
-      renderSettingsTable();
-      renderTable('table-otps', appData.otps.reverse().slice(0, 100), ['วันที่/เวลา', 'อีเมล', 'OTP', 'สถานะ'], 'OTP', false, true); // Read only
-      lucide.createIcons();
-    }
-
-    function renderDashboard() {
-      const s = appData.stats;
-      document.getElementById('stat-users').innerText = s.totalUsers;
-      document.getElementById('stat-noname').innerText = s.nonameUsers;
-      document.getElementById('stat-deposit').innerText = '฿' + s.totalDeposits.toLocaleString(undefined, {minimumFractionDigits:2});
-      document.getElementById('stat-orders').innerText = '฿' + s.totalOrders.toLocaleString(undefined, {minimumFractionDigits:2});
-      document.getElementById('stat-withdraw').innerText = '฿' + s.totalWithdraws.toLocaleString(undefined, {minimumFractionDigits:2});
-      document.getElementById('stat-net').innerText = '฿' + s.netIncome.toLocaleString(undefined, {minimumFractionDigits:2});
-
-      // Render Charts
-      const cData = appData.chartData;
-      if(chartsObj.rev) chartsObj.rev.destroy();
-      chartsObj.rev = new Chart(document.getElementById('revenueChart'), {
-        type: 'line',
-        data: { labels: cData.labels, datasets: [{ label: 'ยอดขาย (Orders)', data: cData.rev, borderColor: '#e43a3d', backgroundColor: 'rgba(228, 58, 61, 0.1)', fill: true, tension: 0.4 }] },
-        options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
-      });
-
-      if(chartsObj.dw) chartsObj.dw.destroy();
-      chartsObj.dw = new Chart(document.getElementById('dwChart'), {
-        type: 'bar',
-        data: { labels: ['ยอดรวมทั้งหมด'], datasets: [
-          { label: 'ฝากเงิน (Deposit)', data: [s.totalDeposits], backgroundColor: '#10b981' },
-          { label: 'ถอนเงิน (Withdraw)', data: [s.totalWithdraws], backgroundColor: '#f59e0b' }
-        ]},
-        options: { maintainAspectRatio: false }
-      });
-    }
-
-    function getBadgeHTML(text) {
-      let txt = String(text||"");
-      if(txt.includes('สำเร็จ') && !txt.includes('ไม่')) return `<span class="badge badge-green">${txt}</span>`;
-      if(txt.includes('ไม่สำเร็จ') || txt.includes('ยกเลิก') || txt.includes('ซ้ำ')) return `<span class="badge badge-red">${txt}</span>`;
-      if(txt.includes('รอดำเนินการ') || txt.includes('รอยืนยัน')) return `<span class="badge badge-yellow">${txt}</span>`;
-      return `<span class="badge badge-gray">${txt}</span>`;
-    }
-
-    function isLink(str) { return String(str).startsWith('http'); }
-
-    // Universal Table Renderer
-    function renderTable(tableId, dataList, displayCols, sheetName, isTransaction = false, readOnly = false) {
-      const tbody = document.querySelector(`#${tableId} tbody`);
-      tbody.innerHTML = '';
-      if(dataList.length === 0) { tbody.innerHTML = `<tr><td colspan="10" class="text-center py-8 text-gray-400">ไม่มีข้อมูล</td></tr>`; return; }
-
-      // Reverse for newest first
-      const displayData = [...dataList].reverse();
-
-      displayData.forEach(row => {
-        let tr = document.createElement('tr');
-        let html = '';
+    <!-- SCRIPT LOGIC -->
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec"; // ใส URL ของคุณ
         
-        displayCols.forEach(col => {
-          let val = row[col] || '';
-          // Custom formats
-          if(col === 'สถานะ') val = getBadgeHTML(val);
-          else if(col === 'สลิป' || col === 'สลิป/หมายเหตุ') {
-            if(isLink(val)) val = `<a href="${val}" target="_blank" class="text-blue-500 hover:underline flex items-center"><i data-lucide="external-link" class="w-3 h-3 mr-1"></i> ดูสลิป</a>`;
-            else val = `<span class="text-xs text-gray-500 truncate max-w-xs block" title="${val}">${val}</span>`;
-          }
-          else if(col === 'จำนวนเงิน' || col === 'ยอดสุทธิ') val = `<span class="font-bold text-gray-800">฿${parseFloat(val||0).toLocaleString(undefined,{minimumFractionDigits:2})}</span>`;
-          else if(col === 'ชื่อ') val = `<span class="font-semibold text-brand">${val} ${row['นามสกุล']||''}</span>`;
-          else if(col === 'เบอร์โทร (รหัสผ่าน)') val = `${row['เบอร์โทรศัพท์']}<br><span class="text-xs text-gray-400">PW: ${row['รหัสผ่าน']}</span>`;
-          else if(col === 'ข้อมูลบัญชี') val = `<span class="text-xs">${row['ธนาคาร']||'-'}<br>${row['เลขที่บัญชี']||'-'}</span>`;
-          else if(col === 'ธนาคาร') val = `<span class="text-xs">${val}<br>${row['เลขที่บัญชี']}</span>`;
-          else if(col === 'ช่องทางชำระ') val = `<span class="text-xs font-semibold px-2 py-1 bg-gray-100 rounded">${val}</span>`;
-          else if(col === 'รายการ') val = `<div class="text-xs text-gray-500 whitespace-pre-wrap max-w-xs leading-tight">${val}</div>`;
-          else if(col === 'Ref') val = `<span class="font-mono text-xs text-gray-600">${val}</span>`;
+        // State
+        let currentView = 'dashboard';
+        let globalData = null;
+        let chartInstances = {};
+        let autoRefreshInterval;
+        let lastActivityCount = 0;
 
-          html += `<td>${val}</td>`;
+        // Config Menus
+        const menus = [
+            { id: 'dashboard', icon: 'layout-dashboard', label: 'หน้าหลัก (Dashboard)' },
+            { id: 'notification', icon: 'bell', label: 'การแจ้งเตือน' },
+            { id: 'users', icon: 'users', label: 'สมาชิก (Users)' },
+            { id: 'orders', icon: 'shopping-cart', label: 'ออเดอร์ (Orders)' },
+            { id: 'deposits', icon: 'arrow-down-circle', label: 'ฝากเงิน (Deposits)' },
+            { id: 'withdraws', icon: 'arrow-up-circle', label: 'ถอนเงิน (Withdraws)' },
+            { id: 'products', icon: 'package', label: 'จัดการสินค้า' },
+            { id: 'otp', icon: 'key', label: 'รายการ OTP' },
+            { id: 'receipts', icon: 'receipt', label: 'ใบเสร็จ' },
+            { id: 'settings', icon: 'settings', label: 'ตั้งค่า (Settings)' },
+            { id: 'broadcast', icon: 'radio', label: 'บอร์ดแคส (Broadcast)' }
+        ];
+
+        // --- Init & Auth ---
+        $(document).ready(() => {
+            lucide.createIcons();
+            if(localStorage.getItem('nextAdminAuth') === 'true') {
+                showApp();
+            }
+            
+            $('#admin-login-form').submit(e => {
+                e.preventDefault();
+                const btn = $('#btn-login'); btn.text('กำลังตรวจสอบ...').prop('disabled', true);
+                fetch(GAS_URL, {
+                    method: 'POST', body: JSON.stringify({action: 'adminLogin', email: $('#login-email').val(), phone: $('#login-phone').val()})
+                }).then(r=>r.json()).then(res => {
+                    if(res.status === 'success') { localStorage.setItem('nextAdminAuth', 'true'); showApp(); }
+                    else { alert(res.message); btn.text('เข้าสู่ระบบจัดการ').prop('disabled', false); }
+                }).catch(e => { alert("Error connecting server"); btn.text('เข้าสู่ระบบจัดการ').prop('disabled', false); });
+            });
+
+            // Search Table
+            $('#table-search').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                $("#dynamic-tbody tr").filter(function() { $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1) });
+            });
         });
 
-        // Action Buttons
-        if(!readOnly) {
-          let actionHtml = `<div class="flex gap-2">`;
-          
-          if(isTransaction && row['ประเภท'] === 'ถอนเงิน') {
-             // ถอนเงิน อัปเดตสถานะแบบพิเศษ
-             let disabled = row['สถานะ'].includes('รอดำเนินการ') ? '' : 'opacity-50 cursor-not-allowed pointer-events-none';
-             actionHtml += `<button class="p-1.5 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 ${disabled}" onclick='openWithdrawModal(${JSON.stringify(row).replace(/'/g, "&#39;")})' title="อัปเดตสถานะ"><i data-lucide="check-square" class="w-4 h-4"></i></button>`;
-          } else {
-             // แก้ไขทั่วไป
-             let editDisabled = '';
-             if(sheetName === 'Orders' && !row['สถานะ'].includes('รอดำเนินการ') && !row['สถานะ'].includes('รอยืนยัน') && !row['สถานะ'].includes('QR')) {
-                 // editDisabled = 'opacity-50 cursor-not-allowed pointer-events-none'; // ปลดล็อกให้แก้ได้เผื่อจำเป็น แต่อาจจะทำไฮไลต์เตือน
-             }
-             actionHtml += `<button class="p-1.5 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 hover:text-brand ${editDisabled}" onclick='openEditModal("${sheetName}", ${row._rowIndex})' title="แก้ไข"><i data-lucide="edit" class="w-4 h-4"></i></button>`;
-             actionHtml += `<button class="p-1.5 bg-red-50 text-red-500 rounded hover:bg-red-100 ${editDisabled}" onclick='deleteRow("${sheetName}", ${row._rowIndex})' title="ลบ"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
-          }
-          
-          actionHtml += `</div>`;
-          html += `<td>${actionHtml}</td>`;
+        function showApp() {
+            $('#login-screen').hide(); $('#app-screen').removeClass('hidden');
+            renderSidebar(); switchView('dashboard'); fetchData();
+            autoRefreshInterval = setInterval(fetchDataSilent, 15000); // Real-time ทุก 15 วินาที
+        }
+        function logoutAdmin() { localStorage.removeItem('nextAdminAuth'); clearInterval(autoRefreshInterval); location.reload(); }
+
+        // --- Theme ---
+        function toggleTheme() {
+            $('html').toggleClass('dark');
+            if(chartInstances.line) { updateChartColors(); }
         }
 
-        tr.innerHTML = html;
-        tbody.appendChild(tr);
-      });
-    }
+        // --- Navigation ---
+        function renderSidebar() {
+            const nav = $('#sidebar-menu'); nav.empty();
+            menus.forEach(m => {
+                const activeCls = m.id === currentView ? 'bg-primary/10 text-primary border-r-4 border-primary' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-darkBase hover:text-white';
+                nav.append(`<button onclick="switchView('${m.id}')" class="w-full text-left px-4 py-3 rounded flex items-center text-sm font-medium transition-colors ${activeCls}"><i data-lucide="${m.icon}" class="w-4 h-4 mr-3"></i> ${m.label}</button>`);
+            });
+            lucide.createIcons();
+        }
 
-    function renderProductsTable() {
-      const tbody = document.querySelector(`#table-products tbody`); tbody.innerHTML = '';
-      appData.products.reverse().forEach(row => {
-        let tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><img src="${row['ลิงก์รูปภาพ']}" class="w-12 h-12 object-cover rounded border"></td>
-          <td class="font-mono text-xs">${row['รหัสสินค้า']}</td>
-          <td><span class="text-xs bg-gray-100 px-2 py-1 rounded">${row['หมวดหมู่']}</span></td>
-          <td class="font-semibold text-gray-800">${row['ชื่อสินค้า']}</td>
-          <td class="font-bold text-brand">฿${parseFloat(row['ราคา (บาท)']||0).toLocaleString()}</td>
-          <td><div class="flex flex-col gap-1 text-[10px]"><a href="${row['ลิงก์ดาวน์โหลดสินค้า']}" target="_blank" class="text-blue-500 truncate w-24">ไฟล์</a><a href="${row['ลิงก์คู่มือการใช้งาน']}" target="_blank" class="text-green-500 truncate w-24">คู่มือ</a></div></td>
-          <td>
-            <div class="flex gap-2">
-              <button class="p-1.5 bg-gray-100 text-gray-600 rounded hover:bg-brand hover:text-white" onclick='openEditModal("ProductList", ${row._rowIndex})'><i data-lucide="edit" class="w-4 h-4"></i></button>
-              <button class="p-1.5 bg-red-50 text-red-500 rounded hover:bg-red-500 hover:text-white" onclick='deleteRow("ProductList", ${row._rowIndex})'><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+        function switchView(viewId) {
+            currentView = viewId; renderSidebar();
+            $('.view-section').hide();
+            
+            const menuObj = menus.find(m => m.id === viewId);
+            $('#topbar-title').text(menuObj.label);
 
-    function renderSettingsTable() {
-      const tbody = document.querySelector(`#table-settings tbody`); tbody.innerHTML = '';
-      appData.settings.forEach(row => {
-        let tr = document.createElement('tr');
-        let valHtml = row['ค่าที่ตั้ง (Value)'];
-        if(valHtml.length > 50) valHtml = `<span class="truncate block max-w-xs" title="${valHtml}">${valHtml}</span>`;
-        tr.innerHTML = `
-          <td class="font-semibold text-gray-700">${row['หัวข้อการตั้งค่า']}</td>
-          <td class="font-mono text-xs text-brand bg-brand-light p-1 rounded inline-block mt-2">${valHtml}</td>
-          <td class="text-xs text-gray-500">${row['คำอธิบาย']}</td>
-          <td><button class="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-semibold rounded hover:bg-brand hover:text-white transition-colors" onclick='openEditModal("Settings", ${row._rowIndex})'>แก้ไข</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // --- Modal Logic ---
-    let currentEditSheet = "";
-    let currentEditRow = 0;
-    let currentColumns = [];
-
-    function openModal(id) {
-      document.getElementById(id).classList.add('show');
-      isModalOpen = true;
-    }
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('show');
-      isModalOpen = false;
-    }
-
-    const sheetSchemas = {
-      'Users': ['วันที่', 'เวลา', 'ชื่อ', 'นามสกุล', 'อีเมล์', 'เบอร์โทรศัพท์', 'รหัสผ่าน', 'ธนาคาร', 'เลขที่บัญชี', 'จำนวนเงิน'],
-      'Orders': ['วันที่', 'Ref', 'ชื่อ', 'เบอร์', 'รายการ', 'ส่วนลด', 'VAT', 'ยอดสุทธิ', 'สลิป', 'สถานะ', 'ช่องทางชำระ'],
-      'Transactions': ['วันที่', 'ID User', 'ชื่อ-นามสกุล', 'อีเมล', 'เบอร์โทร', 'ประเภท', 'จำนวนเงิน', 'สถานะ', 'สลิป/หมายเหตุ'],
-      'ProductList': ["รหัสสินค้า", "หมวดหมู่", "ชื่อสินค้า", "รายละเอียด", "ราคา (บาท)", "ลิงก์รูปภาพ", "ลิงก์ดาวน์โหลดสินค้า", "ลิงก์คู่มือการใช้งาน"],
-      'OptionsList': ["รหัส", "ชื่อ", "ราคา"],
-      'Settings': ["หัวข้อการตั้งค่า", "ค่าที่ตั้ง (Value)", "คำอธิบาย"]
-    };
-
-    function openEditModal(sheetName, rowIndex) {
-      currentEditSheet = sheetName; currentEditRow = rowIndex;
-      const dataArr = appData[sheetName.toLowerCase() === 'productlist' ? 'products' : sheetName.toLowerCase() === 'optionslist' ? 'options' : sheetName.toLowerCase()];
-      const rowData = dataArr.find(r => r._rowIndex === rowIndex);
-      currentColumns = sheetSchemas[sheetName];
-
-      let title = rowIndex ? `แก้ไขข้อมูล - ${sheetName}` : `เพิ่มข้อมูลใหม่ - ${sheetName}`;
-      document.getElementById('modal-gen-title').innerText = title;
-
-      const container = document.getElementById('modal-gen-fields');
-      container.innerHTML = '';
-
-      currentColumns.forEach(col => {
-        let val = rowData ? rowData[col] : '';
-        let inputType = 'text';
-        if(col.includes('อีเมล') || col.includes('อีเมล์')) inputType = 'email';
-        if(col.includes('จำนวน') || col.includes('ราคา') || col.includes('ยอด')) inputType = 'number';
-
-        let readonlyAttr = (col === 'วันที่' || col === 'เวลา' || col === 'Ref' || col === 'ID User' || col === 'หัวข้อการตั้งค่า') && rowIndex ? 'readonly class="form-input bg-gray-100 text-gray-500"' : 'class="form-input"';
-
-        let html = `
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">${col}</label>
-            ${col === 'รายละเอียด' || col === 'รายการ' 
-              ? `<textarea id="edit-col-${col}" rows="3" ${readonlyAttr}>${val}</textarea>`
-              : `<input type="${inputType}" id="edit-col-${col}" value="${val}" ${readonlyAttr} step="any">`
+            if(viewId === 'dashboard') { $('#view-dashboard').show(); renderDashboard(); }
+            else if(viewId === 'broadcast') { $('#view-broadcast').show(); }
+            else if(viewId === 'notification') { 
+                $('#dynamic-table-title').text('ประวัติการแจ้งเตือนระบบ'); buildTable('notification'); $('#view-table').show(); 
             }
-          </div>
-        `;
-        container.insertAdjacentHTML('beforeend', html);
-      });
+            else { 
+                $('#dynamic-table-title').text(menuObj.label); buildTable(viewId); $('#view-table').show(); 
+            }
+        }
 
-      openModal('modal-generic');
-    }
+        // --- Data Fetching ---
+        function fetchData() {
+            showToast("กำลังดึงข้อมูล...", "info");
+            fetchDataSilent(true);
+        }
 
-    document.getElementById('form-generic').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      let newData = [];
-      currentColumns.forEach(col => {
-        let val = document.getElementById(`edit-col-${col}`).value;
-        newData.push(val);
-      });
+        function fetchDataSilent(isManual = false) {
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'getAdminData'}) })
+            .then(r=>r.json()).then(res => {
+                if(res.status === 'success') {
+                    globalData = res;
+                    
+                    // Check for new notifications
+                    if(globalData.recentActivities.length > 0 && globalData.recentActivities.length !== lastActivityCount) {
+                        if(lastActivityCount !== 0 && !isManual) {
+                            showToast(`มีการทำรายการใหม่: ${globalData.recentActivities[0].type}`, "success");
+                        }
+                        lastActivityCount = globalData.recentActivities.length;
+                    }
 
-      const btn = document.getElementById('btn-gen-save'); btn.disabled = true; btn.innerText = 'กำลังบันทึก...';
-      
-      const res = await apiCall('adminUpdateRow', { sheetName: currentEditSheet, rowIndex: currentEditRow, rowData: newData });
-      
-      btn.disabled = false; btn.innerText = 'บันทึกข้อมูล';
-      if(res.status === 'success') {
-        closeModal('modal-generic');
-        Toast.fire({icon: 'success', title: 'อัปเดตสำเร็จ'});
-        fetchAdminData();
-      } else {
-        Toast.fire({icon: 'error', title: res.message});
-      }
-    });
+                    if(currentView === 'dashboard') renderDashboard();
+                    else if(currentView !== 'broadcast') buildTable(currentView); // Update current table quietly
 
-    async function deleteRow(sheetName, rowIndex) {
-      const confirm = await Swal.fire({ title: 'ยืนยันการลบ?', text: "ข้อมูลที่ลบจะไม่สามารถกู้คืนได้!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#e43a3d', cancelButtonColor: '#64748b', confirmButtonText: 'ใช่, ลบเลย!' });
-      if(confirm.isConfirmed) {
-        Swal.fire({title: 'กำลังลบ...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
-        const res = await apiCall('adminDeleteRow', { sheetName: sheetName, rowIndex: rowIndex });
-        if(res.status === 'success') {
-          Swal.fire('ลบสำเร็จ!', '', 'success');
-          fetchAdminData();
-        } else Swal.fire('ผิดพลาด', res.message, 'error');
-      }
-    }
+                    if(isManual) showToast("อัปเดตข้อมูลเรียบร้อย", "success");
+                }
+            }).catch(e => console.log("Silent fetch error", e));
+        }
 
-    // --- Withdraw Specific ---
-    let currentWdRow = null;
-    function openWithdrawModal(rowObj) {
-      currentWdRow = rowObj;
-      document.getElementById('wd-m-name').innerText = rowObj['ชื่อ-นามสกุล'];
-      document.getElementById('wd-m-bank').innerText = `${rowObj['ธนาคาร']} / ${rowObj['เบอร์โทร']}`; // Column mapping might differ slightly, using what's available
-      document.getElementById('wd-m-amt').innerText = `฿${parseFloat(rowObj['จำนวนเงิน']).toLocaleString(undefined,{minimumFractionDigits:2})}`;
-      document.getElementById('wd-m-status').value = 'สำเร็จ';
-      toggleWdReason();
-      openModal('modal-withdraw');
-    }
-    
-    function toggleWdReason() {
-      const v = document.getElementById('wd-m-status').value;
-      document.getElementById('wd-reason-div').style.display = v === 'ยกเลิก' ? 'block' : 'none';
-    }
+        // --- Dashboard Render ---
+        function renderDashboard() {
+            if(!globalData) return;
+            $('#stat-users').text(globalData.stats.users);
+            $('#stat-orders').text('฿' + globalData.stats.totalRevenue.toLocaleString());
+            $('#stat-deposits').text('฿' + globalData.stats.totalDeposit.toLocaleString());
+            $('#stat-withdraws').text('฿' + globalData.stats.totalWithdraw.toLocaleString());
 
-    async function saveWithdrawStatus() {
-      const status = document.getElementById('wd-m-status').value;
-      let reason = document.getElementById('wd-m-reason').value;
-      if(status === 'ยกเลิก' && !reason) { Toast.fire({icon: 'warning', title: 'กรุณาระบุเหตุผล'}); return; }
-      
-      let finalStatus = status === 'สำเร็จ' ? 'สำเร็จ' : `ยกเลิก: ${reason}`;
-      
-      // สร้าง Data Array ใหม่เพื่อไป Update Row
-      let newData = [
-        currentWdRow['วันที่'], currentWdRow['ID User'], currentWdRow['ชื่อ-นามสกุล'], currentWdRow['อีเมล'], 
-        currentWdRow['เบอร์โทร'], currentWdRow['ประเภท'], currentWdRow['จำนวนเงิน'], finalStatus, currentWdRow['สลิป/หมายเหตุ']
-      ];
+            $('#donut-in').text('฿' + globalData.stats.totalDeposit.toLocaleString());
+            $('#donut-out').text('฿' + globalData.stats.totalWithdraw.toLocaleString());
 
-      const res = await apiCall('adminUpdateRow', { sheetName: 'Transactions', rowIndex: currentWdRow._rowIndex, rowData: newData });
-      if(res.status === 'success') {
-        closeModal('modal-withdraw');
-        Toast.fire({icon: 'success', title: 'อัปเดตสถานะถอนเงินเรียบร้อย'});
-        if(status === 'ยกเลิก') Swal.fire('แจ้งเตือน', 'กรุณาไปเพิ่มเครดิตคืนให้ลูกค้าที่เมนู "ข้อมูลสมาชิก" ด้วยตนเอง', 'info');
-        fetchAdminData();
-      } else Toast.fire({icon: 'error', title: res.message});
-    }
+            // Recent Table
+            const rb = $('#recent-table-body'); rb.empty();
+            globalData.recentActivities.forEach(a => {
+                const icon = a.type === 'Deposit' ? '<span class="text-success">ฝากเงิน</span>' : '<span class="text-primary">ถอนเงิน</span>';
+                rb.append(`<tr><td>${icon}</td><td>${a.name}</td><td class="font-bold">฿${a.amt.toLocaleString()}</td><td class="text-xs text-gray-500">${a.time}</td></tr>`);
+            });
 
-    // --- Broadcast ---
-    async function sendBroadcast() {
-      const subject = document.getElementById('bc-subject').value;
-      const message = document.getElementById('bc-message').value;
-      const imageUrl = document.getElementById('bc-image').value;
+            // Charts
+            initCharts(globalData.chartData);
+        }
 
-      const confirm = await Swal.fire({ title: 'ยืนยันการส่ง?', text: "ระบบจะส่งอีเมลหาลูกค้าทุกคนในระบบ", icon: 'question', showCancelButton: true, confirmButtonColor: '#e43a3d' });
-      if(!confirm.isConfirmed) return;
+        function initCharts(data) {
+            Chart.defaults.color = $('html').hasClass('dark') ? '#8f8f9f' : '#666';
+            Chart.defaults.font.family = "'Kanit', sans-serif";
 
-      const btn = document.getElementById('btn-broadcast'); btn.disabled = true; btn.innerHTML = `<div class="loader mr-2 border-white border-t-transparent"></div> กำลังส่ง...`;
-      
-      const res = await apiCall('adminBroadcast', { subject: subject, message: message, imageUrl: imageUrl });
-      
-      btn.disabled = false; btn.innerHTML = `<i data-lucide="send" class="w-4 h-4 mr-2"></i> ส่งอีเมลหาทุกคน`;
-      if(res.status === 'success') {
-        Swal.fire('สำเร็จ', res.message, 'success');
-        document.getElementById('form-broadcast').reset();
-      } else Swal.fire('ผิดพลาด', res.message, 'error');
-    }
+            if(chartInstances.line) chartInstances.line.destroy();
+            if(chartInstances.donut) chartInstances.donut.destroy();
 
-    const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
+            const ctxLine = document.getElementById('lineChart').getContext('2d');
+            chartInstances.line = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        { label: 'Orders', data: data.datasets.orders, borderColor: '#00f2c3', tension: 0.4, borderWidth: 2, pointRadius: 0 },
+                        { label: 'Deposits', data: data.datasets.deposits, borderColor: '#1d8cf8', tension: 0.4, borderWidth: 2, pointRadius: 0 },
+                        { label: 'Withdraws', data: data.datasets.withdraws, borderColor: '#e43a3d', tension: 0.4, borderWidth: 2, pointRadius: 0 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { display: false }, x: { grid: { display: false, color: '#32325d' } } } }
+            });
 
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
+            const ctxDonut = document.getElementById('donutChart').getContext('2d');
+            chartInstances.donut = new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ฝากเงิน', 'ถอนเงิน'],
+                    datasets: [{ data: [globalData.stats.totalDeposit, globalData.stats.totalWithdraw], backgroundColor: ['#00f2c3', '#e43a3d'], borderWidth: 0, cutout: '75%' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        function updateChartColors() {
+            if(globalData && currentView === 'dashboard') initCharts(globalData.chartData);
+        }
+
+        // --- Dynamic Table Builder ---
+        const tableConfigs = {
+            users: { sheet: 'Users', cols: [{h:'Row',k:'row'},{h:'วันที่',k:'date'},{h:'ชื่อ',k:'fname',edit:true},{h:'สกุล',k:'lname',edit:true},{h:'อีเมล',k:'email'},{h:'เบอร์',k:'phone'},{h:'ธนาคาร',k:'bank'},{h:'เลขบัญชี',k:'acc'},{h:'ยอดเงิน',k:'balance',edit:true}] },
+            orders: { sheet: 'Orders', cols: [{h:'Row',k:'row'},{h:'วันที่',k:'date'},{h:'Ref',k:'ref'},{h:'ชื่อ',k:'name'},{h:'รายการ',k:'items'},{h:'ยอดสุทธิ',k:'net'},{h:'ช่องทาง',k:'method'},{h:'สลิป',k:'slip', link:true},{h:'สถานะ',k:'status', edit:true, type:'select', opts:['รอดำเนินการ','การชำระเงินถูกต้อง','สำเร็จ','ยกเลิก']}] },
+            deposits: { sheet: 'Transactions', cols: [{h:'Row',k:'row'},{h:'วันที่',k:'date'},{h:'ชื่อ',k:'name'},{h:'เบอร์',k:'phone'},{h:'ยอดฝาก',k:'amount'},{h:'สลิป',k:'slip', link:true},{h:'สถานะ',k:'status'}] },
+            withdraws: { sheet: 'Transactions', cols: [{h:'Row',k:'row'},{h:'วันที่',k:'date'},{h:'ชื่อ',k:'name'},{h:'เบอร์',k:'phone'},{h:'ยอดถอน',k:'amount'},{h:'สถานะ',k:'status', edit:true, type:'select', opts:['รอดำเนินการ','สำเร็จ','ยกเลิก']}] },
+            products: { sheet: 'ProductList', cols: [{h:'Row',k:'row'},{h:'รหัส',k:'id'},{h:'หมวดหมู่',k:'cat',edit:true},{h:'ชื่อ',k:'name',edit:true},{h:'ราคา',k:'price',edit:true},{h:'รูป',k:'img',edit:true},{h:'ลิ้งค์ไฟล์',k:'dl',edit:true}] },
+            otp: { sheet: 'OTP', cols: [{h:'วันที่',k:'date'},{h:'อีเมล',k:'email'},{h:'OTP',k:'otp'},{h:'สถานะ',k:'status'}] },
+            receipts: { sheet: 'Orders', cols: [{h:'Ref',k:'ref'},{h:'วันที่',k:'date'},{h:'ชื่อ',k:'name'},{h:'ยอดเงิน',k:'net'},{h:'สลิปอ้างอิง',k:'slip', link:true}] },
+            settings: { sheet: 'Settings', cols: [{h:'หัวข้อ',k:'0'},{h:'ค่าที่ตั้ง (Value)',k:'1',edit:true},{h:'คำอธิบาย',k:'2'}] },
+            notification: { sheet: '-', cols: [{h:'เวลา',k:'time'},{h:'ประเภท',k:'type'},{h:'ผู้ใช้',k:'name'},{h:'ยอด',k:'amt'}] }
+        };
+
+        function buildTable(type) {
+            if(!globalData) return;
+            const th = $('#dynamic-thead'); const tb = $('#dynamic-tbody');
+            th.empty(); tb.empty();
+            const conf = tableConfigs[type]; if(!conf) return;
+
+            // Header
+            let trh = '<tr>';
+            conf.cols.forEach(c => trh += `<th>${c.h}</th>`);
+            if(conf.cols.some(c=>c.edit)) trh += `<th class="text-right">จัดการ</th>`;
+            trh += '</tr>'; th.append(trh);
+
+            // Data
+            let dataSource = [];
+            if(type === 'settings') {
+                let sArr = Object.entries(globalData.lists.settings);
+                dataSource = sArr.map((v,i) => ({row: i+2, 0: v[0], 1: v[1], 2: '-'}));
+            } else if (type === 'notification') {
+                dataSource = globalData.recentActivities;
+            } else if (type === 'receipts') {
+                dataSource = globalData.lists.orders.filter(o => o.slip && o.slip !== '-');
+            } else { dataSource = globalData.lists[type]; }
+
+            if(!dataSource || dataSource.length === 0) {
+                tb.append(`<tr><td colspan="10" class="text-center py-4">ไม่มีข้อมูล</td></tr>`); return;
+            }
+
+            dataSource.forEach(row => {
+                let tr = `<tr data-row="${row.row}">`;
+                conf.cols.forEach((c, cIdx) => {
+                    let val = row[c.k] || '-';
+                    if(c.link && val !== '-') val = `<a href="${val}" target="_blank" class="text-info hover:underline"><i data-lucide="external-link" class="w-4 h-4 inline"></i> ดูไฟล์</a>`;
+                    
+                    if(c.edit) {
+                        let actualColIndex = type==='settings'? 2 : cIdx+1; // คำนวณคอลัมน์ Excel แบบลวกๆ
+                        if(type==='orders' && c.k==='status') actualColIndex = 10;
+                        if(type==='withdraws' && c.k==='status') actualColIndex = 8;
+                        if(type==='users' && c.k==='balance') actualColIndex = 10;
+
+                        if(c.type === 'select') {
+                            let opts = ''; c.opts.forEach(o => opts += `<option value="${o}" ${val===o?'selected':''}>${o}</option>`);
+                            tr += `<td><select class="editable-select ds-input" data-col="${actualColIndex}" data-old="${val}" disabled>${opts}</select></td>`;
+                        } else {
+                            tr += `<td><input type="text" class="editable-input ds-input" value="${val}" data-col="${actualColIndex}" data-old="${val}" disabled></td>`;
+                        }
+                    } else { tr += `<td>${val}</td>`; }
+                });
+
+                if(conf.cols.some(c=>c.edit)) {
+                    tr += `<td class="text-right whitespace-nowrap">
+                            <button class="btn-edit text-blue-500 hover:text-blue-300 mr-2"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                            <button class="btn-save text-success hover:text-green-300 mr-2 hidden" data-sheet="${conf.sheet}" data-type="${type}"><i data-lucide="check" class="w-4 h-4"></i></button>
+                            <button class="btn-del text-primary hover:text-red-300" data-sheet="${conf.sheet}"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                           </td>`;
+                }
+                tr += '</tr>'; tb.append(tr);
+            });
+            lucide.createIcons();
+            attachTableEvents();
+        }
+
+        function attachTableEvents() {
+            $('.btn-edit').off('click').on('click', function() {
+                const tr = $(this).closest('tr');
+                tr.find('.ds-input').prop('disabled', false).first().focus();
+                $(this).hide(); tr.find('.btn-save').removeClass('hidden');
+            });
+
+            $('.btn-save').off('click').on('click', function() {
+                const tr = $(this).closest('tr');
+                const btn = $(this); btn.html('<i data-lucide="loader" class="w-4 h-4 animate-spin"></i>');
+                const rowId = tr.data('row');
+                const sheet = btn.data('sheet');
+                const type = btn.data('type');
+                
+                let promises = [];
+                tr.find('.ds-input').each(function() {
+                    let val = $(this).val(); let col = $(this).data('col'); let old = $(this).data('old');
+                    if(val !== String(old)) {
+                        promises.push(fetch(GAS_URL, {method:'POST', body:JSON.stringify({action:'updateAdminRow', sheet:sheet, row:rowId, col:col, val:val, actionType:type})}).then(r=>r.json()));
+                    }
+                });
+
+                if(promises.length === 0) { resetRowBtn(tr); return; }
+
+                Promise.all(promises).then(results => {
+                    showToast("อัปเดตข้อมูลสำเร็จ", "success");
+                    tr.find('.ds-input').each(function(){ $(this).data('old', $(this).val()); });
+                    resetRowBtn(tr);
+                    fetchDataSilent(); // refresh memory
+                }).catch(e => { showToast("Error updating", "error"); resetRowBtn(tr); });
+            });
+
+            $('.btn-del').off('click').on('click', function() {
+                if(!confirm("ยืนยันการลบข้อมูลแถวนี้?")) return;
+                const tr = $(this).closest('tr'); const rowId = tr.data('row'); const sheet = $(this).data('sheet');
+                fetch(GAS_URL, {method:'POST', body:JSON.stringify({action:'deleteAdminRow', sheet:sheet, row:rowId})})
+                .then(r=>r.json()).then(res => {
+                    if(res.status==='success') { tr.fadeOut(); showToast("ลบข้อมูลสำเร็จ", "success"); }
+                });
+            });
+        }
+        function resetRowBtn(tr) { tr.find('.ds-input').prop('disabled', true); tr.find('.btn-save').addClass('hidden').html('<i data-lucide="check" class="w-4 h-4"></i>'); tr.find('.btn-edit').show(); lucide.createIcons(); }
+
+        // --- Broadcast ---
+        function sendBroadcast() {
+            const subj = $('#bc-subject').val(); const img = $('#bc-img').val(); const det = $('#bc-details').val();
+            if(!subj || !det) { alert("กรอกข้อมูลให้ครบ"); return; }
+            if(!confirm("ยืนยันส่งอีเมลแจ้งเตือนให้ผู้ใช้งานทุกคน? (อาจใช้เวลานาน)")) return;
+
+            const btn = $('#btn-bc'); btn.html('<i data-lucide="loader" class="animate-spin inline w-4 h-4 mr-2"></i> กำลังส่ง...').prop('disabled', true);
+            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action:'broadcastEmail', subject:subj, details:det, imgUrl:img}) })
+            .then(r=>r.json()).then(res => {
+                btn.html('<i data-lucide="send" class="inline w-4 h-4 mr-2"></i> ส่งอีเมลถึงผู้ใช้ทุกคน').prop('disabled', false);
+                alert(res.message); $('#broadcast-form')[0].reset();
+            }).catch(e => { alert("Error"); btn.html('<i data-lucide="send" class="inline w-4 h-4 mr-2"></i> ส่งอีเมลถึงผู้ใช้ทุกคน').prop('disabled', false); });
+        }
+
+        // --- UI Helpers ---
+        function showToast(msg, type="info") {
+            const colors = { success: 'bg-green-500', error: 'bg-primary', info: 'bg-info' };
+            const id = 'toast-' + Date.now();
+            $('#toast-container').append(`<div id="${id}" class="toast ${colors[type]} text-white px-4 py-3 rounded shadow-lg text-sm flex items-center"><i data-lucide="info" class="w-4 h-4 mr-2"></i> ${msg}</div>`);
+            lucide.createIcons();
+            setTimeout(() => { $(`#${id}`).fadeOut(300, function(){ $(this).remove(); }); }, 3000);
+        }
+    </script>
 </body>
 </html>
