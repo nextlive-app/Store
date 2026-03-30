@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kanit:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Icons & jQuery & QR Library & Html2Canvas -->
+    <!-- Icons & jQuery & QR Library & Html2Canvas & Bank Fonts -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/allaboutitappscript/fontbank/banks.min.css">
@@ -51,7 +51,6 @@
     </script>
 
     <script>
-        // กำหนดไว้บนสุด ป้องกันปัญหา formatPrice is not defined
         function formatPrice(price) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(price).replace('$', '฿'); }
     </script>
 
@@ -95,6 +94,9 @@
         .lds-spinner div:nth-child(12) { transform: rotate(330deg); animation-delay: 0s; }
         @keyframes lds-spinner { 0% { opacity: 1; } 100% { opacity: 0; } }
 
+        /* สีขาวสำหรับ Loading Spinner บนปุ่มค้นหา */
+        .lds-spinner-white div:after { background: #ffffff !important; }
+
         .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .5); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; z-index: 99999; }
         .popup-container.active { opacity: 1; pointer-events: auto; transition: .4s ease; }
         .popup-container .popup-box { width: 90%; max-width: 400px; background: #f2f2f2; border-radius: 6px; box-shadow: 0 0 10px rgba(0, 0, 0, .1); padding: 30px; transform: scale(0); text-align: center; font-family: "Poppins", 'Kanit', sans-serif; white-space: pre-line; line-height: 1.5; }
@@ -119,7 +121,7 @@
         .stmt-table-header { border-bottom: 2px solid #1a1a1a; }
         .stmt-table { width: 100%; font-size: 11px; }
         @media (min-width: 640px) { .stmt-table { font-size: 13px; } }
-        .stmt-table th, .stmt-table td { padding: 6px 8px; white-space: nowrap; } /* Prevent wrapping */
+        .stmt-table th, .stmt-table td { padding: 6px 8px; white-space: nowrap; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
@@ -288,13 +290,16 @@
                         <div class="flex justify-between items-start mb-6 relative z-10">
                             <div>
                                 <p class="text-sm opacity-80 uppercase tracking-wider mb-1">บัญชีรับเงินของคุณ</p>
-                                <h3 class="text-xl font-bold font-mono tracking-widest" id="wd-card-acc">XXX-X-XXXXX-X</h3>
+                                <div class="flex items-center">
+                                    <span id="wd-card-icon" class="mr-3 flex items-center justify-center bg-white rounded-full p-1 shadow"></span>
+                                    <h3 class="text-xl font-bold font-mono tracking-widest" id="wd-card-acc">XXX-X-XXXXX-X</h3>
+                                </div>
                             </div>
-                            <div class="w-16 h-16 flex items-center justify-center text-white" id="wd-card-logo-container">
-                                <i class="bank bank-kbank m text-[80px]" style="line-height: 1; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></i>
+                            <div class="text-right max-w-[40%] flex flex-col items-end">
+                                <p class="text-sm font-bold leading-tight" id="wd-card-bank-name">ธนาคาร</p>
                             </div>
                         </div>
-                        <div class="flex justify-between items-end relative z-10">
+                        <div class="flex justify-between items-end relative z-10 mt-8 border-t border-white/20 pt-4">
                             <div>
                                 <p class="text-xs opacity-80 uppercase mb-1">ชื่อบัญชี</p>
                                 <p class="font-bold text-lg" id="wd-card-name">นาย ทดสอบ ระบบ</p>
@@ -967,24 +972,41 @@
             { img: "https://img2.pic.in.th/IMG_1086.png" }
         ];
 
+        // รายชื่อธนาคารพร้อมชื่อภาษาไทย
         const bankList = [
-            { id: 'bank-bbl', name: 'Bangkok Bank' }, { id: 'bank-kbank', name: 'Kasikornbank' },
-            { id: 'bank-rbs', name: 'Royal Bank of Scotland' }, { id: 'bank-ktb', name: 'Krungthai Bank' },
-            { id: 'bank-jpm', name: 'J.P. Morgan' }, { id: 'bank-mufg', name: 'Bank of Tokyo-Mitsubishi UFJ' },
-            { id: 'bank-tmb', name: 'TMB Bank' }, { id: 'bank-scb', name: 'Siam Commercial Bank' },
-            { id: 'bank-citi', name: 'Citibank' }, { id: 'bank-smbc', name: 'Sumitomo Mitsui Banking Corp' },
-            { id: 'bank-sc', name: 'Standard Chartered' }, { id: 'bank-cimb', name: 'CIMB Thai Bank' },
-            { id: 'bank-uob', name: 'United Overseas Bank' }, { id: 'bank-bay', name: 'Bank of Ayudhya (Krungsri)' },
-            { id: 'bank-mega', name: 'Mega International' }, { id: 'bank-boa', name: 'Bank of America' },
-            { id: 'bank-cacib', name: 'Crédit Agricole' }, { id: 'bank-gsb', name: 'Government Savings Bank' },
-            { id: 'bank-hsbc', name: 'HSBC' }, { id: 'bank-db', name: 'Deutsche Bank' },
-            { id: 'bank-ghb', name: 'Government Housing Bank' }, { id: 'bank-baac', name: 'BAAC' },
-            { id: 'bank-mb', name: 'Mizuho Bank' }, { id: 'bank-bnp', name: 'BNP Paribas' },
-            { id: 'bank-tbank', name: 'Thanachart Bank' }, { id: 'bank-ibank', name: 'Islamic Bank of Thailand' },
-            { id: 'bank-tisco', name: 'Tisco Bank' }, { id: 'bank-kk', name: 'Kiatnakin Bank' },
-            { id: 'bank-icbc', name: 'ICBC (Thai)' }, { id: 'bank-tcrb', name: 'Thai Credit Retail Bank' },
-            { id: 'bank-lhb', name: 'Land and Houses Bank' }, { id: 'bank-tmn', name: 'TrueMoney Wallet' },
-            { id: 'bank-pp', name: 'PromptPay' }
+            { id: 'bank-bbl', name: 'Bangkok Bank', thName: 'ธนาคารกรุงเทพ' },
+            { id: 'bank-kbank', name: 'Kasikornbank', thName: 'ธนาคารกสิกรไทย' },
+            { id: 'bank-rbs', name: 'Royal Bank of Scotland', thName: 'รอยัลแบงก์ออฟสกอตแลนด์' },
+            { id: 'bank-ktb', name: 'Krungthai Bank', thName: 'ธนาคารกรุงไทย' },
+            { id: 'bank-jpm', name: 'J.P. Morgan', thName: 'เจพีมอร์แกน เชส' },
+            { id: 'bank-mufg', name: 'Bank of Tokyo-Mitsubishi UFJ', thName: 'ธนาคารแห่งโตเกียว-มิตซูบิชิ ยูเอฟเจ' },
+            { id: 'bank-tmb', name: 'TMB Bank', thName: 'ธนาคารทหารไทย' },
+            { id: 'bank-scb', name: 'Siam Commercial Bank', thName: 'ธนาคารไทยพาณิชย์' },
+            { id: 'bank-citi', name: 'Citibank', thName: 'ธนาคารซิตี้แบงก์' },
+            { id: 'bank-smbc', name: 'Sumitomo Mitsui Banking Corporation', thName: 'ซูมิโตโม มิตซุย แบงกิ้ง คอร์ปอเรชั่น' },
+            { id: 'bank-sc', name: 'Standard Chartered', thName: 'ธนาคารสแตนดาร์ดชาร์เตอร์ด (ไทย)' },
+            { id: 'bank-cimb', name: 'CIMB Thai Bank', thName: 'ธนาคารซีไอเอ็มบี ไทย' },
+            { id: 'bank-uob', name: 'United Overseas Bank', thName: 'ธนาคารยูโอบี' },
+            { id: 'bank-bay', name: 'Bank of Ayudhya (Krungsri)', thName: 'ธนาคารกรุงศรีอยุธยา' },
+            { id: 'bank-mega', name: 'Mega International', thName: 'เมกะ อินเตอร์เนชั่นแนล คอมเมอร์เชียล แบงก์' },
+            { id: 'bank-boa', name: 'Bank of America', thName: 'ธนาคารแห่งอเมริกา' },
+            { id: 'bank-cacib', name: 'Crédit Agricole', thName: 'เครดิต อะกริกอล' },
+            { id: 'bank-gsb', name: 'Government Savings Bank', thName: 'ธนาคารออมสิน' },
+            { id: 'bank-hsbc', name: 'HSBC', thName: 'ธนาคารเอชเอสบีซี' },
+            { id: 'bank-db', name: 'Deutsche Bank', thName: 'ดอยซ์แบงก์' },
+            { id: 'bank-ghb', name: 'Government Housing Bank', thName: 'ธนาคารอาคารสงเคราะห์' },
+            { id: 'bank-baac', name: 'BAAC', thName: 'ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร (ธ.ก.ส.)' },
+            { id: 'bank-mb', name: 'Mizuho Bank', thName: 'ธนาคารมิซูโฮ' },
+            { id: 'bank-bnp', name: 'BNP Paribas', thName: 'บีเอ็นพี พารีบาส์' },
+            { id: 'bank-tbank', name: 'Thanachart Bank', thName: 'ธนาคารธนชาต' },
+            { id: 'bank-ibank', name: 'Islamic Bank of Thailand', thName: 'ธนาคารอิสลามแห่งประเทศไทย' },
+            { id: 'bank-tisco', name: 'Tisco Bank', thName: 'ธนาคารทิสโก้' },
+            { id: 'bank-kk', name: 'Kiatnakin Bank', thName: 'ธนาคารเกียรตินาคิน' },
+            { id: 'bank-icbc', name: 'ICBC (Thai)', thName: 'ธนาคารไอซีบีซี (ไทย)' },
+            { id: 'bank-tcrb', name: 'Thai Credit Retail Bank', thName: 'ธนาคารไทยเครดิต' },
+            { id: 'bank-lhb', name: 'Land and Houses Bank', thName: 'ธนาคารแลนด์ แอนด์ เฮ้าส์' },
+            { id: 'bank-tmn', name: 'TrueMoney Wallet', thName: 'ทรูมันนี่ วอลเล็ท' },
+            { id: 'bank-pp', name: 'PromptPay', thName: 'พร้อมเพย์' }
         ];
 
         function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
@@ -1020,41 +1042,55 @@
             initSlider(); populateBankOptions();
             loadCart(); // โหลดตะกร้าตอนเข้าเว็บ
             
+            // จับเวลาเพื่อทำ Loading อย่างน้อย 1 วินาที
+            const startTime = Date.now();
+            
             callBackend({action: 'init'}).then(res => {
-                const loader = document.getElementById('global-loader'); if(loader) loader.style.display = 'none'; 
+                const elapsed = Date.now() - startTime;
+                const delay = Math.max(0, 1000 - elapsed);
                 
-                if(res.status === 'success') {
-                    siteSettings = res.settings;
-                    let isActive = String(siteSettings.SiteActive).trim().toUpperCase() === "TRUE";
-                    if(!isActive) {
-                        const mScreen = document.getElementById('maintenance-screen'); const appWrapper = document.getElementById('app-wrapper');
-                        if(mScreen) mScreen.style.display = 'flex'; if(appWrapper) appWrapper.style.display = 'none'; return; 
-                    } else {
-                        const mScreen = document.getElementById('maintenance-screen'); const appWrapper = document.getElementById('app-wrapper');
-                        if(mScreen) mScreen.style.display = 'none'; if(appWrapper) appWrapper.style.display = 'flex';
-                    }
-
-                    applySettingsToUI();
-                    categories = [{ id: 'all', name: 'สินค้าทั้งหมด' }]; res.categories.forEach(c => categories.push({id: c, name: c}));
-                    products = res.products; optionsDB = res.options;
-
-                    renderCategoryMenu(); renderProducts(); checkLoginState();
-
-                    if (currentUser) { refreshUserData(); }
+                setTimeout(() => {
+                    const loader = document.getElementById('global-loader'); if(loader) loader.style.display = 'none'; 
                     
-                    const searchBox = document.getElementById('product-search-desktop');
-                    if(searchBox) { searchBox.addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderProducts(); }); }
-                } else { showCustomPopup("ข้อผิดพลาด", "โหลดข้อมูลไม่สำเร็จ: " + res.message); }
+                    if(res.status === 'success') {
+                        siteSettings = res.settings;
+                        let isActive = String(siteSettings.SiteActive).trim().toUpperCase() === "TRUE";
+                        if(!isActive) {
+                            const mScreen = document.getElementById('maintenance-screen'); const appWrapper = document.getElementById('app-wrapper');
+                            if(mScreen) mScreen.style.display = 'flex'; if(appWrapper) appWrapper.style.display = 'none'; return; 
+                        } else {
+                            const mScreen = document.getElementById('maintenance-screen'); const appWrapper = document.getElementById('app-wrapper');
+                            if(mScreen) mScreen.style.display = 'none'; if(appWrapper) appWrapper.style.display = 'flex';
+                        }
+
+                        applySettingsToUI();
+                        categories = [{ id: 'all', name: 'สินค้าทั้งหมด' }]; res.categories.forEach(c => categories.push({id: c, name: c}));
+                        products = res.products; optionsDB = res.options;
+
+                        renderCategoryMenu(); renderProducts(); checkLoginState();
+
+                        if (currentUser) { refreshUserData(); }
+                        
+                        const searchBox = document.getElementById('product-search-desktop');
+                        if(searchBox) { searchBox.addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderProducts(); }); }
+                    } else { showCustomPopup("ข้อผิดพลาด", "โหลดข้อมูลไม่สำเร็จ: " + res.message); }
+                }, delay);
+                
             }).catch(e => {
-                const loader = document.getElementById('global-loader'); if(loader) loader.style.display = 'none';
-                showCustomPopup("ข้อผิดพลาดระบบ", e.message);
+                const elapsed = Date.now() - startTime;
+                const delay = Math.max(0, 1000 - elapsed);
+                
+                setTimeout(() => {
+                    const loader = document.getElementById('global-loader'); if(loader) loader.style.display = 'none';
+                    showCustomPopup("ข้อผิดพลาดระบบ", e.message);
+                }, delay);
             });
         }
 
         function populateBankOptions() {
             const select = document.getElementById('wd-bank-name'); if(!select) return;
             bankList.forEach(bank => {
-                const opt = document.createElement('option'); opt.value = bank.id; opt.textContent = bank.name; select.appendChild(opt);
+                const opt = document.createElement('option'); opt.value = bank.id; opt.textContent = bank.thName || bank.name; select.appendChild(opt);
             });
             select.addEventListener('change', function() {
                 const iconPreview = document.getElementById('wd-bank-icon-preview');
@@ -1267,8 +1303,12 @@
                 safeSetText('wd-card-acc', maskedAcc); safeSetText('wd-card-name', `${currentUser.fname} ${currentUser.lname}`);
                 safeSetText('wd-card-balance', `฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
                 
-                const logoCont = document.getElementById('wd-card-logo-container');
-                if(logoCont) logoCont.innerHTML = `<i class="bank ${currentUser.bankName} m text-[80px]" style="line-height: 1; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></i>`;
+                let bankInfo = bankList.find(b => b.id === currentUser.bankName);
+                let thaiName = bankInfo ? bankInfo.thName : currentUser.bankName;
+                safeSetText('wd-card-bank-name', thaiName);
+
+                const iconCont = document.getElementById('wd-card-icon');
+                if(iconCont) iconCont.innerHTML = `<i class="bank ${currentUser.bankName} l round shadow"></i>`;
             } else {
                 if(setupSec) setupSec.classList.remove('hidden'); if(actSec) actSec.classList.add('hidden');
                 safeSetValue('wd-fname', currentUser.fname); safeSetValue('wd-lname', currentUser.lname);
@@ -1613,7 +1653,7 @@
             const btn = document.getElementById('btn-search-history');
             
             if(!phone) { showCustomPopup("แจ้งเตือน", "กรุณาระบุเบอร์โทรศัพท์"); return; }
-            if(btn) { btn.innerHTML = `<div class="lds-spinner" style="width:20px;height:20px;transform:scale(0.3);margin-right:-20px;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>`; btn.disabled = true; }
+            if(btn) { btn.innerHTML = `<div class="lds-spinner lds-spinner-white" style="width:20px;height:20px;transform:scale(0.3);margin-right:-20px;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>`; btn.disabled = true; }
 
             callBackend({ action: 'getHistory', phone: phone }).then(res => {
                 if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; }
@@ -1739,7 +1779,7 @@
         function emailStatementOnly() {
             const btn = document.getElementById('btn-dl-statement');
             const origText = btn.innerHTML;
-            btn.innerHTML = `<div class="lds-spinner w-5 h-5 inline-block align-middle mr-2" style="transform:scale(0.3); margin-top:-20px;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> กำลังประมวลผล...`;
+            btn.innerHTML = `<div class="lds-spinner lds-spinner-white w-5 h-5 inline-block align-middle mr-2" style="transform:scale(0.3); margin-top:-20px;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> กำลังประมวลผล...`;
             btn.disabled = true;
 
             const element = document.getElementById('statement-capture-area');
