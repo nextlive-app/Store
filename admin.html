@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Next Live Shop | Admin Dashboard</title>
+    <title>Merge Digital Marketing Dashboard | Next Live Admin</title>
     
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,13 +20,24 @@
                 extend: {
                     fontFamily: { sans: ['Kanit', 'sans-serif'] },
                     colors: {
-                        darkBase: '#1e1e2d',
-                        darkPanel: '#27293d',
-                        darkBorder: '#32325d',
-                        primary: '#e43a3d',
-                        success: '#00f2c3',
-                        info: '#1d8cf8',
-                        warning: '#ff8d72'
+                        darkBase: '#1a1b1f', // สีพื้นหลังเข้มแบบในรูป
+                        darkPanel: '#2c2e3e', // สีกล่องแบบในรูป
+                        darkBorder: '#3f4156',
+                        primary: '#fbbd08', // สีส้มทองแบบโลโก้
+                        accentInfo: '#3b82f6', // สีฟ้า
+                        accentSuccess: '#10b981', // สีเขียว
+                        accentDanger: '#ef4444', // สีแดง
+                        textGray: '#a0a2b8'
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-in': 'slideIn 0.5s ease-out forwards'
+                    },
+                    keyframes: {
+                        slideIn: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
                     }
                 }
             }
@@ -34,282 +45,485 @@
     </script>
 
     <style>
-        body { font-family: 'Kanit', sans-serif; transition: background-color 0.3s, color 0.3s; }
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        body { font-family: 'Kanit', sans-serif; background-color: #1a1b1f; color: #e2e8f0; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #32325d; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #4a4a6a; }
+        ::-webkit-scrollbar-thumb { background: #3f4156; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fbbd08; }
         
-        .panel { @apply bg-white dark:bg-darkPanel rounded-lg shadow-lg border border-gray-100 dark:border-darkBorder p-5 transition-colors; }
-        .table-container { @apply w-full overflow-x-auto; }
-        .admin-table { @apply w-full text-left border-collapse text-sm; }
-        .admin-table th { @apply p-3 border-b dark:border-darkBorder font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap; }
-        .admin-table td { @apply p-3 border-b border-gray-100 dark:border-darkBorder text-gray-700 dark:text-gray-300; }
-        .admin-table tr:hover { @apply bg-gray-50 dark:bg-[#2b2d42]; }
-        
-        .editable-input { @apply bg-transparent border-b border-gray-400 focus:border-primary outline-none px-1 w-full text-inherit; }
-        .editable-select { @apply bg-gray-100 dark:bg-darkBase border border-gray-300 dark:border-darkBorder rounded px-2 py-1 text-inherit outline-none; }
+        /* Neumorphic / Glass Panel Effect */
+        .panel { 
+            background: linear-gradient(145deg, #2c2e3e, #252735);
+            border-radius: 12px; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+            border: 1px solid #3f4156; 
+            padding: 1.25rem; 
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.3), 0 0 15px rgba(251, 189, 8, 0.1);
+        }
 
-        /* Toast Animation */
-        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .toast { animation: slideInRight 0.3s ease-out forwards; }
+        /* Table Styles */
+        .table-container { @apply w-full overflow-x-auto rounded-lg; }
+        .admin-table { @apply w-full text-left border-collapse text-sm; }
+        .admin-table th { @apply p-3 bg-[#1f212d] border-b border-darkBorder font-medium text-primary whitespace-nowrap tracking-wide; }
+        .admin-table td { @apply p-3 border-b border-darkBorder/50 text-gray-300; transition: background 0.2s; }
+        .admin-table tr:hover td { background-color: rgba(255,255,255,0.03); }
+        
+        /* Input & Select */
+        .editable-input { @apply bg-transparent border-b border-transparent focus:border-primary outline-none px-1 py-0.5 w-full text-inherit transition-colors; }
+        .editable-input:not(:disabled) { @apply border-gray-500 bg-[#1f212d] rounded px-2; }
+        
+        .editable-select { @apply bg-transparent border border-transparent focus:border-primary rounded px-1 py-0.5 text-inherit outline-none appearance-none cursor-default; }
+        .editable-select:not(:disabled) { @apply bg-[#1f212d] border-gray-500 cursor-pointer pl-2 pr-6; }
+
+        /* Badge Status */
+        .badge-success { @apply text-green-400 bg-green-400/10 px-2 py-1 rounded text-xs; }
+        .badge-warning { @apply text-yellow-400 bg-yellow-400/10 px-2 py-1 rounded text-xs; }
+        .badge-danger { @apply text-red-400 bg-red-400/10 px-2 py-1 rounded text-xs; }
+
+        /* Sidebar Item */
+        .nav-item { @apply flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 mb-1 cursor-pointer; border-left: 3px solid transparent; }
+        .nav-item:hover { @apply bg-white/5 text-white border-white/20; }
+        .nav-item.active { @apply bg-primary/10 text-primary border-primary shadow-[inset_4px_0_0_0_#fbbd08]; }
+
+        /* Chart Canvas Constraints */
+        .chart-container { position: relative; height: 100%; width: 100%; min-height: 250px; }
+
+        /* Topbar Glow */
+        header { box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-darkBase text-gray-800 dark:text-white h-screen overflow-hidden flex">
+<body class="h-screen overflow-hidden flex selection:bg-primary selection:text-black">
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="fixed inset-0 bg-gray-100 dark:bg-darkBase z-[100] flex items-center justify-center">
-        <div class="panel w-full max-w-md mx-4">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-primary mb-2">NEXT <span class="text-gray-800 dark:text-white">ADMIN</span></h1>
-                <p class="text-gray-500 text-sm">ระบบจัดการหลังบ้าน</p>
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-[#1f212d] flex flex-col z-20 shadow-2xl shrink-0 border-r border-darkBorder relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-orange-400 to-red-500"></div>
+        
+        <div class="h-20 flex items-center px-6 border-b border-darkBorder">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(251,189,8,0.3)]">
+                    <i data-lucide="zap" class="w-5 h-5 text-black"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white tracking-wider leading-none">NEXT<span class="text-primary">LIVE</span></h1>
+                    <p class="text-[10px] text-textGray tracking-widest mt-1 uppercase">Admin System</p>
+                </div>
             </div>
-            <form id="admin-login-form" class="space-y-5">
-                <div>
-                    <label class="block text-sm mb-1 text-gray-400">อีเมลแอดมิน</label>
-                    <input type="email" id="login-email" class="w-full bg-gray-50 dark:bg-darkBase border border-gray-200 dark:border-darkBorder rounded p-3 text-white outline-none focus:border-primary" required>
-                </div>
-                <div>
-                    <label class="block text-sm mb-1 text-gray-400">หมายเลขโทรศัพท์ (รหัสผ่าน)</label>
-                    <input type="password" id="login-phone" class="w-full bg-gray-50 dark:bg-darkBase border border-gray-200 dark:border-darkBorder rounded p-3 text-white outline-none focus:border-primary" required>
-                </div>
-                <button type="submit" class="w-full bg-primary hover:bg-red-600 text-white font-bold p-3 rounded transition-colors" id="btn-login">เข้าสู่ระบบจัดการ</button>
-            </form>
         </div>
-    </div>
-
-    <!-- MAIN APP -->
-    <div id="app-screen" class="hidden w-full h-full flex">
         
-        <!-- SIDEBAR -->
-        <aside class="w-64 bg-white dark:bg-darkPanel border-r border-gray-200 dark:border-darkBorder flex flex-col transition-colors z-20">
-            <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-darkBorder">
-                <h1 class="text-xl font-bold text-primary">NEXT <span class="text-gray-800 dark:text-white">ADMIN</span></h1>
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1" id="sidebar-menu">
+            <!-- Render by JS -->
+        </nav>
+        
+        <div class="p-4 border-t border-darkBorder bg-[#1a1b1f]/50">
+            <div class="flex items-center mb-4 px-2">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse-fast mr-2"></div>
+                <span class="text-xs text-textGray">System Online Real-time</span>
             </div>
-            <nav class="flex-1 overflow-y-auto py-4 space-y-1 px-3" id="sidebar-menu">
-                <!-- สร้างโดย JS -->
-            </nav>
-            <div class="p-4 border-t border-gray-200 dark:border-darkBorder">
-                <button onclick="logoutAdmin()" class="flex items-center text-red-500 hover:text-red-400 w-full px-3 py-2 rounded-lg transition-colors hover:bg-red-50 dark:hover:bg-red-500/10">
-                    <i data-lucide="log-out" class="w-5 h-5 mr-3"></i> ออกจากระบบ
-                </button>
+            <button onclick="logoutAdmin()" class="flex items-center justify-center w-full bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white px-4 py-2.5 rounded-lg transition-all duration-300 font-medium text-sm">
+                <i data-lucide="log-out" class="w-4 h-4 mr-2"></i> ออกจากระบบ
+            </button>
+        </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-fixed">
+        
+        <!-- TOPBAR -->
+        <header class="h-16 bg-[#2c2e3e]/90 backdrop-blur-md border-b border-darkBorder flex items-center justify-between px-6 z-10">
+            <div class="flex items-center">
+                <i data-lucide="menu" class="w-5 h-5 text-textGray mr-4 cursor-pointer hover:text-white transition-colors"></i>
+                <h2 class="text-lg font-medium text-white tracking-wide" id="topbar-title">Merge Digital Marketing Dashboard</h2>
             </div>
-        </aside>
-
-        <!-- CONTENT AREA -->
-        <main class="flex-1 flex flex-col h-full overflow-hidden relative">
-            <!-- TOPBAR -->
-            <header class="h-16 bg-white dark:bg-darkPanel border-b border-gray-200 dark:border-darkBorder flex items-center justify-between px-6 transition-colors">
-                <div class="flex items-center">
-                    <h2 class="text-lg font-semibold capitalize" id="topbar-title">แดชบอร์ด</h2>
-                    <span class="ml-4 text-xs bg-success/20 text-success px-2 py-1 rounded-full flex items-center animate-pulse">
-                        <span class="w-2 h-2 bg-success rounded-full mr-1"></span> Real-time Connected
-                    </span>
+            
+            <div class="flex items-center space-x-5">
+                <!-- Notifications -->
+                <div class="relative cursor-pointer group" onclick="switchView('notification')">
+                    <i data-lucide="bell" class="w-5 h-5 text-textGray group-hover:text-primary transition-colors"></i>
+                    <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-bounce shadow-[0_0_10px_rgba(239,68,68,0.5)]">3</span>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button onclick="toggleTheme()" class="text-gray-400 hover:text-white transition-colors bg-gray-100 dark:bg-darkBase p-2 rounded-full">
-                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
-                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
-                    </button>
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold mr-2">A</div>
-                        <span class="text-sm text-gray-600 dark:text-gray-300">Admin</span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- VIEWS CONTAINER -->
-            <div class="flex-1 overflow-y-auto p-6" id="views-container">
                 
-                <!-- VIEW: DASHBOARD -->
-                <div id="view-dashboard" class="view-section space-y-6">
-                    <!-- Stats Row -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="panel flex items-center justify-between border-l-4 border-info">
-                            <div><p class="text-xs text-gray-400 mb-1">ยอดผู้ใช้งานรวม</p><h3 class="text-2xl font-bold" id="stat-users">0</h3></div>
-                            <div class="p-3 bg-info/10 text-info rounded-full"><i data-lucide="users" class="w-6 h-6"></i></div>
+                <!-- Profile -->
+                <div class="flex items-center border-l border-darkBorder pl-5">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-lg border-2 border-[#1f212d] z-10">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="rounded-full w-full h-full">
+                    </div>
+                    <div class="ml-3 hidden sm:block">
+                        <p class="text-sm font-medium text-white leading-none">Super Admin</p>
+                        <p class="text-[11px] text-textGray mt-1">admin@nextlive.com</p>
+                    </div>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-textGray ml-2"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- VIEWS CONTAINER -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-6" id="views-container">
+            
+            <!-- VIEW: DASHBOARD (เหมือนในรูปเป๊ะๆ) -->
+            <div id="view-dashboard" class="view-section space-y-6 animate-slide-in">
+                
+                <!-- Filter Bar -->
+                <div class="flex justify-between items-end bg-[#2c2e3e] p-3 rounded-lg border border-darkBorder">
+                    <div class="flex space-x-4">
+                        <div>
+                            <label class="text-[11px] text-textGray block mb-1">Account Name</label>
+                            <select class="bg-[#1f212d] border border-darkBorder text-white text-sm rounded px-3 py-1.5 w-48 outline-none focus:border-primary transition-colors">
+                                <option>All Accounts</option>
+                            </select>
                         </div>
-                        <div class="panel flex items-center justify-between border-l-4 border-success">
-                            <div><p class="text-xs text-gray-400 mb-1">ยอดออเดอร์ (สำเร็จ)</p><h3 class="text-2xl font-bold text-success" id="stat-orders">฿0</h3></div>
-                            <div class="p-3 bg-success/10 text-success rounded-full"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
+                        <div>
+                            <label class="text-[11px] text-textGray block mb-1">Date</label>
+                            <input type="date" id="dash-date" class="bg-[#1f212d] border border-darkBorder text-white text-sm rounded px-3 py-1 w-40 outline-none focus:border-primary transition-colors [color-scheme:dark]">
                         </div>
-                        <div class="panel flex items-center justify-between border-l-4 border-warning">
-                            <div><p class="text-xs text-gray-400 mb-1">ยอดฝากรวม</p><h3 class="text-2xl font-bold text-warning" id="stat-deposits">฿0</h3></div>
-                            <div class="p-3 bg-warning/10 text-warning rounded-full"><i data-lucide="arrow-down-circle" class="w-6 h-6"></i></div>
-                        </div>
-                        <div class="panel flex items-center justify-between border-l-4 border-primary">
-                            <div><p class="text-xs text-gray-400 mb-1">ยอดถอนรวม</p><h3 class="text-2xl font-bold text-primary" id="stat-withdraws">฿0</h3></div>
-                            <div class="p-3 bg-primary/10 text-primary rounded-full"><i data-lucide="arrow-up-circle" class="w-6 h-6"></i></div>
+                    </div>
+                    <button class="bg-primary/20 hover:bg-primary text-primary hover:text-black px-4 py-1.5 rounded text-sm font-medium transition-colors border border-primary/50" onclick="fetchData()">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-1"></i> ซิงค์ข้อมูล
+                    </button>
+                </div>
+
+                <!-- Stats Row (อิงจากรูป: Google Ads, FB Ads) เราแปลงเป็น ฝาก, ถอน, ออเดอร์, ผู้ใช้ -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Stat 1: ออเดอร์ -->
+                    <div class="panel flex flex-col justify-between relative overflow-hidden group">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-accentSuccess/10 rounded-full blur-xl group-hover:bg-accentSuccess/20 transition-all"></div>
+                        <p class="text-accentSuccess text-sm font-medium mb-4 flex items-center justify-center gap-2 border-b border-darkBorder pb-2"><i data-lucide="shopping-cart" class="w-4 h-4"></i> ยอดออเดอร์สุทธิ (Success)</p>
+                        <div class="flex justify-between items-end">
+                            <div class="text-center w-1/3">
+                                <p class="text-3xl font-bold text-white mb-1" id="stat-orders-val">0</p>
+                                <p class="text-[10px] text-textGray uppercase">บาท (THB)</p>
+                                <p class="text-[10px] text-green-400 mt-1">↑ 13.44%</p>
+                            </div>
+                            <div class="text-center w-1/3 border-l border-r border-darkBorder">
+                                <p class="text-xl font-medium text-white mb-1" id="stat-orders-count">0</p>
+                                <p class="text-[10px] text-textGray uppercase">รายการ</p>
+                                <p class="text-[10px] text-red-400 mt-1">↓ 0.39%</p>
+                            </div>
+                            <div class="text-center w-1/3">
+                                <p class="text-xl font-medium text-white mb-1" id="stat-users-val">0</p>
+                                <p class="text-[10px] text-textGray uppercase">Users ออนไลน์</p>
+                                <p class="text-[10px] text-green-400 mt-1">↑ 14.93%</p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Charts Row -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="panel lg:col-span-2">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-gray-400 text-sm">แนวโน้มการทำรายการ (Compare Date)</h3>
-                                <select class="bg-darkBase border border-darkBorder rounded text-xs px-2 py-1 text-gray-400 outline-none">
-                                    <option>รายวัน</option><option>รายสัปดาห์</option><option>รายเดือน</option><option>รายปี</option>
-                                </select>
+                    <!-- Stat 2: ฝากเงิน -->
+                    <div class="panel flex flex-col justify-between relative overflow-hidden group">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-accentInfo/10 rounded-full blur-xl group-hover:bg-accentInfo/20 transition-all"></div>
+                        <p class="text-accentInfo text-sm font-medium mb-4 flex items-center justify-center gap-2 border-b border-darkBorder pb-2"><i data-lucide="arrow-down-circle" class="w-4 h-4"></i> ยอดฝากเงิน (Deposits)</p>
+                        <div class="flex justify-between items-end">
+                            <div class="text-center w-1/2 border-r border-darkBorder">
+                                <p class="text-3xl font-bold text-white mb-1" id="stat-deps-val">0</p>
+                                <p class="text-[10px] text-textGray uppercase">บาท (THB)</p>
+                                <p class="text-[10px] text-green-400 mt-1">↑ 2.04%</p>
                             </div>
-                            <div class="h-64 w-full"><canvas id="lineChart"></canvas></div>
-                        </div>
-                        <div class="panel">
-                            <h3 class="font-bold text-gray-400 text-sm mb-4">ข้อมูลสรุปรายได้ (Cost & Spend)</h3>
-                            <div class="h-48 w-full"><canvas id="donutChart"></canvas></div>
-                            <div class="mt-4 text-center">
-                                <div class="flex justify-between text-xs mb-2"><span class="text-gray-400">ฝากเงิน (In)</span><span class="text-success" id="donut-in">฿0</span></div>
-                                <div class="flex justify-between text-xs"><span class="text-gray-400">ถอนเงิน (Out)</span><span class="text-primary" id="donut-out">฿0</span></div>
+                            <div class="text-center w-1/2">
+                                <p class="text-xl font-medium text-white mb-1">121</p>
+                                <p class="text-[10px] text-textGray uppercase">รายการ</p>
+                                <p class="text-[10px] text-red-400 mt-1">↓ 13.39%</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Recent Activity Table -->
+                    <!-- Stat 3: ถอนเงิน -->
+                    <div class="panel flex flex-col justify-between relative overflow-hidden group">
+                        <div class="absolute -right-4 -top-4 w-20 h-20 bg-primary/10 rounded-full blur-xl group-hover:bg-primary/20 transition-all"></div>
+                        <p class="text-primary text-sm font-medium mb-4 flex items-center justify-center gap-2 border-b border-darkBorder pb-2"><i data-lucide="arrow-up-circle" class="w-4 h-4"></i> ยอดถอนเงิน (Withdraws)</p>
+                        <div class="flex justify-between items-end">
+                            <div class="text-center w-1/2 border-r border-darkBorder">
+                                <p class="text-3xl font-bold text-white mb-1" id="stat-wds-val">0</p>
+                                <p class="text-[10px] text-textGray uppercase">บาท (THB)</p>
+                                <p class="text-[10px] text-green-400 mt-1">↑ 5.20%</p>
+                            </div>
+                            <div class="text-center w-1/2">
+                                <p class="text-xl font-medium text-white mb-1">29</p>
+                                <p class="text-[10px] text-textGray uppercase">รายการ</p>
+                                <p class="text-[10px] text-red-400 mt-1">↓ 2.07%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stat 4: Cost & Spend (Donut Charts แบบในรูป) -->
                     <div class="panel">
-                        <h3 class="font-bold text-gray-400 text-sm mb-4">5 รายการล่าสุด</h3>
+                        <p class="text-primary text-sm font-medium mb-4 text-center border-b border-darkBorder pb-2">ระบบการเงินสุทธิ (Net Flow)</p>
+                        <div class="flex justify-around items-center h-24">
+                            <div class="relative w-20 h-20">
+                                <canvas id="chart-net-in"></canvas>
+                                <div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white">In</div>
+                            </div>
+                            <div class="h-16 w-px bg-darkBorder"></div>
+                            <div class="relative w-20 h-20">
+                                <canvas id="chart-net-out"></canvas>
+                                <div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white">Out</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle Row: Top Campaigns & Compare Date Line Chart -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Table: รายการ 5 อันดับล่าสุด -->
+                    <div class="panel">
+                        <h3 class="text-primary text-sm font-medium mb-4">Top 5 รายการล่าสุด (Real-time)</h3>
                         <div class="table-container">
-                            <table class="admin-table">
-                                <thead><tr><th>ประเภท</th><th>ชื่อผู้ใช้</th><th>จำนวนเงิน</th><th>เวลา</th></tr></thead>
-                                <tbody id="recent-table-body"></tbody>
+                            <table class="admin-table text-[13px] w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-transparent border-b-2 border-darkBorder">ประเภท</th>
+                                        <th class="bg-transparent border-b-2 border-darkBorder">ชื่อผู้ใช้</th>
+                                        <th class="bg-transparent border-b-2 border-darkBorder text-right">ยอดเงิน</th>
+                                        <th class="bg-transparent border-b-2 border-darkBorder text-right">เวลา</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboard-recent-tbody">
+                                    <!-- Rendered by JS -->
+                                </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <!-- Line Chart: Compare Date -->
+                    <div class="panel flex flex-col">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-primary text-sm font-medium">แนวโน้มการทำรายการ (Compare Date)</h3>
+                            <select id="chart-filter" class="bg-[#1f212d] border border-darkBorder text-white text-xs rounded px-2 py-1 outline-none" onchange="fetchData()">
+                                <option value="day">รายวัน</option>
+                                <option value="week">รายสัปดาห์</option>
+                                <option value="month">รายเดือน</option>
+                                <option value="year">รายปี</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-4 mb-2 justify-center text-[10px] text-textGray">
+                            <span class="flex items-center"><span class="w-3 h-1 bg-accentSuccess mr-1 inline-block"></span> ออเดอร์</span>
+                            <span class="flex items-center"><span class="w-3 h-1 bg-accentInfo mr-1 inline-block"></span> ฝากเงิน</span>
+                            <span class="flex items-center"><span class="w-3 h-1 bg-primary mr-1 inline-block"></span> ถอนเงิน</span>
+                        </div>
+                        <div class="chart-container flex-1 min-h-[220px]">
+                            <canvas id="main-line-chart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- DYNAMIC TABLE VIEWS (Users, Orders, etc.) -->
-                <div id="view-table" class="view-section hidden space-y-4">
-                    <div class="panel">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-lg" id="dynamic-table-title">หัวข้อ</h3>
-                            <div class="flex space-x-2">
-                                <input type="text" id="table-search" placeholder="ค้นหา..." class="bg-gray-50 dark:bg-darkBase border border-gray-200 dark:border-darkBorder rounded px-3 py-1 text-sm outline-none">
-                                <button onclick="fetchData()" class="bg-info text-white px-3 py-1 rounded text-sm hover:bg-blue-600"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+                <!-- Bottom Row: Region Breakdown (Donut Charts) -->
+                <div class="panel">
+                    <h3 class="text-primary text-sm font-medium mb-4">ข้อมูลสรุปสัดส่วน (Data Breakdown)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="flex items-center justify-center gap-4">
+                            <div class="w-24 h-24"><canvas id="breakdown-1"></canvas></div>
+                            <div class="text-[11px] space-y-2">
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-primary mr-2"></span> สมาชิกใหม่</p>
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-accentInfo mr-2"></span> สมาชิกเก่า</p>
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-darkBorder mr-2"></span> ไม่ระบุ</p>
                             </div>
                         </div>
-                        <div class="table-container max-h-[70vh] overflow-y-auto">
-                            <table class="admin-table relative">
-                                <thead class="sticky top-0 bg-white dark:bg-darkPanel z-10" id="dynamic-thead"></thead>
-                                <tbody id="dynamic-tbody"></tbody>
-                            </table>
+                        <div class="flex items-center justify-center gap-4 border-l border-r border-darkBorder">
+                            <div class="w-24 h-24"><canvas id="breakdown-2"></canvas></div>
+                            <div class="text-[11px] space-y-2">
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-accentSuccess mr-2"></span> โอนเงิน (QR)</p>
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-purple-500 mr-2"></span> เครดิต</p>
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-darkBorder mr-2"></span> ฟรี</p>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- VIEW: BROADCAST -->
-                <div id="view-broadcast" class="view-section hidden max-w-2xl mx-auto">
-                    <div class="panel">
-                        <h3 class="font-bold text-lg mb-6 text-primary flex items-center"><i data-lucide="mail" class="mr-2"></i> สร้างฟอร์ม Broadcast Email</h3>
-                        <form id="broadcast-form" class="space-y-4">
-                            <div><label class="block text-sm text-gray-400 mb-1">หัวข้อประกาศ</label><input type="text" id="bc-subject" class="w-full bg-gray-50 dark:bg-darkBase border dark:border-darkBorder rounded p-2 text-inherit" required></div>
-                            <div><label class="block text-sm text-gray-400 mb-1">ลิงก์รูปภาพ (URL)</label><input type="url" id="bc-img" class="w-full bg-gray-50 dark:bg-darkBase border dark:border-darkBorder rounded p-2 text-inherit" placeholder="https://..."></div>
-                            <div><label class="block text-sm text-gray-400 mb-1">รายละเอียด</label><textarea id="bc-details" rows="6" class="w-full bg-gray-50 dark:bg-darkBase border dark:border-darkBorder rounded p-2 text-inherit" required></textarea></div>
-                            <button type="button" onclick="sendBroadcast()" id="btn-bc" class="w-full bg-info hover:bg-blue-600 text-white font-bold p-3 rounded mt-4 shadow-lg"><i data-lucide="send" class="inline w-4 h-4 mr-2"></i> ส่งอีเมลถึงผู้ใช้ทุกคน</button>
-                        </form>
+                        <div class="flex items-center justify-center gap-4">
+                            <div class="w-24 h-24"><canvas id="breakdown-3"></canvas></div>
+                            <div class="text-[11px] space-y-2">
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 mr-2"></span> ยกเลิก</p>
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-accentSuccess mr-2"></span> สำเร็จ</p>
+                                <p class="flex items-center"><span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span> รอตรวจ</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
             </div>
-        </main>
-        
-        <!-- Toast Notification Container -->
-        <div id="toast-container" class="fixed bottom-5 right-5 z-[999] flex flex-col space-y-2"></div>
-    </div>
+
+            <!-- DYNAMIC TABLE VIEWS (Users, Orders, etc.) -->
+            <div id="view-table" class="view-section hidden space-y-4 animate-slide-in">
+                <div class="panel min-h-[80vh] flex flex-col">
+                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-darkBorder">
+                        <h3 class="font-semibold text-xl text-primary flex items-center" id="dynamic-table-title"><i data-lucide="database" class="mr-2"></i> หัวข้อ</h3>
+                        <div class="flex items-center space-x-3">
+                            <div class="relative">
+                                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-textGray"></i>
+                                <input type="text" id="table-search" placeholder="พิมพ์ค้นหา..." class="bg-[#1f212d] border border-darkBorder text-white rounded-full pl-9 pr-4 py-1.5 text-sm outline-none focus:border-primary w-64 transition-all">
+                            </div>
+                            <button onclick="fetchData()" class="bg-primary hover:bg-yellow-500 text-black px-4 py-1.5 rounded-full text-sm font-medium flex items-center transition-colors shadow-[0_0_10px_rgba(251,189,8,0.3)]">
+                                <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i> อัปเดต
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container flex-1 overflow-y-auto custom-scroll relative bg-[#1f212d] rounded-lg border border-darkBorder">
+                        <table class="admin-table">
+                            <thead class="sticky top-0 z-10 shadow-md">
+                                <tr id="dynamic-thead"></tr>
+                            </thead>
+                            <tbody id="dynamic-tbody">
+                                <!-- Data injects here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: BROADCAST -->
+            <div id="view-broadcast" class="view-section hidden max-w-3xl mx-auto animate-slide-in">
+                <div class="panel border-t-4 border-t-primary">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_20px_rgba(251,189,8,0.2)]">
+                            <i data-lucide="radio" class="w-8 h-8 text-primary"></i>
+                        </div>
+                        <h3 class="font-bold text-2xl text-white">Broadcast System</h3>
+                        <p class="text-textGray text-sm mt-1">ส่งอีเมลแจ้งเตือนถึงผู้ใช้งานทุกคนในระบบพร้อมกัน</p>
+                    </div>
+
+                    <form id="broadcast-form" class="space-y-5">
+                        <div>
+                            <label class="block text-sm text-textGray mb-1 font-medium">หัวข้อประกาศ (Subject)</label>
+                            <input type="text" id="bc-subject" class="w-full bg-[#1f212d] border border-darkBorder text-white rounded p-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="เช่น โปรโมชั่นใหม่ประจำเดือน!" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-textGray mb-1 font-medium">ลิงก์รูปภาพประกอบ (URL - ไม่บังคับ)</label>
+                            <div class="flex">
+                                <span class="bg-darkBorder text-textGray px-3 py-3 rounded-l border border-r-0 border-darkBorder text-sm">https://</span>
+                                <input type="url" id="bc-img" class="flex-1 bg-[#1f212d] border border-darkBorder text-white rounded-r p-3 outline-none focus:border-primary transition-all" placeholder="domain.com/image.jpg">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-textGray mb-1 font-medium">รายละเอียดเนื้อหา (Details)</label>
+                            <textarea id="bc-details" rows="8" class="w-full bg-[#1f212d] border border-darkBorder text-white rounded p-3 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none" placeholder="พิมพ์ข้อความที่ต้องการส่งถึงสมาชิก..." required></textarea>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-darkBorder flex gap-4">
+                            <button type="button" onclick="document.getElementById('broadcast-form').reset()" class="flex-1 bg-transparent border border-darkBorder text-textGray hover:text-white hover:bg-darkBorder font-medium py-3 rounded transition-colors">
+                                ล้างฟอร์ม
+                            </button>
+                            <button type="button" onclick="sendBroadcast()" id="btn-bc" class="flex-[2] bg-gradient-to-r from-primary to-orange-500 hover:from-orange-500 hover:to-red-500 text-black font-bold py-3 rounded shadow-[0_0_15px_rgba(251,189,8,0.4)] transition-all flex justify-center items-center">
+                                <i data-lucide="send" class="w-5 h-5 mr-2"></i> ส่ง Broadcast เลย
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+    
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-20 right-5 z-[999] flex flex-col space-y-3 pointer-events-none"></div>
 
     <!-- SCRIPT LOGIC -->
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec"; // ใส URL ของคุณ
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec"; // รบกวนใส่ URL ของ Web App คุณ
         
-        // State
+        const THAI_BANKS = ["กสิกรไทย", "ไทยพาณิชย์", "กรุงเทพ", "กรุงไทย", "กรุงศรีอยุธยา", "ทหารไทยธนชาต (ttb)", "ออมสิน", "ก.ก.ส.", "พร้อมเพย์ (PromptPay)"];
+        const ORDER_STATUS = ["รอดำเนินการ", "การชำระเงินถูกต้อง", "สำเร็จ", "ยกเลิก"];
+        const TX_STATUS = ["รอดำเนินการ", "สำเร็จ", "ยกเลิก"];
+
         let currentView = 'dashboard';
         let globalData = null;
         let chartInstances = {};
         let autoRefreshInterval;
-        let lastActivityCount = 0;
+        let isEditing = false; // ป้องกันการ Refresh ตารางขณะกำลังพิมพ์แก้ไข
+        
+        // กำหนดวันที่เริ่มต้น
+        document.getElementById('dash-date').valueAsDate = new Date();
 
-        // Config Menus
         const menus = [
             { id: 'dashboard', icon: 'layout-dashboard', label: 'หน้าหลัก (Dashboard)' },
-            { id: 'notification', icon: 'bell', label: 'การแจ้งเตือน' },
-            { id: 'users', icon: 'users', label: 'สมาชิก (Users)' },
+            { id: 'notification', icon: 'bell-ring', label: 'การแจ้งเตือนแบบเรียลไทม์' },
+            { id: 'users', icon: 'users', label: 'จัดการสมาชิก (Users)' },
             { id: 'orders', icon: 'shopping-cart', label: 'ออเดอร์ (Orders)' },
-            { id: 'deposits', icon: 'arrow-down-circle', label: 'ฝากเงิน (Deposits)' },
-            { id: 'withdraws', icon: 'arrow-up-circle', label: 'ถอนเงิน (Withdraws)' },
-            { id: 'products', icon: 'package', label: 'จัดการสินค้า' },
-            { id: 'otp', icon: 'key', label: 'รายการ OTP' },
-            { id: 'receipts', icon: 'receipt', label: 'ใบเสร็จ' },
-            { id: 'settings', icon: 'settings', label: 'ตั้งค่า (Settings)' },
-            { id: 'broadcast', icon: 'radio', label: 'บอร์ดแคส (Broadcast)' }
+            { id: 'deposits', icon: 'arrow-down-circle', label: 'รายการฝากเงิน' },
+            { id: 'withdraws', icon: 'arrow-up-circle', label: 'รายการถอนเงิน' },
+            { id: 'products', icon: 'package', label: 'จัดการคลังสินค้า' },
+            { id: 'otp', icon: 'key-round', label: 'ประวัติรหัส OTP' },
+            { id: 'receipts', icon: 'receipt', label: 'ออกใบเสร็จรับเงิน' },
+            { id: 'settings', icon: 'settings', label: 'ตั้งค่าระบบ (Settings)' },
+            { id: 'broadcast', icon: 'radio', label: 'กระจายข่าว (Broadcast)' }
         ];
 
-        // --- Init & Auth ---
         $(document).ready(() => {
             lucide.createIcons();
-            if(localStorage.getItem('nextAdminAuth') === 'true') {
-                showApp();
-            }
+            renderSidebar();
             
-            $('#admin-login-form').submit(e => {
-                e.preventDefault();
-                const btn = $('#btn-login'); btn.text('กำลังตรวจสอบ...').prop('disabled', true);
-                fetch(GAS_URL, {
-                    method: 'POST', body: JSON.stringify({action: 'adminLogin', email: $('#login-email').val(), phone: $('#login-phone').val()})
-                }).then(r=>r.json()).then(res => {
-                    if(res.status === 'success') { localStorage.setItem('nextAdminAuth', 'true'); showApp(); }
-                    else { alert(res.message); btn.text('เข้าสู่ระบบจัดการ').prop('disabled', false); }
-                }).catch(e => { alert("Error connecting server"); btn.text('เข้าสู่ระบบจัดการ').prop('disabled', false); });
-            });
+            // Bypass Login ตามที่ขอ เปิดมาโชว์หน้า Dashboard เลย
+            fetchData();
+            startAutoRefresh();
 
-            // Search Table
+            // Search Filter
             $('#table-search').on('keyup', function() {
-                var value = $(this).val().toLowerCase();
-                $("#dynamic-tbody tr").filter(function() { $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1) });
+                let value = $(this).val().toLowerCase();
+                $("#dynamic-tbody tr").filter(function() { 
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1) 
+                });
             });
         });
 
-        function showApp() {
-            $('#login-screen').hide(); $('#app-screen').removeClass('hidden');
-            renderSidebar(); switchView('dashboard'); fetchData();
-            autoRefreshInterval = setInterval(fetchDataSilent, 15000); // Real-time ทุก 15 วินาที
-        }
-        function logoutAdmin() { localStorage.removeItem('nextAdminAuth'); clearInterval(autoRefreshInterval); location.reload(); }
-
-        // --- Theme ---
-        function toggleTheme() {
-            $('html').toggleClass('dark');
-            if(chartInstances.line) { updateChartColors(); }
+        function logoutAdmin() {
+            if(confirm("ต้องการออกจากระบบแอดมินหรือไม่?")) {
+                window.location.href = GAS_URL; // กลับหน้าหลักฝั่ง User
+            }
         }
 
         // --- Navigation ---
         function renderSidebar() {
             const nav = $('#sidebar-menu'); nav.empty();
             menus.forEach(m => {
-                const activeCls = m.id === currentView ? 'bg-primary/10 text-primary border-r-4 border-primary' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-darkBase hover:text-white';
-                nav.append(`<button onclick="switchView('${m.id}')" class="w-full text-left px-4 py-3 rounded flex items-center text-sm font-medium transition-colors ${activeCls}"><i data-lucide="${m.icon}" class="w-4 h-4 mr-3"></i> ${m.label}</button>`);
+                nav.append(`
+                    <div onclick="switchView('${m.id}')" class="nav-item ${m.id === currentView ? 'active' : ''}">
+                        <i data-lucide="${m.icon}" class="w-4 h-4 mr-3"></i> 
+                        ${m.label}
+                    </div>
+                `);
             });
             lucide.createIcons();
         }
 
         function switchView(viewId) {
-            currentView = viewId; renderSidebar();
+            currentView = viewId; 
+            renderSidebar();
             $('.view-section').hide();
             
             const menuObj = menus.find(m => m.id === viewId);
             $('#topbar-title').text(menuObj.label);
 
-            if(viewId === 'dashboard') { $('#view-dashboard').show(); renderDashboard(); }
-            else if(viewId === 'broadcast') { $('#view-broadcast').show(); }
+            if(viewId === 'dashboard') { 
+                $('#view-dashboard').show(); 
+                if(globalData) renderDashboard(); 
+            }
+            else if(viewId === 'broadcast') { 
+                $('#view-broadcast').show(); 
+            }
             else if(viewId === 'notification') { 
-                $('#dynamic-table-title').text('ประวัติการแจ้งเตือนระบบ'); buildTable('notification'); $('#view-table').show(); 
+                $('#dynamic-table-title').html('<i data-lucide="bell-ring" class="mr-2"></i> ประวัติการแจ้งเตือนระบบ'); 
+                buildTable('notification'); 
+                $('#view-table').show(); 
             }
             else { 
-                $('#dynamic-table-title').text(menuObj.label); buildTable(viewId); $('#view-table').show(); 
+                $('#dynamic-table-title').html(`<i data-lucide="${menuObj.icon}" class="mr-2"></i> ${menuObj.label}`); 
+                buildTable(viewId); 
+                $('#view-table').show(); 
             }
+            lucide.createIcons();
         }
 
-        // --- Data Fetching ---
+        // --- Data Fetching & Real-time ---
+        function startAutoRefresh() {
+            // ดึงข้อมูลทุกๆ 5 วินาที เพื่อความเรียลไทม์
+            autoRefreshInterval = setInterval(() => {
+                if(!isEditing) fetchDataSilent();
+            }, 5000); 
+        }
+
         function fetchData() {
-            showToast("กำลังดึงข้อมูล...", "info");
+            showToast("กำลังซิงค์ข้อมูล...", "info", "loader");
             fetchDataSilent(true);
         }
 
@@ -317,220 +531,412 @@
             fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action: 'getAdminData'}) })
             .then(r=>r.json()).then(res => {
                 if(res.status === 'success') {
-                    globalData = res;
-                    
-                    // Check for new notifications
-                    if(globalData.recentActivities.length > 0 && globalData.recentActivities.length !== lastActivityCount) {
-                        if(lastActivityCount !== 0 && !isManual) {
-                            showToast(`มีการทำรายการใหม่: ${globalData.recentActivities[0].type}`, "success");
+                    // Check New Notification
+                    if(globalData && res.recentActivities.length > 0) {
+                        const newAct = res.recentActivities[0];
+                        const oldAct = globalData.recentActivities[0];
+                        if(oldAct && newAct.time !== oldAct.time && !isManual) {
+                            showToast(`รายการใหม่: ${newAct.type} โดย ${newAct.name}`, "success", "bell-ring");
                         }
-                        lastActivityCount = globalData.recentActivities.length;
                     }
 
+                    globalData = res;
+                    
                     if(currentView === 'dashboard') renderDashboard();
-                    else if(currentView !== 'broadcast') buildTable(currentView); // Update current table quietly
+                    else if(currentView !== 'broadcast' && !isEditing) buildTable(currentView);
 
-                    if(isManual) showToast("อัปเดตข้อมูลเรียบร้อย", "success");
+                    if(isManual) showToast("อัปเดตข้อมูลล่าสุดแล้ว", "success", "check-circle");
                 }
-            }).catch(e => console.log("Silent fetch error", e));
+            }).catch(e => console.log("Fetch error"));
         }
 
         // --- Dashboard Render ---
         function renderDashboard() {
             if(!globalData) return;
-            $('#stat-users').text(globalData.stats.users);
-            $('#stat-orders').text('฿' + globalData.stats.totalRevenue.toLocaleString());
-            $('#stat-deposits').text('฿' + globalData.stats.totalDeposit.toLocaleString());
-            $('#stat-withdraws').text('฿' + globalData.stats.totalWithdraw.toLocaleString());
-
-            $('#donut-in').text('฿' + globalData.stats.totalDeposit.toLocaleString());
-            $('#donut-out').text('฿' + globalData.stats.totalWithdraw.toLocaleString());
+            
+            // Update Stats with Animation
+            animateValue("stat-orders-val", parseInt($('#stat-orders-val').text().replace(/,/g, '')), globalData.stats.totalRevenue, 1000);
+            animateValue("stat-orders-count", parseInt($('#stat-orders-count').text()), globalData.lists.orders.length, 1000);
+            animateValue("stat-users-val", parseInt($('#stat-users-val').text()), globalData.stats.users, 1000);
+            animateValue("stat-deps-val", parseInt($('#stat-deps-val').text().replace(/,/g, '')), globalData.stats.totalDeposit, 1000);
+            animateValue("stat-wds-val", parseInt($('#stat-wds-val').text().replace(/,/g, '')), globalData.stats.totalWithdraw, 1000);
 
             // Recent Table
-            const rb = $('#recent-table-body'); rb.empty();
-            globalData.recentActivities.forEach(a => {
-                const icon = a.type === 'Deposit' ? '<span class="text-success">ฝากเงิน</span>' : '<span class="text-primary">ถอนเงิน</span>';
-                rb.append(`<tr><td>${icon}</td><td>${a.name}</td><td class="font-bold">฿${a.amt.toLocaleString()}</td><td class="text-xs text-gray-500">${a.time}</td></tr>`);
+            const rb = $('#dashboard-recent-tbody'); 
+            rb.empty();
+            globalData.recentActivities.slice(0, 5).forEach((a, i) => {
+                let colorClass = "text-primary";
+                if(a.type.includes("ฝาก")) colorClass = "text-accentInfo";
+                else if(a.type.includes("ถอน")) colorClass = "text-accentSuccess";
+                
+                rb.append(`
+                    <tr class="animate-slide-in" style="animation-delay: ${i*0.1}s">
+                        <td class="font-medium ${colorClass}">${a.type}</td>
+                        <td>${a.name}</td>
+                        <td class="text-right font-bold text-white">฿${a.amt.toLocaleString()}</td>
+                        <td class="text-right text-[11px] text-textGray">${a.time}</td>
+                    </tr>
+                `);
             });
 
-            // Charts
+            // Initialize/Update Charts
             initCharts(globalData.chartData);
         }
 
+        // Number Animation Helper
+        function animateValue(id, start, end, duration) {
+            if (start === end) return;
+            let obj = document.getElementById(id);
+            let range = end - start;
+            let current = start;
+            let increment = end > start ? 1 : -1;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            if(stepTime < 20) stepTime = 20; // limit frame rate
+            let steps = duration / stepTime;
+            let stepVal = range / steps;
+            
+            let timer = setInterval(function() {
+                current += stepVal;
+                if ((stepVal > 0 && current >= end) || (stepVal < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                obj.innerHTML = Math.floor(current).toLocaleString();
+            }, stepTime);
+        }
+
+        // --- Charts Configuration (Chart.js) ---
         function initCharts(data) {
-            Chart.defaults.color = $('html').hasClass('dark') ? '#8f8f9f' : '#666';
+            Chart.defaults.color = '#a0a2b8';
             Chart.defaults.font.family = "'Kanit', sans-serif";
+            Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(44, 46, 62, 0.9)';
+            Chart.defaults.plugins.tooltip.borderColor = '#fbbd08';
+            Chart.defaults.plugins.tooltip.borderWidth = 1;
 
+            // 1. Line Chart (Compare)
+            const ctxLine = document.getElementById('main-line-chart').getContext('2d');
             if(chartInstances.line) chartInstances.line.destroy();
-            if(chartInstances.donut) chartInstances.donut.destroy();
+            
+            // Create Gradients
+            let gradSuccess = ctxLine.createLinearGradient(0, 0, 0, 400); gradSuccess.addColorStop(0, 'rgba(16, 185, 129, 0.5)'); gradSuccess.addColorStop(1, 'rgba(16, 185, 129, 0)');
+            let gradInfo = ctxLine.createLinearGradient(0, 0, 0, 400); gradInfo.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); gradInfo.addColorStop(1, 'rgba(59, 130, 246, 0)');
 
-            const ctxLine = document.getElementById('lineChart').getContext('2d');
             chartInstances.line = new Chart(ctxLine, {
                 type: 'line',
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: 'Orders', data: data.datasets.orders, borderColor: '#00f2c3', tension: 0.4, borderWidth: 2, pointRadius: 0 },
-                        { label: 'Deposits', data: data.datasets.deposits, borderColor: '#1d8cf8', tension: 0.4, borderWidth: 2, pointRadius: 0 },
-                        { label: 'Withdraws', data: data.datasets.withdraws, borderColor: '#e43a3d', tension: 0.4, borderWidth: 2, pointRadius: 0 }
+                        { label: 'ออเดอร์', data: data.datasets.orders, borderColor: '#10b981', backgroundColor: gradSuccess, borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#10b981', fill: true, tension: 0.4 },
+                        { label: 'ฝากเงิน', data: data.datasets.deposits, borderColor: '#3b82f6', backgroundColor: gradInfo, borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#3b82f6', fill: true, tension: 0.4 },
+                        { label: 'ถอนเงิน', data: data.datasets.withdraws, borderColor: '#fbbd08', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#fbbd08', fill: false, tension: 0.4 }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { display: false }, x: { grid: { display: false, color: '#32325d' } } } }
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        y: { display: true, grid: { color: '#3f4156', borderDash: [5, 5] }, ticks: { callback: v => v/1000 + 'k' } }, 
+                        x: { grid: { display: false } } 
+                    },
+                    animation: { duration: 2000, easing: 'easeOutQuart' }
+                }
             });
 
-            const ctxDonut = document.getElementById('donutChart').getContext('2d');
-            chartInstances.donut = new Chart(ctxDonut, {
-                type: 'doughnut',
-                data: {
-                    labels: ['ฝากเงิน', 'ถอนเงิน'],
-                    datasets: [{ data: [globalData.stats.totalDeposit, globalData.stats.totalWithdraw], backgroundColor: ['#00f2c3', '#e43a3d'], borderWidth: 0, cutout: '75%' }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
+            // 2. Net Flow Donuts
+            const donutOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '75%', animation: { animateScale: true }};
+            
+            if(chartInstances.dIn) chartInstances.dIn.destroy();
+            chartInstances.dIn = new Chart(document.getElementById('chart-net-in'), { type: 'doughnut', data: { datasets: [{ data: [globalData.stats.totalDeposit, globalData.stats.totalDeposit*0.3], backgroundColor: ['#3b82f6', '#3f4156'], borderWidth: 0 }] }, options: donutOpts });
+            
+            if(chartInstances.dOut) chartInstances.dOut.destroy();
+            chartInstances.dOut = new Chart(document.getElementById('chart-net-out'), { type: 'doughnut', data: { datasets: [{ data: [globalData.stats.totalWithdraw, globalData.stats.totalDeposit], backgroundColor: ['#fbbd08', '#3f4156'], borderWidth: 0 }] }, options: donutOpts });
+
+            // 3. Breakdown Donuts (Mock Data for visual effect)
+            const bdOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '65%', borderWidth: 0};
+            if(chartInstances.b1) chartInstances.b1.destroy();
+            chartInstances.b1 = new Chart(document.getElementById('breakdown-1'), { type: 'doughnut', data: { datasets: [{ data: [60, 30, 10], backgroundColor: ['#fbbd08', '#3b82f6', '#3f4156'], borderWidth: 2, borderColor: '#2c2e3e' }] }, options: bdOpts });
+            if(chartInstances.b2) chartInstances.b2.destroy();
+            chartInstances.b2 = new Chart(document.getElementById('breakdown-2'), { type: 'doughnut', data: { datasets: [{ data: [80, 15, 5], backgroundColor: ['#10b981', '#8b5cf6', '#3f4156'], borderWidth: 2, borderColor: '#2c2e3e' }] }, options: bdOpts });
+            if(chartInstances.b3) chartInstances.b3.destroy();
+            chartInstances.b3 = new Chart(document.getElementById('breakdown-3'), { type: 'doughnut', data: { datasets: [{ data: [20, 70, 10], backgroundColor: ['#ef4444', '#10b981', '#eab308'], borderWidth: 2, borderColor: '#2c2e3e' }] }, options: bdOpts });
         }
 
-        function updateChartColors() {
-            if(globalData && currentView === 'dashboard') initCharts(globalData.chartData);
-        }
-
-        // --- Dynamic Table Builder ---
+        // --- Dynamic Table Logic ---
         const tableConfigs = {
-            users: { sheet: 'Users', cols: [{h:'Row',k:'row'},{h:'วันที่',k:'date'},{h:'ชื่อ',k:'fname',edit:true},{h:'สกุล',k:'lname',edit:true},{h:'อีเมล',k:'email'},{h:'เบอร์',k:'phone'},{h:'ธนาคาร',k:'bank'},{h:'เลขบัญชี',k:'acc'},{h:'ยอดเงิน',k:'balance',edit:true}] },
-            orders: { sheet: 'Orders', cols: [{h:'Row',k:'row'},{h:'วันที่',k:'date'},{h:'Ref',k:'ref'},{h:'ชื่อ',k:'name'},{h:'รายการ',k:'items'},{h:'ยอดสุทธิ',k:'net'},{h:'ช่องทาง',k:'method'},{h:'สลิป',k:'slip', link:true},{h:'สถานะ',k:'status', edit:true, type:'select', opts:['รอดำเนินการ','การชำระเงินถูกต้อง','สำเร็จ','ยกเลิก']}] },
-            deposits: { sheet: 'Transactions', cols: [{h:'Row',k:'row'},{h:'วันที่',k:'date'},{h:'ชื่อ',k:'name'},{h:'เบอร์',k:'phone'},{h:'ยอดฝาก',k:'amount'},{h:'สลิป',k:'slip', link:true},{h:'สถานะ',k:'status'}] },
-            withdraws: { sheet: 'Transactions', cols: [{h:'Row',k:'row'},{h:'วันที่',k:'date'},{h:'ชื่อ',k:'name'},{h:'เบอร์',k:'phone'},{h:'ยอดถอน',k:'amount'},{h:'สถานะ',k:'status', edit:true, type:'select', opts:['รอดำเนินการ','สำเร็จ','ยกเลิก']}] },
-            products: { sheet: 'ProductList', cols: [{h:'Row',k:'row'},{h:'รหัส',k:'id'},{h:'หมวดหมู่',k:'cat',edit:true},{h:'ชื่อ',k:'name',edit:true},{h:'ราคา',k:'price',edit:true},{h:'รูป',k:'img',edit:true},{h:'ลิ้งค์ไฟล์',k:'dl',edit:true}] },
-            otp: { sheet: 'OTP', cols: [{h:'วันที่',k:'date'},{h:'อีเมล',k:'email'},{h:'OTP',k:'otp'},{h:'สถานะ',k:'status'}] },
-            receipts: { sheet: 'Orders', cols: [{h:'Ref',k:'ref'},{h:'วันที่',k:'date'},{h:'ชื่อ',k:'name'},{h:'ยอดเงิน',k:'net'},{h:'สลิปอ้างอิง',k:'slip', link:true}] },
-            settings: { sheet: 'Settings', cols: [{h:'หัวข้อ',k:'0'},{h:'ค่าที่ตั้ง (Value)',k:'1',edit:true},{h:'คำอธิบาย',k:'2'}] },
-            notification: { sheet: '-', cols: [{h:'เวลา',k:'time'},{h:'ประเภท',k:'type'},{h:'ผู้ใช้',k:'name'},{h:'ยอด',k:'amt'}] }
+            users: { 
+                sheet: 'Users', 
+                cols: [
+                    {h:'วันที่', k:'date'}, {h:'เวลา', k:'time'}, {h:'ชื่อ', k:'fname', edit:true}, {h:'สกุล', k:'lname', edit:true}, 
+                    {h:'อีเมล', k:'email', edit:true}, {h:'เบอร์', k:'phone', edit:true}, {h:'รหัสผ่าน', k:'pass', edit:true}, 
+                    {h:'ธนาคาร', k:'bank', edit:true, type:'select', opts: THAI_BANKS}, {h:'เลขบัญชี', k:'acc', edit:true}, 
+                    {h:'ยอดเงิน', k:'balance', edit:true, format:'money'}
+                ] 
+            },
+            orders: { 
+                sheet: 'Orders', 
+                cols: [
+                    {h:'วันที่', k:'date'}, {h:'Ref', k:'ref'}, {h:'ชื่อ', k:'name'}, {h:'เบอร์', k:'phone'}, 
+                    {h:'รายการ', k:'items', width:'250px'}, {h:'ยอดสุทธิ', k:'net', format:'money'}, {h:'ช่องทาง', k:'method'}, 
+                    {h:'สลิป', k:'slip', link:true}, {h:'สถานะ', k:'status', edit:true, type:'select', opts: ORDER_STATUS, lockOn: ['สำเร็จ', 'ยกเลิก']}
+                ] 
+            },
+            deposits: { 
+                sheet: 'Transactions', 
+                cols: [
+                    {h:'วันที่', k:'date'}, {h:'ID User', k:'userId'}, {h:'ชื่อ', k:'name'}, {h:'อีเมล', k:'email'}, {h:'เบอร์', k:'phone'}, 
+                    {h:'ยอดเงิน', k:'amount', format:'money'}, {h:'สถานะ', k:'status'}, {h:'สลิป', k:'slip', link:true}
+                ] 
+            },
+            withdraws: { 
+                sheet: 'Transactions', 
+                cols: [
+                    {h:'วันที่', k:'date'}, {h:'ID User', k:'userId'}, {h:'ชื่อ', k:'name'}, {h:'อีเมล', k:'email'}, {h:'เบอร์', k:'phone'}, 
+                    {h:'ธนาคาร', k:'bank'}, {h:'เลขบัญชี', k:'acc'}, {h:'ยอดเงิน', k:'amount', format:'money'}, 
+                    {h:'สถานะ', k:'status', edit:true, type:'select', opts: TX_STATUS, lockOn: ['สำเร็จ', 'ยกเลิก']}, {h:'หมายเหตุ', k:'note'}
+                ] 
+            },
+            products: { 
+                sheet: 'ProductList', 
+                cols: [
+                    {h:'รหัส', k:'id'}, {h:'หมวดหมู่', k:'cat', edit:true}, {h:'ชื่อ', k:'name', edit:true}, 
+                    {h:'รายละเอียด', k:'detail', edit:true}, {h:'ราคา', k:'price', edit:true}, {h:'ลิ้งค์รูป', k:'img', edit:true}, 
+                    {h:'ลิ้งค์ไฟล์', k:'dl', edit:true}, {h:'คู่มือ', k:'manual', edit:true}
+                ] 
+            },
+            otp: { sheet: 'OTP', cols: [{h:'วันที่', k:'date'}, {h:'อีเมล', k:'email'}, {h:'OTP', k:'otp'}, {h:'สถานะ', k:'status'}] },
+            receipts: { sheet: 'Orders', cols: [{h:'Ref', k:'ref'}, {h:'วันที่', k:'date'}, {h:'ชื่อ', k:'name'}, {h:'ยอดเงิน', k:'net', format:'money'}, {h:'สลิป', k:'slip', link:true}] },
+            settings: { sheet: 'Settings', cols: [{h:'หัวข้อ', k:'0'}, {h:'ค่าที่ตั้ง (Value)', k:'1', edit:true}, {h:'คำอธิบาย', k:'2'}] },
+            notification: { sheet: '-', cols: [{h:'เวลา', k:'time'}, {h:'ประเภท', k:'type'}, {h:'ผู้ใช้', k:'name'}, {h:'ยอดเงิน', k:'amt', format:'money'}] }
         };
 
         function buildTable(type) {
             if(!globalData) return;
-            const th = $('#dynamic-thead'); const tb = $('#dynamic-tbody');
-            th.empty(); tb.empty();
-            const conf = tableConfigs[type]; if(!conf) return;
+            const conf = tableConfigs[type]; 
+            if(!conf) return;
 
-            // Header
             let trh = '<tr>';
-            conf.cols.forEach(c => trh += `<th>${c.h}</th>`);
-            if(conf.cols.some(c=>c.edit)) trh += `<th class="text-right">จัดการ</th>`;
-            trh += '</tr>'; th.append(trh);
+            conf.cols.forEach(c => trh += `<th style="${c.width ? `min-width:${c.width}` : ''}">${c.h}</th>`);
+            if(conf.cols.some(c=>c.edit) || conf.sheet !== '-') trh += `<th class="text-center sticky right-0 bg-[#1f212d] shadow-[-5px_0_10px_rgba(0,0,0,0.2)]">จัดการ</th>`;
+            trh += '</tr>'; 
+            $('#dynamic-thead').html(trh);
 
-            // Data
             let dataSource = [];
-            if(type === 'settings') {
-                let sArr = Object.entries(globalData.lists.settings);
-                dataSource = sArr.map((v,i) => ({row: i+2, 0: v[0], 1: v[1], 2: '-'}));
-            } else if (type === 'notification') {
-                dataSource = globalData.recentActivities;
-            } else if (type === 'receipts') {
-                dataSource = globalData.lists.orders.filter(o => o.slip && o.slip !== '-');
-            } else { dataSource = globalData.lists[type]; }
+            if(type === 'settings') dataSource = Object.entries(globalData.lists.settings).map((v,i) => ({row: i+2, 0: v[0], 1: v[1], 2: '-'}));
+            else if(type === 'notification') dataSource = globalData.recentActivities;
+            else if(type === 'receipts') dataSource = globalData.lists.orders.filter(o => o.slip && o.slip !== '-');
+            else dataSource = globalData.lists[type] || [];
 
-            if(!dataSource || dataSource.length === 0) {
-                tb.append(`<tr><td colspan="10" class="text-center py-4">ไม่มีข้อมูล</td></tr>`); return;
-            }
-
-            dataSource.forEach(row => {
-                let tr = `<tr data-row="${row.row}">`;
-                conf.cols.forEach((c, cIdx) => {
-                    let val = row[c.k] || '-';
-                    if(c.link && val !== '-') val = `<a href="${val}" target="_blank" class="text-info hover:underline"><i data-lucide="external-link" class="w-4 h-4 inline"></i> ดูไฟล์</a>`;
+            let tbodyHtml = '';
+            if(dataSource.length === 0) {
+                tbodyHtml = `<tr><td colspan="15" class="text-center py-10 text-textGray"><i data-lucide="inbox" class="w-10 h-10 mx-auto mb-3 opacity-50"></i> ไม่มีข้อมูล</td></tr>`;
+            } else {
+                dataSource.forEach(row => {
+                    let tr = `<tr data-row="${row.row || ''}">`;
                     
-                    if(c.edit) {
-                        let actualColIndex = type==='settings'? 2 : cIdx+1; // คำนวณคอลัมน์ Excel แบบลวกๆ
-                        if(type==='orders' && c.k==='status') actualColIndex = 10;
-                        if(type==='withdraws' && c.k==='status') actualColIndex = 8;
-                        if(type==='users' && c.k==='balance') actualColIndex = 10;
+                    // ป้องกันการแก้แถวที่โดนล๊อค
+                    let isLocked = false;
+                    if(conf.cols.some(c => c.lockOn && c.lockOn.includes(row[c.k]))) isLocked = true;
 
-                        if(c.type === 'select') {
-                            let opts = ''; c.opts.forEach(o => opts += `<option value="${o}" ${val===o?'selected':''}>${o}</option>`);
-                            tr += `<td><select class="editable-select ds-input" data-col="${actualColIndex}" data-old="${val}" disabled>${opts}</select></td>`;
-                        } else {
-                            tr += `<td><input type="text" class="editable-input ds-input" value="${val}" data-col="${actualColIndex}" data-old="${val}" disabled></td>`;
+                    conf.cols.forEach((c, cIdx) => {
+                        let val = row[c.k];
+                        if(val === undefined || val === '') val = '-';
+                        let displayVal = c.format === 'money' && val !== '-' ? '฿' + parseFloat(val).toLocaleString() : val;
+                        
+                        if(c.link && val !== '-') {
+                            tr += `<td><a href="${val}" target="_blank" class="bg-primary/20 text-primary px-2 py-1 rounded text-xs hover:bg-primary hover:text-black transition-colors whitespace-nowrap"><i data-lucide="image" class="w-3 h-3 inline"></i> ดูไฟล์</a></td>`;
                         }
-                    } else { tr += `<td>${val}</td>`; }
-                });
+                        else if(c.edit) {
+                            // หา Column Index ในชีตจริง (ฮาร์ดโค้ดคร่าวๆ เพื่อให้ตรงกับโครงสร้างคุณ)
+                            let actualColIndex = type==='settings' ? 2 : cIdx+1;
+                            if(type==='users') {
+                                const m = {fname:3, lname:4, email:5, phone:6, pass:7, bank:8, acc:9, balance:10};
+                                actualColIndex = m[c.k] || cIdx+1;
+                            }
+                            if(type==='orders' && c.k==='status') actualColIndex = 10;
+                            if(type==='withdraws' && c.k==='status') actualColIndex = 8;
+                            
+                            let disableAttr = isLocked ? 'disabled title="รายการนี้ถูกปิดผนึกแล้ว"' : 'disabled';
+                            
+                            if(c.type === 'select') {
+                                // ตกแต่งสีให้ Select ตามสถานะ
+                                let colorClass = '';
+                                if(val === 'สำเร็จ' || val === 'การชำระเงินถูกต้อง') colorClass = 'text-green-400 font-bold';
+                                else if(val === 'ยกเลิก') colorClass = 'text-red-400 font-bold';
+                                else if(val === 'รอดำเนินการ') colorClass = 'text-yellow-400 font-bold';
 
-                if(conf.cols.some(c=>c.edit)) {
-                    tr += `<td class="text-right whitespace-nowrap">
-                            <button class="btn-edit text-blue-500 hover:text-blue-300 mr-2"><i data-lucide="edit" class="w-4 h-4"></i></button>
-                            <button class="btn-save text-success hover:text-green-300 mr-2 hidden" data-sheet="${conf.sheet}" data-type="${type}"><i data-lucide="check" class="w-4 h-4"></i></button>
-                            <button class="btn-del text-primary hover:text-red-300" data-sheet="${conf.sheet}"><i data-lucide="trash" class="w-4 h-4"></i></button>
-                           </td>`;
-                }
-                tr += '</tr>'; tb.append(tr);
-            });
+                                let opts = ''; c.opts.forEach(o => opts += `<option value="${o}" ${val===o?'selected':''}>${o}</option>`);
+                                tr += `<td><select class="editable-select ds-input ${colorClass}" data-col="${actualColIndex}" data-old="${val}" ${disableAttr}>${opts}</select></td>`;
+                            } else {
+                                tr += `<td><input type="text" class="editable-input ds-input" value="${val}" data-col="${actualColIndex}" data-old="${val}" ${disableAttr}></td>`;
+                            }
+                        } 
+                        else { 
+                            // ตกแต่ง Text ธรรมดา
+                            if(val === 'สำเร็จ') tr += `<td><span class="badge-success">${val}</span></td>`;
+                            else if(val === 'ยกเลิก') tr += `<td><span class="badge-danger">${val}</span></td>`;
+                            else if(val.toString().indexOf('รอ') > -1) tr += `<td><span class="badge-warning">${val}</span></td>`;
+                            else tr += `<td><div class="truncate max-w-[200px]" title="${val}">${displayVal}</div></td>`; 
+                        }
+                    });
+
+                    // Action Buttons (ยกเว้นชีต Notification)
+                    if(conf.sheet !== '-') {
+                        tr += `<td class="text-center sticky right-0 bg-[#1f212d] shadow-[-5px_0_10px_rgba(0,0,0,0.2)] whitespace-nowrap px-3">`;
+                        if(conf.cols.some(c=>c.edit) && !isLocked) {
+                            tr += `
+                                <button class="btn-edit w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-colors mx-1" title="แก้ไข"><i data-lucide="edit-2" class="w-4 h-4 mx-auto"></i></button>
+                                <button class="btn-save hidden w-8 h-8 rounded-full bg-green-500/10 text-green-400 hover:bg-green-500 hover:text-white transition-colors mx-1" data-sheet="${conf.sheet}" data-type="${type}" title="บันทึก"><i data-lucide="check" class="w-4 h-4 mx-auto"></i></button>
+                            `;
+                        } else if(isLocked) {
+                            tr += `<span class="text-textGray w-8 inline-block" title="ล๊อคแล้ว"><i data-lucide="lock" class="w-4 h-4 mx-auto"></i></span>`;
+                        }
+                        tr += `<button class="btn-del w-8 h-8 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors mx-1" data-sheet="${conf.sheet}" title="ลบข้อมูล"><i data-lucide="trash-2" class="w-4 h-4 mx-auto"></i></button>`;
+                        tr += `</td>`;
+                    }
+                    tr += '</tr>';
+                    tbodyHtml += tr;
+                });
+            }
+            
+            $('#dynamic-tbody').html(tbodyHtml);
             lucide.createIcons();
             attachTableEvents();
         }
 
         function attachTableEvents() {
             $('.btn-edit').off('click').on('click', function() {
+                isEditing = true; // หยุด Auto Refresh ชั่วคราว
                 const tr = $(this).closest('tr');
+                tr.addClass('bg-white/5 shadow-inner border border-primary/50');
                 tr.find('.ds-input').prop('disabled', false).first().focus();
-                $(this).hide(); tr.find('.btn-save').removeClass('hidden');
+                $(this).hide(); 
+                tr.find('.btn-save').removeClass('hidden');
             });
 
             $('.btn-save').off('click').on('click', function() {
                 const tr = $(this).closest('tr');
-                const btn = $(this); btn.html('<i data-lucide="loader" class="w-4 h-4 animate-spin"></i>');
+                const btn = $(this); 
+                btn.html('<i data-lucide="loader" class="w-4 h-4 mx-auto animate-spin"></i>').prop('disabled', true);
+                
                 const rowId = tr.data('row');
                 const sheet = btn.data('sheet');
                 const type = btn.data('type');
                 
                 let promises = [];
                 tr.find('.ds-input').each(function() {
-                    let val = $(this).val(); let col = $(this).data('col'); let old = $(this).data('old');
+                    let val = $(this).val(); 
+                    let col = $(this).data('col'); 
+                    let old = $(this).data('old');
                     if(val !== String(old)) {
-                        promises.push(fetch(GAS_URL, {method:'POST', body:JSON.stringify({action:'updateAdminRow', sheet:sheet, row:rowId, col:col, val:val, actionType:type})}).then(r=>r.json()));
+                        promises.push(fetch(GAS_URL, {
+                            method:'POST', 
+                            body:JSON.stringify({action:'updateAdminRow', sheet:sheet, row:rowId, col:col, val:val, actionType:type})
+                        }).then(r=>r.json()));
                     }
                 });
 
-                if(promises.length === 0) { resetRowBtn(tr); return; }
+                if(promises.length === 0) { 
+                    resetRowBtn(tr); 
+                    isEditing = false;
+                    return; 
+                }
 
                 Promise.all(promises).then(results => {
-                    showToast("อัปเดตข้อมูลสำเร็จ", "success");
+                    showToast("บันทึกข้อมูลและส่งแจ้งเตือนสำเร็จ", "success", "check-circle");
                     tr.find('.ds-input').each(function(){ $(this).data('old', $(this).val()); });
                     resetRowBtn(tr);
-                    fetchDataSilent(); // refresh memory
-                }).catch(e => { showToast("Error updating", "error"); resetRowBtn(tr); });
+                    isEditing = false;
+                    fetchDataSilent(); // Refresh full table after save
+                }).catch(e => { 
+                    showToast("Error updating", "error", "alert-circle"); 
+                    resetRowBtn(tr); 
+                    isEditing = false;
+                });
             });
 
             $('.btn-del').off('click').on('click', function() {
-                if(!confirm("ยืนยันการลบข้อมูลแถวนี้?")) return;
-                const tr = $(this).closest('tr'); const rowId = tr.data('row'); const sheet = $(this).data('sheet');
+                if(!confirm("⚠️ คำเตือน: ยืนยันการลบข้อมูลแถวนี้อย่างถาวร?")) return;
+                const tr = $(this).closest('tr'); 
+                const rowId = tr.data('row'); 
+                const sheet = $(this).data('sheet');
+                
+                tr.css('opacity', '0.5');
                 fetch(GAS_URL, {method:'POST', body:JSON.stringify({action:'deleteAdminRow', sheet:sheet, row:rowId})})
                 .then(r=>r.json()).then(res => {
-                    if(res.status==='success') { tr.fadeOut(); showToast("ลบข้อมูลสำเร็จ", "success"); }
+                    if(res.status==='success') { 
+                        tr.slideUp(300, function(){ $(this).remove(); }); 
+                        showToast("ลบข้อมูลสำเร็จ", "success", "trash"); 
+                        // Update global list manually to avoid immediate refresh jitter
+                        globalData.lists[currentView] = globalData.lists[currentView].filter(item => item.row !== rowId);
+                    } else {
+                        tr.css('opacity', '1');
+                    }
                 });
             });
+            
+            // ยกเลิกการ Edit เมื่อ Focus Out (ถ้าต้องการ)
+            // $('.ds-input').on('blur', function() { ... });
         }
-        function resetRowBtn(tr) { tr.find('.ds-input').prop('disabled', true); tr.find('.btn-save').addClass('hidden').html('<i data-lucide="check" class="w-4 h-4"></i>'); tr.find('.btn-edit').show(); lucide.createIcons(); }
+
+        function resetRowBtn(tr) { 
+            tr.removeClass('bg-white/5 shadow-inner border border-primary/50');
+            tr.find('.ds-input').prop('disabled', true); 
+            tr.find('.btn-save').addClass('hidden').html('<i data-lucide="check" class="w-4 h-4 mx-auto"></i>').prop('disabled', false); 
+            tr.find('.btn-edit').show(); 
+            lucide.createIcons(); 
+        }
 
         // --- Broadcast ---
         function sendBroadcast() {
-            const subj = $('#bc-subject').val(); const img = $('#bc-img').val(); const det = $('#bc-details').val();
-            if(!subj || !det) { alert("กรอกข้อมูลให้ครบ"); return; }
-            if(!confirm("ยืนยันส่งอีเมลแจ้งเตือนให้ผู้ใช้งานทุกคน? (อาจใช้เวลานาน)")) return;
+            const subj = $('#bc-subject').val(); 
+            const img = $('#bc-img').val(); 
+            const det = $('#bc-details').val();
+            
+            if(!subj || !det) { showToast("กรุณากรอกข้อมูลให้ครบถ้วน", "error", "alert-circle"); return; }
+            if(!confirm("ยืนยันส่งอีเมลหาผู้ใช้ทั้งหมด? (ระบบจะส่งทีเดียว อาจใช้เวลาสักครู่)")) return;
 
-            const btn = $('#btn-bc'); btn.html('<i data-lucide="loader" class="animate-spin inline w-4 h-4 mr-2"></i> กำลังส่ง...').prop('disabled', true);
-            fetch(GAS_URL, { method: 'POST', body: JSON.stringify({action:'broadcastEmail', subject:subj, details:det, imgUrl:img}) })
+            const btn = $('#btn-bc'); 
+            btn.html('<i data-lucide="loader" class="animate-spin w-5 h-5 mr-2"></i> กำลังส่ง... โปรดรอสักครู่').prop('disabled', true);
+            
+            fetch(GAS_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({action:'broadcastEmail', subject:subj, details:det, imgUrl:img}) 
+            })
             .then(r=>r.json()).then(res => {
-                btn.html('<i data-lucide="send" class="inline w-4 h-4 mr-2"></i> ส่งอีเมลถึงผู้ใช้ทุกคน').prop('disabled', false);
-                alert(res.message); $('#broadcast-form')[0].reset();
-            }).catch(e => { alert("Error"); btn.html('<i data-lucide="send" class="inline w-4 h-4 mr-2"></i> ส่งอีเมลถึงผู้ใช้ทุกคน').prop('disabled', false); });
+                btn.html('<i data-lucide="send" class="w-5 h-5 mr-2"></i> ส่ง Broadcast เลย').prop('disabled', false);
+                lucide.createIcons();
+                if(res.status === 'success') {
+                    showToast(res.message, "success", "check-circle");
+                    $('#broadcast-form')[0].reset();
+                } else {
+                    showToast(res.message, "error", "alert-circle");
+                }
+            }).catch(e => { 
+                showToast("เกิดข้อผิดพลาดในการเชื่อมต่อ", "error", "alert-circle"); 
+                btn.html('<i data-lucide="send" class="w-5 h-5 mr-2"></i> ส่ง Broadcast เลย').prop('disabled', false); 
+                lucide.createIcons();
+            });
         }
 
-        // --- UI Helpers ---
-        function showToast(msg, type="info") {
-            const colors = { success: 'bg-green-500', error: 'bg-primary', info: 'bg-info' };
+        // --- Custom Toast UI ---
+        function showToast(msg, type="info", icon="info") {
+            const colors = { 
+                success: 'bg-green-500/20 text-green-400 border-green-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]', 
+                error: 'bg-red-500/20 text-red-400 border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]', 
+                info: 'bg-blue-500/20 text-blue-400 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.2)]' 
+            };
             const id = 'toast-' + Date.now();
-            $('#toast-container').append(`<div id="${id}" class="toast ${colors[type]} text-white px-4 py-3 rounded shadow-lg text-sm flex items-center"><i data-lucide="info" class="w-4 h-4 mr-2"></i> ${msg}</div>`);
+            $('#toast-container').append(`
+                <div id="${id}" class="animate-slide-in backdrop-blur-md border ${colors[type]} px-5 py-3 rounded-lg text-sm flex items-center min-w-[300px]">
+                    <i data-lucide="${icon}" class="w-5 h-5 mr-3"></i> 
+                    <span class="font-medium">${msg}</span>
+                </div>
+            `);
             lucide.createIcons();
-            setTimeout(() => { $(`#${id}`).fadeOut(300, function(){ $(this).remove(); }); }, 3000);
+            setTimeout(() => { 
+                $(`#${id}`).css('transform', 'translateY(-20px)').css('opacity', '0').css('transition', 'all 0.5s');
+                setTimeout(()=> $(`#${id}`).remove(), 500);
+            }, 3000);
         }
     </script>
 </body>
