@@ -51,7 +51,6 @@
     </script>
 
     <script>
-        // กำหนดไว้บนสุด ป้องกันปัญหา formatPrice is not defined
         function formatPrice(price) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(price).replace('$', '฿'); }
     </script>
 
@@ -77,7 +76,7 @@
         .slip-container * { color: initial; } 
         .header-icon-box { width: 36px; height: 36px; background-color: white; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         
-        /* iOS Spinner Style */
+        /* iOS Spinner Style (Red/White Theme) */
         .ios-spinner { color: official; display: inline-block; position: relative; width: 60px; height: 60px; }
         .ios-spinner div { transform-origin: 30px 30px; animation: ios-spinner 1.2s linear infinite; }
         .ios-spinner div:after { content: " "; display: block; position: absolute; top: 3px; left: 28px; width: 4px; height: 14px; border-radius: 20%; background: #e43a3d; }
@@ -112,7 +111,7 @@
         .bank-card { background: linear-gradient(135deg, #e43a3d 0%, #991b1b 100%); position: relative; overflow: hidden; }
         .bank-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; }
 
-        .statement-page-container { width: 100%; min-width: 800px; background-color: #ffffff; margin: 0 auto; padding: 30px; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
+        .statement-page-container { width: 100%; min-width: 750px; background-color: #ffffff; margin: 0 auto; padding: 30px; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
         .stmt-theme-red { color: #ff0000; }
         .stmt-table-header { border-bottom: 2px solid #1a1a1a; }
         .stmt-table { width: 100%; font-size: 12px; }
@@ -173,9 +172,7 @@
                     <div class="flex items-center space-x-3 sm:space-x-5">
                         <div id="auth-buttons-wrapper" class="mr-2 border-r border-gray-200 dark:border-gray-700 pr-4">
                             <div class="hidden md:flex items-center space-x-2">
-                                <button onclick="openAuth('login')" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">ลงชื่อเข้าใช้</button>
-                                <span class="text-gray-300 dark:text-gray-600">/</span>
-                                <button onclick="openAuth('register')" class="text-sm font-medium text-primary hover:text-primaryHover transition-colors">สมัครใช้งาน</button>
+                                <button onclick="navigate('auth')" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">ลงชื่อเข้าใช้ / สมัครใช้งาน</button>
                             </div>
                         </div>
 
@@ -382,7 +379,6 @@
                 
                 <div class="overflow-x-auto w-full pb-4">
                     <div id="statement-capture-area" class="statement-page-container shadow-xl relative">
-                        
                         <div class="flex justify-between items-start mb-6">
                             <div class="flex items-end space-x-2">
                                 <span class="text-3xl sm:text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
@@ -514,7 +510,7 @@
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
 
-            <!-- View: Auth (Full width like Privacy Policy) -->
+            <!-- View: Auth (Full Page View) -->
             <div id="view-auth" class="hidden max-w-4xl mx-auto px-4 py-12">
                 <div class="bg-white dark:bg-[#1e1e1e] border shadow-lg rounded-sm overflow-hidden max-w-lg mx-auto p-6 md:p-8">
                     <!-- Login Form -->
@@ -527,7 +523,7 @@
                             <button type="button" onclick="submitLogin()" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-login">ลงชื่อเข้าใช้งาน</button>
                         </form>
                         <div class="mt-6 text-center border-t pt-6">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">ยังไม่มีบัญชี? <button type="button" onclick="switchAuthTab('register')" class="text-primary font-bold hover:underline ml-1">สร้างบัญชีใหม่</button></p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">ยังไม่มีบัญชี? <button type="button" onclick="switchAuthTab('register')" class="text-primary font-bold hover:underline ml-1">สร้างบัญชี</button></p>
                         </div>
                     </div>
 
@@ -712,37 +708,15 @@
                 </div>
             </div>
 
-            <!-- View: Success -->
-            <div id="view-success" class="hidden max-w-xl mx-auto px-4 py-20 text-center animate-fade-in">
-                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check" class="w-8 h-8"></i></div>
-                <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white" id="success-title">ทำรายการเรียบร้อย!</h2>
-                <p class="text-gray-500 mb-6 text-sm" id="success-desc">ระบบได้ดำเนินการและส่งรายละเอียดไปยังอีเมลของคุณแล้ว</p>
-                <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm">
-                    <div class="mb-2"><span class="text-gray-500 text-xs uppercase" id="success-ref-label">รหัสอ้างอิง (Ref)</span><p class="text-lg font-mono font-bold text-primary" id="display-order-id">#NX-00000</p></div>
-                    <div class="pt-4 mt-4 border-t text-sm text-gray-600 dark:text-gray-400"><p>กรุณาตรวจสอบกล่องจดหมาย หรือโฟลเดอร์ Junk/Spam หากไม่ได้รับอีเมลภายใน 5 นาที</p></div>
-                </div>
-                <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
-            </div>
-
-            <!-- Policy Views -->
+            <!-- View: Policy -->
             <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
                     <h3 class="font-semibold text-lg">การเปิดเผยข้อมูลส่วนบุคคล</h3>
                     <p>เราจะไม่ขายหรือเผยแพร่ข้อมูลส่วนตัวของคุณให้แก่บุคคลที่สามอื่น หรือองค์กรอื่นใด การเปิดเผยข้อมูลจะเกิดขึ้นก็ต่อเมื่อคุณเป็นผู้ร้องขอและให้ความยินยอมให้เราดำเนินการให้ หรือ การเปิดเผยข้อมูลนั้นเป็นไปตามที่กฎหมายอนุญาต หรือเป็นไปตามที่กฎหมายกำหนด อาทิ การเปิดเผยข้อมูลตามคำสั่งเจ้าหน้าที่ของรัฐซึ่งกฎหมายได้ให้อำนาจไว้ ตามคำสั่งศาล หรือตามหมายศาล</p>
                     <p>เพื่อการพัฒนาและบำรุงรักษาระบบการของเราให้มีความปลอดภัยและมีประสิทธิภาพสูงสุด เราอาจทำความตกลงไว้กับบุคคลที่สามเพื่อให้ดำเนินงานกับเรา หรือดำเนินการในนามของเรา ทั้งนี้บุคคลที่สามนั้นจะต้องยอมรับข้อตกลงคุ้มครองข้อมูลส่วนตัวของคุณไว้เป็นความลับเช่นเดียวกัน</p>
-                    <p>ในบางกรณี เราอาจดำเนินการนโยบายการตลาดหรือโฆษณาส่งเสริมบริการร่วมกับบุคคลที่สามสำหรับกลุ่มผู้ที่ยังไม่เคยใช้บริการ เราจึงสงวนสิทธิในการยืนยันรับรองกับบุคคลที่สามว่าคุณได้ใช้บริการกับเราแล้ว</p>
-                    <h3 class="font-semibold text-lg mt-6">การเก็บรักษาข้อมูล</h3>
-                    <p>ข้อมูลที่เราจำเป็นต้องร้องขอเพื่อใช้สำหรับยืนยันตัวตนจากคุณได้แก่ ชื่อนามสกุล และ อีเมล นอกจากนี้อาจมีการเก็บข้อมูล ไอพีแอดเดรส เพื่อให้เป็นไปตามข้อกำหนดทางกฎหมาย</p>
-                    <p>เราจะไม่ใช้ข้อมูลส่วนตัวของคุณเพื่อวัตถุประสงค์ใดนอกจากให้บริการหรือเท่าที่กฎหมายกำหนด เราเคารพและคำนึงถึงความเป็นส่วนตัวของลูกค้าของเราอย่างสูงสุด สิ่งที่สำคัญที่สุดคือความสัมพันธ์ระหว่างคุณและเรา เราต้องการให้คุณสบายใจและมั่นใจใช้ผลิตภัณฑ์และบริการของเราและเชื่อถือความปลอดภัยของข้อมูลส่วนตัวและแบบแสดงรายการที่คุณกรอกไว้ให้เรา</p>
-                    <p>คุณมีหน้าที่ปกป้องข้อมูลบนอุปกรณ์ของคุณเช่นการใช้โปรแกรมป้องกันไวรัส, การอัพเดตซอฟท์แวร์, เปลี่ยนรหัสผ่าน, และไม่ให้บุคคลที่สามเข้าถึงอุปกรณ์ของคุณได้ไม่ว่าทางใด</p>
                     <h3 class="font-semibold text-lg mt-6">การลบข้อมูล</h3>
-                    <p>Next Live Shop มีเจตนารักษาข้อมูลบุคคลของคุณให้ถูกต้องและอัพเดทอยู่เสมอ โดยเราจะลบข้อมูลของคุณทั้งหมดหากไม่จำเป็นต้องใช้ข้อมูลเหล่านั้นแล้ว</p>
-                    <p>คุณมีสิทธิขอลบหรือทำลายข้อมูลส่วนบุคคลของคุณได้ตลอดเวลา หากคุณต้องการใช้สิทธิ์นี้กรุณาติดต่อผ่านช่องทางของเรา และแจ้งคำร้องขอให้ทำลายข้อมูลของคุณ โดยเจ้าหน้าที่อาจมีการขอให้แสดงตัวเพื่อยืนยันความเป็นเจ้าของข้อมูล</p>
-                    <h3 class="font-semibold text-lg mt-6">ความปลอดภัยของข้อมูล</h3>
-                    <p>เพราะข้อมูลของคุณเป็นสิ่งที่มีค่ามากที่สุด เราให้ความสำคัญกับความเชื่อมั่นของคุณเป็นอันดับหนึ่งสำหรับเรา เราระลึกอยู่เสมอว่าคุณต้องการความปลอดภัยสูงสุดในการใช้บริการและรักษาความลับของข้อมูลส่วนตัว เราจึงดำเนินการอย่างเข้มงวดเพื่อรักษาความปลอดภัยและป้องกันการนำข้อมูลของคุณโดยไม่ได้รับอนุญาตด้วยมาตรฐานขั้นสูง</p>
-                    <p>เราใช้ระบบรักษาความปลอดภัยของข้อมูลที่มีมาตรฐานระดับเดียวกับธนาคารและสายการบินที่เป็นที่ยอมรับในระดับสากลทั้งในส่วนของเทคโนโลยีและกระบวนการเพื่อป้องกันการโจรกรรมข้อมูลที่เป็นความลับโดยคำนึงถึงประสิทธิภาพสูงสุด เราได้จัดสรรเวลา บุคลากร และทรัพยากรต่างๆ อย่างเต็มที่เพื่อให้คุณมั่นใจในการรักษาความปลอดภัยที่ได้มาตรฐานสูงสุดของเรา ซึ่งรวมถึงเทคโนโลยีเข้ารหัสข้อมูลในระดับ 256 บิท (256-bit Encryption) ซึ่งเป็นการเข้ารหัสระดับสูงสุดของให้บริการมาตรฐานเดียวกับการทำธุรกรรมทางอินเทอร์เน็ตของธนาคารและสายการบิน</p>
-                    <p>เราทำการทดสอบและปรับปรุงเทคโนโลยีรักษาความปลอดภัยของเราอย่างต่อเนื่องและสม่ำเสมอเพื่อให้คุณมั่นใจว่าข้อมูลส่วนตัวของคุณได้รับการดูแลด้วยมาตรการรักษาความปลอดภัยสูงสุด</p>
+                    <p>Next Live Shop มีเจตนารักษาข้อมูลบุคคลของคุณให้ถูกต้องและอัพเดทอยู่เสมอ โดยเราจะลบข้อมูลของคุณทั้งหมดหากไม่จำเป็นต้องใช้ข้อมูลเหล่านั้นแล้ว คุณมีสิทธิขอลบหรือทำลายข้อมูลส่วนบุคคลของคุณได้ตลอดเวลา</p>
                 </div>
             </div>
 
@@ -752,30 +726,16 @@
                     <p>เว็บไซต์ Next Live Shop ขอแจ้งนโยบายการคืนเงินเพื่อเป็นข้อตกลงและสร้างความเข้าใจเกี่ยวกับการใช้บริการเว็บไซต์ ดังนี้</p>
                     <ul class="list-disc pl-5 space-y-2">
                         <li>สินค้าที่ เว็บไซต์ จัดจำหน่ายบนเว็บไซด์ เป็นสินค้าดิจิตอลที่ไม่สามารถคืนสินค้า และไม่สามารถคืนเงินได้</li>
-                        <li>เว็บไซต์ จะทำการคืนเงินค่าสินค้าให้กับลูกค้า ในกรณีที่เว็บไซต์ ไม่สามารถจัดส่งสินค้าให้ลูกค้าได้เท่านั้น (โดยจะทำการคืนเงินให้ในส่วนที่ เว็บไซต์ ไม่ได้จัดส่งสินค้าให้ลูกค้า)</li>
-                    </ul>
-                    <h3 class="font-semibold text-lg mt-6">ระยะเวลาการคืนเงินค่าสินค้า มีรายละเอียดดังนี้</h3>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>กรณีลูกค้าชำระเงินเต็มจำนวนหรือผ่อนชำระ ตัดผ่านบัตรเครดิตของธนาคารพาณิชย์ที่จดทะเบียนในประเทศไทย เว็บไซต์จะส่งเรื่องขอคืนเงินไปยังธนาคาร โดยการคืนเงินจะขึ้นอยู่กับนโยบายของแต่ละธนาคาร ตามปกติแล้วผู้ถือบัตรจะได้รับเงินคืนในรอบบิลถัดไป</li>
-                        <li>กรณีลูกค้าชำระเงินเต็มจำนวน ตัดผ่านช่องทาง True Money Wallet จะทำการคืนเงินกลับไปยัง True Money Wallet ที่ลูกค้าใช้ในการชำระเงิน โดยใช้ระยะเวลาประมาณ 7-14 วันทำการ</li>
-                        <li>กรณีลูกค้าชำระเงินเต็มจำนวน ตัดผ่านบัตรเดบิตของธนาคารพาณิชย์ที่จดทะเบียนในประเทศไทย เว็บไซต์จะส่งเรื่องขอคืนเงินไปยังธนาคาร โดยการคืนเงินจะขึ้นอยู่กับนโยบายของแต่ละธนาคาร ซึ่งจะใช้ระยะเวลาในการคืนเงินตั้งแต่ 30-60 วัน นับจากวันที่ลูกค้าได้รับการแจ้งจาก Call Center</li>
+                        <li>เว็บไซต์ จะทำการคืนเงินค่าสินค้าให้กับลูกค้า ในกรณีที่เว็บไซต์ ไม่สามารถจัดส่งสินค้าให้ลูกค้าได้เท่านั้น</li>
                     </ul>
                     <h3 class="font-semibold text-lg mt-6">ไม่สามารถดำเนินการยกเลิก เปลี่ยนแปลง แก้ไข รายการสั่งซื้อสินค้า ในกรณีต่างๆ ดังนี้</h3>
                     <ul class="list-disc pl-5 space-y-2">
                         <li>กรณีที่เกิดขึ้นจากความผิดพลาดในการสั่งซื้อสินค้า ผิดรุ่น, ผิดประเภทฯ</li>
                         <li>กรณีที่เกิดขึ้นจากการเปลี่ยนแปลงของราคาสินค้าที่อาจเกิดขึ้นได้ในอนาคต รวมถึง Gift Voucher ต่างๆ ทุกกรณี</li>
-                        <li>กรณีที่เกิดขึ้นจากความต้องการใส่ส่วนลดเพิ่มเติม, ลืมใส่ส่วนลด, Coupon</li>
                         <li>กรณีที่เกิดขึ้นจากการเปลี่ยนใจ (Change of mind) ของผู้สั่งซื้อสินค้าทุกกรณี</li>
                     </ul>
-                    <h3 class="font-semibold text-lg mt-6">เว็บไซต์ จะไม่ดำเนินการจัดส่งสินค้า และต้องทำการคืนเงินเท่านั้น เนื่องจากกรณีต่างๆ ดังนี้</h3>
-                    <ul class="list-disc pl-5 space-y-2">
-                        <li>กรณีที่เกิดขึ้นจากสินค้าหมด (เช่น สินค้าหมด Stock, สินค้ายกเลิกการผลิตฯ)</li>
-                        <li>กรณีที่เกิดขึ้นจากเหตุสุดวิสัย (System Error) ที่อาจเกิดขึ้น</li>
-                    </ul>
-                    <p class="mt-4 font-semibold text-red-500">เว็บไซต์ ขอสงวนสิทธิ์ในการคืนเงินเกินระยะเวลาที่กำหนด หากเกิดเหตุสุดวิสัย – เว็บไซต์ ขอสงวนสิทธิในการเปลี่ยนแปลงเงื่อนไขใดๆ โดยไม่จำต้องแจ้งให้ทราบล่วงหน้า</p>
                 </div>
             </div>
-
         </main>
 
         <!-- Footer -->
@@ -1201,6 +1161,11 @@
             safeSetText('vp-balance', `฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
         }
 
+        function updateLiveClock() {
+            const now = new Date(); const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            safeSetText('current-time', now.toLocaleDateString('th-TH', options) + ' น.'); setTimeout(updateLiveClock, 1000);
+        }
+
         function navigate(view) {
             if ((view === 'deposit' || view === 'withdraw' || view === 'profile' || view === 'statement') && !currentUser) {
                 showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้งานฟังก์ชันนี้"); openAuth('login'); return;
@@ -1387,7 +1352,6 @@
             safeSetText('cart-total-price', formatPrice(total));
         }
 
-        // --- Checkout ---
         function proceedToCheckout() { toggleCart(); navigate('checkout'); }
         
         function applyDiscountCode() {
@@ -1483,7 +1447,6 @@
             }).catch(e => { if(btn) { btn.innerText = "ยืนยันการสั่งซื้อ"; btn.disabled = false; } showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); });
         }
 
-        // --- Slip Upload ---
         function handleSlipUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -1540,16 +1503,15 @@
             const btn = document.getElementById('btn-search-history');
             
             if(!phone) { showCustomPopup("แจ้งเตือน", "กรุณาระบุเบอร์โทรศัพท์"); return; }
-            if(btn) { btn.innerHTML = `<div class="dotted-spinner w-5 h-5 border-[3px] border-white inline-block align-middle mr-2"></div>`; btn.disabled = true; }
+            if(btn) { btn.innerHTML = `<div class="ios-spinner w-5 h-5 inline-block align-middle mr-2" style="width:20px;height:20px;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>`; btn.disabled = true; }
 
             callBackend({ action: 'getHistory', phone: phone }).then(res => {
                 if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; }
                 try { lucide.createIcons(); } catch(e) {}
                 
                 if(res.status === 'success') {
-                    globalHistoryData = res;
+                    globalHistoryData = res; 
 
-                    // Orders
                     if(res.orders.length > 0) {
                         if(ordContainer) ordContainer.innerHTML = '';
                         res.orders.forEach((item, idx) => {
@@ -1560,7 +1522,6 @@
                         });
                     } else { if(ordContainer) ordContainer.innerHTML = `<div class="text-center py-8 text-gray-500"><p>ไม่พบประวัติการสั่งซื้อ</p></div>`; }
 
-                    // Deposits
                     if(res.deposits.length > 0) {
                         if(depContainer) depContainer.innerHTML = '';
                         res.deposits.forEach((item, idx) => {
@@ -1571,7 +1532,6 @@
                         });
                     } else { if(depContainer) depContainer.innerHTML = `<div class="text-center py-8 text-gray-500"><p>ไม่พบประวัติการฝากเงิน</p></div>`; }
 
-                    // Withdrawals
                     if(res.withdraws.length > 0) {
                         if(wdContainer) wdContainer.innerHTML = '';
                         res.withdraws.forEach((item, idx) => {
@@ -1587,7 +1547,6 @@
             }).catch(e => { if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; } showCustomPopup("ข้อผิดพลาด", "เชื่อมต่อฐานข้อมูลล้มเหลว"); });
         }
 
-        // --- Statement Logic ---
         function openStatement() {
             if(!globalHistoryData) { showCustomPopup("แจ้งเตือน", "กรุณาค้นหาประวัติก่อนทำรายการ Statement"); return; }
             if(!currentUser) { showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนดึงข้อมูล Statement"); return; }
@@ -1603,66 +1562,35 @@
             safeSetText('stmt-phone', `หมายเลขโทรศัพท์ : ${currentUser.phone}`);
             safeSetText('stmt-admin-name', `ผู้รับเงิน ${siteSettings.AdminName}`);
 
-            // Orders
             const oBody = document.getElementById('stmt-orders-tbody'); oBody.innerHTML = '';
             if(globalHistoryData.orders.length > 0) {
                 globalHistoryData.orders.forEach((o, i) => {
                     let itemsStr = o.items.replace(/\n/g, ' / ');
                     let tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${o.date} (${o.ref})</span></td>
-                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">-</td>
-                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">-</td>
-                        <td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td>
-                        <td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td>
-                        <td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td>
-                        <td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${parseFloat(o.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                    `;
+                    tr.innerHTML = `<td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${o.date} (${o.ref})</span></td><td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">-</td><td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">-</td><td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td><td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td><td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td><td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${parseFloat(o.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>`;
                     oBody.appendChild(tr);
                 });
             } else { oBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
-            // Deposits (คำนวณ Running Balance ย้อนหลังจากยอดปัจจุบัน)
             let tempBalDep = globalHistoryData.balance || 0;
             const dBody = document.getElementById('stmt-deposits-tbody'); dBody.innerHTML = '';
             if(globalHistoryData.deposits.length > 0) {
                 globalHistoryData.deposits.forEach((d, i) => {
                     let tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${d.date}</td>
-                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${formatShortStatus(d.status)}</td>
-                        <td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${tempBalDep.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                    `;
+                    tr.innerHTML = `<td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${d.date}</td><td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td><td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td><td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${formatShortStatus(d.status)}</td><td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${tempBalDep.toLocaleString('en-US',{minimumFractionDigits:2})}</td>`;
                     dBody.appendChild(tr);
-                    // ลบออกเพื่อหักลบไปหายอดก่อนหน้า (เฉพาะถ้ายอดนั้นสำเร็จ)
-                    if(d.status.indexOf("ไม่สำเร็จ") === -1) {
-                        tempBalDep -= parseFloat(d.amount);
-                    }
+                    if(d.status.indexOf("ไม่สำเร็จ") === -1) { tempBalDep -= parseFloat(d.amount); }
                 });
             } else { dBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
-            // Withdraws (คำนวณ Running Balance ย้อนหลังจากยอดปัจจุบัน)
             let tempBalWd = globalHistoryData.balance || 0;
             const wBody = document.getElementById('stmt-withdraws-tbody'); wBody.innerHTML = '';
             if(globalHistoryData.withdraws.length > 0) {
                 globalHistoryData.withdraws.forEach((w, i) => {
                     let tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${w.date}</td>
-                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${currentUser.fname} ${currentUser.lname}</td>
-                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${w.items.split('(')[0].replace('ไปยัง:','').trim()}</td>
-                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${w.items.split('(')[1] ? w.items.split('(')[1].replace(')','') : '-'}</td>
-                        <td class="text-center py-2 border-b border-gray-200 font-bold whitespace-nowrap">${parseFloat(w.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${formatShortStatus(w.status)}</td>
-                        <td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${tempBalWd.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                    `;
+                    tr.innerHTML = `<td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${w.date}</td><td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${currentUser.fname} ${currentUser.lname}</td><td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${w.items.split('(')[0].replace('ไปยัง:','').trim()}</td><td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${w.items.split('(')[1] ? w.items.split('(')[1].replace(')','') : '-'}</td><td class="text-center py-2 border-b border-gray-200 font-bold whitespace-nowrap">${parseFloat(w.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td><td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${formatShortStatus(w.status)}</td><td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${tempBalWd.toLocaleString('en-US',{minimumFractionDigits:2})}</td>`;
                     wBody.appendChild(tr);
-                    // ถอนเงิน = ยอดในอดีตต้องมากกว่าปัจจุบัน (เฉพาะที่รอดำเนินการหรือสำเร็จ ที่หักเงินไปแล้ว)
-                    if(w.status.indexOf("ไม่สำเร็จ") === -1) {
-                        tempBalWd += parseFloat(w.amount);
-                    }
+                    if(w.status.indexOf("ไม่สำเร็จ") === -1) { tempBalWd += parseFloat(w.amount); }
                 });
             } else { wBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
