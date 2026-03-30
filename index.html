@@ -76,7 +76,24 @@
         .slip-container { width: 100%; max-width: 420px; background-color: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.15); overflow: hidden; font-family: 'Kanit', sans-serif; margin: 0 auto; position: relative; }
         .slip-container * { color: initial; } 
         .header-icon-box { width: 36px; height: 36px; background-color: white; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .dotted-spinner { width: 60px; height: 60px; border: 6px dotted #e43a3d; border-radius: 50%; animation: spin 2s linear infinite; }
+        
+        /* iOS Spinner Style */
+        .ios-spinner { color: official; display: inline-block; position: relative; width: 60px; height: 60px; }
+        .ios-spinner div { transform-origin: 30px 30px; animation: ios-spinner 1.2s linear infinite; }
+        .ios-spinner div:after { content: " "; display: block; position: absolute; top: 3px; left: 28px; width: 4px; height: 14px; border-radius: 20%; background: #e43a3d; }
+        .ios-spinner div:nth-child(1) { transform: rotate(0deg); animation-delay: -1.1s; }
+        .ios-spinner div:nth-child(2) { transform: rotate(30deg); animation-delay: -1.0s; }
+        .ios-spinner div:nth-child(3) { transform: rotate(60deg); animation-delay: -0.9s; }
+        .ios-spinner div:nth-child(4) { transform: rotate(90deg); animation-delay: -0.8s; }
+        .ios-spinner div:nth-child(5) { transform: rotate(120deg); animation-delay: -0.7s; }
+        .ios-spinner div:nth-child(6) { transform: rotate(150deg); animation-delay: -0.6s; }
+        .ios-spinner div:nth-child(7) { transform: rotate(180deg); animation-delay: -0.5s; }
+        .ios-spinner div:nth-child(8) { transform: rotate(210deg); animation-delay: -0.4s; }
+        .ios-spinner div:nth-child(9) { transform: rotate(240deg); animation-delay: -0.3s; }
+        .ios-spinner div:nth-child(10) { transform: rotate(270deg); animation-delay: -0.2s; }
+        .ios-spinner div:nth-child(11) { transform: rotate(300deg); animation-delay: -0.1s; }
+        .ios-spinner div:nth-child(12) { transform: rotate(330deg); animation-delay: 0s; }
+        @keyframes ios-spinner { 0% { opacity: 1; } 100% { opacity: 0; } }
 
         .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .5); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; z-index: 99999; }
         .popup-container.active { opacity: 1; pointer-events: auto; transition: .4s ease; }
@@ -95,18 +112,18 @@
         .bank-card { background: linear-gradient(135deg, #e43a3d 0%, #991b1b 100%); position: relative; overflow: hidden; }
         .bank-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; }
 
-        .statement-page-container { width: 100%; max-width: 700px; background-color: #ffffff; margin: 0 auto; padding: 30px; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
+        .statement-page-container { width: 100%; min-width: 800px; background-color: #ffffff; margin: 0 auto; padding: 30px; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
         .stmt-theme-red { color: #ff0000; }
         .stmt-table-header { border-bottom: 2px solid #1a1a1a; }
         .stmt-table { width: 100%; font-size: 12px; }
-        .stmt-table th, .stmt-table td { padding: 6px 4px; }
+        .stmt-table th, .stmt-table td { padding: 6px 4px; white-space: nowrap; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
 
     <div id="global-loader" class="fixed inset-0 bg-white dark:bg-[#121212] z-[100001] flex flex-col items-center justify-center">
-        <div class="dotted-spinner mb-4"></div>
-        <p class="text-gray-500 font-kanit" id="loader-text">กำลังเชื่อต่อ API . . .</p>
+        <div class="ios-spinner mb-4"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <p class="text-gray-500 font-kanit" id="loader-text">กำลังโหลดระบบ...</p>
     </div>
 
     <div id="maintenance-screen" class="hidden">
@@ -181,15 +198,6 @@
                             <i data-lucide="shopping-bag" class="w-5 h-5 mr-0 sm:mr-2"></i>
                             <span class="font-semibold text-sm mr-2 hidden sm:inline">MY CART</span>
                             <span id="cart-badge" class="bg-white text-primary text-xs font-bold px-2 py-0.5 rounded-sm">0</span>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="md:hidden pb-4">
-                    <div class="relative w-full">
-                        <input type="text" id="product-search-mobile" class="w-full pl-4 pr-10 py-2 border-2 border-primary bg-white dark:bg-gray-800 dark:text-white outline-none text-sm rounded-sm" placeholder="ค้นหาสินค้า...">
-                        <button class="absolute right-0 top-0 h-full px-4 text-primary flex items-center justify-center">
-                            <i data-lucide="search" class="w-5 h-5"></i>
                         </button>
                     </div>
                 </div>
@@ -269,8 +277,9 @@
                                 <p class="text-sm opacity-80 uppercase tracking-wider mb-1">บัญชีรับเงินของคุณ</p>
                                 <h3 class="text-xl font-bold font-mono tracking-widest" id="wd-card-acc">XXX-X-XXXXX-X</h3>
                             </div>
-                            <div class="w-16 h-16 flex items-center justify-center text-white" id="wd-card-logo-container">
+                            <div class="flex flex-col items-end text-white" id="wd-card-logo-container">
                                 <i class="bank bank-kbank m text-[80px]" style="line-height: 1; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></i>
+                                <span class="text-[10px] font-bold mt-1 opacity-90" id="wd-card-bankname-text">ธนาคารกสิกรไทย จำกัด (มหาชน)</span>
                             </div>
                         </div>
                         <div class="flex justify-between items-end relative z-10">
@@ -368,123 +377,122 @@
             </div>
 
             <!-- View: Statement Page -->
-            <div id="view-statement" class="hidden w-full mx-auto py-8 sm:py-12 overflow-x-auto bg-gray-100 dark:bg-[#121212]">
-                <button onclick="navigate('history')" class="flex items-center text-gray-500 hover:text-primary mb-6 ml-4 sm:ml-auto max-w-3xl transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าประวัติ</button>
+            <div id="view-statement" class="hidden w-full mx-auto py-8 sm:py-12 bg-gray-100 dark:bg-[#121212]">
+                <button onclick="navigate('history')" class="flex items-center text-gray-500 hover:text-primary mb-6 ml-4 sm:mx-auto sm:max-w-3xl transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าประวัติ</button>
                 
-                <div id="statement-capture-area" class="statement-page-container shadow-xl relative">
-                    <div class="absolute top-6 right-6 text-right" id="stmt-total-balance-display" style="font-size: 14px; font-weight: bold; color: #28a745;">
-                        ยอดเงินคงเหลือปัจจุบัน: ฿0.00
-                    </div>
-
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="flex items-end space-x-2">
-                            <span class="text-3xl sm:text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
+                <div class="overflow-x-auto w-full pb-4">
+                    <div id="statement-capture-area" class="statement-page-container shadow-xl relative">
+                        
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-end space-x-2">
+                                <span class="text-3xl sm:text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-[11px] sm:text-[12px] text-right leading-snug mb-2">
-                        <p>เว็บไซต์ เน็กซ์ ไลฟ์ ช็อป </p>
-                        <p>เว็บไซต์ จำหน่ายสินค้าอิเล็กทรอนิกส์ และสินค้าพรีเมี่ยม</p>
-                    </div>
+                        <div class="text-[11px] sm:text-[12px] text-right leading-snug mb-2">
+                            <p>เว็บไซต์ เน็กซ์ ไลฟ์ ช็อป </p>
+                            <p>เว็บไซต์ จำหน่ายสินค้าอิเล็กทรอนิกส์ และสินค้าพรีเมี่ยม</p>
+                        </div>
 
-                    <div class="flex justify-between items-end mb-6">
-                        <div class="text-[13px] sm:text-[14px] font-semibold" id="stmt-ref">เลขที่ NX-0000-0000-XXXXXX</div>
-                        <div class="flex flex-col items-end text-[12px] sm:text-[13px]">
-                            <div class="flex items-center space-x-2 mb-1">
-                                <div class="text-right leading-tight ml-4">
-                                    <div class="font-bold">ต้นฉบับ ใบเสร็จรับเงิน</div>
-                                    <div>Original Receipt</div>
+                        <div class="flex justify-between items-end mb-6">
+                            <div class="text-[13px] sm:text-[14px] font-semibold" id="stmt-ref">เลขที่ NX-0000-0000-XXXXXX</div>
+                            <div class="flex flex-col items-end text-[12px] sm:text-[13px]">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <div class="text-right leading-tight ml-4">
+                                        <div class="font-bold">ต้นฉบับ ใบเสร็จรับเงิน</div>
+                                        <div>Original Receipt</div>
+                                    </div>
+                                </div>
+                                <div class="text-[11px] sm:text-[12px]">
+                                    <span class="mr-4">Digitally signed by NEXT</span>
+                                    <span id="stmt-date">วันที่ XX-XX-XXXX / XX:XX</span>
                                 </div>
                             </div>
-                            <div class="text-[11px] sm:text-[12px]">
-                                <span class="mr-4">Digitally signed by NEXT</span>
-                                <span id="stmt-date">วันที่ XX-XX-XXXX / XX:XX</span>
+                        </div>
+
+                        <div class="mb-8 text-[12px] sm:text-[13px] leading-relaxed">
+                            <div>
+                                <h3 class="font-bold text-[14px] sm:text-[15px] mb-1 stmt-theme-red">ข้อมูลอ้างอิงและติดต่อผู้ใช้</h3>
+                                <p id="stmt-name">ชื่อ-สกุล : -</p>
+                                <p id="stmt-email">อีเมล : -</p>
+                                <p id="stmt-phone">หมายเลขโทรศัพท์ : -</p>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="mb-8 text-[12px] sm:text-[13px] leading-relaxed">
-                        <div>
-                            <h3 class="font-bold text-[14px] sm:text-[15px] mb-1 stmt-theme-red">ข้อมูลอ้างอิงและติดต่อผู้ใช้</h3>
-                            <p id="stmt-name">ชื่อ-สกุล : -</p>
-                            <p id="stmt-email">อีเมล : -</p>
-                            <p id="stmt-phone">หมายเลขโทรศัพท์ : -</p>
+                        <div class="w-full mb-6">
+                            <table class="stmt-table whitespace-nowrap">
+                                <thead>
+                                    <tr class="stmt-table-header">
+                                        <th colspan="7" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการสั่งซื้อสินค้า</th>
+                                    </tr>
+                                    <tr class="stmt-table-header">
+                                        <th class="text-left font-bold stmt-theme-red w-[40%]">รายการ/Description</th>
+                                        <th class="text-center font-bold stmt-theme-red">ราคา</th>
+                                        <th class="text-center font-bold stmt-theme-red">จำนวน</th>
+                                        <th class="text-right font-bold leading-tight stmt-theme-red">ส่วนลด</th>
+                                        <th class="text-right font-bold leading-tight stmt-theme-red">ยอดสุทธิ</th>
+                                        <th class="text-right font-bold leading-tight stmt-theme-red">ภาษี(VAT)</th>
+                                        <th class="text-right font-bold leading-tight stmt-theme-red">ยอดชำระ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stmt-orders-tbody"></tbody>
+                            </table>
                         </div>
-                    </div>
 
-                    <div class="w-full mb-6">
-                        <table class="stmt-table">
-                            <thead>
-                                <tr class="stmt-table-header">
-                                    <th colspan="7" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการสั่งซื้อสินค้า</th>
-                                </tr>
-                                <tr class="stmt-table-header">
-                                    <th class="text-left font-bold stmt-theme-red w-[40%]">รายการ/Description</th>
-                                    <th class="text-center font-bold stmt-theme-red">ราคา</th>
-                                    <th class="text-center font-bold stmt-theme-red">จำนวน</th>
-                                    <th class="text-right font-bold leading-tight stmt-theme-red">ส่วนลด</th>
-                                    <th class="text-right font-bold leading-tight stmt-theme-red">ยอดสุทธิ</th>
-                                    <th class="text-right font-bold leading-tight stmt-theme-red">ภาษี(VAT)</th>
-                                    <th class="text-right font-bold leading-tight stmt-theme-red">ยอดชำระ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stmt-orders-tbody"></tbody>
-                        </table>
-                    </div>
+                        <div class="w-full mb-6">
+                            <table class="stmt-table whitespace-nowrap">
+                                <thead>
+                                    <tr class="stmt-table-header">
+                                        <th colspan="5" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการ การฝากเงิน/เติมเครดิต (Deposit)</th>
+                                    </tr>
+                                    <tr class="stmt-table-header">
+                                        <th class="text-left font-bold stmt-theme-red w-[30%]">วันที่/เวลา</th>
+                                        <th class="text-center font-bold stmt-theme-red">จำนวนเงิน</th>
+                                        <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตรวม (รวมโบนัส)</th>
+                                        <th class="text-center font-bold leading-tight stmt-theme-red">สถานะ</th>
+                                        <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตคงเหลือ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stmt-deposits-tbody"></tbody>
+                            </table>
+                        </div>
 
-                    <div class="w-full mb-6">
-                        <table class="stmt-table">
-                            <thead>
-                                <tr class="stmt-table-header">
-                                    <th colspan="5" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการ การฝากเงิน/เติมเครดิต (Deposit)</th>
-                                </tr>
-                                <tr class="stmt-table-header">
-                                    <th class="text-left font-bold stmt-theme-red w-[30%]">วันที่/เวลา</th>
-                                    <th class="text-center font-bold stmt-theme-red">จำนวนเงิน</th>
-                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตรวม (รวมโบนัส)</th>
-                                    <th class="text-right font-bold leading-tight stmt-theme-red">สถานะ</th>
-                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตคงเหลือ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stmt-deposits-tbody"></tbody>
-                        </table>
-                    </div>
+                        <div class="w-full">
+                            <table class="stmt-table whitespace-nowrap">
+                                <thead>
+                                    <tr class="stmt-table-header">
+                                        <th colspan="7" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการ การถอนเงิน/ถอนเครดิต (Withdraw)</th>
+                                    </tr>
+                                    <tr class="stmt-table-header">
+                                        <th class="text-left font-bold stmt-theme-red w-[20%]">วันที่/เวลา</th>
+                                        <th class="text-center font-bold stmt-theme-red">ชื่อ นามสกุล</th>
+                                        <th class="text-center font-bold stmt-theme-red">ธนาคาร</th>
+                                        <th class="text-center font-bold leading-tight stmt-theme-red">เลขบัญชี</th>
+                                        <th class="text-center font-bold leading-tight stmt-theme-red">จำนวนเงิน</th>
+                                        <th class="text-center font-bold leading-tight stmt-theme-red">สถานะ</th>
+                                        <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตคงเหลือ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stmt-withdraws-tbody"></tbody>
+                            </table>
+                        </div>
 
-                    <div class="w-full">
-                        <table class="stmt-table">
-                            <thead>
-                                <tr class="stmt-table-header">
-                                    <th colspan="7" class="text-left font-bold pb-2 text-[13px] sm:text-[14px]">ประวัติรายการ การถอนเงิน/ถอนเครดิต (Withdraw)</th>
-                                </tr>
-                                <tr class="stmt-table-header">
-                                    <th class="text-left font-bold stmt-theme-red w-[20%]">วันที่/เวลา</th>
-                                    <th class="text-center font-bold stmt-theme-red">ชื่อ นามสกุล</th>
-                                    <th class="text-center font-bold stmt-theme-red">ธนาคาร</th>
-                                    <th class="text-center font-bold leading-tight stmt-theme-red">เลขบัญชี</th>
-                                    <th class="text-center font-bold leading-tight stmt-theme-red">จำนวนเงิน</th>
-                                    <th class="text-center font-bold leading-tight stmt-theme-red">สถานะ</th>
-                                    <th class="text-right font-bold leading-tight stmt-theme-red">เครดิตคงเหลือ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="stmt-withdraws-tbody"></tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-8 pt-8">
-                        <div class="flex justify-between items-end mb-4 text-[11px] sm:text-[12px]">
-                            <div class="flex">
-                                <span class="font-bold mr-2 stmt-theme-red">ข้อมูลอ้างอิง</span>
-                                <div>
-                                    ออกโดยระบบอัตโนมัติ<br>
-                                    ใช้สำหรับอ้างอิงการทำรายการบนแพลตฟอร์มเท่านั้น
+                        <div class="mt-8 pt-8">
+                            <div class="flex justify-between items-end mb-4 text-[11px] sm:text-[12px]">
+                                <div class="flex">
+                                    <span class="font-bold mr-2 stmt-theme-red">ข้อมูลอ้างอิง</span>
+                                    <div>
+                                        ออกโดยระบบอัตโนมัติ<br>
+                                        ใช้สำหรับอ้างอิงการทำรายการบนแพลตฟอร์มเท่านั้น
+                                    </div>
+                                </div>
+                                <div class="font-bold text-[13px] sm:text-[14px]" id="stmt-admin-name">
+                                    ผู้รับเงิน ชื่อ นามสกุลแอดมิน
                                 </div>
                             </div>
-                            <div class="font-bold text-[13px] sm:text-[14px]" id="stmt-admin-name">
-                                ผู้รับเงิน ชื่อ นามสกุลแอดมิน
-                            </div>
-                        </div>
 
-                        <div class="text-[10px] text-gray-500 border-t border-gray-300 pt-2 leading-tight">
-                            หมายเหตุ : หากเอกสารฉบับนี้ มีข้อมูลรายการไม่ถูกต้อง กรุณาติดต่อเจ้าหน้าที่เพื่อแก้ไขข้อมูลและทำการออกประวัติรายการอีกครั้ง<br>เอกสารฉบับนี้ใช้ภายใต้การให้บริการส่วนบุคคลเท่านั้น ไม่เกี่ยวข้องกับบุคคลที่สาม หรือผู้ให้บริการหน่วยงานอื่นๆ 
+                            <div class="text-[10px] text-gray-500 border-t border-gray-300 pt-2 leading-tight whitespace-normal">
+                                หมายเหตุ : หากเอกสารฉบับนี้ มีข้อมูลรายการไม่ถูกต้อง กรุณาติดต่อเจ้าหน้าที่เพื่อแก้ไขข้อมูลและทำการออกประวัติรายการอีกครั้ง<br>เอกสารฉบับนี้ใช้ภายใต้การให้บริการส่วนบุคคลเท่านั้น ไม่เกี่ยวข้องกับบุคคลที่สาม หรือผู้ให้บริการหน่วยงานอื่นๆ 
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -669,7 +677,7 @@
                                 <img src="https://img1.pic.in.th/images/IMG_1065-removebg.png" class="w-7 h-7 object-contain">
                             </div>
                             <div id="verification-overlay" class="absolute inset-0 bg-white/90 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300 z-30">
-                                <div class="dotted-spinner mb-3"></div>
+                                <div class="ios-spinner mb-3"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                                 <h3 class="text-base font-bold text-gray-800 mb-1 font-sans">กำลังตรวจสอบ...</h3>
                                 <p class="text-xs text-gray-500 font-sans text-center px-4" id="verify-sub-text">โปรดรอสักครู่</p>
                             </div>
@@ -715,7 +723,7 @@
                 </div>
                 <button onclick="navigate('home')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm">กลับหน้าหลัก</button>
             </div>
-            
+
             <!-- Policy Views -->
             <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
@@ -947,23 +955,39 @@
         ];
 
         const bankList = [
-            { id: 'bank-bbl', name: 'Bangkok Bank' }, { id: 'bank-kbank', name: 'Kasikornbank' },
-            { id: 'bank-rbs', name: 'Royal Bank of Scotland' }, { id: 'bank-ktb', name: 'Krungthai Bank' },
-            { id: 'bank-jpm', name: 'J.P. Morgan' }, { id: 'bank-mufg', name: 'Bank of Tokyo-Mitsubishi UFJ' },
-            { id: 'bank-tmb', name: 'TMB Bank' }, { id: 'bank-scb', name: 'Siam Commercial Bank' },
-            { id: 'bank-citi', name: 'Citibank' }, { id: 'bank-smbc', name: 'Sumitomo Mitsui Banking Corp' },
-            { id: 'bank-sc', name: 'Standard Chartered' }, { id: 'bank-cimb', name: 'CIMB Thai Bank' },
-            { id: 'bank-uob', name: 'United Overseas Bank' }, { id: 'bank-bay', name: 'Bank of Ayudhya (Krungsri)' },
-            { id: 'bank-mega', name: 'Mega International' }, { id: 'bank-boa', name: 'Bank of America' },
-            { id: 'bank-cacib', name: 'Crédit Agricole' }, { id: 'bank-gsb', name: 'Government Savings Bank' },
-            { id: 'bank-hsbc', name: 'HSBC' }, { id: 'bank-db', name: 'Deutsche Bank' },
-            { id: 'bank-ghb', name: 'Government Housing Bank' }, { id: 'bank-baac', name: 'BAAC' },
-            { id: 'bank-mb', name: 'Mizuho Bank' }, { id: 'bank-bnp', name: 'BNP Paribas' },
-            { id: 'bank-tbank', name: 'Thanachart Bank' }, { id: 'bank-ibank', name: 'Islamic Bank of Thailand' },
-            { id: 'bank-tisco', name: 'Tisco Bank' }, { id: 'bank-kk', name: 'Kiatnakin Bank' },
-            { id: 'bank-icbc', name: 'ICBC (Thai)' }, { id: 'bank-tcrb', name: 'Thai Credit Retail Bank' },
-            { id: 'bank-lhb', name: 'Land and Houses Bank' }, { id: 'bank-tmn', name: 'TrueMoney Wallet' },
-            { id: 'bank-pp', name: 'PromptPay' }
+            { id: 'bank-bbl', name: 'Bangkok Bank', fullName: 'ธนาคารกรุงเทพ จำกัด (มหาชน)' },
+            { id: 'bank-kbank', name: 'Kasikornbank', fullName: 'ธนาคารกสิกรไทย จำกัด (มหาชน)' },
+            { id: 'bank-rbs', name: 'Royal Bank of Scotland', fullName: 'ธนาคารรอยัลแบงก์ออฟสกอตแลนด์' },
+            { id: 'bank-ktb', name: 'Krungthai Bank', fullName: 'ธนาคารกรุงไทย จำกัด (มหาชน)' },
+            { id: 'bank-jpm', name: 'J.P. Morgan', fullName: 'เจ.พี. มอร์แกน' },
+            { id: 'bank-mufg', name: 'Bank of Tokyo-Mitsubishi UFJ', fullName: 'ธนาคารแห่งโตเกียว-มิตซูบิชิ ยูเอฟเจ' },
+            { id: 'bank-tmb', name: 'TMB Bank', fullName: 'ธนาคารทหารไทยธนชาต จำกัด (มหาชน)' },
+            { id: 'bank-scb', name: 'Siam Commercial Bank', fullName: 'ธนาคารไทยพาณิชย์ จำกัด (มหาชน)' },
+            { id: 'bank-citi', name: 'Citibank', fullName: 'ธนาคารซิตี้แบงก์' },
+            { id: 'bank-smbc', name: 'Sumitomo Mitsui Banking Corp', fullName: 'ซูมิโตโม มิตซุย แบงกิ้ง คอร์ปอเรชั่น' },
+            { id: 'bank-sc', name: 'Standard Chartered', fullName: 'ธนาคารสแตนดาร์ดชาร์เตอร์ด (ไทย)' },
+            { id: 'bank-cimb', name: 'CIMB Thai Bank', fullName: 'ธนาคารซีไอเอ็มบี ไทย จำกัด (มหาชน)' },
+            { id: 'bank-uob', name: 'United Overseas Bank', fullName: 'ธนาคารยูโอบี จำกัด (มหาชน)' },
+            { id: 'bank-bay', name: 'Bank of Ayudhya', fullName: 'ธนาคารกรุงศรีอยุธยา จำกัด (มหาชน)' },
+            { id: 'bank-mega', name: 'Mega International', fullName: 'เมกะ อินเตอร์เนชั่นแนล คอมเมอร์เชียล' },
+            { id: 'bank-boa', name: 'Bank of America', fullName: 'แบงก์ออฟอเมริกา' },
+            { id: 'bank-cacib', name: 'Crédit Agricole', fullName: 'เครดิต อะกริโกล' },
+            { id: 'bank-gsb', name: 'Government Savings Bank', fullName: 'ธนาคารออมสิน' },
+            { id: 'bank-hsbc', name: 'HSBC', fullName: 'ธนาคารเอชเอสบีซี' },
+            { id: 'bank-db', name: 'Deutsche Bank', fullName: 'ดอยซ์แบงก์' },
+            { id: 'bank-ghb', name: 'Government Housing Bank', fullName: 'ธนาคารอาคารสงเคราะห์' },
+            { id: 'bank-baac', name: 'BAAC', fullName: 'ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร' },
+            { id: 'bank-mb', name: 'Mizuho Bank', fullName: 'มิซูโฮ แบงก์' },
+            { id: 'bank-bnp', name: 'BNP Paribas', fullName: 'บีเอ็นพี พารีบาส์' },
+            { id: 'bank-tbank', name: 'Thanachart Bank', fullName: 'ธนาคารธนชาต' },
+            { id: 'bank-ibank', name: 'Islamic Bank of Thailand', fullName: 'ธนาคารอิสลามแห่งประเทศไทย' },
+            { id: 'bank-tisco', name: 'Tisco Bank', fullName: 'ธนาคารทิสโก้ จำกัด (มหาชน)' },
+            { id: 'bank-kk', name: 'Kiatnakin Bank', fullName: 'ธนาคารเกียรตินาคินภัทร จำกัด (มหาชน)' },
+            { id: 'bank-icbc', name: 'ICBC (Thai)', fullName: 'ธนาคารไอซีบีซี (ไทย)' },
+            { id: 'bank-tcrb', name: 'Thai Credit Retail Bank', fullName: 'ธนาคารไทยเครดิต' },
+            { id: 'bank-lhb', name: 'Land and Houses Bank', fullName: 'ธนาคารแลนด์ แอนด์ เฮ้าส์ จำกัด (มหาชน)' },
+            { id: 'bank-tmn', name: 'TrueMoney Wallet', fullName: 'ทรูมันนี่ วอลเล็ท' },
+            { id: 'bank-pp', name: 'PromptPay', fullName: 'พร้อมเพย์' }
         ];
 
         function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
@@ -1095,12 +1119,10 @@
             if(currentUser) { currentUser.balance = newBal; localStorage.setItem('nextLiveUser', JSON.stringify(currentUser)); checkLoginState(); }
         }
 
-        // --- Forgot Password & Register & Pass ---
         function sendOtp() {
             const email = document.getElementById('fp-email').value;
             if(!email) { showCustomPopup("แจ้งเตือน", "กรุณาระบุอีเมล"); return; }
-            const btn = document.getElementById('btn-send-otp');
-            btn.innerText = "..."; btn.disabled = true;
+            const btn = document.getElementById('btn-send-otp'); btn.innerText = "..."; btn.disabled = true;
             callBackend({action: 'sendOtp', email: email}).then(res => {
                 btn.innerText = "ส่งรหัส"; btn.disabled = false;
                 if(res.status === 'success') showCustomPopup("สำเร็จ", res.message);
@@ -1109,10 +1131,8 @@
         }
 
         function submitResetPassword() {
-            const email = document.getElementById('fp-email').value;
-            const otp = document.getElementById('fp-otp').value;
-            const newPass = document.getElementById('fp-new-pass').value;
-            const confirmPass = document.getElementById('fp-confirm-pass').value;
+            const email = document.getElementById('fp-email').value; const otp = document.getElementById('fp-otp').value;
+            const newPass = document.getElementById('fp-new-pass').value; const confirmPass = document.getElementById('fp-confirm-pass').value;
 
             if(!email || !otp || !newPass || !confirmPass) { showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
             if(newPass !== confirmPass) { showCustomPopup("แจ้งเตือน", "รหัสผ่านไม่ตรงกัน"); return; }
@@ -1127,10 +1147,7 @@
 
         function submitChangePassword() {
             if(!currentUser) return;
-            const oldPass = document.getElementById('cp-old').value;
-            const newPass = document.getElementById('cp-new').value;
-            const confirmPass = document.getElementById('cp-confirm').value;
-
+            const oldPass = document.getElementById('cp-old').value; const newPass = document.getElementById('cp-new').value; const confirmPass = document.getElementById('cp-confirm').value;
             if(!oldPass || !newPass || !confirmPass) { showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
             if(newPass !== confirmPass) { showCustomPopup("แจ้งเตือน", "รหัสผ่านใหม่ไม่ตรงกัน"); return; }
 
@@ -1145,9 +1162,7 @@
         function submitRegister() {
             const form1 = document.getElementById('reg-form-1');
             if(form1 && !form1.checkValidity()) { showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
-            if(document.getElementById('reg-pass').value !== document.getElementById('reg-pass-confirm').value) {
-                showCustomPopup("แจ้งเตือน", "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน"); return;
-            }
+            if(document.getElementById('reg-pass').value !== document.getElementById('reg-pass-confirm').value) { showCustomPopup("แจ้งเตือน", "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน"); return; }
 
             const btn = document.getElementById('btn-submit-register'); if(btn) { btn.innerText = "กำลังสร้างบัญชี..."; btn.disabled = true; }
 
@@ -1187,7 +1202,6 @@
         }
 
         function navigate(view) {
-            // เมนูที่บังคับให้ล็อกอิน
             if ((view === 'deposit' || view === 'withdraw' || view === 'profile' || view === 'statement') && !currentUser) {
                 showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้งานฟังก์ชันนี้"); openAuth('login'); return;
             }
@@ -1226,7 +1240,6 @@
             }
         }
 
-        // --- Withdraw Logic ---
         function checkWithdrawalState() {
             if(!currentUser) return;
             const setupSec = document.getElementById('wd-setup-bank-section'); const actSec = document.getElementById('wd-action-section');
@@ -1239,7 +1252,10 @@
                 safeSetText('wd-card-balance', `฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
                 
                 const logoCont = document.getElementById('wd-card-logo-container');
-                if(logoCont) logoCont.innerHTML = `<i class="bank ${currentUser.bankName} m text-[80px]" style="line-height: 1; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></i>`;
+                let bankInfo = bankList.find(b => b.id === currentUser.bankName);
+                let fullName = bankInfo ? bankInfo.fullName : currentUser.bankName;
+                
+                if(logoCont) logoCont.innerHTML = `<i class="bank ${currentUser.bankName} m text-[60px]" style="line-height: 1; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></i><span class="text-[11px] font-bold mt-2 text-center opacity-90">${fullName}</span>`;
             } else {
                 if(setupSec) setupSec.classList.remove('hidden'); if(actSec) actSec.classList.add('hidden');
                 safeSetValue('wd-fname', currentUser.fname); safeSetValue('wd-lname', currentUser.lname);
@@ -1282,7 +1298,6 @@
             }).catch(e => { if(btn) { btn.innerText = "ถอนเงิน"; btn.disabled = false; } showCustomPopup("ข้อผิดพลาด", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); });
         }
 
-        // --- Deposit Logic ---
         function setDepositAmount(amount) { safeSetValue('deposit-amount-input', amount); }
         function confirmDeposit() {
             let val = parseFloat(document.getElementById('deposit-amount-input').value);
@@ -1296,7 +1311,6 @@
             if(currentFlow === 'deposit') navigate('deposit'); else navigate('checkout');
         }
 
-        // --- Categories & Products ---
         function renderCategoryMenu() {
             const list = document.getElementById('category-list'); if(!list) return; let htmlStr = '';
             categories.forEach(cat => {
@@ -1320,7 +1334,6 @@
             });
         }
 
-        // --- Modal & Cart ---
         let selectedProductForModal = null; let selectedOptions = [];
 
         function openModal(id) {
@@ -1387,7 +1400,6 @@
             else if(inputCode === siteSettings.Code3) discountFound = parseFloat(siteSettings.Discount3);
 
             if(discountFound > 0) {
-                // ตรวจสอบการใช้โค้ดซ้ำผ่าน Backend
                 const btn = document.getElementById('btn-apply-code');
                 if(btn) { btn.innerText = "..."; btn.disabled = true; }
 
@@ -1499,7 +1511,6 @@
                             }
                             navigate('success');
                         } else { 
-                            // กรณียกเลิกออเดอร์ หรือสลิปผิดพลาด
                             if(currentFlow === 'order') {
                                 cart = []; currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); 
                                 safeSetText('failure-desc', res.message);
@@ -1516,7 +1527,6 @@
             }
         }
 
-        // --- History fetching & Statement ---
         function formatShortStatus(status) {
             if(!status) return "-";
             if(status.includes("ไม่สำเร็จ") || status.includes("ยกเลิก")) return "ไม่สำเร็จ";
@@ -1530,14 +1540,14 @@
             const btn = document.getElementById('btn-search-history');
             
             if(!phone) { showCustomPopup("แจ้งเตือน", "กรุณาระบุเบอร์โทรศัพท์"); return; }
-            if(btn) { btn.innerHTML = `<div class="dotted-spinner" style="width:20px;height:20px;border-width:3px;border-color:white;"></div>`; btn.disabled = true; }
+            if(btn) { btn.innerHTML = `<div class="dotted-spinner w-5 h-5 border-[3px] border-white inline-block align-middle mr-2"></div>`; btn.disabled = true; }
 
             callBackend({ action: 'getHistory', phone: phone }).then(res => {
                 if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; }
                 try { lucide.createIcons(); } catch(e) {}
                 
                 if(res.status === 'success') {
-                    globalHistoryData = res; // เก็บไว้ทำ Statement
+                    globalHistoryData = res;
 
                     // Orders
                     if(res.orders.length > 0) {
@@ -1582,7 +1592,6 @@
             if(!globalHistoryData) { showCustomPopup("แจ้งเตือน", "กรุณาค้นหาประวัติก่อนทำรายการ Statement"); return; }
             if(!currentUser) { showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนดึงข้อมูล Statement"); return; }
 
-            // Populate Info
             safeSetText('stmt-ref', `เลขที่ NX-${Date.now().toString().slice(-4)}-${Math.floor(Math.random()*9000)+1000}-${currentUser.phone.slice(-6)}`);
             let dParts = new Date().toLocaleDateString('th-TH').split('/');
             let tStr = new Date().toTimeString().substring(0,5);
@@ -1593,60 +1602,67 @@
             safeSetText('stmt-email', `อีเมลจัดส่ง : ${currentUser.email}`);
             safeSetText('stmt-phone', `หมายเลขโทรศัพท์ : ${currentUser.phone}`);
             safeSetText('stmt-admin-name', `ผู้รับเงิน ${siteSettings.AdminName}`);
-            
-            safeSetText('stmt-total-balance-display', `ยอดเงินคงเหลือปัจจุบัน: ฿${(globalHistoryData.balance || 0).toLocaleString('en-US',{minimumFractionDigits:2})}`);
 
-            // Populate Orders
+            // Orders
             const oBody = document.getElementById('stmt-orders-tbody'); oBody.innerHTML = '';
             if(globalHistoryData.orders.length > 0) {
                 globalHistoryData.orders.forEach((o, i) => {
                     let itemsStr = o.items.replace(/\n/g, ' / ');
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${o.date} (${o.ref})</span></td>
-                        <td class="text-center py-2 border-b border-gray-200">-</td>
-                        <td class="text-center py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200 font-bold">${parseFloat(o.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${o.date} (${o.ref})</span></td>
+                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">-</td>
+                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">-</td>
+                        <td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td>
+                        <td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td>
+                        <td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">-</td>
+                        <td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${parseFloat(o.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
                     `;
                     oBody.appendChild(tr);
                 });
             } else { oBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
-            // Populate Deposits
+            // Deposits (คำนวณ Running Balance ย้อนหลังจากยอดปัจจุบัน)
+            let tempBalDep = globalHistoryData.balance || 0;
             const dBody = document.getElementById('stmt-deposits-tbody'); dBody.innerHTML = '';
             if(globalHistoryData.deposits.length > 0) {
                 globalHistoryData.deposits.forEach((d, i) => {
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${d.date}</td>
-                        <td class="text-center py-2 border-b border-gray-200">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-center py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-right py-2 border-b border-gray-200">${formatShortStatus(d.status)}</td>
-                        <td class="text-right py-2 border-b border-gray-200">-</td>
+                        <td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${d.date}</td>
+                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-right py-2 border-b border-gray-200 whitespace-nowrap">${parseFloat(d.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${formatShortStatus(d.status)}</td>
+                        <td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${tempBalDep.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
                     `;
                     dBody.appendChild(tr);
+                    // ลบออกเพื่อหักลบไปหายอดก่อนหน้า (เฉพาะถ้ายอดนั้นสำเร็จ)
+                    if(d.status.indexOf("ไม่สำเร็จ") === -1) {
+                        tempBalDep -= parseFloat(d.amount);
+                    }
                 });
-            } else { dBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
+            } else { dBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
-            // Populate Withdraws
+            // Withdraws (คำนวณ Running Balance ย้อนหลังจากยอดปัจจุบัน)
+            let tempBalWd = globalHistoryData.balance || 0;
             const wBody = document.getElementById('stmt-withdraws-tbody'); wBody.innerHTML = '';
             if(globalHistoryData.withdraws.length > 0) {
                 globalHistoryData.withdraws.forEach((w, i) => {
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${w.date}</td>
-                        <td class="text-center py-2 border-b border-gray-200">${currentUser.fname} ${currentUser.lname}</td>
-                        <td class="text-center py-2 border-b border-gray-200">${w.items.split('(')[0].replace('ไปยัง:','').trim()}</td>
-                        <td class="text-center py-2 border-b border-gray-200">${w.items.split('(')[1] ? w.items.split('(')[1].replace(')','') : '-'}</td>
-                        <td class="text-center py-2 border-b border-gray-200 font-bold">${parseFloat(w.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
-                        <td class="text-center py-2 border-b border-gray-200">${formatShortStatus(w.status)}</td>
-                        <td class="text-right py-2 border-b border-gray-200">-</td>
+                        <td class="py-2 pr-2 border-b border-gray-200 whitespace-nowrap">${i+1}. ${w.date}</td>
+                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${currentUser.fname} ${currentUser.lname}</td>
+                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${w.items.split('(')[0].replace('ไปยัง:','').trim()}</td>
+                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${w.items.split('(')[1] ? w.items.split('(')[1].replace(')','') : '-'}</td>
+                        <td class="text-center py-2 border-b border-gray-200 font-bold whitespace-nowrap">${parseFloat(w.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-center py-2 border-b border-gray-200 whitespace-nowrap">${formatShortStatus(w.status)}</td>
+                        <td class="text-right py-2 border-b border-gray-200 font-bold whitespace-nowrap">${tempBalWd.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
                     `;
                     wBody.appendChild(tr);
+                    // ถอนเงิน = ยอดในอดีตต้องมากกว่าปัจจุบัน (เฉพาะที่รอดำเนินการหรือสำเร็จ ที่หักเงินไปแล้ว)
+                    if(w.status.indexOf("ไม่สำเร็จ") === -1) {
+                        tempBalWd += parseFloat(w.amount);
+                    }
                 });
             } else { wBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
@@ -1656,7 +1672,7 @@
         function emailStatementOnly() {
             const btn = document.getElementById('btn-dl-statement');
             const origText = btn.innerHTML;
-            btn.innerHTML = `<div class="dotted-spinner w-5 h-5 border-[3px] border-white inline-block align-middle mr-2"></div> กำลังประมวลผล...`;
+            btn.innerHTML = `<div class="ios-spinner w-5 h-5 inline-block align-middle mr-2" style="width:20px;height:20px;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> กำลังประมวลผล...`;
             btn.disabled = true;
 
             const element = document.getElementById('statement-capture-area');
@@ -1686,23 +1702,17 @@
             }, 500);
         }
 
-        let currentSlide = 0;
-        function initSlider() {
-            const track = document.getElementById('slider-track'); if(!track) return; track.innerHTML = ''; 
-            bannerData.forEach(banner => {
-                const slide = document.createElement('div'); slide.className = "w-full flex-shrink-0 relative h-full flex items-center justify-center";
-                slide.innerHTML = `<img src="${banner.img}" class="w-full h-full object-contain">`; track.appendChild(slide);
-            });
-            setInterval(() => { currentSlide = (currentSlide + 1) % bannerData.length; track.style.transform = `translateX(-${currentSlide * 100}%)`; }, 4000);
-        }
-
-        function openAuth(tab = 'login') { navigate('auth'); switchAuthTab(tab); }
         function switchAuthTab(tab) {
             const fLog = document.getElementById('form-login-container'); const fReg = document.getElementById('form-register-container');
+            const tLog = document.getElementById('tab-login'); const tReg = document.getElementById('tab-register');
             if(tab === 'login') {
                 if(fLog) fLog.classList.remove('hidden'); if(fReg) fReg.classList.add('hidden');
+                if(tLog) tLog.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white";
+                if(tReg) tReg.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 text-gray-600";
             } else {
                 if(fReg) fReg.classList.remove('hidden'); if(fLog) fLog.classList.add('hidden');
+                if(tReg) tReg.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-primary text-white";
+                if(tLog) tLog.className = "flex-1 py-4 text-center font-bold text-sm uppercase bg-gray-100 text-gray-600";
             }
         }
         function toggleCategorySidebar() {
