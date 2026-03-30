@@ -127,6 +127,7 @@
 <body class="antialiased flex flex-col min-h-screen">
 
     <div id="global-loader" class="fixed inset-0 bg-white dark:bg-[#121212] z-[100001] flex flex-col items-center justify-center">
+        <!-- New Loading Animation -->
         <div class="lds-spinner mb-4"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
         <p class="text-gray-500 font-kanit" id="loader-text">กำลังเชื่อต่อ API . . .</p>
     </div>
@@ -524,7 +525,7 @@
             <!-- View: Failure -->
             <div id="view-failure" class="hidden max-w-xl mx-auto px-4 py-20 text-center animate-fade-in">
                 <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="x" class="w-8 h-8"></i></div>
-                <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white">ทำรายการไม่สำเร็จ!</h2>
+                <h2 class="text-2xl font-bold mb-2 uppercase text-gray-800 dark:text-white" id="failure-title">ทำรายการไม่สำเร็จ!</h2>
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border mb-8 rounded-sm mt-6 shadow-sm">
                     <p class="text-red-600 font-medium text-[15px] whitespace-pre-line leading-relaxed" id="failure-desc">ข้อผิดพลาด</p>
                 </div>
@@ -1270,7 +1271,11 @@
             const upl = document.getElementById('upload-section');
             if(upl) upl.classList.add('hidden');
             
-            safeSetText('failure-desc', "ชำระไม่สำเร็จ เนื่องจาก รหัสชำระเงินหมดอายุ\nคุณทำรายการเกินเวลาที่กำหนด กรุณาทำรายการใหม่ค่ะ");
+            if(currentFlow === 'deposit') {
+                safeSetText('failure-desc', "เติมเงินไม่สำเร็จ เนื่องจาก รหัสชำระเงินหมดอายุ\nคุณทำรายการเกินเวลาที่กำหนด กรุณาทำรายการใหม่ค่ะ");
+            } else {
+                safeSetText('failure-desc', "ชำระไม่สำเร็จ เนื่องจาก รหัสชำระเงินหมดอายุ\nคุณทำรายการเกินเวลาที่กำหนด กรุณาทำรายการใหม่ค่ะ");
+            }
             
             let payload = {};
             if(currentFlow === 'deposit') {
@@ -1685,8 +1690,12 @@
                                 currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); 
                                 safeSetText('failure-desc', res.message);
                                 navigate('failure');
+                            } else if (currentFlow === 'deposit') {
+                                safeSetText('failure-desc', "เติมเงินไม่สำเร็จ เนื่องจาก " + res.message + "\nกรุณาทำรายการใหม่อีกครั้งค่ะ");
+                                navigate('failure');
                             } else {
-                                showCustomPopup("ไม่สำเร็จ", res.message); 
+                                safeSetText('failure-desc', res.message);
+                                navigate('failure');
                             }
                             if(res.newBalance !== undefined && currentUser) { updateBalanceUI(res.newBalance); }
                             if(upl) upl.classList.remove('hidden'); 
