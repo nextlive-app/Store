@@ -1677,9 +1677,9 @@
                         if(overlay) overlay.classList.add('hidden');
                         if (res.status === "success") {
                             if(currentFlow === 'deposit') {
-                                safeSetText('display-order-id', "DEP-" + Date.now().toString().slice(-6)); safeSetText('success-title', 'เติมเงินสำเร็จ!'); safeSetText('success-ref-label', 'รหัสอ้างอิง (Ref)'); updateBalanceUI(res.newBalance);
+                                safeSetText('display-order-id', "DEP-" + Date.now().toString().slice(-6)); safeSetText('success-title', 'เติมเงินสำเร็จ ระบบกำลังเติมเครดิต'); safeSetText('success-ref-label', 'รหัสอ้างอิง (Ref)'); updateBalanceUI(res.newBalance);
                             } else {
-                                safeSetText('display-order-id', res.orderRef); safeSetText('success-title', 'ทำรายการสั่งซื้อเรียบร้อย!'); safeSetText('success-ref-label', 'รหัสอ้างอิงออเดอร์ (Order Ref)'); 
+                                safeSetText('display-order-id', res.orderRef); safeSetText('success-title', 'ชำระเงินสำเร็จ ระบบกำลังส่งสินค้าไปที่ ออเดอร์'); safeSetText('success-ref-label', 'รหัสอ้างอิงออเดอร์ (Order Ref)'); 
                                 cart = cart.filter(c => c.selected === false); saveCart();
                                 currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge();
                             }
@@ -1691,7 +1691,7 @@
                                 safeSetText('failure-desc', res.message);
                                 navigate('failure');
                             } else if (currentFlow === 'deposit') {
-                                safeSetText('failure-desc', "เติมเงินไม่สำเร็จ เนื่องจาก " + res.message + "\nกรุณาทำรายการใหม่อีกครั้งค่ะ");
+                                safeSetText('failure-desc', res.message);
                                 navigate('failure');
                             } else {
                                 safeSetText('failure-desc', res.message);
