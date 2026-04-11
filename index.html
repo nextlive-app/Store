@@ -76,7 +76,6 @@
         .slip-container * { color: initial; } 
         .header-icon-box { width: 36px; height: 36px; background-color: white; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
-        /* Loading Spinner แบบใหม่ (ธีมขาวแดง) */
         .lds-spinner { color: official; display: inline-block; position: relative; width: 60px; height: 60px; }
         .lds-spinner div { transform-origin: 30px 30px; animation: lds-spinner 1.2s linear infinite; }
         .lds-spinner div:after { content: " "; display: block; position: absolute; top: 3px; left: 28px; width: 4px; height: 14px; border-radius: 20%; background: #e43a3d; }
@@ -93,8 +92,6 @@
         .lds-spinner div:nth-child(11) { transform: rotate(300deg); animation-delay: -0.1s; }
         .lds-spinner div:nth-child(12) { transform: rotate(330deg); animation-delay: 0s; }
         @keyframes lds-spinner { 0% { opacity: 1; } 100% { opacity: 0; } }
-
-        /* สีขาวสำหรับ Loading Spinner บนปุ่มค้นหา */
         .lds-spinner-white div:after { background: #ffffff !important; }
 
         .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .5); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; z-index: 99999; }
@@ -108,13 +105,15 @@
         #maintenance-screen { position: fixed; inset: 0; background: #fff; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .dark #maintenance-screen { background: #121212; color: white; }
         
+        /* แก้ไขบัค UI Radio Button ให้แสดงสีชัดเจน */
         .custom-radio:checked + div { border-color: #e43a3d; background-color: #fef2f2; }
+        .custom-radio:checked + div .radio-inner-circle { transform: scale(1); }
         .dark .custom-radio:checked + div { background-color: rgba(228, 58, 61, 0.1); }
+        .radio-inner-circle { transform: scale(0); transition: transform 0.2s ease-in-out; }
         
         .bank-card { background: linear-gradient(135deg, #e43a3d 0%, #991b1b 100%); position: relative; overflow: hidden; }
         .bank-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; }
 
-        /* Statement Mobile Responsive */
         .statement-page-container { width: 100%; min-width: 600px; max-width: 800px; background-color: #ffffff; margin: 0 auto; padding: 30px; color: #1a1a1a; font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
         .stmt-table-wrapper { width: 100%; overflow-x: auto; padding-bottom: 10px; }
         .stmt-theme-red { color: #ff0000; }
@@ -122,12 +121,15 @@
         .stmt-table { width: 100%; font-size: 11px; }
         @media (min-width: 640px) { .stmt-table { font-size: 13px; } }
         .stmt-table th, .stmt-table td { padding: 6px 8px; white-space: nowrap; }
+
+        /* ไอคอนดวงตา Password */
+        .eye-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9ca3af; }
+        .eye-icon:hover { color: #e43a3d; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
 
     <div id="global-loader" class="fixed inset-0 bg-white dark:bg-[#121212] z-[100001] flex flex-col items-center justify-center">
-        <!-- New Loading Animation -->
         <div class="lds-spinner mb-4"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
         <p class="text-gray-500 font-kanit" id="loader-text">Processing  API . . .</p>
     </div>
@@ -167,6 +169,8 @@
                         <a href="#" onclick="navigate('history')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ประวัติการทำรายการ</a>
                         <a href="#" onclick="navigate('deposit')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ฝากเงิน</a>
                         <a href="#" onclick="navigate('withdraw')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ถอนเงิน</a>
+                        <!-- เพิ่มเมนูจองคิว -->
+                        <a href="#" onclick="navigate('booking')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium"><i data-lucide="calendar-clock" class="w-4 h-4 inline mr-1 -mt-1"></i>จองคิวล่วงหน้า</a>
                     </div>
 
                     <div class="hidden xl:flex flex-1 max-w-xs mx-4 relative">
@@ -230,6 +234,149 @@
                     <h2 class="text-xl font-bold text-gray-800 dark:text-white uppercase" id="section-title">สินค้าทั้งหมด</h2>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-6" id="product-grid"></div>
+            </div>
+
+            <!-- View: Booking System (จองคิว) -->
+            <div id="view-booking" class="hidden max-w-5xl mx-auto px-4 py-12">
+                <h2 class="text-2xl font-bold mb-6 text-primary"><i data-lucide="calendar-check" class="w-6 h-6 inline mr-2 -mt-1"></i>ระบบจองคิวล่วงหน้า</h2>
+                
+                <!-- Tab Menu -->
+                <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6 overflow-x-auto hide-scrollbar">
+                    <button onclick="switchBookingTab('check')" id="tab-btn-check" class="py-3 px-6 font-bold text-sm border-b-2 border-primary text-primary whitespace-nowrap"><i data-lucide="list" class="w-4 h-4 inline mr-1"></i> ตรวจสอบคิว</button>
+                    <button onclick="switchBookingTab('book')" id="tab-btn-book" class="py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap"><i data-lucide="calendar-plus" class="w-4 h-4 inline mr-1"></i> จองคิวออนไลน์</button>
+                    <button onclick="switchBookingTab('cancel')" id="tab-btn-cancel" class="py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap"><i data-lucide="x-circle" class="w-4 h-4 inline mr-1"></i> ยกเลิกคิว</button>
+                </div>
+
+                <!-- Tab Content: Check Queue -->
+                <div id="booking-tab-check" class="block animate-fade-in">
+                    <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+                                <tr>
+                                    <th class="p-3">วันที่ทำรายการ</th>
+                                    <th class="p-3">เลขที่คิว</th>
+                                    <th class="p-3">หัวข้อ/รายละเอียด</th>
+                                    <th class="p-3">วัน-เวลาที่จอง</th>
+                                    <th class="p-3 text-center">ลำดับ</th>
+                                    <th class="p-3 text-center">คิวรอ</th>
+                                    <th class="p-3 text-center">สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booking-list-tbody" class="divide-y divide-gray-100 dark:divide-gray-800">
+                                <tr><td colspan="7" class="text-center p-6 text-gray-400">กำลังโหลดข้อมูล...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Book Queue -->
+                <div id="booking-tab-book" class="hidden animate-fade-in">
+                    <div class="bg-white dark:bg-[#1e1e1e] p-6 sm:p-8 border rounded-sm shadow-sm relative">
+                        <!-- Step Indicator -->
+                        <div class="flex items-center justify-center mb-8 relative">
+                            <div class="flex items-center" id="book-step-1-ind">
+                                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm z-10 relative">1</div>
+                                <div class="w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700" id="book-line-1"></div>
+                            </div>
+                            <div class="flex items-center" id="book-step-2-ind">
+                                <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative">2</div>
+                                <div class="w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700" id="book-line-2"></div>
+                            </div>
+                            <div class="flex items-center" id="book-step-3-ind">
+                                <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative">3</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 1: User Info -->
+                        <div id="book-step-1" class="block max-w-lg mx-auto">
+                            <h3 class="text-lg font-bold mb-4 text-center">ข้อมูลผู้จอง</h3>
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><label class="block text-xs font-semibold mb-1">ชื่อ *</label><input type="text" id="bk-fname" class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                                    <div><label class="block text-xs font-semibold mb-1">นามสกุล *</label><input type="text" id="bk-lname" class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                                </div>
+                                <div><label class="block text-xs font-semibold mb-1">อีเมล *</label><input type="email" id="bk-email" class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                                <div><label class="block text-xs font-semibold mb-1">เบอร์โทรศัพท์ *</label><input type="tel" id="bk-phone" class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                                <button onclick="nextBookingStep(2)" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md">ถัดไป</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Booking Details -->
+                        <div id="book-step-2" class="hidden max-w-lg mx-auto">
+                            <h3 class="text-lg font-bold mb-4 text-center">รายละเอียดการจอง</h3>
+                            <div class="space-y-4">
+                                <div><label class="block text-xs font-semibold mb-1">หัวข้อการจอง *</label><input type="text" id="bk-topic" class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm" placeholder="เช่น ปรึกษา, รับบริการ"></div>
+                                <div><label class="block text-xs font-semibold mb-1">รายละเอียดการเข้ารับบริการ *</label><textarea id="bk-detail" rows="4" class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm" placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea></div>
+                                <div class="flex gap-2 mt-4">
+                                    <button onclick="prevBookingStep(1)" class="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 uppercase text-sm rounded-sm">ก่อนหน้า</button>
+                                    <button onclick="nextBookingStep(3)" class="w-2/3 bg-[#333333] hover:bg-black text-white font-bold py-3 uppercase text-sm rounded-sm shadow-md">ถัดไป</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Calendar & Time -->
+                        <div id="book-step-3" class="hidden max-w-3xl mx-auto">
+                            <h3 class="text-lg font-bold mb-4 text-center">เลือกวันและเวลา</h3>
+                            <div class="flex items-center justify-between mb-4 bg-gray-50 dark:bg-gray-800 p-2 rounded-sm">
+                                <button onclick="changeBookingMonth(-1)" class="p-2 hover:text-primary"><i data-lucide="chevron-left"></i></button>
+                                <span id="booking-month-year" class="font-bold text-lg">เดือน ปี</span>
+                                <button onclick="changeBookingMonth(1)" class="p-2 hover:text-primary"><i data-lucide="chevron-right"></i></button>
+                            </div>
+                            
+                            <!-- ปฏิทินแบบ Flex เลื่อนซ้ายขวา -->
+                            <div id="booking-calendar-scroll" class="flex overflow-x-auto gap-3 py-2 hide-scrollbar snap-x mb-6 border-b pb-4">
+                                <!-- Calendar days injected via JS -->
+                            </div>
+
+                            <h4 class="font-bold text-sm mb-3">เวลาที่เปิดรับจอง (<span id="display-selected-date" class="text-primary">-</span>)</h4>
+                            <div id="booking-time-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 mb-6">
+                                <!-- Timeslots injected via JS -->
+                            </div>
+
+                            <div class="flex gap-2 mt-6 pt-4 border-t">
+                                <button onclick="prevBookingStep(2)" class="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 uppercase text-sm rounded-sm">ก่อนหน้า</button>
+                                <button onclick="submitBooking()" id="btn-submit-booking" class="w-2/3 bg-primary hover:bg-primaryHover text-white font-bold py-4 uppercase text-sm rounded-sm shadow-md disabled:opacity-50">ยืนยันการจองคิว</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Success UI -->
+                        <div id="book-step-success" class="hidden max-w-md mx-auto text-center py-8">
+                            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check-circle" class="w-10 h-10"></i></div>
+                            <h2 class="text-2xl font-bold mb-2 text-green-600">จองคิวสำเร็จ</h2>
+                            <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-sm border mb-6 mt-4 text-left inline-block w-full">
+                                <p class="mb-2"><span class="text-gray-500 text-sm">คิวของคุณคือ:</span> <span class="font-bold text-xl text-primary float-right" id="succ-qno">-</span></p>
+                                <p class="mb-2"><span class="text-gray-500 text-sm">ลำดับคิวที่:</span> <span class="font-bold float-right" id="succ-seq">-</span></p>
+                                <p class="mb-2"><span class="text-gray-500 text-sm">จำนวนคิวรอก่อนหน้า:</span> <span class="font-bold float-right text-yellow-600" id="succ-wait">-</span></p>
+                                <hr class="my-2 border-gray-200 dark:border-gray-700">
+                                <p class="text-red-500 text-xs font-semibold text-center mt-2" id="succ-note">กรุณามาเข้ารับบริการภายในวันที่ - เวลา -</p>
+                            </div>
+                            <button onclick="switchBookingTab('check')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm shadow-md">ตรวจสอบคิวของคุณ</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Cancel Queue -->
+                <div id="booking-tab-cancel" class="hidden animate-fade-in">
+                    <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm overflow-x-auto">
+                        <div class="mb-4 text-sm text-red-500 font-semibold bg-red-50 p-3 rounded-sm border border-red-100">
+                            * หมายเหตุ: ผู้ใช้จะต้องทำการยกเลิกก่อนถึงคิวอย่างน้อย 3 ชั่วโมง
+                        </div>
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+                                <tr>
+                                    <th class="p-3">เลขที่คิว</th>
+                                    <th class="p-3">หัวข้อ</th>
+                                    <th class="p-3">วัน-เวลาที่จอง</th>
+                                    <th class="p-3 text-center">สถานะ</th>
+                                    <th class="p-3 text-center">การจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="booking-cancel-tbody" class="divide-y divide-gray-100 dark:divide-gray-800">
+                                <tr><td colspan="5" class="text-center p-6 text-gray-400">กำลังโหลดข้อมูล...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- View: Deposit -->
@@ -340,10 +487,22 @@
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border border-gray-200 dark:border-gray-800 rounded-sm shadow-sm">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">เปลี่ยนรหัสผ่าน</h3>
                     <form id="change-pass-form" class="space-y-4 max-w-sm">
-                        <div><label class="block text-xs font-semibold mb-1">รหัสผ่านปัจจุบัน *</label><input type="password" id="cp-old" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                        <div><label class="block text-xs font-semibold mb-1">รหัสผ่านใหม่ *</label><input type="password" id="cp-new" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                        <div><label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่านใหม่ *</label><input type="password" id="cp-confirm" required class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                        <button type="button" onclick="submitChangePassword()" id="btn-submit-cp" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-6 uppercase text-sm rounded-sm shadow-md w-full">เปลี่ยนรหัสผ่าน</button>
+                        <div class="relative">
+                            <label class="block text-xs font-semibold mb-1">รหัสผ่านปัจจุบัน *</label>
+                            <input type="password" id="cp-old" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('cp-old', this)"></i>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs font-semibold mb-1">รหัสผ่านใหม่ *</label>
+                            <input type="password" id="cp-new" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('cp-new', this)"></i>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่านใหม่ *</label>
+                            <input type="password" id="cp-confirm" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('cp-confirm', this)"></i>
+                        </div>
+                        <button type="button" onclick="submitChangePassword()" id="btn-submit-cp" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-6 uppercase text-sm rounded-sm shadow-md w-full mt-2">เปลี่ยนรหัสผ่าน</button>
                     </form>
                 </div>
             </div>
@@ -434,7 +593,6 @@
                         </div>
                     </div>
 
-                    <!-- ตารางสั่งซื้อ (ป้องกันมือถือล้นโดยใช้ Wrapper) -->
                     <div class="w-full mb-6 stmt-table-wrapper hide-scrollbar">
                         <table class="stmt-table">
                             <thead>
@@ -455,7 +613,6 @@
                         </table>
                     </div>
 
-                    <!-- ตารางฝากเงิน -->
                     <div class="w-full mb-6 stmt-table-wrapper hide-scrollbar">
                         <table class="stmt-table">
                             <thead>
@@ -474,7 +631,6 @@
                         </table>
                     </div>
 
-                    <!-- ตารางถอนเงิน -->
                     <div class="w-full stmt-table-wrapper hide-scrollbar">
                         <table class="stmt-table">
                             <thead>
@@ -540,7 +696,11 @@
                         <h2 class="text-2xl font-bold mb-6 text-center text-primary">ลงชื่อเข้าใช้</h2>
                         <form class="space-y-4" id="login-form">
                             <div><label class="block text-xs font-semibold mb-1">อีเมล / หมายเลขโทรศัพท์</label><input type="text" id="log-username" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                            <div><label class="block text-xs font-semibold mb-1">รหัสผ่าน</label><input type="password" id="log-password" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                            <div class="relative">
+                                <label class="block text-xs font-semibold mb-1">รหัสผ่าน</label>
+                                <input type="password" id="log-password" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('log-password', this)"></i>
+                            </div>
                             <div class="text-right"><button type="button" onclick="navigate('forgot-password')" class="text-sm text-primary hover:underline">ลืมรหัสผ่าน?</button></div>
                             <button type="button" onclick="submitLogin()" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-login">ลงชื่อเข้าใช้งาน</button>
                         </form>
@@ -559,8 +719,16 @@
                             </div>
                             <div><label class="block text-xs font-semibold mb-1">อีเมล *</label><input type="email" id="reg-email" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
                             <div><label class="block text-xs font-semibold mb-1">เบอร์โทรศัพท์ *</label><input type="tel" id="reg-phone" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                            <div><label class="block text-xs font-semibold mb-1">รหัสผ่าน *</label><input type="password" id="reg-pass" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                            <div><label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่าน *</label><input type="password" id="reg-pass-confirm" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                            <div class="relative">
+                                <label class="block text-xs font-semibold mb-1">รหัสผ่าน *</label>
+                                <input type="password" id="reg-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('reg-pass', this)"></i>
+                            </div>
+                            <div class="relative">
+                                <label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่าน *</label>
+                                <input type="password" id="reg-pass-confirm" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('reg-pass-confirm', this)"></i>
+                            </div>
                             <button type="button" onclick="submitRegister()" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-register">สร้างบัญชี</button>
                         </form>
                         <div class="mt-6 text-center border-t pt-6">
@@ -584,8 +752,16 @@
                             </div>
                         </div>
                         <div><label class="block text-xs font-semibold mb-1">รหัส OTP (ตรวจสอบในอีเมล) *</label><input type="text" id="fp-otp" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm text-center tracking-widest text-lg font-bold"></div>
-                        <div><label class="block text-xs font-semibold mb-1">รหัสผ่านใหม่ *</label><input type="password" id="fp-new-pass" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                        <div><label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่านใหม่ *</label><input type="password" id="fp-confirm-pass" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
+                        <div class="relative">
+                            <label class="block text-xs font-semibold mb-1">รหัสผ่านใหม่ *</label>
+                            <input type="password" id="fp-new-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('fp-new-pass', this)"></i>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่านใหม่ *</label>
+                            <input type="password" id="fp-confirm-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('fp-confirm-pass', this)"></i>
+                        </div>
                         <button type="button" onclick="submitResetPassword()" id="btn-reset-pass" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md">เปลี่ยนรหัสผ่าน</button>
                     </form>
                 </div>
@@ -614,24 +790,24 @@
                             <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">ช่องทางการชำระเงิน</h3>
                             <div class="space-y-3">
                                 <label class="relative block cursor-pointer group">
-                                    <input type="radio" name="payment_method" value="qr" class="peer sr-only custom-radio" checked>
-                                    <div class="border rounded-sm p-4 flex items-center transition-all">
-                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-primary mr-3 flex items-center justify-center transition-colors">
-                                            <div class="w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
+                                    <input type="radio" name="payment_method" value="qr" class="peer sr-only custom-radio" onchange="toggleCreditInput()" checked>
+                                    <div class="border rounded-sm p-4 flex items-center transition-all bg-white dark:bg-gray-800">
+                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center transition-colors">
+                                            <div class="w-2.5 h-2.5 bg-primary rounded-full radio-inner-circle"></div>
                                         </div>
                                         <i data-lucide="qr-code" class="w-6 h-6 mr-3 text-gray-500"></i>
                                         <span class="font-semibold text-sm">สแกน QR Code</span>
                                     </div>
                                 </label>
                                 <label class="relative block cursor-pointer group" id="method-credit-wrapper">
-                                    <input type="radio" name="payment_method" value="credit" class="peer sr-only custom-radio">
-                                    <div class="border rounded-sm p-4 flex items-center transition-all">
-                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-primary mr-3 flex items-center justify-center transition-colors">
-                                            <div class="w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
+                                    <input type="radio" name="payment_method" value="credit" class="peer sr-only custom-radio" onchange="toggleCreditInput()">
+                                    <div class="border rounded-sm p-4 flex items-center transition-all bg-white dark:bg-gray-800">
+                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 mr-3 flex items-center justify-center transition-colors">
+                                            <div class="w-2.5 h-2.5 bg-primary rounded-full radio-inner-circle"></div>
                                         </div>
                                         <i data-lucide="wallet" class="w-6 h-6 mr-3 text-green-600"></i>
                                         <div>
-                                            <span class="font-semibold text-sm block">หักเครดิตอัตโนมัติ</span>
+                                            <span class="font-semibold text-sm block">หักเครดิตอัตโนมัติ (เต็มจำนวน)</span>
                                             <span class="text-xs text-gray-500" id="chk-display-balance">คงเหลือ: ฿0.00</span>
                                         </div>
                                     </div>
@@ -644,13 +820,24 @@
                         <div class="bg-gray-50 dark:bg-[#1e1e1e] p-6 border rounded-sm">
                             <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">สรุปคำสั่งซื้อ</h3>
                             <div id="checkout-items" class="space-y-4 mb-4 max-h-80 overflow-y-auto pr-2"></div>
-                            <div class="flex gap-2 mb-6 mt-4">
-                                <input type="text" id="discount-input" placeholder="ใส่รหัสส่วนลด..." class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm uppercase">
-                                <button type="button" onclick="applyDiscountCode()" class="bg-[#333333] hover:bg-black text-white px-4 py-2 text-sm rounded-sm whitespace-nowrap shadow-md" id="btn-apply-code">ใช้รหัส</button>
+                            
+                            <div class="flex flex-col gap-2 mb-4 mt-4">
+                                <div class="flex gap-2">
+                                    <input type="text" id="discount-input" placeholder="ใส่รหัสส่วนลด..." class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm uppercase">
+                                    <button type="button" onclick="applyDiscountCode()" class="bg-[#333333] hover:bg-black text-white px-4 py-2 text-sm rounded-sm whitespace-nowrap shadow-md" id="btn-apply-code">ใช้รหัส</button>
+                                </div>
+                                <!-- ช่องกรอกเครดิต (ใช้ร่วมกับ QR) -->
+                                <div id="partial-credit-container" class="mt-2">
+                                    <label class="block text-xs font-semibold mb-1 text-gray-600">ใช้เครดิตในระบบ (ชำระแบบผสมร่วมกับ QR)</label>
+                                    <input type="number" id="credit-input" placeholder="ระบุจำนวนเครดิตที่ต้องการใช้..." class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm" oninput="updateCheckoutTotals()">
+                                    <p id="credit-msg" class="text-xs mt-1"></p>
+                                </div>
                             </div>
+
                             <div class="border-t pt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
                                 <div class="flex justify-between"><span>ยอดรวมสินค้า</span><span id="chk-subtotal">฿0.00</span></div>
                                 <div class="flex justify-between text-secondary"><span>ส่วนลดรวม</span><span id="chk-discount">- ฿0.00</span></div>
+                                <div class="flex justify-between text-green-600 font-medium" id="row-credit-used" style="display:none;"><span>จำนวนการใช้เครดิต</span><span id="chk-credit-used">- ฿0.00</span></div>
                                 <div class="flex justify-between"><span>ภาษีมูลค่าเพิ่ม (VAT 7%)</span><span id="chk-vat">฿0.00</span></div>
                                 <div class="flex justify-between font-bold text-lg text-gray-800 dark:text-white pt-2 border-t mt-2">
                                     <span>ยอดสุทธิ (Net Total)</span><span id="chk-net-total" class="text-primary">฿0.00</span>
@@ -860,6 +1047,8 @@
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50" onclick="navigate('profile'); toggleCategorySidebar()"><i data-lucide="user" class="w-4 h-4 mr-3 text-gray-500"></i>ข้อมูลโปรไฟล์</li>
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-primary" onclick="navigate('deposit'); toggleCategorySidebar()"><i data-lucide="plus-circle" class="w-4 h-4 mr-3"></i>ฝากเงิน / เติมเครดิต</li>
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-purple-600" onclick="navigate('withdraw'); toggleCategorySidebar()"><i data-lucide="arrow-up-circle" class="w-4 h-4 mr-3"></i>ถอนเงิน / แจ้งถอน</li>
+                    <!-- เพิ่มเมนูจองคิว Mobile -->
+                    <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-blue-600" onclick="navigate('booking'); toggleCategorySidebar()"><i data-lucide="calendar-clock" class="w-4 h-4 mr-3"></i>จองคิวล่วงหน้า</li>
                 </ul>
             </div>
 
@@ -956,7 +1145,7 @@
         let activeCategory = 'all';
         let searchQuery = '';
         let currentUser = null; 
-        let qrTimerInterval; // สำหรับจับเวลา QR
+        let qrTimerInterval; 
         
         let siteSettings = {};
         let categories = [{ id: 'all', name: 'สินค้าทั้งหมด' }];
@@ -966,6 +1155,7 @@
         let currentSubtotal = 0;
         let currentDiscount = 0;
         let currentVat = 0;
+        let currentCreditUsed = 0;
         let currentNetTotal = 0;
         let appliedDiscountCode = "";
         
@@ -977,7 +1167,6 @@
             { img: "https://img2.pic.in.th/IMG_1086.png" }
         ];
 
-        // รายชื่อธนาคารพร้อมชื่อภาษาไทย
         const bankList = [
             { id: 'bank-bbl', name: 'Bangkok Bank', thName: 'ธนาคารกรุงเทพ' },
             { id: 'bank-kbank', name: 'Kasikornbank', thName: 'ธนาคารกสิกรไทย' },
@@ -1014,12 +1203,12 @@
             { id: 'bank-pp', name: 'PromptPay', thName: 'พร้อมเพย์' }
         ];
 
-        // ฟังก์ชันช่วยจัดการสีป้ายสถานะประวัติ
         function getStatusBadgeClass(status) {
             if (!status) return "bg-gray-100 text-gray-700";
+            if (status.includes("รอเรียกคิว")) return "bg-blue-100 text-blue-700";
             if (status.includes("รอดำเนินการ")) return "bg-yellow-100 text-yellow-700";
             if (status.includes("ยกเลิก") || status.includes("ไม่สำเร็จ") || status.includes("สลิปซ้ำ")) return "bg-red-100 text-red-700";
-            if (status.includes("สำเร็จ") || status.includes("การชำระเงินถูกต้อง")) return "bg-green-100 text-green-700";
+            if (status.includes("สำเร็จ") || status.includes("การชำระเงินถูกต้อง") || status.includes("เข้ารับบริการแล้ว")) return "bg-green-100 text-green-700";
             return "bg-gray-100 text-gray-700";
         }
 
@@ -1043,7 +1232,19 @@
             const popup = document.getElementById('custom-popup'); if(popup) popup.classList.remove('active');
         }
 
-        // --- ระบบ LocalStorage ตะกร้าสินค้า ---
+        // ฟังก์ชันซ่อน/แสดงรหัสผ่าน
+        function togglePasswordVisibility(inputId, iconEl) {
+            const input = document.getElementById(inputId);
+            if(input.type === 'password') {
+                input.type = 'text';
+                iconEl.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                iconEl.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
         function saveCart() { localStorage.setItem('nextLiveCart', JSON.stringify(cart)); }
         function loadCart() { 
             const c = localStorage.getItem('nextLiveCart'); 
@@ -1054,9 +1255,8 @@
         function init() {
             try { lucide.createIcons(); } catch(e) {}
             initSlider(); populateBankOptions();
-            loadCart(); // โหลดตะกร้าตอนเข้าเว็บ
+            loadCart(); 
             
-            // จับเวลาเพื่อทำ Loading อย่างน้อย 1 วินาที
             const startTime = Date.now();
             
             callBackend({action: 'init'}).then(res => {
@@ -1154,6 +1354,10 @@
                 
                 safeSetValue('chk-fname', currentUser.fname); safeSetValue('chk-lname', currentUser.lname);
                 safeSetValue('chk-email', currentUser.email); safeSetValue('chk-phone', currentUser.phone);
+                
+                // สำหรับฟอร์มจองคิว
+                safeSetValue('bk-fname', currentUser.fname); safeSetValue('bk-lname', currentUser.lname);
+                safeSetValue('bk-email', currentUser.email); safeSetValue('bk-phone', currentUser.phone);
 
                 renderProfileView(); updateCheckoutTotals(); checkWithdrawalState(); 
             } else {
@@ -1163,6 +1367,7 @@
                 
                 const creditWrapper = document.getElementById('method-credit-wrapper'); if(creditWrapper) creditWrapper.style.display = 'none';
                 const qrRadio = document.querySelector('input[name="payment_method"][value="qr"]'); if(qrRadio) qrRadio.checked = true;
+                toggleCreditInput();
             }
         }
 
@@ -1296,22 +1501,23 @@
         }
 
         function navigate(view) {
-            if ((view === 'deposit' || view === 'withdraw' || view === 'profile' || view === 'statement') && !currentUser) {
+            if ((view === 'deposit' || view === 'withdraw' || view === 'profile' || view === 'statement' || view === 'booking') && !currentUser) {
                 showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้งานฟังก์ชันนี้"); openAuth('login'); return;
             }
 
-            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-failure', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-forgot-password', 'view-profile', 'view-deposit', 'view-withdraw', 'view-statement'];
+            const views = ['view-home', 'view-checkout', 'view-payment', 'view-success', 'view-failure', 'view-privacy', 'view-return', 'view-history', 'view-auth', 'view-forgot-password', 'view-profile', 'view-deposit', 'view-withdraw', 'view-statement', 'view-booking'];
             views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             const targetView = document.getElementById(`view-${view}`);
             if(targetView) targetView.classList.remove('hidden');
 
-            if (view === 'checkout') renderCheckoutItems();
+            if (view === 'checkout') { toggleCreditInput(); renderCheckoutItems(); }
             if (view === 'history' && currentUser) { safeSetValue('history-phone-input', currentUser.phone); searchHistory(); }
             if (view === 'profile' && currentUser) { renderProfileView(); }
             if (view === 'deposit' && currentUser) { refreshUserData(); } 
             if (view === 'withdraw' && currentUser) { refreshUserData(); checkWithdrawalState(); } 
+            if (view === 'booking' && currentUser) { switchBookingTab('check'); }
             if (view === 'payment') {
                 safeSetText('slip-total-amount', currentNetTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 let paymentAmount = currentNetTotal; let rawAccount = String(siteSettings.BankAccount || "0000000000");
@@ -1483,11 +1689,11 @@
             const existingIndex = cart.findIndex(item => item.product.id === product.id && item.optionsIdStr === optionsIdStr);
             if(existingIndex >= 0) {
                 cart[existingIndex].qty += 1; 
-                cart[existingIndex].selected = true; // เลือกอัตโนมัติเมื่อเพิ่มเพิ่ม
+                cart[existingIndex].selected = true; 
             } else {
                 cart.push({ id: Date.now().toString(), product: product, options: [...options], optionsIdStr: optionsIdStr, qty: 1, selected: true });
             }
-            saveCart(); // บันทึกหลังเพิ่ม
+            saveCart(); 
             updateCartBadge(); renderCart(); 
         }
 
@@ -1588,21 +1794,86 @@
             } else { showCustomPopup("ข้อผิดพลาด", "รหัสส่วนลดไม่ถูกต้องหรือหมดอายุ"); inputEl.value = ""; }
         }
 
+        function toggleCreditInput() {
+            const method = document.querySelector('input[name="payment_method"]:checked');
+            const cont = document.getElementById('partial-credit-container');
+            const input = document.getElementById('credit-input');
+            if(method && method.value === 'qr') {
+                if(cont) cont.style.display = 'block';
+            } else {
+                if(cont) cont.style.display = 'none';
+                if(input) input.value = '';
+            }
+            updateCheckoutTotals();
+        }
+
         function updateCheckoutTotals() {
             currentSubtotal = 0; 
             getSelectedCart().forEach(item => { let p = item.product.price; item.options.forEach(o => p += o.price); currentSubtotal += p * item.qty; });
-            currentDiscount = Math.min(currentDiscount, currentSubtotal); let afterDiscount = currentSubtotal - currentDiscount;
-            currentVat = afterDiscount * 0.07; currentNetTotal = afterDiscount + currentVat; 
+            
+            // หักส่วนลด
+            currentDiscount = Math.min(currentDiscount, currentSubtotal); 
+            let afterDiscount = currentSubtotal - currentDiscount;
+            
+            // อ่านยอดเครดิตที่ใช้ผสม (ใช้เฉพาะตอนเลือก QR)
+            currentCreditUsed = 0;
+            const method = document.querySelector('input[name="payment_method"]:checked');
+            if(method && method.value === 'qr') {
+                const cInput = document.getElementById('credit-input');
+                let val = parseFloat(cInput ? cInput.value : 0) || 0;
+                
+                const cMsg = document.getElementById('credit-msg');
+                if(val > 0) {
+                    if(currentUser && val > currentUser.balance) {
+                        if(cMsg) { cMsg.innerText = "เครดิตที่ระบุสูงกว่ายอดคงเหลือในระบบ"; cMsg.className = "text-xs mt-1 text-red-500 font-bold"; }
+                        val = currentUser.balance; // ไม่บังคับเปลี่ยนค่าในช่อง แต่ limit ไว้คำนวณ
+                    } else {
+                        if(cMsg) { cMsg.innerText = "สามารถใช้เครดิตได้"; cMsg.className = "text-xs mt-1 text-green-600 font-bold"; }
+                    }
+                } else {
+                    if(cMsg) cMsg.innerText = "";
+                }
+                
+                // จำกัดไม่ให้ใช้เครดิตเกินราคาสินค้า(หลังหักส่วนลด)บวก VAT 
+                // ค่อยคำนวณ VAT ก่อน 
+                let tempVat = afterDiscount * 0.07;
+                let maxAllowed = afterDiscount + tempVat;
+                currentCreditUsed = Math.min(val, maxAllowed);
+                if(currentUser) currentCreditUsed = Math.min(currentCreditUsed, currentUser.balance);
+            }
 
-            safeSetText('chk-subtotal', formatPrice(currentSubtotal)); safeSetText('chk-discount', "- " + formatPrice(currentDiscount));
-            safeSetText('chk-vat', formatPrice(currentVat)); safeSetText('chk-net-total', formatPrice(currentNetTotal));
+            // คำนวณ VAT (คิดจากราคาสุทธิหลังหักส่วนลด ไม่สนการจ่ายผ่านอะไร)
+            currentVat = afterDiscount * 0.07; 
+            
+            // ยอดสุทธิที่ต้องสแกนจ่ายจริง
+            let totalBeforeCredit = afterDiscount + currentVat;
+            currentNetTotal = totalBeforeCredit - currentCreditUsed; 
+
+            safeSetText('chk-subtotal', formatPrice(currentSubtotal)); 
+            safeSetText('chk-discount', "- " + formatPrice(currentDiscount));
+            safeSetText('chk-vat', formatPrice(currentVat)); 
+            
+            // แสดงยอดใช้เครดิต
+            const rowCredit = document.getElementById('row-credit-used');
+            if(currentCreditUsed > 0) {
+                if(rowCredit) rowCredit.style.display = 'flex';
+                safeSetText('chk-credit-used', "- " + formatPrice(currentCreditUsed));
+            } else {
+                if(rowCredit) rowCredit.style.display = 'none';
+            }
+
+            safeSetText('chk-net-total', formatPrice(currentNetTotal));
 
             const creditWrapper = document.getElementById('method-credit-wrapper');
             if(creditWrapper) creditWrapper.style.display = currentUser ? 'block' : 'none'; 
             if(currentUser) safeSetText('chk-display-balance', `คงเหลือ: ฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
             
             const methodCont = document.getElementById('payment-method-container');
-            if(currentNetTotal === 0) { if(methodCont) methodCont.style.display = 'none'; } else { if(methodCont) methodCont.style.display = 'block'; }
+            if(currentNetTotal === 0 && currentCreditUsed === 0) { 
+                if(methodCont) methodCont.style.display = 'none'; 
+            } else { 
+                if(methodCont) methodCont.style.display = 'block'; 
+            }
         }
 
         function renderCheckoutItems() {
@@ -1615,7 +1886,8 @@
                 const div = document.createElement('div'); div.className = "flex items-start py-3 border-b border-gray-100 dark:border-gray-800 last:border-0";
                 div.innerHTML = `<div class="w-12 h-12 bg-white border p-1 flex-shrink-0 mr-3"><img src="${item.product.image}" class="w-full h-full object-contain"></div><div class="flex-grow"><div class="flex justify-between"><span class="text-sm font-semibold dark:text-gray-200">${item.product.name}</span><span class="font-bold text-sm dark:text-gray-200">${formatPrice(itemPrice * item.qty)}</span></div><div class="text-xs text-gray-500">จำนวน: ${item.qty}</div>${optHtml}</div>`; container.appendChild(div);
             });
-            updateCheckoutTotals(); refreshUserData();
+            toggleCreditInput();
+            refreshUserData();
         }
 
         function processOrder() {
@@ -1624,30 +1896,44 @@
             
             let selectedMethod = document.querySelector('input[name="payment_method"]:checked').value; currentFlow = 'order';
 
-            if(currentNetTotal === 0) { submitFreeOrCreditOrder('free'); } 
+            const cInput = document.getElementById('credit-input');
+            let val = parseFloat(cInput ? cInput.value : 0) || 0;
+            if(selectedMethod === 'qr' && val > 0 && currentUser && val > currentUser.balance) {
+                showCustomPopup("แจ้งเตือน", "ยอดเครดิตที่กรอกสูงกว่ายอดคงเหลือของคุณ"); return;
+            }
+
+            if(currentNetTotal === 0 && currentCreditUsed === 0) { submitFreeOrCreditOrder('free'); } 
+            else if (currentNetTotal === 0 && currentCreditUsed > 0) {
+                // จ่ายด้วยเครดิตเต็มจำนวนแบบผสม (ยอดสุทธิเหลือ 0)
+                submitFreeOrCreditOrder('credit');
+            }
             else if (selectedMethod === 'credit') {
                 if(!currentUser) { showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้เครดิต"); return; }
-                if(currentUser.balance < currentNetTotal) { showCustomPopup("เครดิตไม่เพียงพอ", `เครดิตของคุณไม่พอ (ขาด ฿${(currentNetTotal - currentUser.balance).toFixed(2)}) กรุณาเติมเงินหรือเลือกจ่ายด้วย QR Code`); return; }
+                let totalToPay = currentSubtotal - currentDiscount + currentVat;
+                if(currentUser.balance < totalToPay) { showCustomPopup("เครดิตไม่เพียงพอ", `เครดิตของคุณไม่พอ (ขาด ฿${(totalToPay - currentUser.balance).toFixed(2)}) กรุณาเติมเงินหรือเลือกจ่ายด้วย QR Code`); return; }
                 submitFreeOrCreditOrder('credit');
             } else { navigate('payment'); }
         }
 
         function submitFreeOrCreditOrder(methodStr) {
             const btn = document.getElementById('btn-process-order'); if(btn) { btn.innerText = "กำลังประมวลผล..."; btn.disabled = true; }
+            
+            let finalExpected = methodStr === 'credit' ? (currentSubtotal - currentDiscount + currentVat) : currentNetTotal;
+
             const payload = {
                 action: 'submitOrder', paymentMethod: methodStr, buyname: document.getElementById('chk-fname').value + " " + document.getElementById('chk-lname').value,
                 buyemail: document.getElementById('chk-email').value, phone: document.getElementById('chk-phone').value,
                 cart: getSelectedCart().map(c => ({ qty: c.qty, product: { name: c.product.name }, options: c.options.map(o=>({name: o.name})) })),
-                discount: currentDiscount, vat: currentVat.toFixed(2), expectedPrice: currentNetTotal.toFixed(2), discountCode: appliedDiscountCode, base64: "", name: "", type: ""
+                discount: currentDiscount, vat: currentVat.toFixed(2), expectedPrice: finalExpected.toFixed(2), 
+                creditUsed: currentCreditUsed, discountCode: appliedDiscountCode, base64: "", name: "", type: ""
             };
 
             callBackend(payload).then(res => {
                 if(btn) { btn.innerText = "ยืนยันการสั่งซื้อ"; btn.disabled = false; }
                 if (res.status === "success") {
                     safeSetText('display-order-id', res.orderRef); safeSetText('success-title', 'สั่งซื้อสำเร็จ!'); safeSetText('success-ref-label', 'รหัสอ้างอิงออเดอร์ (Order Ref)');
-                    // ลบเฉพาะรายการที่เลือกออกจากตะกร้า
                     cart = cart.filter(c => c.selected === false); saveCart();
-                    currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); 
+                    currentDiscount = 0; appliedDiscountCode = ""; currentCreditUsed = 0; updateCartBadge(); 
                     if(res.newBalance !== undefined) updateBalanceUI(res.newBalance); navigate('success');
                 } else { showCustomPopup("ข้อผิดพลาด", res.message); }
             }).catch(e => { if(btn) { btn.innerText = "ยืนยันการสั่งซื้อ"; btn.disabled = false; } showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); });
@@ -1664,13 +1950,13 @@
                     const overlay = document.getElementById('verification-overlay');
                     if(overlay) { overlay.classList.remove('hidden'); setTimeout(() => overlay.classList.add('opacity-100'), 50); }
                     
-                    clearInterval(qrTimerInterval); // ยกเลิกเวลา หากส่งสลิปแล้ว
+                    clearInterval(qrTimerInterval); 
 
                     let payload = {};
                     if(currentFlow === 'deposit') {
                         payload = { action: 'deposit', fullname: currentUser ? currentUser.fname + " " + currentUser.lname : "Guest", email: currentUser ? currentUser.email : "guest@mail.com", phone: currentUser ? currentUser.phone : "0000000000", expectedPrice: currentNetTotal.toFixed(2), base64: e.target.result.split(',')[1], name: file.name, type: file.type };
                     } else {
-                        payload = { action: 'submitOrder', paymentMethod: 'qr', buyname: document.getElementById('chk-fname').value + " " + document.getElementById('chk-lname').value, buyemail: document.getElementById('chk-email').value, phone: document.getElementById('chk-phone').value, cart: getSelectedCart().map(c => ({ qty: c.qty, product: { name: c.product.name }, options: c.options.map(o=>({name: o.name})) })), discount: currentDiscount, vat: currentVat.toFixed(2), expectedPrice: currentNetTotal.toFixed(2), discountCode: appliedDiscountCode, base64: e.target.result.split(',')[1], name: file.name, type: file.type };
+                        payload = { action: 'submitOrder', paymentMethod: 'qr', buyname: document.getElementById('chk-fname').value + " " + document.getElementById('chk-lname').value, buyemail: document.getElementById('chk-email').value, phone: document.getElementById('chk-phone').value, cart: getSelectedCart().map(c => ({ qty: c.qty, product: { name: c.product.name }, options: c.options.map(o=>({name: o.name})) })), discount: currentDiscount, vat: currentVat.toFixed(2), expectedPrice: currentNetTotal.toFixed(2), creditUsed: currentCreditUsed, discountCode: appliedDiscountCode, base64: e.target.result.split(',')[1], name: file.name, type: file.type };
                     }
 
                     callBackend(payload).then(res => {
@@ -1681,13 +1967,14 @@
                             } else {
                                 safeSetText('display-order-id', res.orderRef); safeSetText('success-title', 'ชำระเงินสำเร็จ ระบบกำลังส่งสินค้าไปที่ ออเดอร์'); safeSetText('success-ref-label', 'รหัสอ้างอิงออเดอร์ (Order Ref)'); 
                                 cart = cart.filter(c => c.selected === false); saveCart();
-                                currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge();
+                                currentDiscount = 0; appliedDiscountCode = ""; currentCreditUsed = 0; updateCartBadge();
                             }
+                            if(res.newBalance !== undefined && currentUser) { updateBalanceUI(res.newBalance); }
                             navigate('success');
                         } else { 
                             if(currentFlow === 'order') {
                                 cart = cart.filter(c => c.selected === false); saveCart();
-                                currentDiscount = 0; appliedDiscountCode = ""; updateCartBadge(); 
+                                currentDiscount = 0; appliedDiscountCode = ""; currentCreditUsed = 0; updateCartBadge(); 
                                 safeSetText('failure-desc', res.message);
                                 navigate('failure');
                             } else if (currentFlow === 'deposit') {
@@ -1728,7 +2015,7 @@
                         res.orders.forEach((item, idx) => {
                             let badgeClass = getStatusBadgeClass(item.status);
                             const div = document.createElement('div'); div.className = "bg-white dark:bg-[#121212] p-4 border dark:border-gray-800 rounded-sm shadow-sm animate-slide-up mb-4"; div.style.animationDelay = `${idx * 0.1}s`;
-                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div><h3 class="font-bold text-sm">Order: ${item.ref}</h3><p class="text-[10px] text-gray-500">${item.date}</p></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-3 bg-gray-50 dark:bg-gray-800 p-2 rounded-sm font-sans">${item.items}</div><div class="flex justify-end text-xs"><span class="font-bold text-primary">ยอดสุทธิ: ฿${item.amount}</span></div>`;
+                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div><h3 class="font-bold text-sm">Order: ${item.ref.replace(/'/g,'')}</h3><p class="text-[10px] text-gray-500">${item.date}</p></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-3 bg-gray-50 dark:bg-gray-800 p-2 rounded-sm font-sans">${item.items}</div><div class="flex justify-end text-xs"><span class="font-bold text-primary">ยอดสุทธิ: ฿${item.amount}</span></div>`;
                             if(ordContainer) ordContainer.appendChild(div);
                         });
                     } else { if(ordContainer) ordContainer.innerHTML = `<div class="text-center py-8 text-gray-500"><p>ไม่พบประวัติการสั่งซื้อ</p></div>`; }
@@ -1739,7 +2026,7 @@
                         res.deposits.forEach((item, idx) => {
                             let badgeClass = getStatusBadgeClass(item.status);
                             const div = document.createElement('div'); div.className = "bg-white dark:bg-[#121212] p-4 border dark:border-gray-800 rounded-sm shadow-sm animate-slide-up mb-4"; div.style.animationDelay = `${idx * 0.1}s`;
-                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div class="flex items-center"><div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex justify-center items-center mr-2"><i data-lucide="arrow-down-to-line" class="w-3 h-3"></i></div><div><h3 class="font-bold text-sm">ฝากเงิน</h3><p class="text-[10px] text-gray-500">${item.date}</p></div></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="flex justify-between text-xs items-center"><span class="text-gray-500">ยอดที่ได้รับ:</span><span class="font-bold text-green-600 text-sm">+฿${item.amount}</span></div>`;
+                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div class="flex items-center"><div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex justify-center items-center mr-2"><i data-lucide="arrow-down-to-line" class="w-3 h-3"></i></div><div><h3 class="font-bold text-sm">ฝากเงิน / คืนเครดิต</h3><p class="text-[10px] text-gray-500">${item.date}</p></div></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="flex justify-between text-xs items-center"><span class="text-gray-500">ยอดที่ได้รับ:</span><span class="font-bold text-green-600 text-sm">+฿${item.amount}</span></div>`;
                             if(depContainer) depContainer.appendChild(div);
                         });
                     } else { if(depContainer) depContainer.innerHTML = `<div class="text-center py-8 text-gray-500"><p>ไม่พบประวัติการฝากเงิน</p></div>`; }
@@ -1784,20 +2071,28 @@
             safeSetText('stmt-phone', `หมายเลขโทรศัพท์ : ${currentUser.phone}`);
             safeSetText('stmt-admin-name', `ผู้รับเงิน ${siteSettings.AdminName}`);
 
-            // Populate Orders
+            // Populate Orders (นำข้อมูล Subtotal, Net, Discount, VAT มาจัดรูปแบบให้ถูกต้อง)
             const oBody = document.getElementById('stmt-orders-tbody'); oBody.innerHTML = '';
             if(globalHistoryData.orders.length > 0) {
                 globalHistoryData.orders.forEach((o, i) => {
-                    let itemsStr = o.items.replace(/\n/g, ' / ');
+                    let itemsStr = o.items.replace(/\n/g, '<br>');
+                    
+                    // คำนวณตัวเลขกลับคืนมาเพื่อแสดงผลในแต่ละช่อง
+                    let amt = parseFloat(o.amount) || 0; // ยอดชำระสุทธิ (รวมทุกอย่าง)
+                    let vat = parseFloat(o.vat) || 0; // ภาษี
+                    let disc = parseFloat(o.discount) || 0; // ส่วนลด
+                    let net = amt - vat; // ยอดสุทธิ (ก่อนบวก VAT แต่หลังหักส่วนลดแล้ว)
+                    let price = net + disc; // ราคาสินค้ารวม (ราคาตั้งต้น ก่อนหักส่วนลด)
+
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td class="py-2 pr-2 border-b border-gray-200">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${o.date} (${o.ref})</span></td>
-                        <td class="text-center py-2 border-b border-gray-200">-</td>
-                        <td class="text-center py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200">-</td>
-                        <td class="text-right py-2 border-b border-gray-200 font-bold">${parseFloat(o.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="py-2 pr-2 border-b border-gray-200 align-top">${i+1}. ${itemsStr} <br><span class="text-[10px] text-gray-500">${o.date} (${o.ref.replace(/'/g, '')})</span></td>
+                        <td class="text-center py-2 border-b border-gray-200 align-top">${price.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-center py-2 border-b border-gray-200 align-top">รวม</td>
+                        <td class="text-right py-2 border-b border-gray-200 align-top">${disc > 0 ? '-' + disc.toLocaleString('en-US',{minimumFractionDigits:2}) : '0.00'}</td>
+                        <td class="text-right py-2 border-b border-gray-200 align-top">${net.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-right py-2 border-b border-gray-200 align-top">${vat.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+                        <td class="text-right py-2 border-b border-gray-200 font-bold align-top text-primary">${amt.toLocaleString('en-US',{minimumFractionDigits:2})}</td>
                     `;
                     oBody.appendChild(tr);
                 });
@@ -1907,6 +2202,313 @@
         function closePaymentSteps() {
             const overlay = document.getElementById('payment-steps-overlay'); const modal = document.getElementById('payment-steps-modal');
             if(modal) modal.classList.add('opacity-0', 'scale-95'); if(overlay) overlay.classList.remove('overlay-enter-active');
+        }
+
+        // --- BOOKING SYSTEM LOGIC ---
+        let currentBookingDate = null;
+        let currentBookingTime = null;
+        let currentCalDate = new Date(); 
+
+        function switchBookingTab(tab) {
+            document.getElementById('booking-tab-check').classList.add('hidden');
+            document.getElementById('booking-tab-book').classList.add('hidden');
+            document.getElementById('booking-tab-cancel').classList.add('hidden');
+            
+            document.getElementById('tab-btn-check').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap";
+            document.getElementById('tab-btn-book').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap";
+            document.getElementById('tab-btn-cancel').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap";
+
+            document.getElementById('booking-tab-' + tab).classList.remove('hidden');
+            document.getElementById('tab-btn-' + tab).className = "py-3 px-6 font-bold text-sm border-b-2 border-primary text-primary whitespace-nowrap";
+
+            if(tab === 'check') loadBookingHistory();
+            if(tab === 'cancel') loadBookingHistory(true); // true = load for cancel
+            if(tab === 'book') {
+                nextBookingStep(1); 
+                initBookingCalendar();
+            }
+        }
+
+        function loadBookingHistory(isCancelTab = false) {
+            if(!currentUser) return;
+            const tbody = document.getElementById(isCancelTab ? 'booking-cancel-tbody' : 'booking-list-tbody');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center p-6 text-gray-400">กำลังโหลดข้อมูล...</td></tr>';
+            
+            callBackend({action: 'getBookingList', phone: currentUser.phone}).then(res => {
+                if(res.status === 'success') {
+                    if(isCancelTab) renderBookingCancelList(res.bookings);
+                    else renderBookingList(res.bookings);
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6 text-red-500">${res.message}</td></tr>`;
+                }
+            }).catch(e => {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6 text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
+            });
+        }
+
+        function renderBookingList(bookings) {
+            const tbody = document.getElementById('booking-list-tbody');
+            if(bookings.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center p-6 text-gray-400">ไม่พบประวัติการจองคิว</td></tr>'; return; }
+            
+            tbody.innerHTML = '';
+            bookings.forEach(b => {
+                let badgeClass = getStatusBadgeClass(b.status);
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3">${b.createDate}</td>
+                    <td class="p-3 font-bold text-primary">${b.queueNo.replace(/'/g, '')}</td>
+                    <td class="p-3"><div class="font-bold">${b.topic}</div><div class="text-xs text-gray-500 truncate w-32">${b.detail}</div></td>
+                    <td class="p-3">${b.bookDate} <br><span class="text-xs text-gray-500">${b.bookTime} น.</span></td>
+                    <td class="p-3 text-center font-bold">${b.sequence}</td>
+                    <td class="p-3 text-center text-yellow-600 font-bold">${b.waitCount}</td>
+                    <td class="p-3 text-center"><span class="${badgeClass} px-2 py-1 text-[10px] font-bold rounded-sm">${b.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderBookingCancelList(bookings) {
+            const tbody = document.getElementById('booking-cancel-tbody');
+            // กรองเฉพาะ รอเรียกคิว
+            let activeBookings = bookings.filter(b => b.status === "รอเรียกคิว");
+            
+            if(activeBookings.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-gray-400">ไม่มีคิวที่สามารถยกเลิกได้</td></tr>'; return; }
+            
+            tbody.innerHTML = '';
+            activeBookings.forEach(b => {
+                let badgeClass = getStatusBadgeClass(b.status);
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-primary">${b.queueNo.replace(/'/g, '')}</td>
+                    <td class="p-3 font-bold">${b.topic}</td>
+                    <td class="p-3">${b.bookDate} ${b.bookTime} น.</td>
+                    <td class="p-3 text-center"><span class="${badgeClass} px-2 py-1 text-[10px] font-bold rounded-sm">${b.status}</span></td>
+                    <td class="p-3 text-center"><button onclick="cancelBooking(${b.rowId})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-sm text-xs font-bold shadow-sm">ยกเลิกคิว</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function cancelBooking(rowId) {
+            if(!confirm("คุณต้องการยกเลิกคิวนี้ใช่หรือไม่? (ต้องยกเลิกล่วงหน้า 3 ชม.)")) return;
+            
+            showCustomPopup("กำลังดำเนินการ", "โปรดรอสักครู่...");
+            callBackend({
+                action: 'cancelBooking', rowId: rowId, 
+                fname: currentUser.fname, email: currentUser.email, phone: currentUser.phone
+            }).then(res => {
+                if(res.status === 'success') {
+                    showCustomPopup("สำเร็จ", res.message);
+                    loadBookingHistory(true); 
+                } else {
+                    showCustomPopup("ข้อผิดพลาด", res.message);
+                }
+            }).catch(e => showCustomPopup("ข้อผิดพลาด", "ไม่สามารถยกเลิกคิวได้"));
+        }
+
+        function nextBookingStep(step) {
+            if(step === 2) {
+                if(!document.getElementById('bk-fname').value || !document.getElementById('bk-lname').value || !document.getElementById('bk-phone').value) {
+                    showCustomPopup("แจ้งเตือน", "กรุณากรอกข้อมูลส่วนตัวให้ครบถ้วน"); return;
+                }
+            }
+            if(step === 3) {
+                if(!document.getElementById('bk-topic').value || !document.getElementById('bk-detail').value) {
+                    showCustomPopup("แจ้งเตือน", "กรุณาระบุหัวข้อและรายละเอียด"); return;
+                }
+            }
+
+            document.getElementById('book-step-1').classList.add('hidden');
+            document.getElementById('book-step-2').classList.add('hidden');
+            document.getElementById('book-step-3').classList.add('hidden');
+            document.getElementById('book-step-success').classList.add('hidden');
+            
+            document.getElementById('book-step-' + step).classList.remove('hidden');
+
+            for(let i=1; i<=3; i++) {
+                let ind = document.getElementById(`book-step-${i}-ind`).querySelector('div');
+                if(i <= step) {
+                    ind.className = "w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm z-10 relative";
+                } else {
+                    ind.className = "w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative";
+                }
+                
+                if(i < 3) {
+                    let line = document.getElementById(`book-line-${i}`);
+                    if(i < step) line.className = "w-16 sm:w-32 h-1 bg-primary";
+                    else line.className = "w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700";
+                }
+            }
+        }
+        function prevBookingStep(step) { nextBookingStep(step); }
+
+        function initBookingCalendar() {
+            currentCalDate = new Date();
+            renderCalendarDays();
+        }
+
+        function changeBookingMonth(dir) {
+            currentCalDate.setMonth(currentCalDate.getMonth() + dir);
+            
+            let today = new Date();
+            if(currentCalDate.getFullYear() < today.getFullYear() || (currentCalDate.getFullYear() === today.getFullYear() && currentCalDate.getMonth() < today.getMonth())) {
+                currentCalDate = new Date(); // ห้ามย้อนกลับไปเดือนในอดีต
+            }
+            renderCalendarDays();
+        }
+
+        const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        
+        function renderCalendarDays() {
+            document.getElementById('booking-month-year').innerText = thaiMonths[currentCalDate.getMonth()] + " " + (currentCalDate.getFullYear() + 543);
+            
+            let daysInMonth = new Date(currentCalDate.getFullYear(), currentCalDate.getMonth() + 1, 0).getDate();
+            let today = new Date();
+            let scrollCont = document.getElementById('booking-calendar-scroll');
+            scrollCont.innerHTML = '';
+
+            let isCurrentMonth = (currentCalDate.getMonth() === today.getMonth() && currentCalDate.getFullYear() === today.getFullYear());
+            let startDay = isCurrentMonth ? today.getDate() : 1;
+
+            for(let i = startDay; i <= daysInMonth; i++) {
+                let dateStr = `${("0"+i).slice(-2)}/${("0"+(currentCalDate.getMonth()+1)).slice(-2)}/${currentCalDate.getFullYear()}`;
+                let dateObj = new Date(currentCalDate.getFullYear(), currentCalDate.getMonth(), i);
+                let dayName = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."][dateObj.getDay()];
+                
+                let btn = document.createElement('button');
+                btn.className = "flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 snap-center transition-colors hover:border-primary";
+                btn.innerHTML = `<span class="text-xs text-gray-500 mb-1">${dayName}</span><span class="font-bold text-lg">${i}</span>`;
+                btn.onclick = () => selectBookingDate(dateStr, btn);
+                
+                if(currentBookingDate === dateStr) {
+                    btn.classList.add('border-primary', 'bg-red-50', 'dark:bg-red-900/20');
+                    btn.classList.remove('bg-white', 'dark:bg-gray-800');
+                }
+                
+                scrollCont.appendChild(btn);
+            }
+            
+            if(!currentBookingDate) {
+                let firstBtn = scrollCont.querySelector('button');
+                if(firstBtn) firstBtn.click();
+            }
+        }
+
+        function selectBookingDate(dateStr, btnEl) {
+            currentBookingDate = dateStr;
+            currentBookingTime = null; 
+            
+            let allBtns = document.getElementById('booking-calendar-scroll').querySelectorAll('button');
+            allBtns.forEach(b => {
+                b.classList.remove('border-primary', 'bg-red-50', 'dark:bg-red-900/20');
+                b.classList.add('bg-white', 'dark:bg-gray-800');
+            });
+            btnEl.classList.remove('bg-white', 'dark:bg-gray-800');
+            btnEl.classList.add('border-primary', 'bg-red-50', 'dark:bg-red-900/20');
+
+            document.getElementById('display-selected-date').innerText = dateStr;
+            renderTimeSlots(dateStr);
+            checkBookingReady();
+        }
+
+        function renderTimeSlots(dateStr) {
+            let grid = document.getElementById('booking-time-grid');
+            grid.innerHTML = '';
+            
+            let times = [];
+            for(let h=9; h<=16; h++) {
+                times.push(`${("0"+h).slice(-2)}:00`);
+                if(h !== 16) times.push(`${("0"+h).slice(-2)}:30`);
+            }
+
+            let now = new Date();
+            let isToday = (dateStr === `${("0"+now.getDate()).slice(-2)}/${("0"+(now.getMonth()+1)).slice(-2)}/${now.getFullYear()}`);
+
+            times.forEach(t => {
+                let btn = document.createElement('button');
+                let tParts = t.split(':');
+                let slotTime = new Date(); slotTime.setHours(parseInt(tParts[0]), parseInt(tParts[1]), 0);
+                
+                let isPast = isToday && (slotTime <= now);
+                
+                if(isPast) {
+                    btn.className = "py-2 border border-gray-200 dark:border-gray-700 rounded-sm text-sm text-gray-400 bg-gray-100 dark:bg-gray-800 cursor-not-allowed";
+                    btn.disabled = true;
+                } else {
+                    btn.className = "py-2 border border-gray-300 dark:border-gray-600 rounded-sm text-sm font-semibold hover:border-primary hover:text-primary transition-colors bg-white dark:bg-[#121212]";
+                    btn.onclick = () => selectBookingTime(t, btn);
+                    
+                    if(currentBookingTime === t) {
+                        btn.classList.add('border-primary', 'bg-primary', 'text-white');
+                        btn.classList.remove('bg-white', 'hover:text-primary', 'dark:bg-[#121212]', 'text-gray-800');
+                    }
+                }
+                btn.innerText = t;
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectBookingTime(timeStr, btnEl) {
+            currentBookingTime = timeStr;
+            let allBtns = document.getElementById('booking-time-grid').querySelectorAll('button:not(:disabled)');
+            allBtns.forEach(b => {
+                b.className = "py-2 border border-gray-300 dark:border-gray-600 rounded-sm text-sm font-semibold hover:border-primary hover:text-primary transition-colors bg-white dark:bg-[#121212]";
+            });
+            btnEl.className = "py-2 border border-primary bg-primary text-white rounded-sm text-sm font-bold shadow-sm";
+            checkBookingReady();
+        }
+
+        function checkBookingReady() {
+            let btn = document.getElementById('btn-submit-booking');
+            if(currentBookingDate && currentBookingTime) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        function submitBooking() {
+            if(!currentBookingDate || !currentBookingTime) return;
+            
+            let btn = document.getElementById('btn-submit-booking');
+            btn.innerText = "กำลังดำเนินการ...";
+            btn.disabled = true;
+
+            const payload = {
+                action: 'submitBooking',
+                uid: currentUser.uid,
+                fname: document.getElementById('bk-fname').value,
+                lname: document.getElementById('bk-lname').value,
+                email: document.getElementById('bk-email').value,
+                phone: document.getElementById('bk-phone').value,
+                topic: document.getElementById('bk-topic').value,
+                detail: document.getElementById('bk-detail').value,
+                bookDate: currentBookingDate,
+                bookTime: currentBookingTime
+            };
+
+            callBackend(payload).then(res => {
+                btn.innerText = "ยืนยันการจองคิว"; btn.disabled = false;
+                if(res.status === 'success') {
+                    document.getElementById('book-step-3').classList.add('hidden');
+                    document.getElementById('book-step-success').classList.remove('hidden');
+                    
+                    safeSetText('succ-qno', res.queueNo.replace(/'/g, ''));
+                    safeSetText('succ-seq', res.sequence);
+                    safeSetText('succ-wait', res.waitCount);
+                    safeSetText('succ-note', `กรุณามาเข้ารับบริการภายในวันที่ ${currentBookingDate} เวลา ${currentBookingTime} น.`);
+                    
+                    document.getElementById('bk-topic').value = '';
+                    document.getElementById('bk-detail').value = '';
+                    currentBookingDate = null;
+                    currentBookingTime = null;
+                } else {
+                    showCustomPopup("ข้อผิดพลาด", res.message);
+                }
+            }).catch(e => {
+                btn.innerText = "ยืนยันการจองคิว"; btn.disabled = false;
+                showCustomPopup("ระบบมีปัญหา", "การเชื่อมต่อล้มเหลว");
+            });
         }
 
         document.addEventListener('DOMContentLoaded', init);
