@@ -124,9 +124,6 @@
         @media (min-width: 640px) { .stmt-table { font-size: 13px; } }
         .stmt-table th, .stmt-table td { padding: 6px 8px; white-space: nowrap; }
 
-        .eye-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9ca3af; }
-        .eye-icon:hover { color: #e43a3d; }
-        
         /* Smooth Accordion */
         .accordion-content { transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
         .accordion-content.open { max-height: 500px; opacity: 1; }
@@ -465,20 +462,26 @@
                 <div class="bg-white dark:bg-[#1e1e1e] p-6 border border-gray-200 dark:border-gray-800 rounded-sm shadow-sm">
                     <h3 class="text-lg font-bold mb-4 border-b pb-2 uppercase">เปลี่ยนรหัสผ่าน</h3>
                     <form id="change-pass-form" class="space-y-4 max-w-sm">
-                        <div class="relative">
+                        <div>
                             <label class="block text-xs font-semibold mb-1">รหัสผ่านปัจจุบัน *</label>
-                            <input type="password" id="cp-old" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
-                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('cp-old', this)"></i>
+                            <div class="relative">
+                                <input type="password" id="cp-old" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <i data-lucide="eye" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-primary" onclick="togglePasswordVisibility('cp-old', this)"></i>
+                            </div>
                         </div>
-                        <div class="relative">
+                        <div>
                             <label class="block text-xs font-semibold mb-1">รหัสผ่านใหม่ *</label>
-                            <input type="password" id="cp-new" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
-                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('cp-new', this)"></i>
+                            <div class="relative">
+                                <input type="password" id="cp-new" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <i data-lucide="eye" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-primary" onclick="togglePasswordVisibility('cp-new', this)"></i>
+                            </div>
                         </div>
-                        <div class="relative">
+                        <div>
                             <label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่านใหม่ *</label>
-                            <input type="password" id="cp-confirm" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
-                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('cp-confirm', this)"></i>
+                            <div class="relative">
+                                <input type="password" id="cp-confirm" required class="w-full px-3 py-2 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <i data-lucide="eye" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-primary" onclick="togglePasswordVisibility('cp-confirm', this)"></i>
+                            </div>
                         </div>
                         <button type="button" onclick="submitChangePassword()" id="btn-submit-cp" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-6 uppercase text-sm rounded-sm shadow-md w-full mt-2">เปลี่ยนรหัสผ่าน</button>
                     </form>
@@ -556,7 +559,7 @@
                             </div>
                             <div class="text-[11px] sm:text-[12px]">
                                 <span class="mr-4">Digitally signed by NEXT</span>
-                                <span id="stmt-date">วันที่ XX-XX-XXXX / XX:XX</span>
+                                <span id="stmt-date">วันที่ XX-XX-XXXX | XX:XX น.</span>
                             </div>
                         </div>
                     </div>
@@ -673,10 +676,12 @@
                         <h2 class="text-2xl font-bold mb-6 text-center text-primary">ลงชื่อเข้าใช้</h2>
                         <form class="space-y-4" id="login-form">
                             <div><label class="block text-xs font-semibold mb-1">อีเมล / หมายเลขโทรศัพท์</label><input type="text" id="log-username" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                            <div class="relative">
+                            <div>
                                 <label class="block text-xs font-semibold mb-1">รหัสผ่าน</label>
-                                <input type="password" id="log-password" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
-                                <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('log-password', this)"></i>
+                                <div class="relative">
+                                    <input type="password" id="log-password" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                    <i data-lucide="eye" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-primary" onclick="togglePasswordVisibility('log-password', this)"></i>
+                                </div>
                             </div>
                             <div class="text-right"><button type="button" onclick="navigate('forgot-password')" class="text-sm text-primary hover:underline">ลืมรหัสผ่าน?</button></div>
                             <button type="button" onclick="submitLogin()" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-login">ลงชื่อเข้าใช้งาน</button>
@@ -696,15 +701,19 @@
                             </div>
                             <div><label class="block text-xs font-semibold mb-1">อีเมล *</label><input type="email" id="reg-email" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
                             <div><label class="block text-xs font-semibold mb-1">เบอร์โทรศัพท์ *</label><input type="tel" id="reg-phone" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm"></div>
-                            <div class="relative">
+                            <div>
                                 <label class="block text-xs font-semibold mb-1">รหัสผ่าน *</label>
-                                <input type="password" id="reg-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
-                                <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('reg-pass', this)"></i>
+                                <div class="relative">
+                                    <input type="password" id="reg-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                    <i data-lucide="eye" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-primary" onclick="togglePasswordVisibility('reg-pass', this)"></i>
+                                </div>
                             </div>
-                            <div class="relative">
+                            <div>
                                 <label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่าน *</label>
-                                <input type="password" id="reg-pass-confirm" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
-                                <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('reg-pass-confirm', this)"></i>
+                                <div class="relative">
+                                    <input type="password" id="reg-pass-confirm" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                    <i data-lucide="eye" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-primary" onclick="togglePasswordVisibility('reg-pass-confirm', this)"></i>
+                                </div>
                             </div>
                             <button type="button" onclick="submitRegister()" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md" id="btn-submit-register">สร้างบัญชี</button>
                         </form>
@@ -729,15 +738,19 @@
                             </div>
                         </div>
                         <div><label class="block text-xs font-semibold mb-1">รหัส OTP (ตรวจสอบในอีเมล) *</label><input type="text" id="fp-otp" required class="w-full px-4 py-3 border bg-white dark:bg-[#121212] text-sm rounded-sm text-center tracking-widest text-lg font-bold"></div>
-                        <div class="relative">
+                        <div>
                             <label class="block text-xs font-semibold mb-1">รหัสผ่านใหม่ *</label>
-                            <input type="password" id="fp-new-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
-                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('fp-new-pass', this)"></i>
+                            <div class="relative">
+                                <input type="password" id="fp-new-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <i data-lucide="eye" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-primary" onclick="togglePasswordVisibility('fp-new-pass', this)"></i>
+                            </div>
                         </div>
-                        <div class="relative">
+                        <div>
                             <label class="block text-xs font-semibold mb-1">ยืนยันรหัสผ่านใหม่ *</label>
-                            <input type="password" id="fp-confirm-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
-                            <i data-lucide="eye" class="w-5 h-5 eye-icon" onclick="togglePasswordVisibility('fp-confirm-pass', this)"></i>
+                            <div class="relative">
+                                <input type="password" id="fp-confirm-pass" required class="w-full px-4 py-3 pr-10 border bg-white dark:bg-[#121212] text-sm rounded-sm">
+                                <i data-lucide="eye" class="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-primary" onclick="togglePasswordVisibility('fp-confirm-pass', this)"></i>
+                            </div>
                         </div>
                         <button type="button" onclick="submitResetPassword()" id="btn-reset-pass" class="w-full bg-[#333333] hover:bg-black text-white font-bold py-3 mt-4 uppercase text-sm rounded-sm shadow-md">เปลี่ยนรหัสผ่าน</button>
                     </form>
@@ -913,7 +926,7 @@
             <div id="view-privacy" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">นโยบายความเป็นส่วนตัว (PRIVACY POLICY)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="privacy-content">
-                    <h3 class="font-semibold text-lg">การเปิดเผยข้อมูลส่วนบุคคล</h3>
+                     <h3 class="font-semibold text-lg">การเปิดเผยข้อมูลส่วนบุคคล</h3>
                     <p>เราจะไม่ขายหรือเผยแพร่ข้อมูลส่วนตัวของคุณให้แก่บุคคลที่สามอื่น หรือองค์กรอื่นใด การเปิดเผยข้อมูลจะเกิดขึ้นก็ต่อเมื่อคุณเป็นผู้ร้องขอและให้ความยินยอมให้เราดำเนินการให้ หรือ การเปิดเผยข้อมูลนั้นเป็นไปตามที่กฎหมายอนุญาต หรือเป็นไปตามที่กฎหมายกำหนด อาทิ การเปิดเผยข้อมูลตามคำสั่งเจ้าหน้าที่ของรัฐซึ่งกฎหมายได้ให้อำนาจไว้ ตามคำสั่งศาล หรือตามหมายศาล</p>
                     <p>เพื่อการพัฒนาและบำรุงรักษาระบบการของเราให้มีความปลอดภัยและมีประสิทธิภาพสูงสุด เราอาจทำความตกลงไว้กับบุคคลที่สามเพื่อให้ดำเนินงานกับเรา หรือดำเนินการในนามของเรา ทั้งนี้บุคคลที่สามนั้นจะต้องยอมรับข้อตกลงคุ้มครองข้อมูลส่วนตัวของคุณไว้เป็นความลับเช่นเดียวกัน</p>
                     <p>ในบางกรณี เราอาจดำเนินการนโยบายการตลาดหรือโฆษณาส่งเสริมบริการร่วมกับบุคคลที่สามสำหรับกลุ่มผู้ที่ยังไม่เคยใช้บริการ เราจึงสงวนสิทธิในการยืนยันรับรองกับบุคคลที่สามว่าคุณได้ใช้บริการกับเราแล้ว</p>
@@ -934,7 +947,7 @@
             <div id="view-return" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">RETURN POLICY (นโยบายการคืนสินค้าและคืนเงิน)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="return-content">
-                      <p>เว็บไซต์ Next Live Shop ขอแจ้งนโยบายการคืนเงินเพื่อเป็นข้อตกลงและสร้างความเข้าใจเกี่ยวกับการใช้บริการเว็บไซต์ ดังนี้</p>
+                   <p>เว็บไซต์ Next Live Shop ขอแจ้งนโยบายการคืนเงินเพื่อเป็นข้อตกลงและสร้างความเข้าใจเกี่ยวกับการใช้บริการเว็บไซต์ ดังนี้</p>
                     <ul class="list-disc pl-5 space-y-2">
                         <li>สินค้าที่ เว็บไซต์ จัดจำหน่ายบนเว็บไซด์ เป็นสินค้าดิจิตอลที่ไม่สามารถคืนสินค้า และไม่สามารถคืนเงินได้</li>
                         <li>เว็บไซต์ จะทำการคืนเงินค่าสินค้าให้กับลูกค้า ในกรณีที่เว็บไซต์ ไม่สามารถจัดส่งสินค้าให้ลูกค้าได้เท่านั้น (โดยจะทำการคืนเงินให้ในส่วนที่ เว็บไซต์ ไม่ได้จัดส่งสินค้าให้ลูกค้า)</li>
@@ -1040,20 +1053,6 @@
                 <ul class="text-sm">
                     <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('privacy'); toggleCategorySidebar()">Privacy Policy</li>
                     <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('return'); toggleCategorySidebar()">Return Policy</li>
-                    
-                    <!-- PWA Download App Menu -->
-                    <li class="cursor-pointer px-4 py-3 border-t border-gray-100 dark:border-gray-800">
-                        <div class="flex items-center justify-between hover:text-primary font-bold" onclick="toggleAppButtons()">
-                            <span><i data-lucide="smartphone" class="w-4 h-4 mr-3 inline"></i>ดาวน์โหลดแอป</span>
-                            <i data-lucide="chevron-down" id="app-dl-chevron" class="w-4 h-4 transition-transform"></i>
-                        </div>
-                        <div id="app-dl-container" class="hidden mt-4 mb-2">
-                            <div class="flex gap-2">
-                                <button onclick="showInstallGuide('android')" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-sm text-xs font-bold flex items-center justify-center shadow-md transition-colors"><i data-lucide="bot" class="w-4 h-4 mr-1"></i> Android</button>
-                                <button onclick="showInstallGuide('ios')" class="flex-1 bg-gray-800 hover:bg-black text-white py-2 rounded-sm text-xs font-bold flex items-center justify-center shadow-md transition-colors"><i data-lucide="apple" class="w-4 h-4 mr-1"></i> iOS</button>
-                            </div>
-                        </div>
-                    </li>
                 </ul>
             </div>
 
@@ -1135,16 +1134,6 @@
                 <button class="w-1/2 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-sm text-sm transition-colors" onclick="closeConfirmPopup()">ไม่ใช่</button>
                 <button class="w-1/2 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-sm text-sm shadow-md transition-colors" id="confirm-yes-btn">ใช่, ยืนยัน</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Install PWA Guide Popup -->
-    <div class="popup-container" id="install-guide-popup">
-        <div class="popup-box relative !p-6 max-w-xs">
-            <button class="absolute top-3 right-3 text-gray-400 hover:text-red-500" onclick="document.getElementById('install-guide-popup').classList.remove('active')"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <img src="https://profile.line-scdn.net/0hsOEB08SxLGB4OzOszzxTN0R-Ig0PFSooAFUzDlgzIFcGXG1iQg1iAFxrIFZWCGIzE15hDg49JgJS/preview" class="w-20 h-20 mx-auto rounded-xl shadow-md mb-4 object-cover">
-            <h2 class="text-lg font-bold mb-2 dark:text-white" id="install-title">ติดตั้งแอปพลิเคชัน</h2>
-            <div id="install-guide-content" class="text-sm text-gray-700 dark:text-gray-300 text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-md leading-relaxed border dark:border-gray-700"></div>
         </div>
     </div>
 
@@ -1242,40 +1231,6 @@
             if(confirmActionCallback) confirmActionCallback();
             closeConfirmPopup();
         });
-
-        // App Download (PWA Simulation)
-        function toggleAppButtons() {
-            const cont = document.getElementById('app-dl-container');
-            const chev = document.getElementById('app-dl-chevron');
-            if(cont.classList.contains('hidden')) {
-                cont.classList.remove('hidden'); chev.style.transform = 'rotate(180deg)';
-            } else {
-                cont.classList.add('hidden'); chev.style.transform = 'rotate(0deg)';
-            }
-        }
-        
-        function showInstallGuide(os) {
-            const content = document.getElementById('install-guide-content');
-            let guideHTML = '';
-            if(os === 'ios') {
-                guideHTML = `<p class="font-bold mb-2">วิธีติดตั้งบน iOS (Safari):</p>
-                             <ol class="list-decimal pl-5 space-y-1">
-                                <li>แตะที่ไอคอน <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Share_Icon.svg/1200px-Share_Icon.svg.png" class="w-4 h-4 inline opacity-70"> <b>แชร์ (Share)</b> ด้านล่างของ Safari</li>
-                                <li>เลื่อนลงมาและเลือก <br><b>"เพิ่มไปยังหน้าจอโฮม"</b> <br>(Add to Home Screen)</li>
-                                <li>กด <b>"เพิ่ม" (Add)</b> ที่มุมขวาบน</li>
-                             </ol>`;
-            } else {
-                guideHTML = `<p class="font-bold mb-2">วิธีติดตั้งบน Android (Chrome):</p>
-                             <ol class="list-decimal pl-5 space-y-1">
-                                <li>แตะที่ไอคอนเมนู <b>3 จุด</b> (มุมขวาบนของเบราว์เซอร์)</li>
-                                <li>เลือก <b>"เพิ่มลงในหน้าจอหลัก"</b> <br>(Add to Home screen)</li>
-                                <li>กด <b>"เพิ่ม" (Add)</b> ยืนยันการติดตั้ง</li>
-                             </ol>`;
-            }
-            content.innerHTML = guideHTML;
-            document.getElementById('install-guide-popup').classList.add('active');
-            toggleCategorySidebar(); // Close sidebar
-        }
 
         // Draggable Horizontal Scroll function
         function initDraggableScroll(elementId) {
@@ -1975,10 +1930,9 @@
                                 safeSetText('display-order-id', "DEP-" + Date.now().toString().slice(-6)); 
                                 safeSetText('success-title', 'เติมเงินสำเร็จ ระบบกำลังเติมเครดิต'); 
                                 safeSetText('success-ref-label', 'รหัสอ้างอิง (Ref)');
-                                if(res.newBalance !== undefined) updateBalanceUI(res.newBalance);
                             } else {
                                 safeSetText('display-order-id', res.orderRef); 
-                                safeSetText('success-title', 'ชำระเงินสำเร็จ ระบบกำลังส่งสินค้าไปที่อีเมล'); 
+                                safeSetText('success-title', 'ชำระเงินสำเร็จ ระบบกำลังจัดส่งสินค้า'); 
                                 safeSetText('success-ref-label', 'รหัสอ้างอิงออเดอร์ (Order Ref)'); 
                                 cart = cart.filter(c => c.selected === false); saveCart();
                                 currentDiscount = 0; appliedDiscountCode = ""; currentCreditUsed = 0; updateCartBadge();
@@ -2008,6 +1962,44 @@
             }
         }
 
+        // --- Booking Formatter (Fix Date/Time Display) ---
+        function formatBookingDisplay(dStr, tStr) {
+            let finalDate = dStr;
+            let finalTime = tStr;
+
+            // Handle ISO Date or "DD-MM-YYYY"
+            if (typeof dStr === 'string' && dStr.includes('T')) {
+                let d = new Date(dStr);
+                let y = d.getFullYear();
+                if (y < 2500) y += 543;
+                finalDate = `${("0" + d.getDate()).slice(-2)}-${("0" + (d.getMonth() + 1)).slice(-2)}-${y}`;
+            } else if (typeof dStr === 'string' && dStr.includes('-')) {
+                let parts = dStr.split('-');
+                if(parts.length === 3 && parts[0].length === 2) {
+                    let y = parseInt(parts[2]);
+                    if (y < 2500) y += 543;
+                    finalDate = `${parts[0]}-${parts[1]}-${y}`;
+                }
+            }
+
+            // Handle ISO Time or "HH:MM"
+            if (typeof tStr === 'string' && tStr.includes('T')) {
+                let d = new Date(tStr);
+                let h = d.getHours();
+                let m = d.getMinutes();
+                // Fix historical timezone offset bug for 1899 times generated by Google Sheets
+                if (d.getFullYear() < 1950) {
+                    if (m >= 10 && m <= 25) { m = 0; }
+                    else if (m >= 40 && m <= 55) { m = 30; }
+                }
+                finalTime = `${("0"+h).slice(-2)}:${("0"+m).slice(-2)}`;
+            } else if (typeof tStr === 'string' && tStr.length >= 5) {
+                finalTime = tStr.substring(0,5);
+            }
+
+            return `${finalDate} | ${finalTime} น.`;
+        }
+
         // --- History fetching & Statement ---
         function searchHistory() {
             const phoneEl = document.getElementById('history-phone-input'); const phone = phoneEl ? phoneEl.value : "";
@@ -2015,7 +2007,7 @@
             const btn = document.getElementById('btn-search-history');
             
             if(!phone) { showCustomPopup("แจ้งเตือน", "กรุณาระบุเบอร์โทรศัพท์"); return; }
-            if(btn) { btn.innerHTML = `<div class="lds-spinner lds-spinner-white" style="width:20px;height:20px;transform:scale(0.3);margin-right:-20px;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>`; btn.disabled = true; }
+            if(btn) { btn.innerHTML = `<div class="lds-spinner lds-spinner-white" style="width:20px;height:20px;transform:scale(0.3);margin-right:-20px;display:inline-block;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>`; btn.disabled = true; }
 
             callBackend({ action: 'getHistory', phone: phone }).then(res => {
                 if(btn) { btn.innerHTML = `<i data-lucide="search" class="w-4 h-4 mr-2"></i>ค้นหา`; btn.disabled = false; }
@@ -2078,7 +2070,7 @@
             let dParts = new Date().toLocaleDateString('th-TH').split('/');
             let tStr = new Date().toTimeString().substring(0,5);
             let y = parseInt(dParts[2]); if(y < 2500) y += 543;
-            safeSetText('stmt-date', `วันที่ ${("0"+dParts[0]).slice(-2)}-${("0"+dParts[1]).slice(-2)}-${y} / ${tStr}`);
+            safeSetText('stmt-date', `วันที่ ${("0"+dParts[0]).slice(-2)}-${("0"+dParts[1]).slice(-2)}-${y} | ${tStr} น.`);
             
             safeSetText('stmt-name', `ชื่อ-สกุล : ${currentUser.fname} ${currentUser.lname}`);
             safeSetText('stmt-email', `อีเมลจัดส่ง : ${currentUser.email}`);
@@ -2264,6 +2256,9 @@
                 let div = document.createElement('div');
                 div.className = "bg-white dark:bg-[#1e1e1e] border dark:border-gray-800 rounded-md shadow-sm overflow-hidden mb-3 transition-all";
                 
+                let displayCreateDate = formatBookingDisplay(b.createDate, ""); 
+                let displayBookDateTime = formatBookingDisplay(b.bookDate, b.bookTime);
+
                 let header = document.createElement('div');
                 header.className = "p-4 cursor-pointer flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors";
                 header.onclick = () => {
@@ -2282,7 +2277,7 @@
                             <span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${b.status}</span>
                         </div>
                         <span class="font-bold text-sm text-gray-800 dark:text-gray-200">${b.topic}</span>
-                        <span class="text-xs text-gray-500">${b.bookDate} ${b.bookTime} น.</span>
+                        <span class="text-xs text-gray-500">${displayBookDateTime}</span>
                     </div>
                     <i data-lucide="chevron-down" id="booking-icon-${idx}" class="w-5 h-5 text-gray-400 transition-transform duration-300"></i>
                 `;
@@ -2292,7 +2287,7 @@
                 content.className = "accordion-content bg-gray-50 dark:bg-[#121212] border-t dark:border-gray-800 text-sm";
                 content.innerHTML = `
                     <div class="grid grid-cols-2 gap-y-3 gap-x-4">
-                        <div><p class="text-xs text-gray-500 mb-1">วันที่ทำรายการ</p><p class="font-semibold">${b.createDate}</p></div>
+                        <div><p class="text-xs text-gray-500 mb-1">วันที่ทำรายการ</p><p class="font-semibold">${displayCreateDate.split('|')[0]}</p></div>
                         <div><p class="text-xs text-gray-500 mb-1">ลำดับคิว</p><p class="font-semibold">${b.sequence}</p></div>
                         <div class="col-span-2"><p class="text-xs text-gray-500 mb-1">รายละเอียด</p><p class="font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700">${b.detail}</p></div>
                         <div><p class="text-xs text-gray-500 mb-1">จำนวนคิวรอก่อนหน้า</p><p class="font-bold text-yellow-600">${b.waitCount}</p></div>
@@ -2316,6 +2311,8 @@
             container.innerHTML = '';
             activeBookings.forEach((b, idx) => {
                 let badgeClass = getStatusBadgeClass(b.status);
+                let displayBookDateTime = formatBookingDisplay(b.bookDate, b.bookTime);
+
                 let div = document.createElement('div');
                 div.className = "bg-white dark:bg-[#1e1e1e] border dark:border-gray-800 rounded-md shadow-sm p-4 mb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4";
                 div.innerHTML = `
@@ -2325,7 +2322,7 @@
                             <span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${b.status}</span>
                         </div>
                         <span class="font-bold text-sm text-gray-800 dark:text-gray-200">${b.topic}</span>
-                        <span class="text-xs text-gray-500">${b.bookDate} ${b.bookTime} น.</span>
+                        <span class="text-xs text-gray-500">${displayBookDateTime}</span>
                     </div>
                     <button onclick="cancelBooking(${b.rowId})" class="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-sm text-xs font-bold shadow-sm transition-colors flex justify-center items-center whitespace-nowrap">
                         <i data-lucide="x-circle" class="w-4 h-4 mr-1"></i> ยกเลิกคิว
@@ -2419,13 +2416,13 @@
             let startDay = isCurrentMonth ? today.getDate() : 1;
 
             for(let i = startDay; i <= daysInMonth; i++) {
-                let dateStr = `${("0"+i).slice(-2)}/${("0"+(currentCalDate.getMonth()+1)).slice(-2)}/${currentCalDate.getFullYear()}`;
+                let dateStr = `${("0"+i).slice(-2)}-${("0"+(currentCalDate.getMonth()+1)).slice(-2)}-${currentCalDate.getFullYear()}`;
                 let dateObj = new Date(currentCalDate.getFullYear(), currentCalDate.getMonth(), i);
                 let dayName = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."][dateObj.getDay()];
                 
                 let btn = document.createElement('button');
                 btn.className = "flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 snap-center transition-colors hover:border-primary select-none";
-                btn.innerHTML = `<span class="text-xs text-gray-500 mb-1">${dayName}</span><span class="font-bold text-lg pointer-events-none">${i}</span>`;
+                btn.innerHTML = `<span class="text-xs text-gray-500 mb-1 pointer-events-none">${dayName}</span><span class="font-bold text-lg pointer-events-none">${i}</span>`;
                 btn.onclick = () => selectBookingDate(dateStr, btn);
                 
                 if(currentBookingDate === dateStr) {
@@ -2454,12 +2451,29 @@
             btnEl.classList.remove('bg-white', 'dark:bg-gray-800');
             btnEl.classList.add('border-primary', 'bg-red-50', 'dark:bg-red-900/20');
 
-            document.getElementById('display-selected-date').innerText = dateStr;
-            renderTimeSlots(dateStr);
-            checkBookingReady();
+            document.getElementById('display-selected-date').innerText = formatBookingDisplay(dateStr, "").split('|')[0].trim();
+            
+            let grid = document.getElementById('booking-time-grid');
+            grid.innerHTML = '<div class="col-span-full text-center py-4 text-gray-500 text-sm"><div class="lds-spinner lds-spinner-white" style="width:20px;height:20px;transform:scale(0.3);margin-right:-20px;display:inline-block;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> กำลังตรวจสอบคิว...</div>';
+            
+            callBackend({action: 'getBookedSlots', date: dateStr, phone: currentUser.phone}).then(res => {
+                if(res.status === 'success') {
+                    if(res.hasUserBookedToday) {
+                        grid.innerHTML = '<div class="col-span-full text-center py-4 text-red-500 font-bold text-sm border border-red-200 bg-red-50 rounded-sm"><i data-lucide="alert-circle" class="w-5 h-5 inline mr-1 -mt-1"></i>คุณมีคิวที่กำลังรอรับบริการในวันนี้แล้ว ไม่สามารถจองซ้ำได้</div>';
+                        try { lucide.createIcons(); } catch(e){}
+                    } else {
+                        renderTimeSlots(dateStr, res.bookedTimes || []);
+                    }
+                } else {
+                    grid.innerHTML = '<div class="col-span-full text-center py-4 text-red-500 text-sm">ตรวจสอบคิวล้มเหลว</div>';
+                }
+                checkBookingReady();
+            }).catch(e => {
+                grid.innerHTML = '<div class="col-span-full text-center py-4 text-red-500 text-sm">การเชื่อมต่อล้มเหลว</div>';
+            });
         }
 
-        function renderTimeSlots(dateStr) {
+        function renderTimeSlots(dateStr, bookedTimes) {
             let grid = document.getElementById('booking-time-grid');
             grid.innerHTML = '';
             
@@ -2470,7 +2484,15 @@
             }
 
             let now = new Date();
-            let isToday = (dateStr === `${("0"+now.getDate()).slice(-2)}/${("0"+(now.getMonth()+1)).slice(-2)}/${now.getFullYear()}`);
+            let isToday = (dateStr === `${("0"+now.getDate()).slice(-2)}-${("0"+(now.getMonth()+1)).slice(-2)}-${now.getFullYear()}`);
+
+            // Normalize booked times from ISO strings if needed
+            let normalizedBookedTimes = bookedTimes.map(t => {
+                if(typeof t === 'string' && t.includes('T')) {
+                   return formatBookingDisplay("", t).split('|')[1].replace('น.', '').trim();
+                }
+                return t;
+            });
 
             times.forEach(t => {
                 let btn = document.createElement('button');
@@ -2478,10 +2500,16 @@
                 let slotTime = new Date(); slotTime.setHours(parseInt(tParts[0]), parseInt(tParts[1]), 0);
                 
                 let isPast = isToday && (slotTime <= now);
+                let isBooked = normalizedBookedTimes.includes(t);
                 
                 if(isPast) {
                     btn.className = "py-2 border border-gray-200 dark:border-gray-700 rounded-sm text-sm text-gray-400 bg-gray-100 dark:bg-gray-800 cursor-not-allowed";
                     btn.disabled = true;
+                    btn.innerText = t;
+                } else if(isBooked) {
+                    btn.className = "py-2 border border-red-500 rounded-sm text-sm text-white bg-red-500 font-bold cursor-not-allowed flex items-center justify-center";
+                    btn.disabled = true;
+                    btn.innerHTML = `<span class="mr-1">${t}</span><span class="text-[10px] bg-white text-red-500 px-1 rounded">เต็ม</span>`;
                 } else {
                     btn.className = "py-2 border border-gray-300 dark:border-gray-600 rounded-sm text-sm font-semibold hover:border-primary hover:text-primary transition-colors bg-white dark:bg-[#121212]";
                     btn.onclick = () => selectBookingTime(t, btn);
@@ -2490,8 +2518,8 @@
                         btn.classList.add('border-primary', 'bg-primary', 'text-white');
                         btn.classList.remove('bg-white', 'hover:text-primary', 'dark:bg-[#121212]', 'text-gray-800');
                     }
+                    btn.innerText = t;
                 }
-                btn.innerText = t;
                 grid.appendChild(btn);
             });
         }
@@ -2543,10 +2571,12 @@
                     document.getElementById('book-step-3').classList.add('hidden');
                     document.getElementById('book-step-success').classList.remove('hidden');
                     
+                    let displayBookDateTime = formatBookingDisplay(currentBookingDate, currentBookingTime);
+
                     safeSetText('succ-qno', res.queueNo.replace(/'/g, ''));
                     safeSetText('succ-seq', res.sequence);
                     safeSetText('succ-wait', res.waitCount);
-                    safeSetText('succ-note', `กรุณามาเข้ารับบริการภายในวันที่ ${currentBookingDate} เวลา ${currentBookingTime} น.`);
+                    safeSetText('succ-note', `กรุณามาเข้ารับบริการภายในวันที่ ${displayBookDateTime}`);
                     
                     document.getElementById('bk-topic').value = '';
                     document.getElementById('bk-detail').value = '';
