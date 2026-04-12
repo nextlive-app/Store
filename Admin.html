@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Premium Dashboard</title>
+    
+    <!-- นำเข้า Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- นำเข้า Google Fonts (Nunito) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- นำเข้า Chart.js สำหรับกราฟ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- นำเข้า Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- ตั้งค่า Tailwind Config และ Custom CSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            sidebar: '#5755A5',
+                            bg: '#F5F7FC',
+                            purple: '#665DFF',
+                            purpleLight: '#A3A0FF',
+                            purpleFade: '#EAE9FF',
+                            orange: '#FF9B63',
+                            orangeLight: '#FFC8A8',
+                            orangeFade: '#FFF0E6',
+                            textDark: '#2D3748',
+                            textMuted: '#A0AEC0',
+                            danger: '#EF4444',
+                            success: '#10B981'
+                        }
+                    },
+                    boxShadow: {
+                        'card': '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
+                        'app': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #E2E8F0; }
+        /* ซ่อน Scrollbar แต่ยังเลื่อนได้ */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Table Styles */
+        .admin-table { width: 100%; text-align: left; border-collapse: separate; border-spacing: 0 0.5rem; }
+        .admin-table th { padding: 1rem; color: #A0AEC0; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #EAE9FF; }
+        .admin-table td { padding: 1rem; background: white; font-size: 0.875rem; color: #2D3748; font-weight: 600; }
+        .admin-table tr td:first-child { border-top-left-radius: 1rem; border-bottom-left-radius: 1rem; }
+        .admin-table tr td:last-child { border-top-right-radius: 1rem; border-bottom-right-radius: 1rem; }
+        .admin-table tbody tr { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); transition: transform 0.2s; }
+        .admin-table tbody tr:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+        
+        .editable-input { width: 100%; border: 1px solid #EAE9FF; border-radius: 0.5rem; padding: 0.25rem 0.5rem; outline: none; font-family: 'Nunito', sans-serif; font-size: 0.875rem; color: #665DFF; background: #F5F7FC; }
+        .editable-input:focus { border-color: #665DFF; }
+
+        /* Toast Animation */
+        @keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        .toast-enter { animation: slideInUp 0.3s ease-out forwards; }
+        .toast-exit { animation: fadeOut 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 sm:p-4 lg:p-8 font-sans">
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[100] flex flex-col items-center justify-center hidden">
+        <i data-lucide="loader-2" class="w-12 h-12 text-brand-purple animate-spin mb-4"></i>
+        <p class="text-brand-textDark font-bold tracking-widest animate-pulse">PROCESSING...</p>
+    </div>
+
+    <!-- App Container -->
+    <div class="bg-brand-bg rounded-[2.5rem] shadow-app flex overflow-hidden w-full max-w-[1400px] h-[95vh] min-h-[800px]">
+        
+        <!-- Sidebar -->
+        <aside class="w-20 lg:w-24 bg-brand-sidebar flex flex-col items-center py-8 justify-between z-10 rounded-l-[2.5rem] flex-shrink-0 transition-all">
+            <div class="flex flex-col items-center gap-8">
+                <!-- Admin Avatar -->
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg relative group cursor-pointer">
+                    <i data-lucide="shield-check" class="text-brand-purple w-6 h-6"></i>
+                    <div class="absolute left-16 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Admin Panel</div>
+                </div>
+                
+                <!-- Menu Icons -->
+                <nav class="flex flex-col gap-6 text-white/50" id="sidebar-menu">
+                    <a href="#" data-target="dashboard" class="menu-btn bg-white/20 text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">หน้าหลัก</div>
+                    </a>
+                    <a href="#" data-target="users" class="menu-btn hover:text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">จัดการผู้ใช้งาน</div>
+                    </a>
+                    <a href="#" data-target="deposits" class="menu-btn hover:text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="arrow-down-circle" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">รายการฝากเงิน</div>
+                    </a>
+                    <a href="#" data-target="withdraws" class="menu-btn hover:text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="arrow-up-circle" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">รายการถอนเงิน</div>
+                    </a>
+                    <a href="#" data-target="orders" class="menu-btn hover:text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">จัดการออเดอร์</div>
+                    </a>
+                    <a href="#" data-target="booking" class="menu-btn hover:text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="calendar-clock" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">ระบบจองคิว</div>
+                    </a>
+                    <a href="#" data-target="products" class="menu-btn hover:text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="package" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">จัดการสินค้า</div>
+                    </a>
+                    <a href="#" data-target="settings" class="menu-btn hover:text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="settings" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">ตั้งค่าระบบ</div>
+                    </a>
+                    <a href="#" data-target="broadcast" class="menu-btn hover:text-white p-3 rounded-2xl transition-all relative group">
+                        <i data-lucide="megaphone" class="w-6 h-6"></i>
+                        <div class="absolute left-14 bg-brand-textDark text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">บรอดแคสต์ (อีเมล)</div>
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- Logout Icon -->
+            <a href="javascript:window.close();" class="text-white/50 hover:text-white p-3 rounded-2xl transition-all relative group">
+                <i data-lucide="log-out" class="w-6 h-6"></i>
+                <div class="absolute left-14 bg-brand-danger text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">ออกจากระบบ</div>
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto relative scroll-smooth p-4 lg:p-8" id="main-scroll-area">
+            
+            <!-- ================= VIEW: DASHBOARD (หน้าหลัก) ================= -->
+            <div id="view-dashboard" class="view-section block animate-fade-in h-full">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-brand-textDark">หน้าหลัก (Dashboard)</h1>
+                        <p class="text-sm text-brand-textMuted" id="dash-date">วันที่ปัจจุบัน: --</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col xl:flex-row gap-6 h-[calc(100%-5rem)]">
+                    <!-- ฝั่งซ้าย (75%) -->
+                    <div class="flex-1 flex flex-col gap-6">
+                        <!-- แถวที่ 1: สถิติ -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Stats Card 1 -->
+                            <div class="card flex flex-col justify-between">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="font-bold text-brand-textDark">จำนวนผู้ใช้งานทั้งหมด</h3>
+                                    <div class="w-8 h-8 rounded-full bg-brand-purpleFade flex items-center justify-center"><i data-lucide="users" class="w-4 h-4 text-brand-purple"></i></div>
+                                </div>
+                                <div class="text-center py-2">
+                                    <div class="text-brand-purple font-extrabold text-4xl" id="dash-users">0</div>
+                                </div>
+                            </div>
+
+                            <!-- Stats Card 2 -->
+                            <div class="card flex flex-col justify-between">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="font-bold text-brand-textDark">สถานะการใช้งานระบบ</h3>
+                                    <div class="w-8 h-8 rounded-full bg-brand-orangeFade flex items-center justify-center"><i data-lucide="activity" class="w-4 h-4 text-brand-orange"></i></div>
+                                </div>
+                                <div class="text-center py-2">
+                                    <div class="text-brand-orange font-extrabold text-2xl" id="dash-most-used">ออเดอร์สินค้า</div>
+                                    <p class="text-xs text-brand-textMuted mt-1">ฟังก์ชันที่มีการใช้งานสูงสุด</p>
+                                </div>
+                            </div>
+
+                            <!-- Stats Card 3 -->
+                            <div class="card">
+                                <h3 class="font-bold text-brand-textDark mb-1">ความคืบหน้า (ยอดเงิน)</h3>
+                                <p class="text-[10px] text-brand-textMuted mb-4">สัดส่วนยอดฝากและสั่งซื้อ</p>
+                                <div class="space-y-3">
+                                    <div>
+                                        <div class="flex justify-between text-xs font-bold mb-1"><span class="text-brand-purple">ยอดฝาก</span><span id="dash-prog-dep">0%</span></div>
+                                        <div class="w-full bg-brand-purpleFade rounded-full h-2"><div class="bg-gradient-to-r from-brand-purple to-brand-purpleLight h-2 rounded-full" style="width: 0%" id="bar-dep"></div></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-xs font-bold mb-1"><span class="text-brand-orange">ยอดสั่งซื้อ</span><span id="dash-prog-ord">0%</span></div>
+                                        <div class="w-full bg-brand-orangeFade rounded-full h-2"><div class="bg-gradient-to-r from-brand-orange to-brand-orangeLight h-2 rounded-full" style="width: 0%" id="bar-ord"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- แถวที่ 2: Line Chart & Circle Progress -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-64 min-h-[250px]">
+                            <!-- Line Chart (Span 2) -->
+                            <div class="card md:col-span-2 flex flex-col">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h3 class="font-bold text-brand-textDark">แนวโน้มยอดขาย & ยอดถอน</h3>
+                                    <span class="text-xs text-brand-textMuted border rounded-full px-3 py-1">เดือนนี้</span>
+                                </div>
+                                <div class="relative flex-1 w-full h-full"><canvas id="mainLineChart"></canvas></div>
+                                <div class="flex justify-center gap-8 mt-2 text-xs text-brand-textMuted font-bold">
+                                    <div class="flex items-center gap-2"><span class="w-4 h-1 bg-brand-purple rounded-full"></span> ยอดขาย (ออเดอร์)</div>
+                                    <div class="flex items-center gap-2"><span class="w-4 h-1 bg-brand-orange rounded-full"></span> ยอดถอนเงิน</div>
+                                </div>
+                            </div>
+
+                            <!-- Circle Progress -->
+                            <div class="card flex flex-col items-center justify-center text-center relative overflow-hidden">
+                                <h3 class="font-bold text-brand-textDark w-full text-left mb-2">อัตรากำไร (Profit)</h3>
+                                <p class="text-[10px] text-brand-textMuted w-full text-left mb-2">เปรียบเทียบยอดขายกับยอดถอน</p>
+                                <div class="relative w-28 h-28 flex items-center justify-center mb-2 z-10">
+                                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="40" fill="none" stroke="#EAE9FF" stroke-width="8"></circle>
+                                        <circle id="profit-circle" cx="50" cy="50" r="40" fill="none" stroke="#10B981" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-linecap="round" class="transition-all duration-1000"></circle>
+                                    </svg>
+                                    <span class="absolute text-xl font-extrabold text-brand-textDark" id="dash-profit-pct">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- แถวที่ 3: Horizontal & Vertical Bar Charts -->
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 h-60 min-h-[220px]">
+                            <!-- Horizontal Bar Chart (Span 3) -->
+                            <div class="card md:col-span-3 flex flex-col">
+                                <h3 class="font-bold text-brand-textDark text-sm mb-1">ความผันผวนของระบบ (จำลอง)</h3>
+                                <div class="relative flex-1 w-full h-full"><canvas id="horizBarChart"></canvas></div>
+                            </div>
+
+                            <!-- Vertical Bar Chart (Span 2) -->
+                            <div class="card md:col-span-2 flex flex-col">
+                                <h3 class="font-bold text-brand-textDark text-sm mb-1">รายงานสถิติรายวัน</h3>
+                                <div class="relative flex-1 w-full h-full"><canvas id="vertBarChart"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ฝั่งขวา (25%) -->
+                    <div class="w-full xl:w-72 flex flex-col gap-6">
+                        <!-- Search Bar (Visual Only) -->
+                        <div class="relative hidden xl:block">
+                            <input type="text" placeholder="Admin Search..." class="w-full bg-white rounded-full py-3 px-5 pr-12 text-sm shadow-card focus:outline-none focus:ring-2 focus:ring-brand-purpleLight text-brand-textDark" disabled>
+                            <div class="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-brand-sidebar rounded-full flex items-center justify-center"><i data-lucide="search" class="w-4 h-4 text-white"></i></div>
+                        </div>
+
+                        <!-- Stacked Progress (สัดส่วนระบบ) -->
+                        <div class="card">
+                            <h3 class="font-bold text-brand-textDark text-sm mb-4">สัดส่วนข้อมูลในระบบ</h3>
+                            <div class="flex w-full h-3 rounded-full overflow-hidden mb-3">
+                                <div class="bg-brand-purple" id="stack-u" style="width: 33%"></div>
+                                <div class="bg-brand-purpleLight" id="stack-o" style="width: 33%"></div>
+                                <div class="bg-brand-orange" id="stack-t" style="width: 34%"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-brand-textMuted font-bold px-1">
+                                <div class="flex items-center gap-1"><span class="w-2 h-2 bg-brand-purple rounded-sm"></span> ผู้ใช้</div>
+                                <div class="flex items-center gap-1"><span class="w-2 h-2 bg-brand-purpleLight rounded-sm"></span> ออเดอร์</div>
+                                <div class="flex items-center gap-1"><span class="w-2 h-2 bg-brand-orange rounded-sm"></span> ธุรกรรม</div>
+                            </div>
+                        </div>
+
+                        <!-- Donut Chart (ส่วนแบ่งตลาด) -->
+                        <div class="card flex flex-col items-center flex-1 justify-center">
+                            <div class="flex justify-between items-center w-full mb-4">
+                                <h3 class="font-bold text-brand-textDark text-sm">การเงินโดยรวม</h3>
+                            </div>
+                            <div class="relative w-40 h-40">
+                                <canvas id="donutChart"></canvas>
+                            </div>
+                            <div class="w-full mt-4 space-y-2">
+                                <div class="flex justify-between text-xs font-bold text-brand-textDark"><span class="text-brand-purple">ยอดฝากรวม</span><span id="dash-total-dep">฿0</span></div>
+                                <div class="flex justify-between text-xs font-bold text-brand-textDark"><span class="text-[#A3A0FF]">ยอดซื้อรวม</span><span id="dash-total-ord">฿0</span></div>
+                                <div class="flex justify-between text-xs font-bold text-brand-textDark"><span class="text-brand-orange">ยอดถอนรวม</span><span id="dash-total-wit">฿0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: USERS ================= -->
+            <div id="view-users" class="view-section hidden animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-brand-textDark flex items-center gap-2"><i data-lucide="users" class="w-6 h-6 text-brand-purple"></i> จัดการผู้ใช้งาน</h1>
+                    <button onclick="addRow('users')" class="bg-brand-purple hover:bg-brand-sidebar text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> เพิ่มผู้ใช้ใหม่</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="card flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand-purpleFade flex items-center justify-center"><i data-lucide="users" class="w-6 h-6 text-brand-purple"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">ยอดรวมผู้ใช้งาน</p><p class="text-2xl font-extrabold text-brand-textDark" id="stat-user-total">0</p></div>
+                    </div>
+                    <div class="card flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand-orangeFade flex items-center justify-center"><i data-lucide="user-check" class="w-6 h-6 text-brand-orange"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">อัปเดตข้อมูลวันนี้</p><p class="text-2xl font-extrabold text-brand-textDark" id="stat-user-today">0</p></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-card overflow-x-auto p-4 border border-gray-50">
+                    <table class="admin-table min-w-[1000px]" id="table-users">
+                        <thead><tr><th>วันที่</th><th>ID User</th><th>ชื่อ</th><th>นามสกุล</th><th>อีเมล</th><th>เบอร์โทร</th><th>รหัสผ่าน</th><th>ธนาคาร</th><th>เลขบัญชี</th><th>เครดิต</th><th class="text-center">จัดการ</th></tr></thead>
+                        <tbody id="tbody-users"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: DEPOSITS ================= -->
+            <div id="view-deposits" class="view-section hidden animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-brand-textDark flex items-center gap-2"><i data-lucide="arrow-down-circle" class="w-6 h-6 text-brand-purple"></i> จัดการฝากเงิน (Deposits)</h1>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="card flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center"><i data-lucide="coins" class="w-6 h-6 text-green-500"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">ยอดฝากรวมวันนี้</p><p class="text-2xl font-extrabold text-brand-textDark" id="stat-dep-today">฿0</p></div>
+                    </div>
+                    <div class="card flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand-purpleFade flex items-center justify-center"><i data-lucide="piggy-bank" class="w-6 h-6 text-brand-purple"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">ยอดฝากสะสมทั้งหมด</p><p class="text-2xl font-extrabold text-brand-textDark" id="stat-dep-total">฿0</p></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-card overflow-x-auto p-4 border border-gray-50">
+                    <p class="text-xs text-brand-orange mb-2 font-bold">* แก้ไขสถานะได้เพียง 1 ครั้งเท่านั้น หากเลือก "สำเร็จ" ระบบจะเพิ่มเครดิตให้ผู้ใช้โดยอัตโนมัติ</p>
+                    <table class="admin-table min-w-[900px]" id="table-deposits">
+                        <thead><tr><th>วันที่</th><th>ID User</th><th>ชื่อ-นามสกุล</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>สลิป</th><th>สถานะ</th><th class="text-center">จัดการ</th></tr></thead>
+                        <tbody id="tbody-deposits"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: WITHDRAWS ================= -->
+            <div id="view-withdraws" class="view-section hidden animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-brand-textDark flex items-center gap-2"><i data-lucide="arrow-up-circle" class="w-6 h-6 text-brand-orange"></i> จัดการถอนเงิน (Withdrawals)</h1>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="card flex items-center gap-4 border-l-4 border-brand-orange">
+                        <div class="w-12 h-12 rounded-full bg-brand-orangeFade flex items-center justify-center"><i data-lucide="clock" class="w-6 h-6 text-brand-orange"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">ยอดรอโอน (รอดำเนินการ)</p><p class="text-2xl font-extrabold text-brand-orange" id="stat-wit-pending">฿0</p></div>
+                    </div>
+                    <div class="card flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center"><i data-lucide="check-circle" class="w-6 h-6 text-green-500"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">ถอนเงินสำเร็จแล้วรวม</p><p class="text-2xl font-extrabold text-brand-textDark" id="stat-wit-done">฿0</p></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-card overflow-x-auto p-4 border border-gray-50">
+                    <p class="text-xs text-brand-orange mb-2 font-bold">* อัปเดตสถานะได้เพียง 1 ครั้งเท่านั้น และจะถูกล็อคทันที</p>
+                    <table class="admin-table min-w-[1000px]" id="table-withdraws">
+                        <thead><tr><th>วันที่</th><th>ID User</th><th>ชื่อ-นามสกุล</th><th>เบอร์โทร</th><th>จำนวนเงิน</th><th>ปลายทาง</th><th>สถานะ</th><th class="text-center">จัดการ</th></tr></thead>
+                        <tbody id="tbody-withdraws"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: ORDERS ================= -->
+            <div id="view-orders" class="view-section hidden animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-brand-textDark flex items-center gap-2"><i data-lucide="shopping-bag" class="w-6 h-6 text-brand-purple"></i> จัดการออเดอร์ (Orders)</h1>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="card flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand-purpleFade flex items-center justify-center"><i data-lucide="shopping-cart" class="w-6 h-6 text-brand-purple"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">จำนวนออเดอร์วันนี้</p><p class="text-2xl font-extrabold text-brand-textDark" id="stat-ord-today">0</p></div>
+                    </div>
+                    <div class="card flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center"><i data-lucide="layers" class="w-6 h-6 text-gray-500"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">จำนวนออเดอร์รวมทั้งหมด</p><p class="text-2xl font-extrabold text-brand-textDark" id="stat-ord-total">0</p></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-card overflow-x-auto p-4 border border-gray-50">
+                    <p class="text-xs text-brand-orange mb-2 font-bold">* แก้ไขสถานะได้ 1 ครั้ง</p>
+                    <table class="admin-table min-w-[1100px]" id="table-orders">
+                        <thead><tr><th>วันที่</th><th>Ref</th><th>ชื่อ</th><th>เบอร์</th><th>รายการ</th><th>ยอดสุทธิ</th><th>ช่องทาง</th><th>สถานะ</th><th class="text-center">จัดการ</th></tr></thead>
+                        <tbody id="tbody-orders"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: BOOKING ================= -->
+            <div id="view-booking" class="view-section hidden animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-brand-textDark flex items-center gap-2"><i data-lucide="calendar-clock" class="w-6 h-6 text-brand-purple"></i> ระบบจองคิว (Booking)</h1>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="card flex items-center gap-4 border-l-4 border-blue-400">
+                        <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center"><i data-lucide="calendar" class="w-6 h-6 text-blue-500"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">จองคิววันนี้</p><p class="text-2xl font-extrabold text-blue-500" id="stat-bk-today">0</p></div>
+                    </div>
+                    <div class="card flex items-center gap-4 border-l-4 border-green-400">
+                        <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center"><i data-lucide="user-check" class="w-6 h-6 text-green-500"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">เข้ารับบริการแล้ว</p><p class="text-2xl font-extrabold text-green-500" id="stat-bk-done">0</p></div>
+                    </div>
+                    <div class="card flex items-center gap-4 border-l-4 border-red-400">
+                        <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center"><i data-lucide="x-circle" class="w-6 h-6 text-red-500"></i></div>
+                        <div><p class="text-sm text-brand-textMuted font-bold">ยกเลิกแล้ว</p><p class="text-2xl font-extrabold text-red-500" id="stat-bk-cancel">0</p></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-card overflow-hidden border border-gray-50 flex flex-col h-[500px]">
+                    <div class="flex border-b">
+                        <button onclick="switchBkTab('pending')" id="tab-bk-pending" class="flex-1 py-4 font-bold text-brand-purple border-b-2 border-brand-purple">รอเรียกคิว</button>
+                        <button onclick="switchBkTab('history')" id="tab-bk-history" class="flex-1 py-4 font-bold text-brand-textMuted border-b-2 border-transparent hover:text-brand-textDark">ประวัติ (เสร็จ/ยกเลิก)</button>
+                    </div>
+                    
+                    <div class="p-4 overflow-y-auto flex-1">
+                        <table class="admin-table w-full min-w-[1000px]" id="table-booking">
+                            <thead><tr><th>เวลาจอง</th><th>คิว/ลำดับ</th><th>ผู้ใช้</th><th>เบอร์โทร</th><th>หัวข้อ/รายละเอียด</th><th>สถานะ</th><th>หมายเหตุ</th><th class="text-center">จัดการ</th></tr></thead>
+                            <tbody id="tbody-booking"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: PRODUCTS ================= -->
+            <div id="view-products" class="view-section hidden animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-brand-textDark flex items-center gap-2"><i data-lucide="package" class="w-6 h-6 text-brand-purple"></i> จัดการสินค้า (Products)</h1>
+                    <button onclick="addRow('products')" class="bg-brand-purple hover:bg-brand-sidebar text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> เพิ่มสินค้าใหม่</button>
+                </div>
+                
+                <div class="card mb-6 inline-block pr-12 border-l-4 border-brand-purple">
+                    <p class="text-sm text-brand-textMuted font-bold">จำนวนสินค้าทั้งหมดในระบบ</p>
+                    <p class="text-3xl font-extrabold text-brand-purple" id="stat-prod-total">0</p>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-card overflow-x-auto p-4 border border-gray-50">
+                    <table class="admin-table min-w-[1200px]" id="table-products">
+                        <thead><tr><th>รหัส</th><th>หมวดหมู่</th><th>ชื่อสินค้า</th><th>รายละเอียด</th><th>ราคา</th><th>รูปลิงก์</th><th>ลิงก์โหลด</th><th>ลิงก์คู่มือ</th><th class="text-center">จัดการ</th></tr></thead>
+                        <tbody id="tbody-products"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: SETTINGS ================= -->
+            <div id="view-settings" class="view-section hidden animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-brand-textDark flex items-center gap-2"><i data-lucide="settings" class="w-6 h-6 text-brand-purple"></i> ตั้งค่าระบบ (Settings)</h1>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-card overflow-x-auto p-6 border border-gray-50 max-w-4xl">
+                    <p class="text-sm text-brand-textMuted font-bold mb-4">ข้อมูลในส่วนนี้ไม่สามารถเพิ่มแถวได้ แต่แก้ไขและบันทึกค่าแบบเรียลไทม์ได้</p>
+                    <table class="admin-table w-full" id="table-settings">
+                        <thead><tr><th class="w-1/4">หัวข้อการตั้งค่า</th><th class="w-2/4">ค่าที่ตั้ง (Value)</th><th class="w-1/4">คำอธิบาย</th><th class="w-24 text-center">จัดการ</th></tr></thead>
+                        <tbody id="tbody-settings"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW: BROADCAST ================= -->
+            <div id="view-broadcast" class="view-section hidden animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold text-brand-textDark flex items-center gap-2"><i data-lucide="megaphone" class="w-6 h-6 text-brand-orange"></i> บรอดแคสต์อีเมล (Broadcast)</h1>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-card p-6 md:p-8 border border-gray-50 max-w-2xl mx-auto mt-10">
+                    <div class="flex items-center justify-center w-16 h-16 bg-brand-orangeFade text-brand-orange rounded-full mx-auto mb-6">
+                        <i data-lucide="send" class="w-8 h-8 ml-1"></i>
+                    </div>
+                    <h2 class="text-center font-extrabold text-xl text-brand-textDark mb-2">ส่งข้อความถึงผู้ใช้ทั้งหมด</h2>
+                    <p class="text-center text-sm text-brand-textMuted mb-8">ระบบจะทำการดึงอีเมลผู้ใช้ทั้งหมดในชีต Users และทำการส่งอีเมลอัตโนมัติ</p>
+
+                    <form id="broadcast-form" onsubmit="handleBroadcast(event)" class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-bold text-brand-textDark mb-1">หัวเรื่อง (Subject) <span class="text-red-500">*</span></label>
+                            <input type="text" id="bc-subject" required class="w-full border-2 border-brand-purpleFade rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple transition-colors bg-gray-50 focus:bg-white" placeholder="เช่น โปรโมชั่นพิเศษประจำเดือน!">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-brand-textDark mb-1">ลิงก์รูปภาพ (Image URL)</label>
+                            <input type="url" id="bc-image" class="w-full border-2 border-brand-purpleFade rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple transition-colors bg-gray-50 focus:bg-white" placeholder="https://example.com/image.jpg (เว้นว่างได้)">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-brand-textDark mb-1">รายละเอียดข้อความ (Message) <span class="text-red-500">*</span></label>
+                            <textarea id="bc-message" required rows="5" class="w-full border-2 border-brand-purpleFade rounded-xl px-4 py-3 focus:outline-none focus:border-brand-purple transition-colors bg-gray-50 focus:bg-white resize-none" placeholder="พิมพ์ข้อความของคุณที่นี่..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-brand-orange hover:bg-[#e07b43] text-white font-extrabold py-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 mt-4 text-lg">
+                            <i data-lucide="paperclip" class="w-5 h-5"></i> ส่งบรอดแคสต์
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // กำหนด URL ของ GAS
+        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec";
+
+        let state = {
+            users: [],
+            deposits: [],
+            withdraws: [],
+            orders: [],
+            booking: [],
+            products: [],
+            settings: []
+        };
+
+        // --- Core Functions ---
+        lucide.createIcons();
+
+        function showLoader(show) { document.getElementById('loading-overlay').classList.toggle('hidden', !show); }
+        
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const color = type === 'success' ? 'bg-brand-success' : 'bg-brand-danger';
+            const icon = type === 'success' ? 'check-circle' : 'alert-circle';
+            toast.className = `toast-enter flex items-center gap-3 text-white px-5 py-3 rounded-xl shadow-lg ${color} font-bold text-sm`;
+            toast.innerHTML = `<i data-lucide="${icon}" class="w-5 h-5"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => { toast.classList.replace('toast-enter', 'toast-exit'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // Fetch Data จาก GAS
+        async function fetchAdminData() {
+            showLoader(true);
+            try {
+                const res = await fetch(GAS_WEBAPP_URL, { 
+                    method:'POST', 
+                    body: JSON.stringify({action: 'adminGetData'}) 
+                });
+                const response = await res.json();
+                if(response.status === 'success') {
+                    state = response.data;
+                    refreshAllTables();
+                    updateDashboardStats();
+                } else {
+                    showToast(response.message || "โหลดข้อมูลล้มเหลว", 'error');
+                }
+            } catch (error) {
+                showToast("โหลดข้อมูลล้มเหลว", 'error');
+            }
+            showLoader(false);
+        }
+
+        // --- Navigation Logic ---
+        document.querySelectorAll('.menu-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = btn.getAttribute('data-target');
+                
+                // Change Active Styling
+                document.querySelectorAll('.menu-btn').forEach(b => {
+                    b.classList.remove('bg-white/20', 'text-white');
+                    b.classList.add('hover:text-white', 'text-white/50');
+                });
+                btn.classList.add('bg-white/20', 'text-white');
+                btn.classList.remove('hover:text-white', 'text-white/50');
+
+                // Switch Views
+                document.querySelectorAll('.view-section').forEach(view => view.classList.add('hidden'));
+                const viewEl = document.getElementById(`view-${target}`);
+                if(viewEl) {
+                    viewEl.classList.remove('hidden');
+                    if(target === 'dashboard') updateDashboardStats();
+                    else refreshAllTables(); // Re-render tables when opening tabs
+                }
+                
+                // Scroll top
+                document.getElementById('main-scroll-area').scrollTop = 0;
+            });
+        });
+
+        // --- Render Tables & Edit Logic ---
+        function getActionButtons(rowId, sheetName, editable = true, lockCondition = false, customHtml = '') {
+            if(lockCondition) {
+                return `<div class="flex justify-center gap-2">
+                            ${customHtml}
+                            <button onclick="deleteRow('${sheetName}', ${rowId})" class="text-brand-danger hover:bg-red-50 p-2 rounded-lg transition" title="ลบข้อมูล"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>`;
+            }
+            if(!editable) {
+                return `<div class="flex justify-center"><button onclick="deleteRow('${sheetName}', ${rowId})" class="text-brand-danger hover:bg-red-50 p-2 rounded-lg transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
+            }
+            return `
+                <div class="flex justify-center gap-2" id="action-${sheetName}-${rowId}">
+                    ${customHtml}
+                    <button onclick="enableEdit('${sheetName}', ${rowId})" class="text-brand-orange hover:bg-orange-50 p-2 rounded-lg transition" title="แก้ไข"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                    <button onclick="deleteRow('${sheetName}', ${rowId})" class="text-brand-danger hover:bg-red-50 p-2 rounded-lg transition" title="ลบข้อมูล"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+                <div class="hidden justify-center gap-2" id="save-${sheetName}-${rowId}">
+                    <button onclick="saveEdit('${sheetName}', ${rowId})" class="text-brand-success hover:bg-green-50 p-2 rounded-lg transition" title="บันทึก"><i data-lucide="save" class="w-4 h-4"></i></button>
+                    <button onclick="cancelEdit('${sheetName}', ${rowId})" class="text-brand-textMuted hover:bg-gray-100 p-2 rounded-lg transition" title="ยกเลิก"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+            `;
+        }
+
+        // Generic Render Function
+        function renderTable(sheetName, mapping, lockIndex = -1, lockValues = []) {
+            const tbody = document.getElementById(`tbody-${sheetName}`);
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            const dataList = state[sheetName];
+            
+            if(!dataList || dataList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${mapping.length + 1}" class="text-center text-brand-textMuted py-8">ไม่มีข้อมูลในระบบ</td></tr>`;
+                return;
+            }
+
+            dataList.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.id = `row-${sheetName}-${item.row}`;
+                let html = '';
+                
+                let isLocked = false;
+                if(lockIndex > -1) {
+                    const statusStr = item.cols[lockIndex] ? String(item.cols[lockIndex]) : '';
+                    isLocked = lockValues.some(v => statusStr.includes(v));
+                }
+
+                let editableIndices = getEditableIndices(sheetName); 
+
+                mapping.forEach(origIdx => {
+                    let val = item.cols[origIdx] === undefined || item.cols[origIdx] === null ? '' : item.cols[origIdx];
+                    let canEditThisCol = editableIndices.includes(origIdx) && !isLocked;
+                    
+                    let displayVal = val;
+                    if(typeof val === 'string' && val.startsWith('http')) {
+                        displayVal = `<a href="${val}" target="_blank" class="text-brand-purple underline flex items-center gap-1"><i data-lucide="external-link" class="w-3 h-3"></i> ดูลำดับ</a>`;
+                    }
+                    
+                    html += `
+                        <td class="whitespace-nowrap">
+                            <span id="text-${sheetName}-${item.row}-${origIdx}" class="block overflow-hidden text-ellipsis max-w-[200px]" title="${val}">${displayVal}</span>
+                            ${canEditThisCol ? `<input type="text" id="input-${sheetName}-${item.row}-${origIdx}" class="editable-input hidden" value="${val}">` : ''}
+                        </td>
+                    `;
+                });
+                
+                html += `<td class="text-center">${getActionButtons(item.row, sheetName, !isLocked, isLocked)}</td>`;
+                tr.innerHTML = html;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        // กำหนด Index ของ Column ที่ยอมให้แก้ได้ในแต่ละ Sheet (นับตาม Sheet เริ่มที่ 0)
+        function getEditableIndices(sheetName) {
+            if(sheetName === 'users') return [2,3,4,5,6,7,8,9,10]; // แก้ได้หมดยกเว้นวันที่(0), เวลา(1)
+            if(sheetName === 'deposits') return [7]; // แก้สถานะ
+            if(sheetName === 'withdraws') return [7]; // แก้สถานะ
+            if(sheetName === 'orders') return [9]; // แก้สถานะ
+            if(sheetName === 'booking') return [14, 15]; // สถานะ, หมายเหตุ
+            if(sheetName === 'products') return [0,1,2,3,4,5,6,7];
+            if(sheetName === 'settings') return [1,2]; // ห้ามแก้ชื่อ Key(0)
+            return [];
+        }
+
+        function refreshAllTables() {
+            // mapping arrays based on exact column index in Google Sheets
+            renderTable('users', [0, 2, 3, 4, 5, 6, 7, 8, 9, 10]); // วันที่, ID, ชื่อ, นามสกุล, เมล, เบอร์, รหัส, ธนาคาร, เลข, เครดิต
+            renderTable('deposits', [0, 1, 2, 4, 6, 8, 7], 7, ['สำเร็จ', 'ไม่สำเร็จ', 'ยกเลิก', 'สลิปซ้ำ']); // วัน, ID, ชื่อ, เบอร์, จำนวน, สลิป, สถานะ
+            renderTable('withdraws', [0, 1, 2, 4, 6, 8, 7], 7, ['สำเร็จ', 'ไม่สำเร็จ', 'ยกเลิก']);
+            renderTable('orders', [0, 1, 2, 3, 4, 7, 10, 9], 9, ['สำเร็จ', 'การชำระเงินถูกต้อง', 'ยกเลิก']); // วัน, ref, ชื่อ, เบอร์, รายการ, ยอดสุทธิ, ช่องทาง, สถานะ
+            
+            renderBookingTable(); // Custom mapping
+            
+            renderTable('products', [0, 1, 2, 3, 4, 5, 6, 7]);
+            renderTable('settings', [0, 1, 2]);
+        }
+
+        // Booking มี 2 Tab
+        let activeBkTab = 'pending';
+        function switchBkTab(tab) {
+            activeBkTab = tab;
+            document.getElementById('tab-bk-pending').className = tab === 'pending' ? "flex-1 py-4 font-bold text-brand-purple border-b-2 border-brand-purple" : "flex-1 py-4 font-bold text-brand-textMuted border-b-2 border-transparent hover:text-brand-textDark";
+            document.getElementById('tab-bk-history').className = tab === 'history' ? "flex-1 py-4 font-bold text-brand-purple border-b-2 border-brand-purple" : "flex-1 py-4 font-bold text-brand-textMuted border-b-2 border-transparent hover:text-brand-textDark";
+            renderBookingTable();
+        }
+        function renderBookingTable() {
+            const tbody = document.getElementById('tbody-booking');
+            tbody.innerHTML = '';
+            const dataList = state.booking || [];
+            let filtered = dataList.filter(b => activeBkTab === 'pending' ? b.cols[14] === 'รอเรียกคิว' : b.cols[14] !== 'รอเรียกคิว');
+            
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-brand-textMuted py-8">ไม่มีข้อมูลในหมวดหมู่นี้</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.id = `row-booking-${item.row}`;
+                let isLocked = item.cols[14] !== 'รอเรียกคิว';
+                let editableIndices = getEditableIndices('booking');
+
+                let html = '';
+                // คอลัมน์ที่แสดง 0:เวลาจอง, 1:คิวลำดับ, 2:ผู้ใช้, 3:เบอร์, 4:รายละเอียด, 5:สถานะ, 6:หมายเหตุ
+                let colsToShow = [
+                    `${item.cols[9]} ${item.cols[10]}`, 
+                    `${item.cols[11]} (ที่ ${item.cols[12]})`, 
+                    `${item.cols[3]} ${item.cols[4]}`, 
+                    item.cols[6], 
+                    `${item.cols[7]}: ${item.cols[8]}`, 
+                    item.cols[14], 
+                    item.cols[15]
+                ];
+                
+                // Mappings for original column index to input index for saving
+                let mapping = [-1, -1, -1, -1, -1, 14, 15];
+
+                colsToShow.forEach((val, i) => {
+                    let origIdx = mapping[i];
+                    let canEdit = origIdx > -1 && editableIndices.includes(origIdx) && !isLocked;
+                    
+                    html += `
+                        <td class="whitespace-nowrap">
+                            <span id="text-booking-${item.row}-${origIdx}" class="block overflow-hidden text-ellipsis max-w-[150px]" title="${val}">${val}</span>
+                            ${canEdit ? `<input type="text" id="input-booking-${item.row}-${origIdx}" class="editable-input hidden" value="${item.cols[origIdx]}">` : ''}
+                        </td>
+                    `;
+                });
+                
+                let customHtml = !isLocked ? `<button onclick="callQueue(${item.row}, '${item.cols[5]}')" class="text-brand-purple hover:bg-brand-purpleFade p-2 rounded-lg transition" title="เรียกคิว (อีเมล)"><i data-lucide="bell-ring" class="w-4 h-4"></i></button>` : '';
+                html += `<td class="text-center">${getActionButtons(item.row, 'booking', !isLocked, isLocked, customHtml)}</td>`;
+                tr.innerHTML = html;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        // --- Interaction Logic (Edit, Save, Delete, Add) ---
+        function enableEdit(sheetName, rowId) {
+            const tr = document.getElementById(`row-${sheetName}-${rowId}`);
+            if(!tr) return;
+            const spans = tr.querySelectorAll('span[id^="text-"]');
+            const inputs = tr.querySelectorAll('input[id^="input-"]');
+            
+            spans.forEach(s => s.classList.add('hidden'));
+            inputs.forEach(i => i.classList.remove('hidden'));
+            
+            document.getElementById(`action-${sheetName}-${rowId}`).classList.add('hidden');
+            document.getElementById(`save-${sheetName}-${rowId}`).classList.remove('hidden');
+            document.getElementById(`save-${sheetName}-${rowId}`).classList.add('flex');
+        }
+
+        function cancelEdit(sheetName, rowId) {
+            const tr = document.getElementById(`row-${sheetName}-${rowId}`);
+            if(!tr) return;
+            const spans = tr.querySelectorAll('span[id^="text-"]');
+            const inputs = tr.querySelectorAll('input[id^="input-"]');
+            
+            spans.forEach(s => s.classList.remove('hidden'));
+            inputs.forEach(i => { i.classList.add('hidden'); i.value = i.getAttribute('value'); }); 
+            
+            document.getElementById(`action-${sheetName}-${rowId}`).classList.remove('hidden');
+            document.getElementById(`save-${sheetName}-${rowId}`).classList.add('hidden');
+            document.getElementById(`save-${sheetName}-${rowId}`).classList.remove('flex');
+        }
+
+        async function saveEdit(sheetName, rowId) {
+            const tr = document.getElementById(`row-${sheetName}-${rowId}`);
+            const inputs = tr.querySelectorAll('input[id^="input-"]');
+            let updateData = {};
+            
+            inputs.forEach(input => {
+                let colIdx = input.id.split('-').pop();
+                updateData[colIdx] = input.value;
+            });
+
+            showLoader(true);
+            try {
+                const res = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'adminUpdateRow', sheet: sheetName, row: rowId, data: updateData })
+                });
+                const response = await res.json();
+                if(response.status === 'success') {
+                    showToast('อัปเดตข้อมูลสำเร็จ');
+                    fetchAdminData();
+                } else {
+                    showToast(response.message, 'error');
+                }
+            } catch(e) {
+                showToast('เกิดข้อผิดพลาดในการบันทึก', 'error');
+            }
+            showLoader(false);
+        }
+
+        async function deleteRow(sheetName, rowId) {
+            if(!confirm("ยืนยันการลบข้อมูลแถวนี้?")) return;
+            
+            showLoader(true);
+            try {
+                const res = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'adminDeleteRow', sheet: sheetName, row: rowId })
+                });
+                const response = await res.json();
+                if(response.status === 'success') {
+                    showToast('ลบข้อมูลเรียบร้อยแล้ว');
+                    fetchAdminData();
+                } else {
+                    showToast(response.message, 'error');
+                }
+            } catch(e) {
+                showToast('เกิดข้อผิดพลาด', 'error');
+            }
+            showLoader(false);
+        }
+
+        async function addRow(sheetName) {
+            if (sheetName !== 'products' && sheetName !== 'users') {
+                showToast('เพิ่มข้อมูลผ่านระบบนี้ได้เฉพาะผู้ใช้และสินค้า', 'error'); return;
+            }
+            let promptMsg = sheetName === 'products' ? "กรอกข้อมูลสินค้า (คั่นด้วย |)\nรหัส|หมวดหมู่|ชื่อ|รายละเอียด|ราคา|ลิงก์รูป|ลิงก์โหลด|ลิงก์คู่มือ" : "กรอกข้อมูลผู้ใช้ (คั่นด้วย |)\nชื่อ|นามสกุล|อีเมล|เบอร์|รหัสผ่าน";
+            let defaultVal = sheetName === 'products' ? "P005|หมวดหมู่|ชื่อ|รายละเอียด|100|url|url|url" : "ทดสอบ|ระบบ|test@mail.com|0800000000|1234";
+            
+            let input = prompt(promptMsg, defaultVal);
+            if(!input) return;
+            let parts = input.split('|');
+            
+            showLoader(true);
+            try {
+                const res = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'adminAddRow', sheet: sheetName, data: parts })
+                });
+                const response = await res.json();
+                if(response.status === 'success') {
+                    showToast('เพิ่มข้อมูลสำเร็จ');
+                    fetchAdminData(); 
+                } else {
+                    showToast(response.message, 'error');
+                }
+            } catch(e) {
+                showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            }
+            showLoader(false);
+        }
+
+        async function callQueue(rowId, email) {
+            if(!confirm(`ต้องการส่งอีเมลเรียกคิวไปที่ ${email} หรือไม่?`)) return;
+            showLoader(true);
+            try {
+                const res = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'adminCallQueue', row: rowId, email: email })
+                });
+                const response = await res.json();
+                if(response.status === 'success') {
+                    showToast('ส่งอีเมลแจ้งเรียกคิวสำเร็จ');
+                    fetchAdminData();
+                } else {
+                    showToast('เกิดข้อผิดพลาด', 'error');
+                }
+            } catch(e) {
+                showToast('เกิดข้อผิดพลาด', 'error');
+            }
+            showLoader(false);
+        }
+
+        async function handleBroadcast(e) {
+            e.preventDefault();
+            const subject = document.getElementById('bc-subject').value;
+            const imgUrl = document.getElementById('bc-image').value;
+            const message = document.getElementById('bc-message').value;
+
+            if(!confirm("ยืนยันการส่งอีเมลบอร์ดแคสต์หาผู้ใช้ทั้งหมด?")) return;
+            
+            showLoader(true);
+            try {
+                const res = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'adminBroadcast', subject: subject, imgUrl: imgUrl, message: message })
+                });
+                const response = await res.json();
+                if(response.status === 'success') {
+                    showToast('ส่งข้อความบรอดแคสต์เรียบร้อยแล้ว');
+                    document.getElementById('broadcast-form').reset();
+                } else {
+                    showToast(response.message, 'error');
+                }
+            } catch(error) {
+                showToast('เกิดข้อผิดพลาดในการส่งข้อความ', 'error');
+            }
+            showLoader(false);
+        }
+
+        // --- Dashboard Update Logic ---
+        function updateDashboardStats() {
+            document.getElementById('dash-date').innerText = `วันที่ปัจจุบัน: ${new Date().toLocaleDateString('th-TH')}`;
+            document.getElementById('dash-users').innerText = state.users ? state.users.length : 0;
+            document.getElementById('stat-user-total').innerText = state.users ? state.users.length : 0;
+            document.getElementById('stat-ord-total').innerText = state.orders ? state.orders.length : 0;
+            document.getElementById('stat-prod-total').innerText = state.products ? state.products.length : 0;
+            
+            // คำนวณยอด
+            let totalDep = 0, totalOrd = 0, totalWit = 0;
+            if(state.deposits) state.deposits.forEach(d => { if(d.cols[7]==='สำเร็จ') totalDep += parseFloat(d.cols[6]||0); });
+            if(state.orders) state.orders.forEach(o => { if(o.cols[9]==='การชำระเงินถูกต้อง') totalOrd += parseFloat(o.cols[7]||0); });
+            if(state.withdraws) state.withdraws.forEach(w => { if(w.cols[7]==='สำเร็จ') totalWit += parseFloat(w.cols[6]||0); });
+            
+            // Update Dashboard Text
+            document.getElementById('dash-total-dep').innerText = `฿${totalDep.toLocaleString()}`;
+            document.getElementById('dash-total-ord').innerText = `฿${totalOrd.toLocaleString()}`;
+            document.getElementById('dash-total-wit').innerText = `฿${totalWit.toLocaleString()}`;
+
+            let totalIn = totalDep + totalOrd;
+            if(totalIn > 0) {
+                let depPct = (totalDep / totalIn) * 100;
+                let ordPct = (totalOrd / totalIn) * 100;
+                document.getElementById('dash-prog-dep').innerText = `${depPct.toFixed(0)}%`;
+                document.getElementById('bar-dep').style.width = `${depPct}%`;
+                document.getElementById('dash-prog-ord').innerText = `${ordPct.toFixed(0)}%`;
+                document.getElementById('bar-ord').style.width = `${ordPct}%`;
+                
+                let profitPct = ((totalIn - totalWit) / totalIn) * 100;
+                if(profitPct < 0) profitPct = 0;
+                document.getElementById('dash-profit-pct').innerText = `${profitPct.toFixed(0)}%`;
+                let offset = 251.2 - (251.2 * profitPct / 100);
+                document.getElementById('profit-circle').style.strokeDashoffset = offset;
+            }
+
+            // Booking Stats
+            if(state.booking) {
+                document.getElementById('stat-bk-today').innerText = state.booking.filter(b => b.cols[14]==='รอเรียกคิว').length;
+                document.getElementById('stat-bk-done').innerText = state.booking.filter(b => b.cols[14]==='เข้ารับบริการแล้ว').length;
+                document.getElementById('stat-bk-cancel').innerText = state.booking.filter(b => b.cols[14]==='ยกเลิกแล้ว').length;
+            }
+        }
+
+        // เริ่มโหลดข้อมูลเมื่อหน้าเว็บโหลดเสร็จ
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAdminData();
+        });
+    </script>
+</body>
+</html>
