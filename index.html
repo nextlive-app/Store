@@ -94,18 +94,20 @@
         @keyframes lds-spinner { 0% { opacity: 1; } 100% { opacity: 0; } }
         .lds-spinner-white div:after { background: #ffffff !important; }
 
-        .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .5); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; z-index: 99999; }
-        .popup-container.active { opacity: 1; pointer-events: auto; transition: .4s ease; }
-        .popup-container .popup-box { width: 90%; max-width: 400px; background: #f2f2f2; border-radius: 6px; box-shadow: 0 0 10px rgba(0, 0, 0, .1); padding: 30px; transform: scale(0); text-align: center; font-family: "Poppins", 'Kanit', sans-serif; white-space: pre-line; line-height: 1.5; }
-        .popup-container.active .popup-box { transform: scale(1); transition: .4s ease; transition-delay: .1s; }
+        .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .5); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; z-index: 99999; backdrop-filter: blur(2px); }
+        .popup-container.active { opacity: 1; pointer-events: auto; transition: .3s ease; }
+        .popup-container .popup-box { width: 90%; max-width: 400px; background: #f2f2f2; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, .2); padding: 30px; transform: scale(0.9); text-align: center; font-family: "Poppins", 'Kanit', sans-serif; white-space: pre-line; line-height: 1.5; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .dark .popup-container .popup-box { background: #1e1e1e; }
+        .popup-container.active .popup-box { transform: scale(1); }
         .popup-box h1 { color: #333; line-height: 1; font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+        .dark .popup-box h1 { color: #fff; }
         .popup-box p { color: #555; margin: 12px 0 20px; font-size: 14px; }
-        .popup-box .close-btn { width: 100%; height: 45px; background: #e43a3d; border-radius: 6px; border: none; outline: none; box-shadow: 0 0 10px rgba(0, 0, 0, .1); cursor: pointer; font-size: 16px; color: #f2f2f2; font-weight: 600; }
+        .dark .popup-box p { color: #aaa; }
+        .popup-box .close-btn { width: 100%; height: 45px; background: #e43a3d; border-radius: 6px; border: none; outline: none; box-shadow: 0 4px 10px rgba(228, 58, 61, .3); cursor: pointer; font-size: 16px; color: #f2f2f2; font-weight: 600; }
 
         #maintenance-screen { position: fixed; inset: 0; background: #fff; z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .dark #maintenance-screen { background: #121212; color: white; }
         
-        /* แก้ไขบัค UI Radio Button ให้แสดงสีชัดเจน */
         .custom-radio:checked + div { border-color: #e43a3d; background-color: #fef2f2; }
         .custom-radio:checked + div .radio-inner-circle { transform: scale(1); }
         .dark .custom-radio:checked + div { background-color: rgba(228, 58, 61, 0.1); }
@@ -122,9 +124,12 @@
         @media (min-width: 640px) { .stmt-table { font-size: 13px; } }
         .stmt-table th, .stmt-table td { padding: 6px 8px; white-space: nowrap; }
 
-        /* ไอคอนดวงตา Password */
         .eye-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #9ca3af; }
         .eye-icon:hover { color: #e43a3d; }
+        
+        /* Smooth Accordion */
+        .accordion-content { transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+        .accordion-content.open { max-height: 500px; opacity: 1; }
     </style>
 </head>
 <body class="antialiased flex flex-col min-h-screen">
@@ -169,7 +174,6 @@
                         <a href="#" onclick="navigate('history')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ประวัติการทำรายการ</a>
                         <a href="#" onclick="navigate('deposit')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ฝากเงิน</a>
                         <a href="#" onclick="navigate('withdraw')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium">ถอนเงิน</a>
-                        <!-- เพิ่มเมนูจองคิว -->
                         <a href="#" onclick="navigate('booking')" class="text-gray-600 dark:text-gray-300 hover:text-primary text-sm font-medium"><i data-lucide="calendar-clock" class="w-4 h-4 inline mr-1 -mt-1"></i>จองคิวล่วงหน้า</a>
                     </div>
 
@@ -237,7 +241,7 @@
             </div>
 
             <!-- View: Booking System (จองคิว) -->
-            <div id="view-booking" class="hidden max-w-5xl mx-auto px-4 py-12">
+            <div id="view-booking" class="hidden max-w-4xl mx-auto px-4 py-12">
                 <h2 class="text-2xl font-bold mb-6 text-primary"><i data-lucide="calendar-check" class="w-6 h-6 inline mr-2 -mt-1"></i>ระบบจองคิวล่วงหน้า</h2>
                 
                 <!-- Tab Menu -->
@@ -247,25 +251,11 @@
                     <button onclick="switchBookingTab('cancel')" id="tab-btn-cancel" class="py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap"><i data-lucide="x-circle" class="w-4 h-4 inline mr-1"></i> ยกเลิกคิว</button>
                 </div>
 
-                <!-- Tab Content: Check Queue -->
+                <!-- Tab Content: Check Queue (To-Do List Style) -->
                 <div id="booking-tab-check" class="block animate-fade-in">
-                    <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-                                <tr>
-                                    <th class="p-3">วันที่ทำรายการ</th>
-                                    <th class="p-3">เลขที่คิว</th>
-                                    <th class="p-3">หัวข้อ/รายละเอียด</th>
-                                    <th class="p-3">วัน-เวลาที่จอง</th>
-                                    <th class="p-3 text-center">ลำดับ</th>
-                                    <th class="p-3 text-center">คิวรอ</th>
-                                    <th class="p-3 text-center">สถานะ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="booking-list-tbody" class="divide-y divide-gray-100 dark:divide-gray-800">
-                                <tr><td colspan="7" class="text-center p-6 text-gray-400">กำลังโหลดข้อมูล...</td></tr>
-                            </tbody>
-                        </table>
+                    <div id="booking-list-container" class="space-y-3">
+                        <!-- Cards will be injected here via JS -->
+                        <div class="text-center p-6 text-gray-400 border border-dashed rounded-md">กำลังโหลดข้อมูล...</div>
                     </div>
                 </div>
 
@@ -275,15 +265,15 @@
                         <!-- Step Indicator -->
                         <div class="flex items-center justify-center mb-8 relative">
                             <div class="flex items-center" id="book-step-1-ind">
-                                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm z-10 relative">1</div>
-                                <div class="w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700" id="book-line-1"></div>
+                                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm z-10 relative shadow-md">1</div>
+                                <div class="w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700 transition-colors" id="book-line-1"></div>
                             </div>
                             <div class="flex items-center" id="book-step-2-ind">
-                                <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative">2</div>
-                                <div class="w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700" id="book-line-2"></div>
+                                <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative transition-colors">2</div>
+                                <div class="w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700 transition-colors" id="book-line-2"></div>
                             </div>
                             <div class="flex items-center" id="book-step-3-ind">
-                                <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative">3</div>
+                                <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative transition-colors">3</div>
                             </div>
                         </div>
 
@@ -317,14 +307,14 @@
                         <!-- Step 3: Calendar & Time -->
                         <div id="book-step-3" class="hidden max-w-3xl mx-auto">
                             <h3 class="text-lg font-bold mb-4 text-center">เลือกวันและเวลา</h3>
-                            <div class="flex items-center justify-between mb-4 bg-gray-50 dark:bg-gray-800 p-2 rounded-sm">
+                            <div class="flex items-center justify-between mb-4 bg-gray-50 dark:bg-gray-800 p-2 rounded-sm border">
                                 <button onclick="changeBookingMonth(-1)" class="p-2 hover:text-primary"><i data-lucide="chevron-left"></i></button>
                                 <span id="booking-month-year" class="font-bold text-lg">เดือน ปี</span>
                                 <button onclick="changeBookingMonth(1)" class="p-2 hover:text-primary"><i data-lucide="chevron-right"></i></button>
                             </div>
                             
-                            <!-- ปฏิทินแบบ Flex เลื่อนซ้ายขวา -->
-                            <div id="booking-calendar-scroll" class="flex overflow-x-auto gap-3 py-2 hide-scrollbar snap-x mb-6 border-b pb-4">
+                            <!-- Draggable Calendar Scroll -->
+                            <div id="booking-calendar-scroll" class="flex overflow-x-auto gap-3 py-2 hide-scrollbar snap-x mb-6 border-b pb-4 cursor-pointer">
                                 <!-- Calendar days injected via JS -->
                             </div>
 
@@ -335,7 +325,7 @@
 
                             <div class="flex gap-2 mt-6 pt-4 border-t">
                                 <button onclick="prevBookingStep(2)" class="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 uppercase text-sm rounded-sm">ก่อนหน้า</button>
-                                <button onclick="submitBooking()" id="btn-submit-booking" class="w-2/3 bg-primary hover:bg-primaryHover text-white font-bold py-4 uppercase text-sm rounded-sm shadow-md disabled:opacity-50">ยืนยันการจองคิว</button>
+                                <button onclick="submitBooking()" id="btn-submit-booking" class="w-2/3 bg-primary hover:bg-primaryHover text-white font-bold py-4 uppercase text-sm rounded-sm shadow-md disabled:opacity-50 disabled:cursor-not-allowed">ยืนยันการจองคิว</button>
                             </div>
                         </div>
                         
@@ -350,31 +340,19 @@
                                 <hr class="my-2 border-gray-200 dark:border-gray-700">
                                 <p class="text-red-500 text-xs font-semibold text-center mt-2" id="succ-note">กรุณามาเข้ารับบริการภายในวันที่ - เวลา -</p>
                             </div>
-                            <button onclick="switchBookingTab('check')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm shadow-md">ตรวจสอบคิวของคุณ</button>
+                            <button onclick="switchBookingTab('check')" class="bg-[#333333] hover:bg-black text-white font-bold py-3 px-8 uppercase text-sm rounded-sm shadow-md w-full">ตรวจสอบคิวของคุณ</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tab Content: Cancel Queue -->
                 <div id="booking-tab-cancel" class="hidden animate-fade-in">
-                    <div class="bg-white dark:bg-[#1e1e1e] p-6 border rounded-sm shadow-sm overflow-x-auto">
-                        <div class="mb-4 text-sm text-red-500 font-semibold bg-red-50 p-3 rounded-sm border border-red-100">
-                            * หมายเหตุ: ผู้ใช้จะต้องทำการยกเลิกก่อนถึงคิวอย่างน้อย 3 ชั่วโมง
-                        </div>
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
-                                <tr>
-                                    <th class="p-3">เลขที่คิว</th>
-                                    <th class="p-3">หัวข้อ</th>
-                                    <th class="p-3">วัน-เวลาที่จอง</th>
-                                    <th class="p-3 text-center">สถานะ</th>
-                                    <th class="p-3 text-center">การจัดการ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="booking-cancel-tbody" class="divide-y divide-gray-100 dark:divide-gray-800">
-                                <tr><td colspan="5" class="text-center p-6 text-gray-400">กำลังโหลดข้อมูล...</td></tr>
-                            </tbody>
-                        </table>
+                    <div class="mb-4 text-sm text-red-500 font-semibold bg-red-50 p-3 rounded-md border border-red-100 flex items-center">
+                        <i data-lucide="info" class="w-5 h-5 mr-2 flex-shrink-0"></i> * หมายเหตุ: ผู้ใช้จะต้องทำการยกเลิกก่อนถึงคิวอย่างน้อย 3 ชั่วโมง
+                    </div>
+                    <div id="booking-cancel-container" class="space-y-3">
+                        <!-- Cards will be injected here via JS -->
+                        <div class="text-center p-6 text-gray-400 border border-dashed rounded-md">ไม่มีคิวที่สามารถยกเลิกได้</div>
                     </div>
                 </div>
             </div>
@@ -557,7 +535,6 @@
                 <button onclick="navigate('history')" class="flex items-center text-gray-500 hover:text-primary mb-6 ml-4 sm:ml-auto max-w-3xl transition-colors text-sm font-medium"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> กลับไปหน้าประวัติ</button>
                 
                 <div id="statement-capture-area" class="statement-page-container shadow-xl relative overflow-hidden">
-                    
                     <div class="flex justify-between items-start mb-6">
                         <div class="flex items-end space-x-2">
                             <span class="text-3xl sm:text-4xl font-bold tracking-tighter stmt-theme-red" style="font-family: Arial, sans-serif;">Next Live</span>
@@ -826,7 +803,6 @@
                                     <input type="text" id="discount-input" placeholder="ใส่รหัสส่วนลด..." class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm uppercase">
                                     <button type="button" onclick="applyDiscountCode()" class="bg-[#333333] hover:bg-black text-white px-4 py-2 text-sm rounded-sm whitespace-nowrap shadow-md" id="btn-apply-code">ใช้รหัส</button>
                                 </div>
-                                <!-- ช่องกรอกเครดิต (ใช้ร่วมกับ QR) -->
                                 <div id="partial-credit-container" class="mt-2">
                                     <label class="block text-xs font-semibold mb-1 text-gray-600">ใช้เครดิตในระบบ (ชำระแบบผสมร่วมกับ QR)</label>
                                     <input type="number" id="credit-input" placeholder="ระบุจำนวนเครดิตที่ต้องการใช้..." class="w-full px-3 py-2 border bg-white dark:bg-[#121212] text-sm rounded-sm" oninput="updateCheckoutTotals()">
@@ -958,7 +934,7 @@
             <div id="view-return" class="hidden max-w-4xl mx-auto px-4 py-12 text-gray-800 dark:text-gray-200">
                 <h2 class="text-2xl font-bold mb-6 text-primary">RETURN POLICY (นโยบายการคืนสินค้าและคืนเงิน)</h2>
                 <div class="space-y-4 text-sm leading-relaxed" id="return-content">
-                    <p>เว็บไซต์ Next Live Shop ขอแจ้งนโยบายการคืนเงินเพื่อเป็นข้อตกลงและสร้างความเข้าใจเกี่ยวกับการใช้บริการเว็บไซต์ ดังนี้</p>
+                      <p>เว็บไซต์ Next Live Shop ขอแจ้งนโยบายการคืนเงินเพื่อเป็นข้อตกลงและสร้างความเข้าใจเกี่ยวกับการใช้บริการเว็บไซต์ ดังนี้</p>
                     <ul class="list-disc pl-5 space-y-2">
                         <li>สินค้าที่ เว็บไซต์ จัดจำหน่ายบนเว็บไซด์ เป็นสินค้าดิจิตอลที่ไม่สามารถคืนสินค้า และไม่สามารถคืนเงินได้</li>
                         <li>เว็บไซต์ จะทำการคืนเงินค่าสินค้าให้กับลูกค้า ในกรณีที่เว็บไซต์ ไม่สามารถจัดส่งสินค้าให้ลูกค้าได้เท่านั้น (โดยจะทำการคืนเงินให้ในส่วนที่ เว็บไซต์ ไม่ได้จัดส่งสินค้าให้ลูกค้า)</li>
@@ -982,6 +958,7 @@
                         <li>กรณีที่เกิดขึ้นจากเหตุสุดวิสัย (System Error) ที่อาจเกิดขึ้น</li>
                     </ul>
                     <p class="mt-4 font-semibold text-red-500">เว็บไซต์ ขอสงวนสิทธิ์ในการคืนเงินเกินระยะเวลาที่กำหนด หากเกิดเหตุสุดวิสัย – เว็บไซต์ ขอสงวนสิทธิในการเปลี่ยนแปลงเงื่อนไขใดๆ โดยไม่จำต้องแจ้งให้ทราบล่วงหน้า</p>
+                    </ul>
                 </div>
             </div>
 
@@ -1020,7 +997,7 @@
         </footer>
     </div> <!-- End App Wrapper -->
 
-    <!-- Modals & Overlays -->
+    <!-- Sidebar & Menus -->
     <div id="category-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overlay-enter" onclick="toggleCategorySidebar()"></div>
     <div id="category-sidebar" class="fixed top-0 left-0 h-full w-[280px] bg-white dark:bg-[#1e1e1e] shadow-2xl z-50 flex flex-col left-sidebar-enter transition-colors">
         <div class="px-4 py-4 bg-primary text-white flex justify-between items-center">
@@ -1028,7 +1005,7 @@
             <button onclick="toggleCategorySidebar()" class="text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         
-        <div class="flex-grow overflow-y-auto flex flex-col">
+        <div class="flex-grow overflow-y-auto flex flex-col hide-scrollbar">
             <div id="mobile-auth-section" class="md:hidden border-b border-gray-100 dark:border-gray-800 pb-2 mb-2">
                 <div class="grid grid-cols-2 gap-2 p-4 pb-2">
                     <button onclick="openAuth('login'); toggleCategorySidebar()" class="bg-gray-100 text-gray-800 py-2 text-sm font-bold shadow-sm">ลงชื่อเข้าใช้</button>
@@ -1047,7 +1024,6 @@
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50" onclick="navigate('profile'); toggleCategorySidebar()"><i data-lucide="user" class="w-4 h-4 mr-3 text-gray-500"></i>ข้อมูลโปรไฟล์</li>
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-primary" onclick="navigate('deposit'); toggleCategorySidebar()"><i data-lucide="plus-circle" class="w-4 h-4 mr-3"></i>ฝากเงิน / เติมเครดิต</li>
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-purple-600" onclick="navigate('withdraw'); toggleCategorySidebar()"><i data-lucide="arrow-up-circle" class="w-4 h-4 mr-3"></i>ถอนเงิน / แจ้งถอน</li>
-                    <!-- เพิ่มเมนูจองคิว Mobile -->
                     <li class="cursor-pointer px-4 py-3 flex items-center hover:bg-gray-50 font-medium text-blue-600" onclick="navigate('booking'); toggleCategorySidebar()"><i data-lucide="calendar-clock" class="w-4 h-4 mr-3"></i>จองคิวล่วงหน้า</li>
                 </ul>
             </div>
@@ -1064,6 +1040,20 @@
                 <ul class="text-sm">
                     <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('privacy'); toggleCategorySidebar()">Privacy Policy</li>
                     <li class="cursor-pointer px-4 py-3 hover:text-primary" onclick="navigate('return'); toggleCategorySidebar()">Return Policy</li>
+                    
+                    <!-- PWA Download App Menu -->
+                    <li class="cursor-pointer px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+                        <div class="flex items-center justify-between hover:text-primary font-bold" onclick="toggleAppButtons()">
+                            <span><i data-lucide="smartphone" class="w-4 h-4 mr-3 inline"></i>ดาวน์โหลดแอป</span>
+                            <i data-lucide="chevron-down" id="app-dl-chevron" class="w-4 h-4 transition-transform"></i>
+                        </div>
+                        <div id="app-dl-container" class="hidden mt-4 mb-2">
+                            <div class="flex gap-2">
+                                <button onclick="showInstallGuide('android')" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-sm text-xs font-bold flex items-center justify-center shadow-md transition-colors"><i data-lucide="bot" class="w-4 h-4 mr-1"></i> Android</button>
+                                <button onclick="showInstallGuide('ios')" class="flex-1 bg-gray-800 hover:bg-black text-white py-2 rounded-sm text-xs font-bold flex items-center justify-center shadow-md transition-colors"><i data-lucide="apple" class="w-4 h-4 mr-1"></i> iOS</button>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
             </div>
 
@@ -1127,12 +1117,34 @@
         </div>
     </div>
 
-    <!-- Custom Popup Container -->
+    <!-- Custom Alerts & Confirms -->
     <div class="popup-container" id="custom-popup">
         <div class="popup-box">
             <h1 id="popup-title">Hello!</h1>
             <p id="popup-desc">This is a message.</p>
             <button class="close-btn hover:bg-primaryHover transition-colors" onclick="closeCustomPopup()">ตกลง</button>
+        </div>
+    </div>
+
+    <div class="popup-container" id="confirm-popup">
+        <div class="popup-box">
+            <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="alert-triangle" class="w-8 h-8"></i></div>
+            <h1 id="confirm-title" class="text-xl font-bold mb-2">ยืนยัน?</h1>
+            <p id="confirm-desc" class="text-sm text-gray-500 mb-6">คุณแน่ใจหรือไม่?</p>
+            <div class="flex gap-2">
+                <button class="w-1/2 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-sm text-sm transition-colors" onclick="closeConfirmPopup()">ไม่ใช่</button>
+                <button class="w-1/2 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-sm text-sm shadow-md transition-colors" id="confirm-yes-btn">ใช่, ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Install PWA Guide Popup -->
+    <div class="popup-container" id="install-guide-popup">
+        <div class="popup-box relative !p-6 max-w-xs">
+            <button class="absolute top-3 right-3 text-gray-400 hover:text-red-500" onclick="document.getElementById('install-guide-popup').classList.remove('active')"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <img src="https://profile.line-scdn.net/0hsOEB08SxLGB4OzOszzxTN0R-Ig0PFSooAFUzDlgzIFcGXG1iQg1iAFxrIFZWCGIzE15hDg49JgJS/preview" class="w-20 h-20 mx-auto rounded-xl shadow-md mb-4 object-cover">
+            <h2 class="text-lg font-bold mb-2 dark:text-white" id="install-title">ติดตั้งแอปพลิเคชัน</h2>
+            <div id="install-guide-content" class="text-sm text-gray-700 dark:text-gray-300 text-left bg-gray-50 dark:bg-gray-800 p-4 rounded-md leading-relaxed border dark:border-gray-700"></div>
         </div>
     </div>
 
@@ -1146,19 +1158,12 @@
         let searchQuery = '';
         let currentUser = null; 
         let qrTimerInterval; 
-        
         let siteSettings = {};
         let categories = [{ id: 'all', name: 'สินค้าทั้งหมด' }];
         let products = [];
         let optionsDB = [];
-        
-        let currentSubtotal = 0;
-        let currentDiscount = 0;
-        let currentVat = 0;
-        let currentCreditUsed = 0;
-        let currentNetTotal = 0;
+        let currentSubtotal = 0, currentDiscount = 0, currentVat = 0, currentCreditUsed = 0, currentNetTotal = 0;
         let appliedDiscountCode = "";
-        
         let currentFlow = 'order'; 
         let globalHistoryData = null; 
 
@@ -1170,28 +1175,17 @@
         const bankList = [
             { id: 'bank-bbl', name: 'Bangkok Bank', thName: 'ธนาคารกรุงเทพ' },
             { id: 'bank-kbank', name: 'Kasikornbank', thName: 'ธนาคารกสิกรไทย' },
-            { id: 'bank-rbs', name: 'Royal Bank of Scotland', thName: 'รอยัลแบงก์ออฟสกอตแลนด์' },
             { id: 'bank-ktb', name: 'Krungthai Bank', thName: 'ธนาคารกรุงไทย' },
-            { id: 'bank-jpm', name: 'J.P. Morgan', thName: 'เจพีมอร์แกน เชส' },
-            { id: 'bank-mufg', name: 'Bank of Tokyo-Mitsubishi UFJ', thName: 'ธนาคารแห่งโตเกียว-มิตซูบิชิ ยูเอฟเจ' },
             { id: 'bank-tmb', name: 'TMB Bank', thName: 'ธนาคารทหารไทย' },
             { id: 'bank-scb', name: 'Siam Commercial Bank', thName: 'ธนาคารไทยพาณิชย์' },
             { id: 'bank-citi', name: 'Citibank', thName: 'ธนาคารซิตี้แบงก์' },
-            { id: 'bank-smbc', name: 'Sumitomo Mitsui Banking Corporation', thName: 'ซูมิโตโม มิตซุย แบงกิ้ง คอร์ปอเรชั่น' },
             { id: 'bank-sc', name: 'Standard Chartered', thName: 'ธนาคารสแตนดาร์ดชาร์เตอร์ด (ไทย)' },
             { id: 'bank-cimb', name: 'CIMB Thai Bank', thName: 'ธนาคารซีไอเอ็มบี ไทย' },
             { id: 'bank-uob', name: 'United Overseas Bank', thName: 'ธนาคารยูโอบี' },
             { id: 'bank-bay', name: 'Bank of Ayudhya (Krungsri)', thName: 'ธนาคารกรุงศรีอยุธยา' },
-            { id: 'bank-mega', name: 'Mega International', thName: 'เมกะ อินเตอร์เนชั่นแนล คอมเมอร์เชียล แบงก์' },
-            { id: 'bank-boa', name: 'Bank of America', thName: 'ธนาคารแห่งอเมริกา' },
-            { id: 'bank-cacib', name: 'Crédit Agricole', thName: 'เครดิต อะกริกอล' },
             { id: 'bank-gsb', name: 'Government Savings Bank', thName: 'ธนาคารออมสิน' },
-            { id: 'bank-hsbc', name: 'HSBC', thName: 'ธนาคารเอชเอสบีซี' },
-            { id: 'bank-db', name: 'Deutsche Bank', thName: 'ดอยซ์แบงก์' },
             { id: 'bank-ghb', name: 'Government Housing Bank', thName: 'ธนาคารอาคารสงเคราะห์' },
             { id: 'bank-baac', name: 'BAAC', thName: 'ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร (ธ.ก.ส.)' },
-            { id: 'bank-mb', name: 'Mizuho Bank', thName: 'ธนาคารมิซูโฮ' },
-            { id: 'bank-bnp', name: 'BNP Paribas', thName: 'บีเอ็นพี พารีบาส์' },
             { id: 'bank-tbank', name: 'Thanachart Bank', thName: 'ธนาคารธนชาต' },
             { id: 'bank-ibank', name: 'Islamic Bank of Thailand', thName: 'ธนาคารอิสลามแห่งประเทศไทย' },
             { id: 'bank-tisco', name: 'Tisco Bank', thName: 'ธนาคารทิสโก้' },
@@ -1224,6 +1218,7 @@
             } catch (err) { throw new Error(err.message || "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้"); }
         }
 
+        // Popup System
         function showCustomPopup(title, text) {
             safeSetText('popup-title', title); safeSetText('popup-desc', text);
             const popup = document.getElementById('custom-popup'); if(popup) popup.classList.add('active');
@@ -1232,15 +1227,85 @@
             const popup = document.getElementById('custom-popup'); if(popup) popup.classList.remove('active');
         }
 
-        // ฟังก์ชันซ่อน/แสดงรหัสผ่าน
+        // Confirm Popup System
+        let confirmActionCallback = null;
+        function showConfirmPopup(title, desc, callback) {
+            safeSetText('confirm-title', title); safeSetText('confirm-desc', desc);
+            confirmActionCallback = callback;
+            document.getElementById('confirm-popup').classList.add('active');
+        }
+        function closeConfirmPopup() {
+            document.getElementById('confirm-popup').classList.remove('active');
+            confirmActionCallback = null;
+        }
+        document.getElementById('confirm-yes-btn').addEventListener('click', function() {
+            if(confirmActionCallback) confirmActionCallback();
+            closeConfirmPopup();
+        });
+
+        // App Download (PWA Simulation)
+        function toggleAppButtons() {
+            const cont = document.getElementById('app-dl-container');
+            const chev = document.getElementById('app-dl-chevron');
+            if(cont.classList.contains('hidden')) {
+                cont.classList.remove('hidden'); chev.style.transform = 'rotate(180deg)';
+            } else {
+                cont.classList.add('hidden'); chev.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        function showInstallGuide(os) {
+            const content = document.getElementById('install-guide-content');
+            let guideHTML = '';
+            if(os === 'ios') {
+                guideHTML = `<p class="font-bold mb-2">วิธีติดตั้งบน iOS (Safari):</p>
+                             <ol class="list-decimal pl-5 space-y-1">
+                                <li>แตะที่ไอคอน <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Share_Icon.svg/1200px-Share_Icon.svg.png" class="w-4 h-4 inline opacity-70"> <b>แชร์ (Share)</b> ด้านล่างของ Safari</li>
+                                <li>เลื่อนลงมาและเลือก <br><b>"เพิ่มไปยังหน้าจอโฮม"</b> <br>(Add to Home Screen)</li>
+                                <li>กด <b>"เพิ่ม" (Add)</b> ที่มุมขวาบน</li>
+                             </ol>`;
+            } else {
+                guideHTML = `<p class="font-bold mb-2">วิธีติดตั้งบน Android (Chrome):</p>
+                             <ol class="list-decimal pl-5 space-y-1">
+                                <li>แตะที่ไอคอนเมนู <b>3 จุด</b> (มุมขวาบนของเบราว์เซอร์)</li>
+                                <li>เลือก <b>"เพิ่มลงในหน้าจอหลัก"</b> <br>(Add to Home screen)</li>
+                                <li>กด <b>"เพิ่ม" (Add)</b> ยืนยันการติดตั้ง</li>
+                             </ol>`;
+            }
+            content.innerHTML = guideHTML;
+            document.getElementById('install-guide-popup').classList.add('active');
+            toggleCategorySidebar(); // Close sidebar
+        }
+
+        // Draggable Horizontal Scroll function
+        function initDraggableScroll(elementId) {
+            const slider = document.getElementById(elementId);
+            if(!slider) return;
+            let isDown = false; let startX; let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('cursor-grabbing'); slider.classList.remove('cursor-pointer');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('cursor-grabbing'); });
+            slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('cursor-grabbing'); slider.classList.add('cursor-pointer'); });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2; 
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        }
+
         function togglePasswordVisibility(inputId, iconEl) {
             const input = document.getElementById(inputId);
             if(input.type === 'password') {
-                input.type = 'text';
-                iconEl.setAttribute('data-lucide', 'eye-off');
+                input.type = 'text'; iconEl.setAttribute('data-lucide', 'eye-off');
             } else {
-                input.type = 'password';
-                iconEl.setAttribute('data-lucide', 'eye');
+                input.type = 'password'; iconEl.setAttribute('data-lucide', 'eye');
             }
             lucide.createIcons();
         }
@@ -1254,18 +1319,14 @@
 
         function init() {
             try { lucide.createIcons(); } catch(e) {}
-            initSlider(); populateBankOptions();
-            loadCart(); 
+            initSlider(); populateBankOptions(); loadCart(); 
             
             const startTime = Date.now();
-            
             callBackend({action: 'init'}).then(res => {
                 const elapsed = Date.now() - startTime;
                 const delay = Math.max(0, 1000 - elapsed);
-                
                 setTimeout(() => {
                     const loader = document.getElementById('global-loader'); if(loader) loader.style.display = 'none'; 
-                    
                     if(res.status === 'success') {
                         siteSettings = res.settings;
                         let isActive = String(siteSettings.SiteActive).trim().toUpperCase() === "TRUE";
@@ -1276,24 +1337,20 @@
                             const mScreen = document.getElementById('maintenance-screen'); const appWrapper = document.getElementById('app-wrapper');
                             if(mScreen) mScreen.style.display = 'none'; if(appWrapper) appWrapper.style.display = 'flex';
                         }
-
                         applySettingsToUI();
                         categories = [{ id: 'all', name: 'สินค้าทั้งหมด' }]; res.categories.forEach(c => categories.push({id: c, name: c}));
                         products = res.products; optionsDB = res.options;
 
                         renderCategoryMenu(); renderProducts(); checkLoginState();
-
                         if (currentUser) { refreshUserData(); }
                         
                         const searchBox = document.getElementById('product-search-desktop');
                         if(searchBox) { searchBox.addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); renderProducts(); }); }
                     } else { showCustomPopup("ข้อผิดพลาด", "โหลดข้อมูลไม่สำเร็จ: " + res.message); }
                 }, delay);
-                
             }).catch(e => {
                 const elapsed = Date.now() - startTime;
                 const delay = Math.max(0, 1000 - elapsed);
-                
                 setTimeout(() => {
                     const loader = document.getElementById('global-loader'); if(loader) loader.style.display = 'none';
                     showCustomPopup("ข้อผิดพลาดระบบ", e.message);
@@ -1344,7 +1401,6 @@
 
             if(savedUser) {
                 currentUser = JSON.parse(savedUser);
-                
                 if(authWrapper) authWrapper.style.display = 'none'; if(profMenu) profMenu.classList.remove('hidden'); 
                 if(mobileAuth) mobileAuth.style.display = 'none'; if(mobileProf) mobileProf.style.display = 'block'; if(mobileLogout) mobileLogout.style.display = 'block';
                 
@@ -1355,7 +1411,6 @@
                 safeSetValue('chk-fname', currentUser.fname); safeSetValue('chk-lname', currentUser.lname);
                 safeSetValue('chk-email', currentUser.email); safeSetValue('chk-phone', currentUser.phone);
                 
-                // สำหรับฟอร์มจองคิว
                 safeSetValue('bk-fname', currentUser.fname); safeSetValue('bk-lname', currentUser.lname);
                 safeSetValue('bk-email', currentUser.email); safeSetValue('bk-phone', currentUser.phone);
 
@@ -1380,7 +1435,7 @@
             if(currentUser) { currentUser.balance = newBal; localStorage.setItem('nextLiveUser', JSON.stringify(currentUser)); checkLoginState(); }
         }
 
-        // --- Forgot Password & Register & Pass ---
+        // Auth Logic...
         function sendOtp() {
             const email = document.getElementById('fp-email').value;
             if(!email) { showCustomPopup("แจ้งเตือน", "กรุณาระบุอีเมล"); return; }
@@ -1471,7 +1526,7 @@
             safeSetText('vp-balance', `฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
         }
 
-        // --- ระบบหมดเวลา QR (3 นาที) ---
+        // Handle Timeouts
         function handleQRTimeout() {
             const upl = document.getElementById('upload-section');
             if(upl) upl.classList.add('hidden');
@@ -1535,21 +1590,15 @@
                 };
                 generateQR();
 
-                // ตั้งเวลา 3 นาที (180 วินาที)
                 let qrTimeLeft = 180;
                 if(typeof qrTimerInterval !== 'undefined') clearInterval(qrTimerInterval);
                 document.getElementById('qr-countdown').innerText = "03:00";
                 
                 qrTimerInterval = setInterval(() => {
                     qrTimeLeft--;
-                    let m = Math.floor(qrTimeLeft / 60);
-                    let s = qrTimeLeft % 60;
+                    let m = Math.floor(qrTimeLeft / 60); let s = qrTimeLeft % 60;
                     document.getElementById('qr-countdown').innerText = `0${m}:${s < 10 ? '0'+s : s}`;
-                    
-                    if (qrTimeLeft <= 0) {
-                        clearInterval(qrTimerInterval);
-                        handleQRTimeout();
-                    }
+                    if (qrTimeLeft <= 0) { clearInterval(qrTimerInterval); handleQRTimeout(); }
                 }, 1000);
 
                 const ver = document.getElementById('verification-overlay'); if(ver) ver.classList.add('hidden');
@@ -1557,11 +1606,10 @@
             }
         }
 
-        // --- Withdraw Logic ---
+        // Withdraw Logic
         function checkWithdrawalState() {
             if(!currentUser) return;
             const setupSec = document.getElementById('wd-setup-bank-section'); const actSec = document.getElementById('wd-action-section');
-            
             if(currentUser.bankName && currentUser.bankAcc) {
                 if(setupSec) setupSec.classList.add('hidden'); if(actSec) actSec.classList.remove('hidden');
                 let maskedAcc = currentUser.bankAcc;
@@ -1572,7 +1620,6 @@
                 let bankInfo = bankList.find(b => b.id === currentUser.bankName);
                 let thaiName = bankInfo ? bankInfo.thName : currentUser.bankName;
                 safeSetText('wd-card-bank-name', thaiName);
-
                 const iconCont = document.getElementById('wd-card-icon');
                 if(iconCont) iconCont.innerHTML = `<i class="bank ${currentUser.bankName} l round shadow"></i>`;
             } else {
@@ -1617,7 +1664,7 @@
             }).catch(e => { if(btn) { btn.innerText = "ถอนเงิน"; btn.disabled = false; } showCustomPopup("ข้อผิดพลาด", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); });
         }
 
-        // --- Deposit Logic ---
+        // Deposit Logic
         function setDepositAmount(amount) { safeSetValue('deposit-amount-input', amount); }
         function confirmDeposit() {
             let val = parseFloat(document.getElementById('deposit-amount-input').value);
@@ -1626,13 +1673,12 @@
             
             currentFlow = 'deposit'; currentNetTotal = val; navigate('payment');
         }
-
         function goBackFromPayment() {
-            clearInterval(qrTimerInterval); // ยกเลิกการจับเวลาเมื่อกดย้อนกลับ
+            clearInterval(qrTimerInterval); 
             if(currentFlow === 'deposit') navigate('deposit'); else navigate('checkout');
         }
 
-        // --- Categories & Products ---
+        // Categories & Products
         function renderCategoryMenu() {
             const list = document.getElementById('category-list'); if(!list) return; let htmlStr = '';
             categories.forEach(cat => {
@@ -1650,15 +1696,14 @@
             if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400 border bg-white">ไม่พบสินค้าในหมวดหมู่นี้</div>`; return; }
 
             filtered.forEach(product => {
-                const card = document.createElement('div'); card.className = `product-card bg-white dark:bg-[#1e1e1e] overflow-hidden flex flex-col cursor-pointer group relative`; card.onclick = () => openModal(product.id);
-                card.innerHTML = `<div class="p-4 flex-grow flex flex-col items-center text-center"><div class="w-full h-32 mb-4 flex items-center justify-center overflow-hidden bg-white p-2"><img src="${product.image}" class="max-w-full max-h-full object-contain transition-transform group-hover:scale-105"></div><h3 class="font-medium text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary mb-1 line-clamp-2">${product.name}</h3><div class="mt-auto font-bold text-primary">${formatPrice(product.price)}</div></div>`;
+                const card = document.createElement('div'); card.className = `product-card bg-white dark:bg-[#1e1e1e] overflow-hidden flex flex-col cursor-pointer group relative rounded-sm`; card.onclick = () => openModal(product.id);
+                card.innerHTML = `<div class="p-4 flex-grow flex flex-col items-center text-center"><div class="w-full h-32 mb-4 flex items-center justify-center overflow-hidden bg-white p-2 rounded"><img src="${product.image}" class="max-w-full max-h-full object-contain transition-transform group-hover:scale-105"></div><h3 class="font-medium text-sm text-gray-800 dark:text-gray-200 group-hover:text-primary mb-1 line-clamp-2">${product.name}</h3><div class="mt-auto font-bold text-primary">${formatPrice(product.price)}</div></div>`;
                 grid.appendChild(card);
             });
         }
 
-        // --- Modal & Cart ---
+        // Modal & Cart
         let selectedProductForModal = null; let selectedOptions = [];
-
         function openModal(id) {
             const product = products.find(p => p.id === id); if(!product) return;
             selectedProductForModal = product; selectedOptions = []; 
@@ -1688,35 +1733,25 @@
             const optionsIdStr = options.map(o=>o.id).sort().join('-'); 
             const existingIndex = cart.findIndex(item => item.product.id === product.id && item.optionsIdStr === optionsIdStr);
             if(existingIndex >= 0) {
-                cart[existingIndex].qty += 1; 
-                cart[existingIndex].selected = true; 
+                cart[existingIndex].qty += 1; cart[existingIndex].selected = true; 
             } else {
                 cart.push({ id: Date.now().toString(), product: product, options: [...options], optionsIdStr: optionsIdStr, qty: 1, selected: true });
             }
-            saveCart(); 
-            updateCartBadge(); renderCart(); 
+            saveCart(); updateCartBadge(); renderCart(); 
         }
 
         function toggleCartItemSelection(id, isSelected) {
-            let item = cart.find(c => c.id === id);
-            if(item) item.selected = isSelected;
+            let item = cart.find(c => c.id === id); if(item) item.selected = isSelected;
             saveCart(); renderCart();
         }
 
         function updateCartQty(id, change) {
             let item = cart.find(c => c.id === id);
-            if(item) {
-                item.qty += change;
-                if(item.qty <= 0) cart = cart.filter(c => c.id !== id);
-            }
+            if(item) { item.qty += change; if(item.qty <= 0) cart = cart.filter(c => c.id !== id); }
             saveCart(); updateCartBadge(); renderCart();
         }
 
-        function removeCartItem(id) {
-            cart = cart.filter(c => c.id !== id);
-            saveCart(); updateCartBadge(); renderCart();
-        }
-
+        function removeCartItem(id) { cart = cart.filter(c => c.id !== id); saveCart(); updateCartBadge(); renderCart(); }
         function updateCartBadge() { safeSetText('cart-badge', cart.reduce((sum, item) => sum + item.qty, 0)); }
 
         function toggleCart() {
@@ -1737,7 +1772,7 @@
                 const div = document.createElement('div'); div.className = "flex gap-3 mb-4 border-b border-gray-100 dark:border-gray-800 pb-4 items-center";
                 div.innerHTML = `
                     <input type="checkbox" class="w-5 h-5 text-primary rounded cursor-pointer accent-primary" ${item.selected !== false ? 'checked' : ''} onchange="toggleCartItemSelection('${item.id}', this.checked)">
-                    <div class="w-16 h-16 border p-1 bg-white flex-shrink-0"><img src="${item.product.image}" class="w-full h-full object-contain"></div>
+                    <div class="w-16 h-16 border p-1 bg-white flex-shrink-0 rounded"><img src="${item.product.image}" class="w-full h-full object-contain"></div>
                     <div class="flex-grow">
                         <h4 class="font-semibold text-sm line-clamp-1 dark:text-gray-200">${item.product.name}</h4>
                         <div class="text-primary font-bold text-sm">${formatPrice(itemPrice)}</div>
@@ -1757,7 +1792,7 @@
             try { lucide.createIcons(); } catch(e) {}
         }
 
-        // --- Checkout ---
+        // Checkout
         function proceedToCheckout() { toggleCart(); navigate('checkout'); }
         
         function applyDiscountCode() {
@@ -1772,7 +1807,6 @@
             if(discountFound > 0) {
                 const btn = document.getElementById('btn-apply-code');
                 if(btn) { btn.innerText = "..."; btn.disabled = true; }
-
                 let bName = document.getElementById('chk-fname').value + " " + document.getElementById('chk-lname').value;
                 let bPhone = document.getElementById('chk-phone').value;
 
@@ -1798,12 +1832,8 @@
             const method = document.querySelector('input[name="payment_method"]:checked');
             const cont = document.getElementById('partial-credit-container');
             const input = document.getElementById('credit-input');
-            if(method && method.value === 'qr') {
-                if(cont) cont.style.display = 'block';
-            } else {
-                if(cont) cont.style.display = 'none';
-                if(input) input.value = '';
-            }
+            if(method && method.value === 'qr') { if(cont) cont.style.display = 'block'; } 
+            else { if(cont) cont.style.display = 'none'; if(input) input.value = ''; }
             updateCheckoutTotals();
         }
 
@@ -1811,41 +1841,31 @@
             currentSubtotal = 0; 
             getSelectedCart().forEach(item => { let p = item.product.price; item.options.forEach(o => p += o.price); currentSubtotal += p * item.qty; });
             
-            // หักส่วนลด
             currentDiscount = Math.min(currentDiscount, currentSubtotal); 
             let afterDiscount = currentSubtotal - currentDiscount;
             
-            // อ่านยอดเครดิตที่ใช้ผสม (ใช้เฉพาะตอนเลือก QR)
             currentCreditUsed = 0;
             const method = document.querySelector('input[name="payment_method"]:checked');
             if(method && method.value === 'qr') {
                 const cInput = document.getElementById('credit-input');
                 let val = parseFloat(cInput ? cInput.value : 0) || 0;
-                
                 const cMsg = document.getElementById('credit-msg');
                 if(val > 0) {
                     if(currentUser && val > currentUser.balance) {
                         if(cMsg) { cMsg.innerText = "เครดิตที่ระบุสูงกว่ายอดคงเหลือในระบบ"; cMsg.className = "text-xs mt-1 text-red-500 font-bold"; }
-                        val = currentUser.balance; // ไม่บังคับเปลี่ยนค่าในช่อง แต่ limit ไว้คำนวณ
+                        val = currentUser.balance; 
                     } else {
                         if(cMsg) { cMsg.innerText = "สามารถใช้เครดิตได้"; cMsg.className = "text-xs mt-1 text-green-600 font-bold"; }
                     }
-                } else {
-                    if(cMsg) cMsg.innerText = "";
-                }
+                } else { if(cMsg) cMsg.innerText = ""; }
                 
-                // จำกัดไม่ให้ใช้เครดิตเกินราคาสินค้า(หลังหักส่วนลด)บวก VAT 
-                // ค่อยคำนวณ VAT ก่อน 
                 let tempVat = afterDiscount * 0.07;
                 let maxAllowed = afterDiscount + tempVat;
                 currentCreditUsed = Math.min(val, maxAllowed);
                 if(currentUser) currentCreditUsed = Math.min(currentCreditUsed, currentUser.balance);
             }
 
-            // คำนวณ VAT (คิดจากราคาสุทธิหลังหักส่วนลด ไม่สนการจ่ายผ่านอะไร)
             currentVat = afterDiscount * 0.07; 
-            
-            // ยอดสุทธิที่ต้องสแกนจ่ายจริง
             let totalBeforeCredit = afterDiscount + currentVat;
             currentNetTotal = totalBeforeCredit - currentCreditUsed; 
 
@@ -1853,14 +1873,11 @@
             safeSetText('chk-discount', "- " + formatPrice(currentDiscount));
             safeSetText('chk-vat', formatPrice(currentVat)); 
             
-            // แสดงยอดใช้เครดิต
             const rowCredit = document.getElementById('row-credit-used');
             if(currentCreditUsed > 0) {
                 if(rowCredit) rowCredit.style.display = 'flex';
                 safeSetText('chk-credit-used', "- " + formatPrice(currentCreditUsed));
-            } else {
-                if(rowCredit) rowCredit.style.display = 'none';
-            }
+            } else { if(rowCredit) rowCredit.style.display = 'none'; }
 
             safeSetText('chk-net-total', formatPrice(currentNetTotal));
 
@@ -1869,11 +1886,8 @@
             if(currentUser) safeSetText('chk-display-balance', `คงเหลือ: ฿${(currentUser.balance || 0).toLocaleString('en-US', {minimumFractionDigits:2})}`);
             
             const methodCont = document.getElementById('payment-method-container');
-            if(currentNetTotal === 0 && currentCreditUsed === 0) { 
-                if(methodCont) methodCont.style.display = 'none'; 
-            } else { 
-                if(methodCont) methodCont.style.display = 'block'; 
-            }
+            if(currentNetTotal === 0 && currentCreditUsed === 0) { if(methodCont) methodCont.style.display = 'none'; } 
+            else { if(methodCont) methodCont.style.display = 'block'; }
         }
 
         function renderCheckoutItems() {
@@ -1884,17 +1898,16 @@
             sCart.forEach(item => {
                 let itemPrice = item.product.price; let optHtml = ''; item.options.forEach(o => { itemPrice += o.price; optHtml += `<div class="text-xs text-gray-500">+ ${o.name}</div>`; });
                 const div = document.createElement('div'); div.className = "flex items-start py-3 border-b border-gray-100 dark:border-gray-800 last:border-0";
-                div.innerHTML = `<div class="w-12 h-12 bg-white border p-1 flex-shrink-0 mr-3"><img src="${item.product.image}" class="w-full h-full object-contain"></div><div class="flex-grow"><div class="flex justify-between"><span class="text-sm font-semibold dark:text-gray-200">${item.product.name}</span><span class="font-bold text-sm dark:text-gray-200">${formatPrice(itemPrice * item.qty)}</span></div><div class="text-xs text-gray-500">จำนวน: ${item.qty}</div>${optHtml}</div>`; container.appendChild(div);
+                div.innerHTML = `<div class="w-12 h-12 bg-white border p-1 flex-shrink-0 mr-3 rounded"><img src="${item.product.image}" class="w-full h-full object-contain"></div><div class="flex-grow"><div class="flex justify-between"><span class="text-sm font-semibold dark:text-gray-200">${item.product.name}</span><span class="font-bold text-sm dark:text-gray-200">${formatPrice(itemPrice * item.qty)}</span></div><div class="text-xs text-gray-500">จำนวน: ${item.qty}</div>${optHtml}</div>`; container.appendChild(div);
             });
-            toggleCreditInput();
-            refreshUserData();
+            toggleCreditInput(); refreshUserData();
         }
 
         function processOrder() {
             const form = document.getElementById('checkout-form'); if(form && !form.checkValidity()) { showCustomPopup("แจ้งเตือน","กรุณากรอกข้อมูลให้ครบถ้วน"); return; }
             if(getSelectedCart().length === 0) { showCustomPopup("แจ้งเตือน","ไม่มีสินค้าที่เลือกในตะกร้า"); return; }
             
-            let selectedMethod = document.querySelector('input[name="payment_method"]:checked').value; currentFlow = 'order';
+            let selectedMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'qr'; currentFlow = 'order';
 
             const cInput = document.getElementById('credit-input');
             let val = parseFloat(cInput ? cInput.value : 0) || 0;
@@ -1903,10 +1916,7 @@
             }
 
             if(currentNetTotal === 0 && currentCreditUsed === 0) { submitFreeOrCreditOrder('free'); } 
-            else if (currentNetTotal === 0 && currentCreditUsed > 0) {
-                // จ่ายด้วยเครดิตเต็มจำนวนแบบผสม (ยอดสุทธิเหลือ 0)
-                submitFreeOrCreditOrder('credit');
-            }
+            else if (currentNetTotal === 0 && currentCreditUsed > 0) { submitFreeOrCreditOrder('credit'); }
             else if (selectedMethod === 'credit') {
                 if(!currentUser) { showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้เครดิต"); return; }
                 let totalToPay = currentSubtotal - currentDiscount + currentVat;
@@ -1917,7 +1927,6 @@
 
         function submitFreeOrCreditOrder(methodStr) {
             const btn = document.getElementById('btn-process-order'); if(btn) { btn.innerText = "กำลังประมวลผล..."; btn.disabled = true; }
-            
             let finalExpected = methodStr === 'credit' ? (currentSubtotal - currentDiscount + currentVat) : currentNetTotal;
 
             const payload = {
@@ -1939,7 +1948,7 @@
             }).catch(e => { if(btn) { btn.innerText = "ยืนยันการสั่งซื้อ"; btn.disabled = false; } showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); });
         }
 
-        // --- Slip Upload ---
+        // Slip Upload
         function handleSlipUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -1963,9 +1972,14 @@
                         if(overlay) overlay.classList.add('hidden');
                         if (res.status === "success") {
                             if(currentFlow === 'deposit') {
-                                safeSetText('display-order-id', "DEP-" + Date.now().toString().slice(-6)); safeSetText('success-title', 'เติมเงินสำเร็จ ระบบกำลังเติมเครดิต'); safeSetText('success-ref-label', 'รหัสอ้างอิง (Ref)'); updateBalanceUI(res.newBalance);
+                                safeSetText('display-order-id', "DEP-" + Date.now().toString().slice(-6)); 
+                                safeSetText('success-title', 'เติมเงินสำเร็จ ระบบกำลังเติมเครดิต'); 
+                                safeSetText('success-ref-label', 'รหัสอ้างอิง (Ref)');
+                                if(res.newBalance !== undefined) updateBalanceUI(res.newBalance);
                             } else {
-                                safeSetText('display-order-id', res.orderRef); safeSetText('success-title', 'ชำระเงินสำเร็จ ระบบกำลังส่งสินค้าไปที่ ออเดอร์'); safeSetText('success-ref-label', 'รหัสอ้างอิงออเดอร์ (Order Ref)'); 
+                                safeSetText('display-order-id', res.orderRef); 
+                                safeSetText('success-title', 'ชำระเงินสำเร็จ ระบบกำลังส่งสินค้าไปที่อีเมล'); 
+                                safeSetText('success-ref-label', 'รหัสอ้างอิงออเดอร์ (Order Ref)'); 
                                 cart = cart.filter(c => c.selected === false); saveCart();
                                 currentDiscount = 0; appliedDiscountCode = ""; currentCreditUsed = 0; updateCartBadge();
                             }
@@ -1977,9 +1991,6 @@
                                 currentDiscount = 0; appliedDiscountCode = ""; currentCreditUsed = 0; updateCartBadge(); 
                                 safeSetText('failure-desc', res.message);
                                 navigate('failure');
-                            } else if (currentFlow === 'deposit') {
-                                safeSetText('failure-desc', res.message);
-                                navigate('failure');
                             } else {
                                 safeSetText('failure-desc', res.message);
                                 navigate('failure');
@@ -1987,7 +1998,11 @@
                             if(res.newBalance !== undefined && currentUser) { updateBalanceUI(res.newBalance); }
                             if(upl) upl.classList.remove('hidden'); 
                         }
-                    }).catch(e => { if(overlay) overlay.classList.add('hidden'); showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); if(upl) upl.classList.remove('hidden'); });
+                    }).catch(e => { 
+                        if(overlay) overlay.classList.add('hidden'); 
+                        showCustomPopup("ระบบมีปัญหา", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์"); 
+                        if(upl) upl.classList.remove('hidden'); 
+                    });
                 }
                 reader.readAsDataURL(file);
             }
@@ -2007,7 +2022,7 @@
                 try { lucide.createIcons(); } catch(e) {}
                 
                 if(res.status === 'success') {
-                    globalHistoryData = res; // เก็บไว้ทำ Statement
+                    globalHistoryData = res; 
 
                     // Orders
                     if(res.orders.length > 0) {
@@ -2015,7 +2030,7 @@
                         res.orders.forEach((item, idx) => {
                             let badgeClass = getStatusBadgeClass(item.status);
                             const div = document.createElement('div'); div.className = "bg-white dark:bg-[#121212] p-4 border dark:border-gray-800 rounded-sm shadow-sm animate-slide-up mb-4"; div.style.animationDelay = `${idx * 0.1}s`;
-                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div><h3 class="font-bold text-sm">Order: ${item.ref.replace(/'/g,'')}</h3><p class="text-[10px] text-gray-500">${item.date}</p></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-3 bg-gray-50 dark:bg-gray-800 p-2 rounded-sm font-sans">${item.items}</div><div class="flex justify-end text-xs"><span class="font-bold text-primary">ยอดสุทธิ: ฿${item.amount}</span></div>`;
+                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div><h3 class="font-bold text-sm">Order: ${item.ref.replace(/'/g,'')}</h3><p class="text-[10px] text-gray-500">${item.date}</p></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-3 bg-gray-50 dark:bg-gray-800 p-2 rounded-sm font-sans">${item.items}</div><div class="flex justify-end text-xs"><span class="font-bold text-primary">ยอดสุทธิ: ฿${parseFloat(item.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</span></div>`;
                             if(ordContainer) ordContainer.appendChild(div);
                         });
                     } else { if(ordContainer) ordContainer.innerHTML = `<div class="text-center py-8 text-gray-500"><p>ไม่พบประวัติการสั่งซื้อ</p></div>`; }
@@ -2026,7 +2041,7 @@
                         res.deposits.forEach((item, idx) => {
                             let badgeClass = getStatusBadgeClass(item.status);
                             const div = document.createElement('div'); div.className = "bg-white dark:bg-[#121212] p-4 border dark:border-gray-800 rounded-sm shadow-sm animate-slide-up mb-4"; div.style.animationDelay = `${idx * 0.1}s`;
-                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div class="flex items-center"><div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex justify-center items-center mr-2"><i data-lucide="arrow-down-to-line" class="w-3 h-3"></i></div><div><h3 class="font-bold text-sm">ฝากเงิน / คืนเครดิต</h3><p class="text-[10px] text-gray-500">${item.date}</p></div></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="flex justify-between text-xs items-center"><span class="text-gray-500">ยอดที่ได้รับ:</span><span class="font-bold text-green-600 text-sm">+฿${item.amount}</span></div>`;
+                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div class="flex items-center"><div class="w-6 h-6 bg-green-100 text-green-600 rounded-full flex justify-center items-center mr-2"><i data-lucide="arrow-down-to-line" class="w-3 h-3"></i></div><div><h3 class="font-bold text-sm">ฝากเงิน / คืนเครดิต</h3><p class="text-[10px] text-gray-500">${item.date}</p></div></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="flex justify-between text-xs items-center"><span class="text-gray-500">ยอดที่ได้รับ:</span><span class="font-bold text-green-600 text-sm">+฿${parseFloat(item.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</span></div>`;
                             if(depContainer) depContainer.appendChild(div);
                         });
                     } else { if(depContainer) depContainer.innerHTML = `<div class="text-center py-8 text-gray-500"><p>ไม่พบประวัติการฝากเงิน</p></div>`; }
@@ -2037,7 +2052,7 @@
                         res.withdraws.forEach((item, idx) => {
                             let badgeClass = getStatusBadgeClass(item.status);
                             const div = document.createElement('div'); div.className = "bg-white dark:bg-[#121212] p-4 border dark:border-gray-800 rounded-sm shadow-sm animate-slide-up mb-4"; div.style.animationDelay = `${idx * 0.1}s`;
-                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div class="flex items-center"><div class="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex justify-center items-center mr-2"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i></div><div><h3 class="font-bold text-sm">ถอนเงิน</h3><p class="text-[10px] text-gray-500">${item.date}</p></div></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="text-xs text-gray-700 dark:text-gray-400 mb-3">${item.items}</div><div class="flex justify-between text-xs items-center"><span class="text-gray-500">ยอดถอน:</span><span class="font-bold text-purple-600 text-sm">-฿${item.amount}</span></div>`;
+                            div.innerHTML = `<div class="flex justify-between items-start mb-3 border-b dark:border-gray-800 pb-2"><div class="flex items-center"><div class="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex justify-center items-center mr-2"><i data-lucide="arrow-up-circle" class="w-3 h-3"></i></div><div><h3 class="font-bold text-sm">ถอนเงิน</h3><p class="text-[10px] text-gray-500">${item.date}</p></div></div><span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${item.status}</span></div><div class="text-xs text-gray-700 dark:text-gray-400 mb-3">${item.items}</div><div class="flex justify-between text-xs items-center"><span class="text-gray-500">ยอดถอน:</span><span class="font-bold text-purple-600 text-sm">-฿${parseFloat(item.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</span></div>`;
                             if(wdContainer) wdContainer.appendChild(div);
                         });
                     } else { if(wdContainer) wdContainer.innerHTML = `<div class="text-center py-8 text-gray-500"><p>ไม่พบประวัติการถอนเงิน</p></div>`; }
@@ -2059,7 +2074,6 @@
             if(!globalHistoryData) { showCustomPopup("แจ้งเตือน", "กรุณาค้นหาประวัติก่อนทำรายการ Statement"); return; }
             if(!currentUser) { showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนดึงข้อมูล Statement"); return; }
 
-            // Populate Info
             safeSetText('stmt-ref', `เลขที่ NX-${Date.now().toString().slice(-4)}-${Math.floor(Math.random()*9000)+1000}-${currentUser.phone.slice(-6)}`);
             let dParts = new Date().toLocaleDateString('th-TH').split('/');
             let tStr = new Date().toTimeString().substring(0,5);
@@ -2071,18 +2085,15 @@
             safeSetText('stmt-phone', `หมายเลขโทรศัพท์ : ${currentUser.phone}`);
             safeSetText('stmt-admin-name', `ผู้รับเงิน ${siteSettings.AdminName}`);
 
-            // Populate Orders (นำข้อมูล Subtotal, Net, Discount, VAT มาจัดรูปแบบให้ถูกต้อง)
             const oBody = document.getElementById('stmt-orders-tbody'); oBody.innerHTML = '';
             if(globalHistoryData.orders.length > 0) {
                 globalHistoryData.orders.forEach((o, i) => {
                     let itemsStr = o.items.replace(/\n/g, '<br>');
-                    
-                    // คำนวณตัวเลขกลับคืนมาเพื่อแสดงผลในแต่ละช่อง
-                    let amt = parseFloat(o.amount) || 0; // ยอดชำระสุทธิ (รวมทุกอย่าง)
-                    let vat = parseFloat(o.vat) || 0; // ภาษี
-                    let disc = parseFloat(o.discount) || 0; // ส่วนลด
-                    let net = amt - vat; // ยอดสุทธิ (ก่อนบวก VAT แต่หลังหักส่วนลดแล้ว)
-                    let price = net + disc; // ราคาสินค้ารวม (ราคาตั้งต้น ก่อนหักส่วนลด)
+                    let amt = parseFloat(o.amount) || 0; 
+                    let vat = parseFloat(o.vat) || 0; 
+                    let disc = parseFloat(o.discount) || 0; 
+                    let net = amt - vat; 
+                    let price = net + disc; 
 
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -2098,10 +2109,8 @@
                 });
             } else { oBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
-            // เตรียมยอดยกมา (ยอดคงเหลือปัจจุบัน) 
             let currentBalStr = parseFloat(globalHistoryData.balance || 0).toLocaleString('en-US',{minimumFractionDigits:2});
 
-            // Populate Deposits
             const dBody = document.getElementById('stmt-deposits-tbody'); dBody.innerHTML = '';
             if(globalHistoryData.deposits.length > 0) {
                 globalHistoryData.deposits.forEach((d, i) => {
@@ -2117,7 +2126,6 @@
                 });
             } else { dBody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400">ไม่มีข้อมูล</td></tr>'; }
 
-            // Populate Withdraws
             const wBody = document.getElementById('stmt-withdraws-tbody'); wBody.innerHTML = '';
             if(globalHistoryData.withdraws.length > 0) {
                 globalHistoryData.withdraws.forEach((w, i) => {
@@ -2214,15 +2222,15 @@
             document.getElementById('booking-tab-book').classList.add('hidden');
             document.getElementById('booking-tab-cancel').classList.add('hidden');
             
-            document.getElementById('tab-btn-check').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap";
-            document.getElementById('tab-btn-book').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap";
-            document.getElementById('tab-btn-cancel').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap";
+            document.getElementById('tab-btn-check').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap transition-colors";
+            document.getElementById('tab-btn-book').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap transition-colors";
+            document.getElementById('tab-btn-cancel').className = "py-3 px-6 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-primary whitespace-nowrap transition-colors";
 
             document.getElementById('booking-tab-' + tab).classList.remove('hidden');
-            document.getElementById('tab-btn-' + tab).className = "py-3 px-6 font-bold text-sm border-b-2 border-primary text-primary whitespace-nowrap";
+            document.getElementById('tab-btn-' + tab).className = "py-3 px-6 font-bold text-sm border-b-2 border-primary text-primary whitespace-nowrap transition-colors";
 
             if(tab === 'check') loadBookingHistory();
-            if(tab === 'cancel') loadBookingHistory(true); // true = load for cancel
+            if(tab === 'cancel') loadBookingHistory(true); 
             if(tab === 'book') {
                 nextBookingStep(1); 
                 initBookingCalendar();
@@ -2231,79 +2239,118 @@
 
         function loadBookingHistory(isCancelTab = false) {
             if(!currentUser) return;
-            const tbody = document.getElementById(isCancelTab ? 'booking-cancel-tbody' : 'booking-list-tbody');
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center p-6 text-gray-400">กำลังโหลดข้อมูล...</td></tr>';
+            const container = document.getElementById(isCancelTab ? 'booking-cancel-container' : 'booking-list-container');
+            container.innerHTML = '<div class="text-center p-6 text-gray-400 border border-dashed rounded-md"><div class="lds-spinner lds-spinner-white" style="width:20px;height:20px;transform:scale(0.3);margin-right:-20px;display:inline-block;"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div> กำลังโหลดข้อมูล...</div>';
             
             callBackend({action: 'getBookingList', phone: currentUser.phone}).then(res => {
                 if(res.status === 'success') {
                     if(isCancelTab) renderBookingCancelList(res.bookings);
                     else renderBookingList(res.bookings);
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6 text-red-500">${res.message}</td></tr>`;
+                    container.innerHTML = `<div class="text-center p-6 text-red-500 border border-dashed rounded-md">${res.message}</div>`;
                 }
             }).catch(e => {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-6 text-red-500">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
+                container.innerHTML = `<div class="text-center p-6 text-red-500 border border-dashed rounded-md">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>`;
             });
         }
 
         function renderBookingList(bookings) {
-            const tbody = document.getElementById('booking-list-tbody');
-            if(bookings.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center p-6 text-gray-400">ไม่พบประวัติการจองคิว</td></tr>'; return; }
+            const container = document.getElementById('booking-list-container');
+            if(bookings.length === 0) { container.innerHTML = '<div class="text-center p-6 text-gray-400 border border-dashed rounded-md"><i data-lucide="calendar-x" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>ไม่พบประวัติการจองคิว</div>'; try { lucide.createIcons(); } catch(e){} return; }
             
-            tbody.innerHTML = '';
-            bookings.forEach(b => {
+            container.innerHTML = '';
+            bookings.forEach((b, idx) => {
                 let badgeClass = getStatusBadgeClass(b.status);
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3">${b.createDate}</td>
-                    <td class="p-3 font-bold text-primary">${b.queueNo.replace(/'/g, '')}</td>
-                    <td class="p-3"><div class="font-bold">${b.topic}</div><div class="text-xs text-gray-500 truncate w-32">${b.detail}</div></td>
-                    <td class="p-3">${b.bookDate} <br><span class="text-xs text-gray-500">${b.bookTime} น.</span></td>
-                    <td class="p-3 text-center font-bold">${b.sequence}</td>
-                    <td class="p-3 text-center text-yellow-600 font-bold">${b.waitCount}</td>
-                    <td class="p-3 text-center"><span class="${badgeClass} px-2 py-1 text-[10px] font-bold rounded-sm">${b.status}</span></td>
+                let div = document.createElement('div');
+                div.className = "bg-white dark:bg-[#1e1e1e] border dark:border-gray-800 rounded-md shadow-sm overflow-hidden mb-3 transition-all";
+                
+                let header = document.createElement('div');
+                header.className = "p-4 cursor-pointer flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors";
+                header.onclick = () => {
+                    const content = document.getElementById(`booking-content-${idx}`);
+                    const icon = document.getElementById(`booking-icon-${idx}`);
+                    if(content.classList.contains('open')) {
+                        content.classList.remove('open', 'p-4');
+                    } else {
+                        content.classList.add('open', 'p-4');
+                    }
+                };
+                header.innerHTML = `
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-bold text-primary">${b.queueNo.replace(/'/g, '')}</span>
+                            <span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${b.status}</span>
+                        </div>
+                        <span class="font-bold text-sm text-gray-800 dark:text-gray-200">${b.topic}</span>
+                        <span class="text-xs text-gray-500">${b.bookDate} ${b.bookTime} น.</span>
+                    </div>
+                    <i data-lucide="chevron-down" id="booking-icon-${idx}" class="w-5 h-5 text-gray-400 transition-transform duration-300"></i>
                 `;
-                tbody.appendChild(tr);
+
+                let content = document.createElement('div');
+                content.id = `booking-content-${idx}`;
+                content.className = "accordion-content bg-gray-50 dark:bg-[#121212] border-t dark:border-gray-800 text-sm";
+                content.innerHTML = `
+                    <div class="grid grid-cols-2 gap-y-3 gap-x-4">
+                        <div><p class="text-xs text-gray-500 mb-1">วันที่ทำรายการ</p><p class="font-semibold">${b.createDate}</p></div>
+                        <div><p class="text-xs text-gray-500 mb-1">ลำดับคิว</p><p class="font-semibold">${b.sequence}</p></div>
+                        <div class="col-span-2"><p class="text-xs text-gray-500 mb-1">รายละเอียด</p><p class="font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-2 rounded border dark:border-gray-700">${b.detail}</p></div>
+                        <div><p class="text-xs text-gray-500 mb-1">จำนวนคิวรอก่อนหน้า</p><p class="font-bold text-yellow-600">${b.waitCount}</p></div>
+                        <div class="col-span-2"><p class="text-xs text-gray-500 mb-1">หมายเหตุ</p><p class="text-xs text-red-500">${b.note || '-'}</p></div>
+                    </div>
+                `;
+
+                div.appendChild(header);
+                div.appendChild(content);
+                container.appendChild(div);
             });
+            try { lucide.createIcons(); } catch(e) {}
         }
 
         function renderBookingCancelList(bookings) {
-            const tbody = document.getElementById('booking-cancel-tbody');
-            // กรองเฉพาะ รอเรียกคิว
+            const container = document.getElementById('booking-cancel-container');
             let activeBookings = bookings.filter(b => b.status === "รอเรียกคิว");
             
-            if(activeBookings.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-center p-6 text-gray-400">ไม่มีคิวที่สามารถยกเลิกได้</td></tr>'; return; }
+            if(activeBookings.length === 0) { container.innerHTML = '<div class="text-center p-6 text-gray-400 border border-dashed rounded-md"><i data-lucide="check-circle" class="w-10 h-10 mx-auto mb-2 opacity-50 text-green-500"></i>ไม่มีคิวที่สามารถยกเลิกได้</div>'; try { lucide.createIcons(); } catch(e){} return; }
             
-            tbody.innerHTML = '';
-            activeBookings.forEach(b => {
+            container.innerHTML = '';
+            activeBookings.forEach((b, idx) => {
                 let badgeClass = getStatusBadgeClass(b.status);
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-3 font-bold text-primary">${b.queueNo.replace(/'/g, '')}</td>
-                    <td class="p-3 font-bold">${b.topic}</td>
-                    <td class="p-3">${b.bookDate} ${b.bookTime} น.</td>
-                    <td class="p-3 text-center"><span class="${badgeClass} px-2 py-1 text-[10px] font-bold rounded-sm">${b.status}</span></td>
-                    <td class="p-3 text-center"><button onclick="cancelBooking(${b.rowId})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-sm text-xs font-bold shadow-sm">ยกเลิกคิว</button></td>
+                let div = document.createElement('div');
+                div.className = "bg-white dark:bg-[#1e1e1e] border dark:border-gray-800 rounded-md shadow-sm p-4 mb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4";
+                div.innerHTML = `
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-bold text-primary">${b.queueNo.replace(/'/g, '')}</span>
+                            <span class="${badgeClass} px-2 py-0.5 text-[10px] font-bold rounded-sm">${b.status}</span>
+                        </div>
+                        <span class="font-bold text-sm text-gray-800 dark:text-gray-200">${b.topic}</span>
+                        <span class="text-xs text-gray-500">${b.bookDate} ${b.bookTime} น.</span>
+                    </div>
+                    <button onclick="cancelBooking(${b.rowId})" class="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-sm text-xs font-bold shadow-sm transition-colors flex justify-center items-center whitespace-nowrap">
+                        <i data-lucide="x-circle" class="w-4 h-4 mr-1"></i> ยกเลิกคิว
+                    </button>
                 `;
-                tbody.appendChild(tr);
+                container.appendChild(div);
             });
+            try { lucide.createIcons(); } catch(e) {}
         }
 
         function cancelBooking(rowId) {
-            if(!confirm("คุณต้องการยกเลิกคิวนี้ใช่หรือไม่? (ต้องยกเลิกล่วงหน้า 3 ชม.)")) return;
-            
-            showCustomPopup("กำลังดำเนินการ", "โปรดรอสักครู่...");
-            callBackend({
-                action: 'cancelBooking', rowId: rowId, 
-                fname: currentUser.fname, email: currentUser.email, phone: currentUser.phone
-            }).then(res => {
-                if(res.status === 'success') {
-                    showCustomPopup("สำเร็จ", res.message);
-                    loadBookingHistory(true); 
-                } else {
-                    showCustomPopup("ข้อผิดพลาด", res.message);
-                }
-            }).catch(e => showCustomPopup("ข้อผิดพลาด", "ไม่สามารถยกเลิกคิวได้"));
+            showConfirmPopup("ยืนยันการยกเลิก", "คุณต้องการยกเลิกคิวนี้ใช่หรือไม่?\n(กรุณายกเลิกล่วงหน้า 3 ชม.)", function() {
+                showCustomPopup("กำลังดำเนินการ", "โปรดรอสักครู่...");
+                callBackend({
+                    action: 'cancelBooking', rowId: rowId, 
+                    fname: currentUser.fname, email: currentUser.email, phone: currentUser.phone
+                }).then(res => {
+                    if(res.status === 'success') {
+                        showCustomPopup("สำเร็จ", res.message);
+                        loadBookingHistory(true); 
+                    } else {
+                        showCustomPopup("ข้อผิดพลาด", res.message);
+                    }
+                }).catch(e => showCustomPopup("ข้อผิดพลาด", "ไม่สามารถยกเลิกคิวได้"));
+            });
         }
 
         function nextBookingStep(step) {
@@ -2328,15 +2375,15 @@
             for(let i=1; i<=3; i++) {
                 let ind = document.getElementById(`book-step-${i}-ind`).querySelector('div');
                 if(i <= step) {
-                    ind.className = "w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm z-10 relative";
+                    ind.className = "w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm z-10 relative shadow-md transition-colors";
                 } else {
-                    ind.className = "w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative";
+                    ind.className = "w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center font-bold text-sm z-10 relative transition-colors";
                 }
                 
                 if(i < 3) {
                     let line = document.getElementById(`book-line-${i}`);
-                    if(i < step) line.className = "w-16 sm:w-32 h-1 bg-primary";
-                    else line.className = "w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700";
+                    if(i < step) line.className = "w-16 sm:w-32 h-1 bg-primary transition-colors";
+                    else line.className = "w-16 sm:w-32 h-1 bg-gray-200 dark:bg-gray-700 transition-colors";
                 }
             }
         }
@@ -2345,6 +2392,7 @@
         function initBookingCalendar() {
             currentCalDate = new Date();
             renderCalendarDays();
+            initDraggableScroll('booking-calendar-scroll');
         }
 
         function changeBookingMonth(dir) {
@@ -2352,7 +2400,7 @@
             
             let today = new Date();
             if(currentCalDate.getFullYear() < today.getFullYear() || (currentCalDate.getFullYear() === today.getFullYear() && currentCalDate.getMonth() < today.getMonth())) {
-                currentCalDate = new Date(); // ห้ามย้อนกลับไปเดือนในอดีต
+                currentCalDate = new Date(); 
             }
             renderCalendarDays();
         }
@@ -2376,8 +2424,8 @@
                 let dayName = ["อา.", "จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส."][dateObj.getDay()];
                 
                 let btn = document.createElement('button');
-                btn.className = "flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 snap-center transition-colors hover:border-primary";
-                btn.innerHTML = `<span class="text-xs text-gray-500 mb-1">${dayName}</span><span class="font-bold text-lg">${i}</span>`;
+                btn.className = "flex-shrink-0 flex flex-col items-center justify-center w-16 h-20 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 snap-center transition-colors hover:border-primary select-none";
+                btn.innerHTML = `<span class="text-xs text-gray-500 mb-1">${dayName}</span><span class="font-bold text-lg pointer-events-none">${i}</span>`;
                 btn.onclick = () => selectBookingDate(dateStr, btn);
                 
                 if(currentBookingDate === dateStr) {
@@ -2462,8 +2510,10 @@
             let btn = document.getElementById('btn-submit-booking');
             if(currentBookingDate && currentBookingTime) {
                 btn.disabled = false;
+                btn.classList.remove('cursor-not-allowed');
             } else {
                 btn.disabled = true;
+                btn.classList.add('cursor-not-allowed');
             }
         }
 
