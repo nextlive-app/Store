@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>แนะนำเพื่อน | Next Live</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class', 
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Kanit', 'sans-serif'] },
+                    colors: { 
+                        primary: '#6b3fd1', // โทนสีม่วงตามรูป
+                        primaryHover: '#562fba', 
+                        accent: '#ffd700', // สีทอง
+                        bgDark: '#0f0b1c',
+                        cardDark: '#1a1432',
+                        cardLight: '#261c4a',
+                        borderDark: '#2d244f'
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { background-color: #0f0b1c; color: #e5e7eb; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+
+        .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s; }
+        .tab-btn.active { color: #fff; border-bottom: 2px solid #fff; font-weight: bold; }
+        
+        .stat-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        .stat-table th, .stat-table td { padding: 10px; border: 1px solid #2d244f; text-align: center; }
+        .stat-table th { background-color: #261c4a; font-size: 12px; font-weight: 600; color: #a79ad1; }
+        .stat-table td { font-size: 14px; font-weight: bold; background-color: #1a1432; }
+
+        /* Custom Popup Styles */
+        .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .8); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; z-index: 99999; backdrop-filter: blur(4px); }
+        .popup-container.active { opacity: 1; pointer-events: auto; transition: .3s ease; }
+        .popup-container .popup-box { width: 90%; max-width: 400px; background: #1a1432; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, .5); padding: 30px; transform: scale(0.9); text-align: center; font-family: 'Kanit', sans-serif; white-space: pre-line; line-height: 1.5; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #2d244f; }
+        .popup-container.active .popup-box { transform: scale(1); }
+        .popup-box h1 { color: #fff; line-height: 1; font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+        .popup-box p { color: #a79ad1; margin: 12px 0 20px; font-size: 14px; }
+        .popup-box .close-btn { width: 100%; height: 45px; background: #6b3fd1; border-radius: 8px; border: none; outline: none; cursor: pointer; font-size: 16px; color: #fff; font-weight: 600; transition: background-color 0.2s; }
+        .popup-box .close-btn:hover { background: #562fba; }
+        
+        /* Focus input */
+        input[type=number]:focus { outline: none; }
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] { -moz-appearance: textfield; }
+    </style>
+</head>
+<body class="antialiased min-h-screen dark">
+    
+    <!-- Loading Overlay -->
+    <div id="loader" class="fixed inset-0 bg-black/80 z-[100000] flex items-center justify-center flex-col hidden">
+        <i data-lucide="loader-2" class="w-10 h-10 text-primary animate-spin mb-2"></i>
+        <p class="text-white text-sm">กำลังประมวลผล...</p>
+    </div>
+
+    <div class="max-w-md mx-auto min-h-screen flex flex-col relative bg-bgDark shadow-2xl">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between px-4 py-4 sticky top-0 bg-bgDark z-40 border-b border-borderDark shadow-sm">
+            <div class="flex items-center group cursor-pointer w-24" onclick="goBack()">
+                <i data-lucide="home" class="w-6 h-6 text-white group-hover:text-accent transition-colors"></i>
+                <span class="animate-bounce-slow ml-2 text-[10px] font-bold text-accent">กลับหน้าหลัก</span>
+            </div>
+            <h1 class="text-lg font-bold text-white tracking-wide flex-1 text-center">แนะนำเพื่อนและรับ</h1>
+            <div class="w-24 flex justify-end">
+                <button onclick="openSharePopup()" class="bg-cardLight hover:bg-[#342766] transition-colors text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-borderDark flex items-center gap-1 shadow-sm">
+                    แชร์ <i data-lucide="share-2" class="w-3 h-3 text-accent"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex px-4 border-b border-borderDark sticky top-[65px] bg-bgDark z-40">
+            <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn active flex-1 py-3 text-sm text-[#a79ad1] hover:text-white">ภาพรวม</button>
+            <button onclick="switchTab('history')" id="tab-history" class="tab-btn flex-1 py-3 text-sm text-[#a79ad1] hover:text-white">ประวัติ</button>
+            <button onclick="switchTab('howto')" id="tab-howto" class="tab-btn flex-1 py-3 text-sm text-[#a79ad1] hover:text-white">วิธีใช้งาน</button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto pb-10 hide-scroll">
+            
+            <!-- VIEW: OVERVIEW -->
+            <div id="view-overview" class="block p-4 animate-fade-in space-y-6">
+                
+                <!-- Main Balance -->
+                <div class="relative bg-bgDark py-4 border-b border-borderDark flex items-start justify-between">
+                    <div class="flex-1">
+                        <p class="text-[#a79ad1] text-sm mb-1">รายได้</p>
+                        <!-- ปรับขนาด font เล็กลง (text-4xl) -->
+                        <input type="number" id="wd-amount" placeholder="0.00" class="w-full bg-transparent text-white text-4xl font-extrabold outline-none border-none p-0 m-0 tracking-tight" autocomplete="off">
+                        <button onclick="transferCredit()" class="mt-4 bg-[#562fba] hover:bg-primary text-white font-bold py-2.5 px-10 rounded-lg shadow-[0_0_15px_rgba(107,63,209,0.4)] transition-all text-sm w-fit">
+                            ถอนรายได้
+                        </button>
+                        <p class="text-[10px] text-gray-500 mt-2" id="txt-max-avail">ขั้นต่ำ 100 บ. | ยอดที่ถอนได้: 0.00</p>
+                    </div>
+                    <div class="w-32 h-32 flex-shrink-0 ml-2 relative">
+                        <img src="https://img5.pic.in.th/file/secure-sv1/IMG_1305.jpeg" alt="Cat" class="absolute inset-0 w-full h-full object-cover object-[right_top] drop-shadow-2xl rounded-xl opacity-80 mix-blend-screen" onerror="this.style.display='none'">
+                        <i data-lucide="gem" class="w-24 h-24 text-accent drop-shadow-xl absolute top-4 right-4 z-10" id="fallback-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Link Section -->
+                <div class="bg-cardDark rounded-xl p-5 border border-borderDark shadow-sm">
+                    <p class="text-sm font-bold text-white mb-3 text-center">ลิงก์แนะนำเพื่อน</p>
+                    <div class="bg-[#110c22] border border-borderDark rounded-lg p-3 mb-4 break-all text-[13px] text-gray-300 font-mono text-center">
+                        <span id="aff-link">กำลังโหลด...</span>
+                    </div>
+                    <button onclick="copyAffiliateLink()" class="bg-primary hover:bg-primaryHover text-white font-bold py-2.5 px-4 w-fit mx-auto rounded-full text-sm transition-colors flex items-center justify-center shadow-md">
+                        คัดลอกลิงก์ <i data-lucide="copy" class="w-4 h-4 ml-2"></i>
+                    </button>
+                </div>
+
+                <!-- 4 Summary Boxes (Horizontal Scroll) -->
+                <div class="flex overflow-x-auto gap-3 pb-2 hide-scroll snap-x">
+                    <div class="bg-cardDark border border-borderDark rounded-xl p-3 text-center shadow-sm min-w-[130px] flex-shrink-0 snap-center">
+                        <p class="text-[10px] text-[#a79ad1] mb-1">สมาชิกรวมลูกทีม (คน)</p>
+                        <p class="font-bold text-white text-xl truncate" id="box-members">0</p>
+                    </div>
+                    <div class="bg-cardDark border border-borderDark rounded-xl p-3 text-center shadow-sm min-w-[130px] flex-shrink-0 snap-center">
+                        <p class="text-[10px] text-[#a79ad1] mb-1">ยอดขายรวม (วันนี้)</p>
+                        <p class="font-bold text-white text-xl truncate" id="box-sales-today">0.00</p>
+                    </div>
+                    <div class="bg-cardDark border border-borderDark rounded-xl p-3 text-center shadow-sm min-w-[130px] flex-shrink-0 snap-center">
+                        <p class="text-[10px] text-[#a79ad1] mb-1">คอมมิชชั่นรวม (วันนี้)</p>
+                        <p class="font-bold text-green-400 text-xl truncate" id="box-comm-today">0.00</p>
+                    </div>
+                    <div class="bg-cardDark border border-borderDark rounded-xl p-3 text-center shadow-sm min-w-[140px] flex-shrink-0 snap-center">
+                        <p class="text-[10px] text-[#a79ad1] mb-1">คอมสะสม (หักยอดถอน)</p>
+                        <p class="font-bold text-primary text-xl truncate" id="box-comm-avail">0.00</p>
+                    </div>
+                </div>
+
+                <!-- Overview Tables (Focusing on Today) -->
+                <div class="mt-8">
+                    <h3 class="text-white font-bold mb-3 text-sm flex justify-center border-b border-borderDark pb-2">สรุปผู้ใช้งานของวันนี้ (รายบุคคล)</h3>
+                    <table class="stat-table rounded-lg overflow-hidden">
+                        <thead><tr><th>ผู้ใช้ใหม่ (คน)</th><th>ผู้ใช้เก่า (คน)</th><th>ลูกทีม (คน)</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td id="t1-c1" class="text-green-400">0</td>
+                                <td id="t1-c2">0</td>
+                                <td id="t1-c3" class="text-accent">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="text-white font-bold mb-3 mt-6 text-sm flex justify-center border-b border-borderDark pb-2">ขั้นที่ 1: แนะนำเพื่อนตรง (ของวันนี้)</h3>
+                    <table class="stat-table rounded-lg overflow-hidden">
+                        <thead><tr><th>ใหม่ (ยอดซื้อ)</th><th>เก่า (ยอดซื้อ)</th><th>คอมมิชชั่นขั้น 1</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td id="t2-c1">0.00</td>
+                                <td id="t2-c2">0.00</td>
+                                <td id="t2-c3" class="text-green-400">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="text-white font-bold mb-3 mt-6 text-sm flex justify-center border-b border-borderDark pb-2">ขั้นที่ 2: เพื่อนแนะนำต่อ 1% (ของวันนี้)</h3>
+                    <table class="stat-table rounded-lg overflow-hidden">
+                        <thead><tr><th>ผู้ใช้งาน (คน)</th><th>ยอดขายรวม</th><th>คอมมิชชั่นรวม</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td id="t3-c1">0</td>
+                                <td id="t3-c2">0.00</td>
+                                <td id="t3-c3" class="text-green-400">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="text-white font-bold mb-3 mt-6 text-sm flex justify-center border-b border-borderDark pb-2">ขั้นที่ 3: เพื่อนของเพื่อน 0.5% (ของวันนี้)</h3>
+                    <table class="stat-table rounded-lg overflow-hidden">
+                        <thead><tr><th>ผู้ใช้งาน (คน)</th><th>ยอดขายรวม</th><th>คอมมิชชั่นรวม</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td id="t4-c1">0</td>
+                                <td id="t4-c2">0.00</td>
+                                <td id="t4-c3" class="text-green-400">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="text-white font-bold mb-3 mt-6 text-sm flex justify-center border-b border-borderDark pb-2">ขั้นที่ 4 ขึ้นไป: ลึกลงไปเรื่อยๆ 0.1% (ของวันนี้)</h3>
+                    <table class="stat-table rounded-lg overflow-hidden">
+                        <thead><tr><th>ผู้ใช้งาน (คน)</th><th>ยอดขายรวม</th><th>คอมมิชชั่นรวม</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td id="t6-c1">0</td>
+                                <td id="t6-c2">0.00</td>
+                                <td id="t6-c3" class="text-green-400">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="text-white font-bold mb-3 mt-6 text-sm flex justify-center border-b border-borderDark pb-2">ไม่มีบัญชี / Guest 1% (ของวันนี้)</h3>
+                    <table class="stat-table rounded-lg overflow-hidden">
+                        <thead><tr><th>วันนี้ (คน)</th><th>ยอดขายรวม</th><th>คอมมิชชั่นรวม</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td id="t5-c1">0</td>
+                                <td id="t5-c2">0.00</td>
+                                <td id="t5-c3" class="text-green-400">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- VIEW: HISTORY -->
+            <div id="view-history" class="hidden p-4">
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="bg-cardDark border border-borderDark rounded-xl p-4 text-center">
+                        <p class="text-xs text-[#a79ad1] mb-1">รายได้วันนี้</p>
+                        <p class="font-bold text-green-400 text-xl" id="stat-today">0.00</p>
+                    </div>
+                    <div class="bg-cardDark border border-borderDark rounded-xl p-4 text-center">
+                        <p class="text-xs text-[#a79ad1] mb-1">รายได้เมื่อวาน</p>
+                        <p class="font-bold text-white text-xl" id="stat-yest">0.00</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-4 border-b border-borderDark pb-2">
+                    <h3 class="font-bold text-white text-sm">ประวัติล่าสุด</h3>
+                </div>
+
+                <div id="history-container" class="space-y-3">
+                    <!-- Cards Injected here -->
+                </div>
+            </div>
+
+            <!-- VIEW: HOW TO (Scroll Layout) -->
+            <div id="view-howto" class="hidden p-4">
+                <img src="https://img1.pic.in.th/images/IMG_1322.jpeg" alt="Nextlive Affiliate" class="w-full h-auto rounded-lg object-contain border border-borderDark mb-6" onerror="this.onerror=null; this.src='https://via.placeholder.com/400x500/1a1432/a79ad1?text=Image+Not+Found';">
+                
+                <div class="bg-cardDark border border-borderDark rounded-xl p-5 mb-6 shadow-lg">
+                    <h3 class="text-center text-accent font-bold mb-5 border-b border-borderDark pb-3 text-lg"><i data-lucide="info" class="w-5 h-5 inline mr-1 -mt-1"></i> ขั้นตอนการใช้งาน</h3>
+                    <div class="space-y-5 text-sm text-gray-300">
+                        <div class="flex items-start">
+                            <div class="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold mr-4 shrink-0 shadow-md">1</div>
+                            <p class="pt-1">คัดลอกลิงก์แนะนำเพื่อนของคุณจากหน้า "ภาพรวม"</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold mr-4 shrink-0 shadow-md">2</div>
+                            <p class="pt-1">ส่งลิงก์ให้เพื่อน หรือแชร์ลงในโซเชียลมีเดียต่างๆ</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold mr-4 shrink-0 shadow-md">3</div>
+                            <p class="pt-1">เมื่อเพื่อนคลิกลิงก์และทำการทำรายการ (ฝากเงิน หรือ ซื้อสินค้า) สำเร็จ</p>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center font-bold mr-4 shrink-0 shadow-md">4</div>
+                            <p class="pt-1 text-green-400 font-bold">รับค่าคอมมิชชั่นเข้ากระเป๋า Affiliate ทันทีแบบเรียลไทม์!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-cardDark border border-borderDark rounded-xl p-5 shadow-lg mb-6">
+                    <h3 class="text-center text-accent font-bold mb-5 border-b border-borderDark pb-3 text-lg"><i data-lucide="percent" class="w-5 h-5 inline mr-1 -mt-1"></i> อัตราส่วนแบ่งรายได้แต่ละขั้น</h3>
+                    
+                    <div class="space-y-4 text-sm">
+                        <div class="bg-[#110c22] p-4 rounded-lg border border-borderDark">
+                            <p class="font-bold text-white mb-1"><span class="text-green-400">ขั้นที่ 1:</span> แนะนำเพื่อนตรง (ค่าคอมมิชชั่น 5%)</p>
+                            <p class="text-gray-400 text-xs">ตัวอย่าง: ยอดธุรกรรม 10,000 ได้รับ <span class="text-accent font-bold">500.00 บาท / คน</span></p>
+                        </div>
+                        <div class="bg-[#110c22] p-4 rounded-lg border border-borderDark">
+                            <p class="font-bold text-white mb-1"><span class="text-primary">ขั้นที่ 2:</span> เพื่อนชวนเพื่อน (ค่าคอมมิชชั่น 1%)</p>
+                            <p class="text-gray-400 text-xs">ตัวอย่าง: ยอดธุรกรรม 10,000 ได้รับ <span class="text-accent font-bold">100.00 บาท / คน</span></p>
+                        </div>
+                        <div class="bg-[#110c22] p-4 rounded-lg border border-borderDark">
+                            <p class="font-bold text-white mb-1"><span class="text-blue-400">ขั้นที่ 3:</span> เพื่อนของเพื่อนชวนต่อ (ค่าคอมมิชชั่น 0.5%)</p>
+                            <p class="text-gray-400 text-xs">ตัวอย่าง: ยอดธุรกรรม 10,000 ได้รับ <span class="text-accent font-bold">50.00 บาท / คน</span></p>
+                        </div>
+                        <div class="bg-[#110c22] p-4 rounded-lg border border-borderDark">
+                            <p class="font-bold text-white mb-1"><span class="text-purple-400">ขั้นที่ 4 ขึ้นไป:</span> ลึกลงไปเรื่อยๆ (ค่าคอมมิชชั่น 0.1%)</p>
+                            <p class="text-gray-400 text-xs">ตัวอย่าง: ยอดธุรกรรม 10,000.00 ได้รับ <span class="text-accent font-bold">10.00 บาท / คน</span></p>
+                        </div>
+                        <div class="bg-[#110c22] p-4 rounded-lg border border-borderDark">
+                            <p class="font-bold text-white mb-1"><span class="text-gray-400">ผู้ใช้ไม่ได้สมัคร</span> (Guest 1%)</p>
+                            <p class="text-gray-400 text-xs">ตัวอย่าง: ยอดธุรกรรม 10,000.00 ได้รับ <span class="text-accent font-bold">100.00 บาท / คน</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-6 pt-4 border-t border-borderDark">
+                        <h4 class="font-bold text-white mb-2 text-sm"><i data-lucide="wallet" class="w-4 h-4 inline text-primary -mt-1"></i> การถอนรายได้</h4>
+                        <p class="text-xs text-[#a79ad1] leading-relaxed">เมื่อมียอดสะสมขั้นต่ำ <span class="text-white font-bold">100.00 บาท</span> ขึ้นไป<br>สามารถระบุยอดถอนในหน้าภาพรวม เพื่อโอนเข้ากระเป๋าหลักได้ทันที</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Popup Models -->
+    <div class="popup-container" id="custom-popup">
+        <div class="popup-box">
+            <h1 id="popup-title">Hello!</h1>
+            <p id="popup-desc">This is a message.</p>
+            <button class="close-btn" id="btn-close-custom-popup">ตกลง</button>
+        </div>
+    </div>
+
+    <div class="popup-container" id="confirm-popup">
+        <div class="popup-box">
+            <div class="w-16 h-16 bg-yellow-900/30 text-accent rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-700/50"><i data-lucide="alert-triangle" class="w-8 h-8"></i></div>
+            <h1 id="confirm-title" class="text-xl font-bold mb-2">ยืนยัน?</h1>
+            <p id="confirm-desc" class="text-sm text-[#a79ad1] mb-6">คุณแน่ใจหรือไม่?</p>
+            <div class="flex gap-2">
+                <button class="w-1/2 py-3 bg-cardLight hover:bg-[#342766] border border-borderDark text-white font-bold rounded-md text-sm transition-colors" onclick="closeConfirmPopup()">ไม่ใช่</button>
+                <button class="w-1/2 py-3 bg-primary hover:bg-primaryHover text-white font-bold rounded-md text-sm shadow-[0_0_10px_rgba(107,63,209,0.5)] transition-colors" id="confirm-yes-btn">ใช่, ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Popup -->
+    <div class="popup-container" id="share-popup">
+        <div class="popup-box" style="padding: 20px;">
+            <h2 class="text-white font-bold text-lg mb-5 border-b border-borderDark pb-2">แชร์ไปยัง...</h2>
+            <div class="grid grid-cols-3 gap-y-6 gap-x-4 mb-2">
+                <!-- ใช้ Icon จริงของแต่ละ App -->
+                <button onclick="shareTo('line')" class="flex flex-col items-center gap-2 group">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="Line" class="w-12 h-12 shadow-lg group-hover:scale-110 transition-transform bg-white rounded-[12px]">
+                    <span class="text-[11px] text-gray-400 font-bold tracking-wide">LINE</span>
+                </button>
+                
+                <button onclick="shareTo('facebook')" class="flex flex-col items-center gap-2 group">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook" class="w-12 h-12 shadow-lg group-hover:scale-110 transition-transform">
+                    <span class="text-[11px] text-gray-400 font-bold tracking-wide">Facebook</span>
+                </button>
+                
+                <button onclick="shareTo('twitter')" class="flex flex-col items-center gap-2 group">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X" class="w-12 h-12 shadow-lg group-hover:scale-110 transition-transform bg-white rounded-lg p-2">
+                    <span class="text-[11px] text-gray-400 font-bold tracking-wide">X (Twitter)</span>
+                </button>
+                
+                <button onclick="shareTo('telegram')" class="flex flex-col items-center gap-2 group">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="w-12 h-12 shadow-lg group-hover:scale-110 transition-transform">
+                    <span class="text-[11px] text-gray-400 font-bold tracking-wide">Telegram</span>
+                </button>
+                
+                <button onclick="shareTo('discord')" class="flex flex-col items-center gap-2 group">
+                    <div class="w-12 h-12 bg-[#5865F2] rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 text-white" viewBox="0 0 127.14 96.36" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.2,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
+                    </div>
+                    <span class="text-[11px] text-gray-400 font-bold tracking-wide">Discord</span>
+                </button>
+                
+                <button onclick="shareTo('weibo')" class="flex flex-col items-center gap-2 group">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Sina_Weibo_logo.svg" alt="Weibo" class="w-12 h-12 shadow-lg group-hover:scale-110 transition-transform bg-white rounded-xl p-1">
+                    <span class="text-[11px] text-gray-400 font-bold tracking-wide">Weibo</span>
+                </button>
+            </div>
+
+            <!-- ปุ่มคัดลอกลิงก์แยกด้านล่าง -->
+            <button onclick="shareTo('copy')" class="mt-4 flex w-full items-center justify-center gap-2 py-3 bg-[#2d244f] hover:bg-[#3d316a] transition-colors rounded-lg group">
+                <i data-lucide="copy" class="text-white w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm text-white font-bold tracking-wide">คัดลอกลิงก์ส่วนตัว</span>
+            </button>
+            
+            <button onclick="closeSharePopup()" class="mt-4 w-full py-2.5 bg-transparent border border-gray-600 hover:bg-gray-800 text-gray-400 rounded-lg font-bold transition-colors text-sm">ยกเลิก</button>
+        </div>
+    </div>
+
+    <script>
+        // *** โปรดระบุ URL ของ Google Apps Script ของคุณตรงนี้ ***
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec";
+        
+        let currentUser = null;
+        let affiliateLink = "";
+        let maxAvailable = 0; 
+        let pollingInterval = null; // สำหรับ Auto-refresh
+
+        lucide.createIcons();
+
+        function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
+        function showLoader(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
+        function formatNum(num) { return Number(num).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+        // --- Custom Popup Logic ---
+        let popupCloseCallback = null;
+        function showCustomPopup(title, text, callback = null) {
+            safeSetText('popup-title', title); safeSetText('popup-desc', text);
+            popupCloseCallback = callback;
+            const popup = document.getElementById('custom-popup'); if(popup) popup.classList.add('active');
+        }
+        function closeCustomPopup() {
+            const popup = document.getElementById('custom-popup'); if(popup) popup.classList.remove('active');
+            if(popupCloseCallback) { popupCloseCallback(); popupCloseCallback = null; }
+        }
+        document.getElementById('btn-close-custom-popup').addEventListener('click', closeCustomPopup);
+
+        let confirmActionCallback = null;
+        function showConfirmPopup(title, desc, callback) {
+            safeSetText('confirm-title', title); safeSetText('confirm-desc', desc);
+            confirmActionCallback = callback;
+            document.getElementById('confirm-popup').classList.add('active');
+        }
+        function closeConfirmPopup() {
+            document.getElementById('confirm-popup').classList.remove('active');
+            confirmActionCallback = null;
+        }
+        document.getElementById('confirm-yes-btn').addEventListener('click', function() {
+            if(confirmActionCallback) confirmActionCallback();
+            closeConfirmPopup();
+        });
+
+
+        // --- Core Application Logic ---
+        function checkAuth() {
+            const saved = localStorage.getItem('nextLiveUser');
+            if(!saved) {
+                showCustomPopup("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้งานระบบแนะนำเพื่อน", function() {
+                    window.location.href = "https://nextlive-app.github.io/Store/"; 
+                });
+                return false;
+            }
+            currentUser = JSON.parse(saved);
+            affiliateLink = `https://nextlive-app.github.io/Store/?Affiliate=${currentUser.uid}`;
+            document.getElementById('aff-link').innerText = affiliateLink;
+            
+            const catImg = document.querySelector('img[alt="Cat"]');
+            if(catImg) {
+                catImg.onload = function() { document.getElementById('fallback-icon').style.display = 'none'; };
+            }
+
+            loadData();
+            
+            // เริ่มการดึงข้อมูลอัตโนมัติทุกๆ 10 วินาที
+            if(!pollingInterval) {
+                pollingInterval = setInterval(loadDataSilent, 10000);
+            }
+            return true;
+        }
+
+        async function loadData() {
+            showLoader(true);
+            try {
+                const res = await fetch(GAS_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'getAffiliateData', uid: currentUser.uid })
+                });
+                const response = await res.json();
+                if(response.status === 'success') {
+                    updateUIWithData(response);
+                } else {
+                    showCustomPopup("ข้อผิดพลาด", response.message || "ไม่สามารถดึงข้อมูลได้");
+                }
+            } catch(e) {
+                showCustomPopup("ข้อผิดพลาด", "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
+            }
+            showLoader(false);
+        }
+
+        // โหลดข้อมูลแบบเงียบๆ ไม่ให้รบกวนหน้าจอผู้ใช้
+        async function loadDataSilent() {
+            try {
+                const res = await fetch(GAS_URL, {
+                    method: 'POST', body: JSON.stringify({ action: 'getAffiliateData', uid: currentUser.uid })
+                });
+                const response = await res.json();
+                if(response.status === 'success') {
+                    updateUIWithData(response);
+                }
+            } catch(e) {
+                // Ignore silent errors
+            }
+        }
+
+        function updateUIWithData(response) {
+            maxAvailable = response.stats.available;
+            document.getElementById('txt-max-avail').innerText = `ขั้นต่ำ 100 บ. | ยอดที่ถอนได้: ฿${formatNum(maxAvailable)}`;
+            
+            document.getElementById('box-members').innerText = response.stats.totalMembers;
+            document.getElementById('box-sales-today').innerText = formatNum(response.stats.todaySales);
+            document.getElementById('box-comm-today').innerText = formatNum(response.stats.todayComm);
+            document.getElementById('box-comm-avail').innerText = formatNum(response.stats.available);
+            
+            let tbl = response.stats.tables;
+            
+            // T1
+            document.getElementById('t1-c1').innerText = response.stats.uniqueNew;
+            document.getElementById('t1-c2').innerText = response.stats.uniqueOld;
+            document.getElementById('t1-c3').innerText = response.stats.uniqueDownline;
+            
+            // T2
+            document.getElementById('t2-c1').innerText = formatNum(tbl.t1NewSales);
+            document.getElementById('t2-c2').innerText = formatNum(tbl.t1OldSales);
+            document.getElementById('t2-c3').innerText = formatNum(tbl.t1NewComm + tbl.t1OldComm);
+            
+            // T3
+            document.getElementById('t3-c1').innerText = response.stats.uniqueTier2;
+            document.getElementById('t3-c2').innerText = formatNum(tbl.t2Sales);
+            document.getElementById('t3-c3').innerText = formatNum(tbl.t2Comm);
+
+            // T4
+            document.getElementById('t4-c1').innerText = response.stats.uniqueTier3;
+            document.getElementById('t4-c2').innerText = formatNum(tbl.t3Sales);
+            document.getElementById('t4-c3').innerText = formatNum(tbl.t3Comm);
+
+            // T5 (Guest)
+            document.getElementById('t5-c1').innerText = response.stats.uniqueGuest;
+            document.getElementById('t5-c2').innerText = formatNum(tbl.guestSales);
+            document.getElementById('t5-c3').innerText = formatNum(tbl.guestComm);
+
+            // T6 (Tier 4+)
+            document.getElementById('t6-c1').innerText = response.stats.uniqueTier4Plus;
+            document.getElementById('t6-c2').innerText = formatNum(tbl.t4PlusSales);
+            document.getElementById('t6-c3').innerText = formatNum(tbl.t4PlusComm);
+
+            // History Tabs Stats
+            document.getElementById('stat-today').innerText = formatNum(response.stats.todayComm);
+            document.getElementById('stat-yest').innerText = formatNum(response.stats.yestComm);
+
+            renderHistory(response.history);
+        }
+
+        function renderHistory(data) {
+            const container = document.getElementById('history-container');
+            if(data.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-10 border border-borderDark rounded-xl border-dashed">
+                        <i data-lucide="history" class="w-10 h-10 mx-auto mb-2 opacity-30"></i>
+                        <p>ยังไม่มีประวัติรายได้</p>
+                    </div>`; 
+                lucide.createIcons();
+                return;
+            }
+            
+            container.innerHTML = '';
+            let sumTotal = 0;
+
+            data.forEach(item => {
+                let isWithdraw = item.type === 'ถอนรายได้';
+                let isReg = item.type.includes('สมัครบัญชี') || item.type.includes('สมัครสมาชิก'); // ดักจับทั้ง 2 คำ
+                
+                let color = isWithdraw ? 'text-red-400' : (isReg ? 'text-gray-400' : 'text-green-400');
+                let sign = isWithdraw ? '-' : (isReg ? '' : '+');
+                
+                let iconStr = isWithdraw 
+                    ? '<i data-lucide="arrow-up-circle" class="w-3 h-3 inline mr-1 text-red-400 -mt-0.5"></i>' 
+                    : (isReg ? '<i data-lucide="user-plus" class="w-3 h-3 inline mr-1 text-blue-400 -mt-0.5"></i>' 
+                             : '<i data-lucide="check-circle" class="w-3 h-3 inline mr-1 text-green-400 -mt-0.5"></i>');
+
+                if(!isWithdraw && !isReg) sumTotal += item.amount; // คำนวณรายได้ทั้งหมด (ไม่รวมยอดสมัคร 0 บาท)
+
+                container.innerHTML += `
+                    <div class="bg-cardDark border border-borderDark p-4 rounded-xl flex justify-between items-center shadow-sm">
+                        <div>
+                            <p class="font-bold text-white text-sm">${item.type}</p>
+                            <p class="text-xs text-[#a79ad1] mt-1">${item.date} | <span class="text-gray-400">User: ${item.buyer}</span></p>
+                            <p class="text-[10px] mt-1.5 flex items-center">${iconStr} ${isReg ? 'เข้าสู่ระบบแล้ว' : 'สำเร็จ'}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold ${color} text-lg">${sign}฿${formatNum(Math.abs(item.amount))}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            lucide.createIcons();
+        }
+
+        function transferCredit() {
+            let inputEl = document.getElementById('wd-amount');
+            let withdrawAmount = parseFloat(inputEl.value);
+            
+            if(isNaN(withdrawAmount) || withdrawAmount <= 0) { 
+                showCustomPopup("แจ้งเตือน", "กรุณาระบุตัวเลขจำนวนเงินที่ต้องการถอนในช่องรายได้"); 
+                return; 
+            }
+            
+            if(withdrawAmount < 100) {
+                showCustomPopup("แจ้งเตือน", "ขั้นต่ำในการทำรายการคือ 100.00 บาท"); 
+                return; 
+            }
+
+            if(withdrawAmount > maxAvailable) {
+                showCustomPopup("แจ้งเตือน", "ยอดเงินไม่เพียงพอ\nยอดที่ถอนได้สูงสุดคือ: ฿" + formatNum(maxAvailable)); 
+                return; 
+            }
+            
+            showConfirmPopup("ยืนยันการทำรายการ", "ระบบจะทำการถอนรายได้\nจำนวน ฿" + formatNum(withdrawAmount) + "\nเข้าสู่กระเป๋าเครดิตหลักของคุณ\n\nคุณแน่ใจหรือไม่?", async function() {
+                showLoader(true);
+                try {
+                    const res = await fetch(GAS_URL, {
+                        method: 'POST', body: JSON.stringify({ action: 'transferAffiliateCredit', uid: currentUser.uid, fname: currentUser.fname, email: currentUser.email, phone: currentUser.phone, amount: withdrawAmount })
+                    });
+                    const response = await res.json();
+                    if(response.status === 'success') {
+                        showCustomPopup("สำเร็จ", response.message);
+                        currentUser.balance = response.newBalance;
+                        localStorage.setItem('nextLiveUser', JSON.stringify(currentUser));
+                        inputEl.value = ''; // เคลียร์ช่อง
+                        loadDataSilent(); // Update UI
+                    } else {
+                        showCustomPopup("ข้อผิดพลาด", response.message);
+                    }
+                } catch(e) {
+                    showCustomPopup("ข้อผิดพลาด", "การเชื่อมต่อล้มเหลว ไม่สามารถโอนเงินได้");
+                }
+                showLoader(false);
+            });
+        }
+
+        // --- Share Logic ---
+        function openSharePopup() { document.getElementById('share-popup').classList.add('active'); }
+        function closeSharePopup() { document.getElementById('share-popup').classList.remove('active'); }
+        
+        function shareTo(platform) {
+            closeSharePopup();
+            let url = encodeURIComponent(affiliateLink);
+            let text = encodeURIComponent("แนะนำบริการดีๆ สมัครเลย! รับสิทธิพิเศษมากมาย 🎉");
+            let shareUrl = "";
+
+            switch(platform) {
+                case 'line': 
+                    shareUrl = `https://social-plugins.line.me/lineit/share?url=${url}&text=${text}`; 
+                    break;
+                case 'facebook': 
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; 
+                    break;
+                case 'twitter': 
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`; 
+                    break;
+                case 'telegram': 
+                    shareUrl = `https://t.me/share/url?url=${url}&text=${text}`; 
+                    break;
+                case 'weibo': 
+                    shareUrl = `http://service.weibo.com/share/share.php?url=${url}&title=${text}`; 
+                    break;
+                case 'discord': 
+                    copyAffiliateLink(true);
+                    showCustomPopup("แชร์ไปที่ Discord", "คัดลอกลิงก์สำเร็จแล้ว\nกรุณาเปิดแอป Discord และวางลิงก์เพื่อส่งให้เพื่อน");
+                    return;
+                case 'copy': 
+                    copyAffiliateLink(); 
+                    return;
+            }
+            
+            if(shareUrl) {
+                window.open(shareUrl, '_blank', 'width=600,height=500');
+            }
+        }
+
+        function copyAffiliateLink(silent = false) {
+            navigator.clipboard.writeText(affiliateLink).then(() => {
+                if(!silent) showCustomPopup("สำเร็จ", "คัดลอกลิงก์สำเร็จแล้ว\nนำไปแชร์ให้เพื่อนได้เลย!");
+            }).catch(err => {
+                if(!silent) showCustomPopup("ข้อผิดพลาด", "ไม่สามารถคัดลอกได้อัตโนมัติ กรุณาเลือกข้อความแล้วกดคัดลอกด้วยตนเอง");
+            });
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'text-white'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.add('text-[#a79ad1]'));
+            
+            let btn = document.getElementById('tab-' + tab);
+            btn.classList.add('active', 'text-white');
+            btn.classList.remove('text-[#a79ad1]');
+
+            document.getElementById('view-overview').classList.add('hidden');
+            document.getElementById('view-history').classList.add('hidden');
+            document.getElementById('view-howto').classList.add('hidden');
+            document.getElementById('view-' + tab).classList.remove('hidden');
+        }
+
+        function goBack() {
+            window.location.href = "https://nextlive-app.github.io/Store/";
+        }
+
+        window.onload = checkAuth;
+    </script>
+</body>
+</html>
