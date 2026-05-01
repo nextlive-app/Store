@@ -2,77 +2,88 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SiamFlix - ดูหนังออนไลน์</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            background-color: #050505; /* ดำสนิท */
+            background-color: #050505;
             color: #ffffff;
             overflow-x: hidden;
         }
 
-        /* ซ่อน Scrollbar ของ Container ที่เลื่อนแนวนอน */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
+        /* ซ่อน Scrollbar */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* ตกแต่งแถบความคืบหน้าวิดีโอ (Range Input) */
+        /* ตกแต่ง Range Input (Progress Bar) */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
             background: transparent;
+            cursor: pointer;
         }
-        input[type=range]:focus {
-            outline: none;
-        }
+        input[type=range]:focus { outline: none; }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 14px;
-            width: 14px;
+            height: 16px; width: 16px;
             border-radius: 50%;
-            background: #E50914; /* สีแดง Netflix */
-            cursor: pointer;
-            margin-top: -5px;
-            box-shadow: 0 0 5px rgba(229, 9, 20, 0.8);
+            background: #E50914;
+            margin-top: -6px;
+            box-shadow: 0 0 8px rgba(229, 9, 20, 0.9);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
         }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.3);
+            width: 100%; height: 4px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 2px;
         }
-        /* แถบสีแดงที่วิ่งตามค่า (ใช้ JavaScript อัปเดต background แบบ linear-gradient ได้ หรือใช้ CSS พื้นฐาน) */
-        
+
         .hero-gradient {
-            background: linear-gradient(to right, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0.4) 50%, transparent 100%);
+            background: linear-gradient(to right, rgba(5,5,5,1) 0%, rgba(5,5,5,0.6) 40%, transparent 100%);
         }
         
         @media (max-width: 768px) {
             .hero-gradient {
-                background: linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,0.5) 60%, transparent 100%);
+                background: linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,0.7) 50%, transparent 100%);
             }
         }
 
-        /* เอฟเฟกต์แสงสีแดงด้านหลัง Modal */
-        .modal-glow {
-            box-shadow: 0 0 50px rgba(229, 9, 20, 0.2);
+        /* สำหรับโหมด Fullscreen จำลอง (CSS Fallback) */
+        .css-fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-height: none !important;
+            z-index: 9999 !important;
+            background-color: black !important;
+            border-radius: 0 !important;
+        }
+        .css-fullscreen video {
+            height: 100% !important;
+            width: 100% !important;
+            object-fit: contain !important;
+        }
+
+        /* ซ่อนปุ่มควบคุมวิดีโอพื้นฐานของเบราว์เซอร์ */
+        video::-webkit-media-controls {
+            display: none !important;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-red-600 selection:text-white">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-40 bg-gradient-to-b from-black/80 to-transparent p-4 flex justify-between items-center transition-all duration-300" id="navbar">
+    <nav class="fixed w-full z-40 bg-gradient-to-b from-black/90 to-transparent p-4 md:px-8 flex justify-between items-center transition-all duration-300" id="navbar">
         <div class="flex items-center gap-8">
-            <h1 class="text-3xl font-black text-[#E50914] tracking-wider uppercase">SIAMFLIX</h1>
+            <h1 class="text-3xl font-black text-[#E50914] tracking-wider uppercase drop-shadow-md">SIAMFLIX</h1>
             <ul class="hidden md:flex gap-6 text-sm font-medium text-gray-300">
                 <li class="text-white cursor-pointer hover:text-[#E50914] transition">HOME</li>
                 <li class="cursor-pointer hover:text-[#E50914] transition">PROFILE</li>
@@ -82,22 +93,20 @@
                 <li class="cursor-pointer hover:text-[#E50914] transition">CARTOON</li>
             </ul>
         </div>
-        <button class="md:hidden text-white">
+        <button class="md:hidden text-white hover:text-red-500 transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </button>
     </nav>
 
     <!-- Hero Section -->
-    <header class="relative h-[80vh] md:h-[90vh] w-full flex items-center">
-        <!-- ภาพพื้นหลัง Hero -->
+    <header class="relative h-[85vh] w-full flex items-center">
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=2000&auto=format&fit=crop" alt="Hero Background" class="w-full h-full object-cover object-top opacity-60">
             <div class="absolute inset-0 hero-gradient"></div>
         </div>
 
-        <!-- เนื้อหา Hero -->
         <div class="relative z-10 p-6 md:p-16 max-w-2xl mt-20 md:mt-0">
-            <h2 class="text-5xl md:text-7xl font-black text-[#E50914] mb-2 drop-shadow-lg leading-none uppercase">SIKSA<br>NERAKA</h2>
+            <h2 class="text-5xl md:text-7xl font-black text-[#E50914] mb-2 drop-shadow-[0_0_10px_rgba(229,9,20,0.5)] leading-none uppercase">SIKSA<br>NERAKA</h2>
             
             <div class="flex items-center gap-3 text-sm md:text-base text-yellow-500 mb-4">
                 <span>★★★★☆</span>
@@ -105,160 +114,154 @@
             </div>
             
             <p class="text-gray-300 text-sm md:text-base mb-8 line-clamp-4 md:line-clamp-none">
-                Siksa Neraka adalah film hantu jagal Indonesia tahun 2023 yang disutradarai oleh Anggy Umbara. Film yang merupakan diadaptasi dari komik dengan judul yang sama. Film produksi Dee Company ini dibintangi oleh Ratu Sofya, Slamet Rahardjo, Kiesha Alvaro...
+                ภาพยนตร์สยองขวัญสุดระทึกขวัญแห่งปี 2023 นำแสดงโดย Ratu Sofya เรื่องราวของการชดใช้กรรมในนรกภูมิที่สมจริงและน่าสะพรึงกลัวที่สุด สร้างจากคอมมิคชื่อดัง
             </p>
             
             <div class="flex gap-4">
-                <button class="bg-[#900] hover:bg-[#E50914] text-white px-8 py-2 md:py-3 rounded-full font-semibold transition shadow-[0_0_15px_rgba(229,9,20,0.5)] flex items-center gap-2" onclick="openModal(movies[0])">
+                <!-- กดปุ่มนี้จะเปิดหนังเรื่องแรก (Siksa Neraka) -->
+                <button class="bg-red-700 hover:bg-[#E50914] text-white px-8 py-3 rounded-full font-bold transition shadow-[0_0_20px_rgba(229,9,20,0.4)] flex items-center gap-2 transform hover:scale-105" onclick="openModal(movies[0])">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                    PLAY NOW
+                    เล่นเลย
                 </button>
-                <button class="bg-transparent border border-gray-500 hover:border-white text-white px-8 py-2 md:py-3 rounded-full font-semibold transition">
-                    DOWNLOAD
+                <button class="bg-black/50 border border-gray-500 hover:border-white hover:bg-white/10 text-white px-8 py-3 rounded-full font-bold transition backdrop-blur-sm">
+                    รายละเอียด
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="relative z-10 -mt-10 pb-20">
+    <main class="relative z-10 -mt-16 pb-20 bg-gradient-to-b from-transparent via-[#050505] to-[#050505]">
         
         <!-- หมวดหมู่ -->
-        <div class="flex gap-4 md:gap-8 px-6 md:px-16 mb-6 overflow-x-auto hide-scrollbar border-b border-gray-800 pb-4">
-            <button class="text-white font-bold whitespace-nowrap px-4 py-1 bg-[#900] rounded-full">Horor</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-4 py-1">Comedy</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-4 py-1">Anime</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-4 py-1">Romans</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-4 py-1">Action</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-4 py-1">Adventure</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-4 py-1">Crime</button>
+        <div class="flex gap-3 md:gap-6 px-6 md:px-16 mb-8 overflow-x-auto hide-scrollbar pb-2 pt-16">
+            <button class="text-white font-bold whitespace-nowrap px-5 py-1.5 bg-red-700/80 border border-red-500 rounded-full shadow-[0_0_10px_rgba(229,9,20,0.3)]">Horor</button>
+            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-5 py-1.5 border border-transparent hover:border-gray-600 rounded-full transition">Comedy</button>
+            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-5 py-1.5 border border-transparent hover:border-gray-600 rounded-full transition">Anime</button>
+            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-5 py-1.5 border border-transparent hover:border-gray-600 rounded-full transition">Action</button>
+            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-5 py-1.5 border border-transparent hover:border-gray-600 rounded-full transition">Thriller</button>
         </div>
 
         <!-- Section 1: Trends Now -->
-        <section class="mb-10 px-6 md:px-16">
-            <h3 class="text-2xl font-bold mb-4 flex items-center gap-4">
-                TRENDS NOW 
-                <span class="h-[1px] flex-1 bg-gradient-to-r from-red-600 to-transparent"></span>
+        <section class="mb-12 px-6 md:px-16">
+            <h3 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-4 border-l-4 border-[#E50914] pl-3">
+                กำลังฮิต (TRENDS NOW)
             </h3>
-            <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4" id="trendsContainer">
-                <!-- วาดการ์ดหนังด้วย JS -->
+            <div class="flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar pb-6" id="trendsContainer">
+                <!-- โหลดการ์ดหนังด้วย JS -->
             </div>
         </section>
 
         <!-- Section 2: Continue Watching -->
         <section class="mb-10 px-6 md:px-16">
-            <div class="flex justify-between items-end mb-4">
-                <h3 class="text-2xl font-bold">CONTINUE WATCHING</h3>
-                <button class="text-xs text-gray-400 hover:text-white bg-gray-900 px-3 py-1 rounded-full border border-gray-700">SEE MORE</button>
+            <div class="flex justify-between items-end mb-6">
+                <h3 class="text-xl md:text-2xl font-bold border-l-4 border-[#E50914] pl-3">ดูต่อให้จบ</h3>
+                <button class="text-xs text-gray-400 hover:text-white bg-gray-900 px-4 py-1.5 rounded-full border border-gray-700 transition">ดูทั้งหมด</button>
             </div>
-            <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4" id="continueContainer">
-                <!-- วาดการ์ดตอนหนังด้วย JS -->
+            <div class="flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar pb-6" id="continueContainer">
+                <!-- โหลดการ์ดตอนหนังด้วย JS -->
             </div>
         </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gradient-to-t from-red-900/40 to-black py-8 border-t border-red-900/30 text-center">
-        <div class="flex flex-col md:flex-row justify-center items-center gap-4 text-gray-400 text-sm">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-gray-700 overflow-hidden">
-                    <img src="https://ui-avatars.com/api/?name=Mita&background=random" alt="Avatar" class="w-full h-full object-cover">
-                </div>
-                <span>Created by: <strong class="text-white">mita_31nk</strong></span>
-            </div>
-            <span class="hidden md:inline">|</span>
-            <span>Design Inspired by: Askar Akmil Design</span>
-        </div>
-    </footer>
-
-
-    <!-- ========================================== -->
-    <!-- MODAL ดูหนัง (แสดงเมื่อคลิกภาพ) -->
-    <!-- ========================================== -->
-    <div id="movieModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm hidden flex-col transition-opacity duration-300 opacity-0 overflow-y-auto">
+    <!-- Modal เล่นวิดีโอ (ซ่อนไว้เป็นค่าเริ่มต้น) -->
+    <div id="movieModal" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md hidden flex-col transition-opacity duration-300 opacity-0 overflow-hidden">
         
-        <!-- ส่วนหัว Modal มีปุ่มปิด -->
-        <div class="w-full p-4 flex justify-between items-center bg-gradient-to-b from-black to-transparent sticky top-0 z-20">
-            <h2 id="modalHeaderTitle" class="text-xl font-bold text-white truncate max-w-[70%] drop-shadow-md">กำลังโหลด...</h2>
-            <button onclick="closeModal()" class="bg-gray-800/80 hover:bg-[#E50914] text-white p-2 rounded-full transition shadow-lg">
+        <!-- Header ของ Modal -->
+        <div class="w-full p-4 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent absolute top-0 z-20">
+            <h2 id="modalHeaderTitle" class="text-lg md:text-xl font-bold text-white truncate drop-shadow-md pr-4">กำลังโหลด...</h2>
+            <button onclick="closeModal()" class="bg-gray-800/80 hover:bg-[#E50914] text-white p-2 rounded-full transition shadow-lg flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
         </div>
 
-        <div class="max-w-6xl w-full mx-auto flex flex-col md:flex-row gap-6 p-4 md:p-8 modal-glow">
+        <div class="w-full h-full mx-auto flex flex-col lg:flex-row overflow-y-auto hide-scrollbar pt-16 lg:pt-20 px-0 lg:px-8 pb-8 gap-4 lg:gap-8">
             
-            <!-- ฝั่งซ้าย: วิดีโอเพลเยอร์ -->
-            <div class="w-full md:w-2/3 relative group rounded-xl overflow-hidden shadow-2xl shadow-red-900/20 bg-gray-900 aspect-video flex flex-col">
-                <!-- วิดีโอหลัก -->
+            <!-- Video Player Container (ใช้ตัวนี้ในการทำ Fullscreen) -->
+            <div id="videoContainer" class="w-full lg:w-2/3 xl:w-3/4 relative group bg-black flex flex-col justify-center rounded-none lg:rounded-xl overflow-hidden shadow-2xl shadow-red-900/20 max-h-[40vh] md:max-h-[60vh] lg:max-h-[80vh] transition-all duration-300">
+                
+                <!-- วิดีโอหลัก (ใช้ HTTPS เพื่อให้เล่นได้จริง) -->
                 <video id="mainVideo" class="w-full h-full object-contain" playsinline>
                     <source src="" type="video/mp4">
                     เบราว์เซอร์ของคุณไม่รองรับวิดีโอ HTML5
                 </video>
 
-                <!-- UI ควบคุมวิดีโอ (แสดงเมื่อเอาเมาส์ชี้ หรือแตะจอ) -->
-                <div id="videoControls" class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <!-- Loading Spinner -->
+                <div id="videoLoading" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden bg-black/50">
+                    <svg class="animate-spin h-10 w-10 text-[#E50914]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </div>
+
+                <!-- Custom Video Controls (แสดงเมื่อ Hover หรือ Pause) -->
+                <div id="videoControls" class="absolute bottom-0 left-0 right-0 p-3 md:p-5 bg-gradient-to-t from-black via-black/80 to-transparent flex flex-col gap-2 md:gap-4 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                     
                     <!-- Progress Bar -->
-                    <div class="w-full flex items-center gap-2">
-                        <span id="currentTime" class="text-xs font-mono text-gray-300 min-w-[40px]">0:00</span>
-                        <input type="range" id="progressBar" value="0" min="0" step="0.1" class="flex-1">
-                        <span id="durationTime" class="text-xs font-mono text-gray-300 min-w-[40px]">0:00</span>
+                    <div class="w-full flex items-center gap-3">
+                        <span id="currentTime" class="text-xs md:text-sm font-mono text-gray-300 min-w-[45px] text-right">0:00</span>
+                        <div class="relative flex-1 flex items-center group/slider">
+                            <input type="range" id="progressBar" value="0" min="0" step="0.1" class="w-full absolute z-10">
+                            <!-- แถบสีแดงวิ่งตาม (Visual) -->
+                            <div class="h-1 bg-gray-600 rounded-full w-full absolute z-0 overflow-hidden">
+                                <div id="progressFill" class="h-full bg-[#E50914]" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <span id="durationTime" class="text-xs md:text-sm font-mono text-gray-300 min-w-[45px]">0:00</span>
                     </div>
 
-                    <!-- แถบปุ่มควบคุม -->
-                    <div class="flex justify-between items-center text-white">
-                        <div class="flex items-center gap-4">
-                            <!-- ปุ่ม Play/Pause -->
-                            <button id="playPauseBtn" class="hover:text-[#E50914] transition transform hover:scale-110">
-                                <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="hidden"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                    <!-- แถบปุ่ม -->
+                    <div class="flex justify-between items-center text-white mt-1">
+                        <div class="flex items-center gap-4 md:gap-6">
+                            <!-- Play/Pause -->
+                            <button id="playPauseBtn" class="hover:text-[#E50914] transition transform hover:scale-110 active:scale-95">
+                                <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" md:width="32" md:height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" md:width="32" md:height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="hidden"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
                             </button>
                             
-                            <!-- ปรับความเร็ว (Speed) -->
+                            <!-- ควบคุมความเร็ว -->
                             <div class="relative group/speed">
-                                <button class="text-sm font-medium hover:text-[#E50914] flex items-center gap-1 bg-gray-800/60 px-2 py-1 rounded">
+                                <button class="text-xs md:text-sm font-medium hover:text-[#E50914] flex items-center gap-1 bg-gray-800/80 px-2 py-1 rounded border border-gray-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                                     <span id="speedIndicator">1x</span>
                                 </button>
-                                <!-- เมนูเลือกความเร็ว -->
-                                <div class="absolute bottom-full left-0 mb-2 bg-gray-900 border border-gray-700 rounded shadow-xl hidden flex-col group-hover/speed:flex z-50 w-20 overflow-hidden text-sm">
-                                    <button class="speed-btn px-3 py-2 hover:bg-red-800 text-left transition" data-speed="0.5">0.5x</button>
-                                    <button class="speed-btn px-3 py-2 hover:bg-red-800 text-left transition bg-red-900/30" data-speed="1">1x (ปกติ)</button>
-                                    <button class="speed-btn px-3 py-2 hover:bg-red-800 text-left transition" data-speed="1.5">1.5x</button>
-                                    <button class="speed-btn px-3 py-2 hover:bg-red-800 text-left transition" data-speed="2">2x</button>
+                                <!-- เมนูความเร็ว -->
+                                <div class="absolute bottom-full left-0 mb-2 bg-black/90 border border-gray-700 rounded shadow-xl hidden flex-col group-hover/speed:flex z-50 w-24 overflow-hidden text-sm backdrop-blur-md">
+                                    <button class="speed-btn px-4 py-2 hover:bg-red-700 hover:text-white text-left transition" data-speed="0.5">0.5x</button>
+                                    <button class="speed-btn px-4 py-2 hover:bg-red-700 hover:text-white text-left transition text-[#E50914]" data-speed="1">1x (ปกติ)</button>
+                                    <button class="speed-btn px-4 py-2 hover:bg-red-700 hover:text-white text-left transition" data-speed="1.5">1.5x</button>
+                                    <button class="speed-btn px-4 py-2 hover:bg-red-700 hover:text-white text-left transition" data-speed="2">2x</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-4">
-                            <!-- ปุ่ม Fullscreen -->
-                            <button id="fullscreenBtn" class="hover:text-[#E50914] transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-                            </button>
-                        </div>
+                        <!-- ปุ่มขยายเต็มจอ (ทำงานได้ 100% ทั้งมือถือแนวนอนและคอม) -->
+                        <button id="fullscreenBtn" class="hover:text-[#E50914] transition p-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- ฝั่งขวา: รายละเอียดหนัง -->
-            <div class="w-full md:w-1/3 flex flex-col pt-4 md:pt-0">
-                <h1 id="modalTitle" class="text-4xl md:text-5xl font-black text-[#E50914] mb-2 uppercase tracking-wide">ชื่อเรื่อง</h1>
-                <div class="flex items-center gap-3 text-sm text-yellow-500 mb-4">
+            <!-- รายละเอียดหนัง -->
+            <div class="w-full lg:w-1/3 xl:w-1/4 flex flex-col px-4 lg:px-0 pb-10">
+                <h1 id="modalTitle" class="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 uppercase tracking-wide">ชื่อเรื่อง</h1>
+                <div class="flex items-center gap-3 text-sm text-yellow-500 mb-4 bg-gray-900/50 w-fit px-3 py-1 rounded-full border border-gray-700">
                     <span id="modalRating">★★★★★</span>
-                    <span class="text-gray-400">| <span id="modalYear">202X</span> | <span id="modalGenre">Horror</span></span>
+                    <span class="text-gray-300">| <span id="modalYear">202X</span> | <span id="modalGenre">Horror</span></span>
                 </div>
                 
-                <p id="modalDesc" class="text-gray-300 text-sm md:text-base leading-relaxed mb-6 flex-1">
+                <p id="modalDesc" class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
                     รายละเอียดหนัง...
                 </p>
 
-                <div class="bg-gray-900/50 p-4 rounded-lg border border-red-900/30">
-                    <h4 class="text-[#E50914] font-bold mb-2">ข้อมูลเพิ่มเติม</h4>
-                    <ul class="text-sm text-gray-400 space-y-1">
-                        <li><strong>ผู้กำกับ:</strong> Anggy Umbara</li>
-                        <li><strong>นักแสดง:</strong> Ratu Sofya, Slamet Rahardjo</li>
-                        <li><strong>ความละเอียด:</strong> 1080p FHD</li>
+                <div class="bg-gray-900/60 p-5 rounded-xl border border-gray-800 shadow-inner">
+                    <h4 class="text-white font-bold mb-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E50914" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        ข้อมูลเรื่อง
+                    </h4>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li class="flex gap-2"><span class="w-16 font-medium text-gray-500">ผู้กำกับ:</span> <span class="text-white">Anggy Umbara</span></li>
+                        <li class="flex gap-2"><span class="w-16 font-medium text-gray-500">นักแสดง:</span> <span class="text-white">Ratu Sofya, Kiesha Alvaro</span></li>
+                        <li class="flex gap-2"><span class="w-16 font-medium text-gray-500">ภาพ:</span> <span class="text-green-500 font-semibold border border-green-500 px-1 rounded text-xs">HD 1080p</span></li>
                     </ul>
                 </div>
             </div>
@@ -267,128 +270,118 @@
 
 
     <script>
-        // --- 1. ข้อมูลจำลอง (Mock Data) ---
+        // --- 1. ข้อมูลจำลอง (แก้ไขลิงก์วิดีโอเป็น HTTPS เพื่อให้เล่นได้จริงไม่ติดบล็อก) ---
         const movies = [
             {
                 id: 1,
                 title: "Siksa Neraka",
                 image: "https://images.unsplash.com/photo-1605806616949-1e87b487bc2a?q=80&w=400&auto=format&fit=crop",
-                videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", // ตัวอย่างวิดีโอฟรี
+                // วิดีโอทดสอบคุณภาพสูงจาก Google (Tears of Steel)
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", 
                 rating: "★★★★☆",
                 year: "2023",
                 genre: "Horor",
-                desc: "เรื่องราวสยองขวัญเกี่ยวกับการชดใช้กรรมในนรก เมื่อวัยรุ่นกลุ่มหนึ่งต้องเผชิญหน้ากับบาปกรรมที่พวกเขาก่อไว้ในอดีต ภาพยนตร์สร้างจากการ์ตูนสยองขวัญชื่อดังของอินโดนีเซีย นำเสนอภาพนรกภูมิที่น่าสะพรึงกลัวและสมจริง"
+                desc: "เรื่องราวสยองขวัญเกี่ยวกับการชดใช้กรรมในนรก เมื่อวัยรุ่นกลุ่มหนึ่งต้องเผชิญหน้ากับบาปกรรมที่พวกเขาก่อไว้ในอดีต (ตัวอย่างหนังใช้ภาพยนตร์ไซไฟ Tears of Steel เพื่อการทดสอบระบบ Player)"
             },
             {
                 id: 2,
                 title: "Pengantin Iblis",
                 image: "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?q=80&w=400&auto=format&fit=crop",
-                videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
                 rating: "★★★★☆",
                 year: "2024",
                 genre: "Horor / Thriller",
-                desc: "เจ้าสาวปีศาจ หญิงสาวที่ถูกบีบบังคับให้แต่งงานกับวิญญาณร้ายเพื่อรักษาวงศ์ตระกูล เธอต้องหาทางเอาชีวิตรอดจากคฤหาสน์ต้องคำสาปก่อนที่พิธีจะเสร็จสมบูรณ์"
+                desc: "เจ้าสาวปีศาจ หญิงสาวที่ถูกบีบบังคับให้แต่งงานกับวิญญาณร้ายเพื่อรักษาวงศ์ตระกูล เธอต้องหาทางเอาชีวิตรอดจากคฤหาสน์ต้องคำสาป (ใช้หนังสั้น Sintel ทดสอบ)"
             },
             {
                 id: 3,
                 title: "DreadOut",
                 image: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?q=80&w=400&auto=format&fit=crop",
-                videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                 rating: "★★★☆☆",
                 year: "2019",
                 genre: "Horor / Survival",
-                desc: "สร้างจากเกมสยองขวัญชื่อดัง กลุ่มนักเรียนมัธยมปลายเข้าไปสำรวจอพาร์ตเมนต์ร้างเพื่อหวังยอดวิว แต่กลับปลดปล่อยวิญญาณร้ายที่ถูกจองจำ พวกเขาต้องใช้สมาร์ทโฟนเป็นอาวุธเดียวในการเอาชีวิตรอด"
+                desc: "สร้างจากเกมสยองขวัญชื่อดัง กลุ่มนักเรียนมัธยมปลายเข้าไปสำรวจอพาร์ตเมนต์ร้างเพื่อหวังยอดวิว แต่กลับปลดปล่อยวิญญาณร้าย (ใช้ Big Buck Bunny ทดสอบ)"
             },
             {
                 id: 4,
                 title: "Annabelle",
                 image: "https://images.unsplash.com/photo-1629851496181-421714bc7c2b?q=80&w=400&auto=format&fit=crop",
-                videoUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
                 rating: "★★★★☆",
                 year: "2019",
                 genre: "Horor / Mystery",
-                desc: "ตุ๊กตาผีสิงกลับมาอีกครั้ง เมื่อห้องเก็บของอาถรรพ์ของเอ็ดและลอร์เรน วอร์เรน ไม่สามารถกักขังความชั่วร้ายของมันไว้ได้ แอนนาเบลล์ได้ปลุกวิญญาณร้ายอื่นๆ ในห้องให้ตื่นขึ้นมาหลอกหลอนลูกสาวของพวกเขา"
+                desc: "ตุ๊กตาผีสิงกลับมาอีกครั้ง เมื่อห้องเก็บของอาถรรพ์ไม่สามารถกักขังความชั่วร้ายของมันไว้ได้ (ใช้ Elephants Dream ทดสอบ)"
             }
         ];
 
-        // วิดีโอตอนต่างๆ สำหรับหมวด Continue Watching (เล่นต่อจากที่ค้างไว้)
         const continueEpisodes = [
             { id: 101, title: "Malam Pencabut Nyawa", image: "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=500&auto=format&fit=crop", progress: "45%" },
-            { id: 102, title: "Jailangkung Sandekala", image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=500&auto=format&fit=crop", progress: "80%" },
-            { id: 103, title: "Pengabdi Setan", image: "https://images.unsplash.com/photo-1518049362265-d5b2a6467637?q=80&w=500&auto=format&fit=crop", progress: "15%" }
+            { id: 102, title: "Jailangkung Sandekala", image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=500&auto=format&fit=crop", progress: "80%" }
         ];
 
-
-        // --- 2. ฟังก์ชันวาด UI (Render) ---
+        // --- 2. ฟังก์ชันวาด UI หนัง ---
         function renderMovies() {
             const trendsContainer = document.getElementById('trendsContainer');
-            trendsContainer.innerHTML = ''; // เคลียร์ของเก่า
-            
             movies.forEach(movie => {
                 const card = document.createElement('div');
-                card.className = "flex-shrink-0 w-32 md:w-48 cursor-pointer group";
-                // ส่งข้อมูลหนังเข้าไปในฟังก์ชันเปิด Modal เมื่อคลิก
+                card.className = "flex-shrink-0 w-36 md:w-48 cursor-pointer group";
                 card.onclick = () => openModal(movie); 
                 card.innerHTML = `
-                    <div class="relative overflow-hidden rounded-lg aspect-[2/3] mb-2 border border-transparent group-hover:border-[#E50914] transition-all duration-300">
+                    <div class="relative overflow-hidden rounded-xl aspect-[2/3] mb-3 border-2 border-transparent group-hover:border-[#E50914] shadow-lg transition-all duration-300">
                         <img src="${movie.image}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <div class="bg-[#E50914] p-3 rounded-full text-white transform scale-50 group-hover:scale-100 transition duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <div class="bg-[#E50914] p-4 rounded-full text-white transform scale-50 group-hover:scale-100 transition duration-300 shadow-[0_0_15px_rgba(229,9,20,0.8)]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="ml-1"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                             </div>
                         </div>
                     </div>
-                    <h4 class="text-white font-medium text-sm truncate">${movie.title}</h4>
-                    <p class="text-yellow-500 text-xs">${movie.rating}</p>
+                    <h4 class="text-white font-semibold text-sm md:text-base truncate group-hover:text-[#E50914] transition">${movie.title}</h4>
+                    <p class="text-gray-400 text-xs mt-1">ปี ${movie.year}</p>
                 `;
                 trendsContainer.appendChild(card);
             });
 
-            // Render Continue Watching
             const continueContainer = document.getElementById('continueContainer');
-            continueContainer.innerHTML = '';
-            
             continueEpisodes.forEach(ep => {
                 const card = document.createElement('div');
                 card.className = "flex-shrink-0 w-64 md:w-80 cursor-pointer group";
-                // จำลองว่าคลิกแล้วเปิดตอนแรกของหนัง Siksa Neraka ไปก่อน
-                card.onclick = () => openModal(movies[0]);
+                card.onclick = () => openModal(movies[0]); // จำลองเปิดคลิปแรก
                 card.innerHTML = `
-                    <div class="relative overflow-hidden rounded-lg aspect-video mb-2 border border-gray-800 group-hover:border-gray-500 transition-all">
-                        <img src="${ep.image}" alt="${ep.title}" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition">
+                    <div class="relative overflow-hidden rounded-xl aspect-video mb-3 shadow-lg border border-gray-800 group-hover:border-gray-500 transition-all">
+                        <img src="${ep.image}" alt="${ep.title}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
                         
-                        <!-- ไอคอน Play กลางรูป -->
                         <div class="absolute inset-0 flex items-center justify-center">
-                             <div class="border-2 border-white/70 rounded-full p-2 bg-black/30 backdrop-blur-sm group-hover:bg-[#E50914] group-hover:border-[#E50914] transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="text-white ml-1"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                             <div class="border-2 border-white/70 rounded-full p-3 bg-black/40 backdrop-blur-sm group-hover:bg-[#E50914] group-hover:border-[#E50914] transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="text-white ml-1"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                              </div>
                         </div>
-                        <!-- Progress Bar สีแดงด้านล่างรูป -->
-                        <div class="absolute bottom-0 left-0 h-1 bg-gray-600 w-full">
-                            <div class="h-full bg-[#E50914]" style="width: ${ep.progress}"></div>
+                        <div class="absolute bottom-0 left-0 h-1.5 bg-gray-700 w-full">
+                            <div class="h-full bg-[#E50914] shadow-[0_0_5px_rgba(229,9,20,0.8)]" style="width: ${ep.progress}"></div>
                         </div>
                     </div>
-                    <h4 class="text-white font-medium text-sm">${ep.title}</h4>
+                    <h4 class="text-white font-medium text-sm md:text-base">${ep.title}</h4>
                 `;
                 continueContainer.appendChild(card);
             });
         }
 
-
-        // --- 3. ระบบ Modal และ Video Player ---
+        // --- 3. ระบบ Video Player & Fullscreen Logic ---
         const modal = document.getElementById('movieModal');
+        const videoContainer = document.getElementById('videoContainer');
         const video = document.getElementById('mainVideo');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const playIcon = document.getElementById('playIcon');
         const pauseIcon = document.getElementById('pauseIcon');
         const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
         const currentTimeDisplay = document.getElementById('currentTime');
         const durationDisplay = document.getElementById('durationTime');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const speedBtns = document.querySelectorAll('.speed-btn');
         const speedIndicator = document.getElementById('speedIndicator');
+        const videoLoading = document.getElementById('videoLoading');
 
-        // ฟังก์ชันแปลงวินาทีเป็น นาที:วินาที (เช่น 90s -> 1:30)
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
             const m = Math.floor(seconds / 60);
@@ -396,9 +389,7 @@
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
-        // เปิด Modal พร้อมโหลดข้อมูลหนัง
         function openModal(movieData) {
-            // ใส่ข้อมูล Text
             document.getElementById('modalHeaderTitle').innerText = movieData.title;
             document.getElementById('modalTitle').innerText = movieData.title;
             document.getElementById('modalRating').innerText = movieData.rating;
@@ -406,99 +397,94 @@
             document.getElementById('modalGenre').innerText = movieData.genre;
             document.getElementById('modalDesc').innerText = movieData.desc;
 
-            // ใส่ Source วิดีโอ
+            // รีเซ็ตวิดีโอ
             video.src = movieData.videoUrl;
-            
-            // รีเซ็ตสถานะ
             video.playbackRate = 1;
             speedIndicator.innerText = "1x";
             updateSpeedBtnUI(1);
+            updatePlayPauseIcon(false);
+            progressBar.value = 0;
+            progressFill.style.width = '0%';
             
-            // แสดง Modal ด้วย animation
             modal.classList.remove('hidden');
-            // ใช้ setTimeout เพื่อให้เบราว์เซอร์ลบ hidden ทันก่อนค่อยสั่งเล่น opacity transition
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.classList.add('opacity-100');
-            }, 10);
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
 
-            // พยายามสั่งเล่นอัตโนมัติ (อาจถูกบล็อกโดยเบราว์เซอร์หากไม่มี interacion มาก่อน)
+            // แสดง Loading จนกว่าจะเล่นได้
+            videoLoading.classList.remove('hidden');
+
+            // เริ่มเล่น (ถ้าไม่ติด Policy ของเบราว์เซอร์)
             video.play().then(() => {
                 updatePlayPauseIcon(true);
-            }).catch(e => {
-                console.log("Auto-play prevented by browser. User must click play.", e);
-                updatePlayPauseIcon(false);
+            }).catch(() => {
+                // เบราว์เซอร์บล็อก Auto-play (พบได้บ่อยในมือถือถ้าไม่ได้ Mute)
+                console.log("กรุณากดปุ่ม Play เพื่อเริ่มเล่น");
+                videoLoading.classList.add('hidden');
             });
         }
 
-        // ปิด Modal
         function closeModal() {
-            modal.classList.remove('opacity-100');
             modal.classList.add('opacity-0');
-            video.pause(); // หยุดวิดีโอ
+            video.pause();
             
+            // ออกจาก Fullscreen ถ้าเปิดอยู่
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+            videoContainer.classList.remove('css-fullscreen');
+
             setTimeout(() => {
                 modal.classList.add('hidden');
-                video.src = ""; // ล้าง source เพื่อประหยัดเมมโมรี่
-            }, 300); // รอ transition จบ
+                video.src = ""; // ล้าง source 
+            }, 300);
         }
 
-        // --- ควบคุมวิดีโอ (Events) ---
+        // สถานะวิดีโอ (Loading / Playing)
+        video.addEventListener('waiting', () => videoLoading.classList.remove('hidden'));
+        video.addEventListener('playing', () => videoLoading.classList.add('hidden'));
+        video.addEventListener('canplay', () => videoLoading.classList.add('hidden'));
 
-        // อัปเดตไอคอน Play/Pause
         function updatePlayPauseIcon(isPlaying) {
             if (isPlaying) {
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
+                playIcon.classList.add('hidden'); pauseIcon.classList.remove('hidden');
             } else {
-                playIcon.classList.remove('hidden');
-                pauseIcon.classList.add('hidden');
+                playIcon.classList.remove('hidden'); pauseIcon.classList.add('hidden');
             }
         }
 
-        // สลับเล่น/หยุด
         function togglePlay() {
             if (video.paused) {
-                video.play();
-                updatePlayPauseIcon(true);
+                video.play(); updatePlayPauseIcon(true);
             } else {
-                video.pause();
-                updatePlayPauseIcon(false);
+                video.pause(); updatePlayPauseIcon(false);
             }
         }
 
         playPauseBtn.addEventListener('click', togglePlay);
-        // คลิกที่ตัววิดีโอก็ให้เล่น/หยุด ได้ด้วย
-        video.addEventListener('click', togglePlay); 
+        video.addEventListener('click', togglePlay); // แตะที่จอวิดีโอเพื่อหยุด/เล่น
 
-        // อัปเดตเมื่อวิดีโอโหลดข้อมูล Meta เสร็จ (จะได้รู้ความยาวรวม)
         video.addEventListener('loadedmetadata', () => {
             progressBar.max = video.duration;
             durationDisplay.innerText = formatTime(video.duration);
         });
 
-        // อัปเดต Progress bar ขณะเล่น
         video.addEventListener('timeupdate', () => {
             progressBar.value = video.currentTime;
             currentTimeDisplay.innerText = formatTime(video.currentTime);
-            
-            // อัปเดตสีพื้นหลังของ range input ให้เหมือนหลอดวิ่ง
             const percentage = (video.currentTime / video.duration) * 100;
-            progressBar.style.background = `linear-gradient(to right, #E50914 ${percentage}%, rgba(255,255,255,0.3) ${percentage}%)`;
+            progressFill.style.width = `${percentage}%`;
         });
 
-        // เมื่อผู้ใช้ลาก Progress bar เพื่อเปลี่ยนเวลา
         progressBar.addEventListener('input', () => {
             video.currentTime = progressBar.value;
         });
 
-        // ควบคุมความเร็ว (Speed)
+        // ความเร็ว
         function updateSpeedBtnUI(speedValue) {
             speedBtns.forEach(btn => {
                 if(parseFloat(btn.dataset.speed) === parseFloat(speedValue)) {
-                    btn.classList.add('bg-red-900/50'); // Highlight ตัวที่เลือก
+                    btn.classList.add('text-[#E50914]', 'font-bold');
                 } else {
-                    btn.classList.remove('bg-red-900/50');
+                    btn.classList.remove('text-[#E50914]', 'font-bold');
                 }
             });
         }
@@ -509,45 +495,45 @@
                 video.playbackRate = speed;
                 speedIndicator.innerText = speed + "x";
                 updateSpeedBtnUI(speed);
-                // ซ่อนเมนู (อาศัย group-hover ของ tailwind จัดการให้เมื่อเอาเมาส์ออก)
             });
         });
 
-        // ควบคุม Fullscreen
+        // --- ระบบ Fullscreen สำหรับรองรับทุกหน้าจอแนวนอน/แนวตั้ง ---
         fullscreenBtn.addEventListener('click', () => {
-            // ใช้ API สำหรับ Fullscreen หากเปิดบนมือถือแล้วหมุนเครื่อง จะเป็นแนวนอนเต็มจอทันที
-            if (!document.fullscreenElement) {
-                if (video.requestFullscreen) {
-                    video.requestFullscreen();
-                } else if (video.webkitRequestFullscreen) { /* Safari */
-                    video.webkitRequestFullscreen();
-                } else if (video.msRequestFullscreen) { /* IE11 */
-                    video.msRequestFullscreen();
+            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || videoContainer.classList.contains('css-fullscreen');
+            
+            if (!isFullscreen) {
+                // พยายามใช้ API ก่อน (ทำงานได้ดีบน Android และ PC)
+                if (videoContainer.requestFullscreen) {
+                    videoContainer.requestFullscreen();
+                } else if (videoContainer.webkitRequestFullscreen) { /* Safari PC */
+                    videoContainer.webkitRequestFullscreen();
+                } else if (video.webkitEnterFullscreen) { 
+                    // สำหรับ iOS Safari บน iPhone (เรียกใช้ Player ของระบบ)
+                    video.webkitEnterFullscreen();
+                } else {
+                    // CSS Fallback (ถ้า API ข้างต้นไม่ทำงาน)
+                    videoContainer.classList.add('css-fullscreen');
                 }
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) { /* Safari */
+                } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { /* IE11 */
-                    document.msExitFullscreen();
                 }
+                videoContainer.classList.remove('css-fullscreen');
             }
         });
 
-        // Navbar Scroll Effect (ทำให้ Navbar เข้มขึ้นเมื่อเลื่อนจอลง)
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('bg-black');
-                navbar.classList.remove('bg-gradient-to-b', 'from-black/80', 'to-transparent');
-            } else {
-                navbar.classList.add('bg-gradient-to-b', 'from-black/80', 'to-transparent');
-                navbar.classList.remove('bg-black');
-            }
+        // ตรวจจับเมื่อผู้ใช้ออกจาก Fullscreen (ผ่านปุ่ม Back ของเครื่อง)
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) videoContainer.classList.remove('css-fullscreen');
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (!document.webkitFullscreenElement) videoContainer.classList.remove('css-fullscreen');
         });
 
-        // เริ่มต้นการทำงาน
+        // เริ่มต้นแอป
         renderMovies();
 
     </script>
