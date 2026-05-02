@@ -3,1492 +3,616 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NextLive Admin Dashboard</title>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Chart.js & Icons -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Tailwind CSS -->
+    <title>M-FLIX: Premium Chinese Series</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Kanit', 'sans-serif'] },
-                    colors: {
-                        main: '#0A0A0A',
-                        sidebar: '#121212',
-                        panel: '#1A1A1A',
-                        primary: '#FF6B00',
-                        primaryDark: '#CC5500',
-                        textMuted: '#888888',
-                        danger: '#EF4444',
-                        success: '#10B981',
-                        accentDark: '#3A1E00'
-                    }
-                }
-            }
-        }
-    </script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Maitree:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background-color: #0A0A0A; color: #FFFFFF; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
-        
-        .card { background-color: #1A1A1A; border-radius: 12px; padding: 20px; border: 1px solid #2A2A2A; }
-        .stat-box { background-color: #121212; border: 1px solid #222; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; justify-content: center; }
-
-        .table-container { width: 100%; overflow-x: auto; }
-        .admin-table { width: 100%; text-align: left; border-collapse: separate; border-spacing: 0; min-width: 1000px; }
-        .admin-table th { padding: 12px 16px; color: #888888; font-size: 13px; font-weight: 600; border-bottom: 1px solid #2A2A2A; white-space: nowrap; }
-        .admin-table td { padding: 16px; font-size: 14px; border-bottom: 1px solid #222; vertical-align: middle; }
-        .admin-table tbody tr:hover { background-color: #222222; }
-        
-        .form-input { width: 100%; background: #0A0A0A; border: 1px solid #333; color: white; padding: 10px 14px; border-radius: 8px; outline: none; font-size: 14px; transition: border 0.3s; }
-        .form-input:focus { border-color: #FF6B00; }
-        .form-select { background: #0A0A0A; border: 1px solid #333; color: white; padding: 8px 12px; border-radius: 6px; outline: none; font-size: 13px; cursor: pointer; transition: border 0.3s; }
-        .form-select:focus { border-color: #FF6B00; }
-        .form-select:disabled { background: #1A1A1A; cursor: not-allowed; color: #888; border-color: #222; appearance: none; -webkit-appearance: none; }
-
-        /* Custom Popup Styles */
-        .popup-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, .8); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; z-index: 99999; backdrop-filter: blur(4px); transition: opacity 0.3s; }
-        .popup-container.active { opacity: 1; pointer-events: auto; }
-        .popup-box { width: 90%; max-width: 400px; background: #1A1A1A; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 1); padding: 30px; transform: scale(0.9); text-align: center; transition: transform 0.3s; border: 1px solid #333; }
-        .popup-container.active .popup-box { transform: scale(1); }
-        
-        /* Modal Form */
-        .modal-box { width: 90%; max-width: 500px; background: #1A1A1A; border-radius: 12px; padding: 25px; transform: scale(0.9); transition: transform 0.3s; border: 1px solid #333; max-height: 90vh; overflow-y: auto; }
-        .popup-container.active .modal-box { transform: scale(1); }
-
-        /* Loader */
-        .loader-overlay { position: fixed; inset: 0; background: rgba(10,10,10,0.9); z-index: 100000; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .loader-overlay.active { display: flex; }
-
-        /* Real-time Toast Notifications */
-        #toast-container { position: fixed; top: 24px; right: 24px; z-index: 100001; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
-        .toast-message { background: #1A1A1A; border-left: 4px solid #FF6B00; color: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: bold; transform: translateX(120%); animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: auto; border: 1px solid #333; border-left-width: 4px; }
-        @keyframes slideInRight { to { transform: translateX(0); } }
-        .toast-message.hide { animation: fadeOutRight 0.4s forwards; }
-        @keyframes fadeOutRight { to { transform: translateX(120%); opacity: 0; } }
-        
-        /* Bell Animation */
-        .animate-ring { animation: ring 1s ease-in-out; }
-        @keyframes ring {
-            0% { transform: rotate(0); }
-            10% { transform: rotate(15deg); }
-            20% { transform: rotate(-15deg); }
-            30% { transform: rotate(10deg); }
-            40% { transform: rotate(-10deg); }
-            50% { transform: rotate(5deg); }
-            60% { transform: rotate(-5deg); }
-            70% { transform: rotate(0); }
-            100% { transform: rotate(0); }
+        :root {
+            --app-bg: #080303; /* สีพื้นหลังดำอมแดงเข้ม */
+            --primary-red: #c8102e; /* สีแดงเข้มแบบจีน */
+            --gold-accent: #d4af37; /* สีทองโบราณ */
         }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #000;
+            color: #fff;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            justify-content: center;
+        }
+
+        .font-maitree { font-family: 'Maitree', serif; }
+
+        /* ซ่อน Scrollbar */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* เอฟเฟกต์สีทองและสีแดง */
+        .text-glow-red { text-shadow: 0 0 15px rgba(200, 16, 46, 0.7); }
+        .text-glow-gold { text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+        
+        .gold-border {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        /* ลวดลายจีนโบราณจางๆ ที่พื้นหลัง */
+        .chinese-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%23d4af37' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-flare {
+            position: absolute;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(200,16,46,0.15) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* TikTok Style Scroll Snap */
+        .tiktok-scroll-container {
+            height: 100dvh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+        .tiktok-video-item {
+            height: 100dvh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+        }
+        .tiktok-video-item video {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        /* Nav & Tabs */
+        .nav-btn { color: #6b7280; transition: all 0.3s; }
+        .nav-btn.active { color: var(--gold-accent); }
+        
+        .cat-btn { transition: all 0.2s; }
+        .cat-btn.active { 
+            background: linear-gradient(to bottom, var(--primary-red), #800000); 
+            color: white; 
+            border-color: var(--primary-red); 
+            box-shadow: 0 2px 10px rgba(200,16,46,0.4);
+        }
+
+        /* Banner Transitions */
+        .slide-fade { animation: fadeEffect 0.5s ease-in-out; }
+        @keyframes fadeEffect { from { opacity: 0.5; } to { opacity: 1; } }
     </style>
 </head>
-<body class="h-screen flex overflow-hidden">
+<body class="min-h-screen">
 
-    <!-- Global Loader -->
-    <div class="loader-overlay" id="global-loader">
-        <i data-lucide="loader-2" class="w-10 h-10 text-primary animate-spin mb-3"></i>
-        <p class="text-sm text-textMuted tracking-wider font-bold">PROCESSING...</p>
-    </div>
-
-    <!-- Toast Notification Container -->
-    <div id="toast-container"></div>
-
-    <!-- Alert Popup -->
-    <div class="popup-container" id="custom-popup">
-        <div class="popup-box">
-            <h1 id="popup-title" class="text-white text-xl font-bold mb-3">Title</h1>
-            <p id="popup-desc" class="text-textMuted text-sm mb-6 whitespace-pre-line">Message</p>
-            <div class="flex gap-3 justify-center" id="popup-btn-container">
-                <button class="w-full bg-primary hover:bg-primaryDark text-white py-3 rounded-lg font-bold transition-colors" onclick="closePopup()">ตกลง</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Enhanced Image Preview Popup -->
-    <div class="popup-container" id="image-popup" onclick="closeImagePopup()">
-        <div class="relative w-[90%] max-w-2xl bg-[#1A1A1A] rounded-xl border border-[#333] shadow-2xl p-2 flex flex-col items-center transform scale-90 transition-transform duration-300" id="image-popup-box" onclick="event.stopPropagation()">
-            <div class="w-full flex justify-between items-center mb-2 px-3 pt-2">
-                <h3 class="text-white font-bold flex items-center text-sm uppercase tracking-wider"><i data-lucide="image" class="w-4 h-4 mr-2 text-primary"></i> แกลลอรี่รูปภาพ / สลิป</h3>
-                <button class="text-gray-400 hover:text-white transition-colors bg-[#222] hover:bg-danger rounded-full p-2" onclick="closeImagePopup()">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            </div>
-            <div class="w-full bg-[#0A0A0A] rounded-lg overflow-hidden flex items-center justify-center min-h-[300px] max-h-[65vh] border border-[#222] p-2">
-                <img id="preview-img-src" src="" class="max-w-full max-h-full object-contain rounded-md drop-shadow-lg">
-            </div>
-            <div class="w-full mt-4 flex justify-center pb-2">
-                <a id="preview-img-link" href="#" target="_blank" class="bg-[#222] border border-[#333] hover:border-primary hover:bg-primary/20 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2">
-                    <i data-lucide="external-link" class="w-4 h-4 text-primary"></i> เปิดรูปภาพต้นฉบับ
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Data Form Modal -->
-    <div class="popup-container" id="add-data-modal">
-        <div class="modal-box text-left relative">
-            <button onclick="closeAddModal()" class="absolute top-4 right-4 text-textMuted hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <h2 id="add-modal-title" class="text-xl font-bold text-white mb-6 border-b border-[#333] pb-3">เพิ่มข้อมูล</h2>
-            <form id="add-data-form" onsubmit="submitAddData(event)" class="space-y-4">
-                <div id="add-inputs-container" class="space-y-4"></div>
-                <button type="submit" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-3 rounded-lg transition-colors mt-2 shadow-lg">บันทึกข้อมูล</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Login Overlay -->
-    <div id="login-overlay" class="fixed inset-0 bg-main z-[60] flex items-center justify-center">
-        <div class="card w-full max-w-sm p-8 shadow-2xl">
-            <div class="flex items-center justify-center gap-2 mb-8">
-                <i data-lucide="boxes" class="w-8 h-8 text-primary"></i>
-                <span class="text-2xl font-bold tracking-tight">NextLive<span class="text-primary">.Admin</span></span>
-            </div>
-            <form onsubmit="handleLogin(event)" class="space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-textMuted mb-2 uppercase tracking-wider">Email Address</label>
-                    <input type="email" id="login-email" required class="form-input">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-textMuted mb-2 uppercase tracking-wider">Phone Number (Password)</label>
-                    <input type="password" id="login-phone" required class="form-input" placeholder="ไม่ต้องใส่ขีด">
-                </div>
-                <button type="submit" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-3 rounded-lg transition-colors mt-4 shadow-lg">LOGIN</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Sidebar Mobile Overlay -->
-    <div id="mobile-overlay" class="fixed inset-0 bg-black/80 z-30 hidden lg:hidden backdrop-blur-sm" onclick="toggleSidebar()"></div>
-    
-    <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-sidebar border-r border-[#222] flex flex-col h-full absolute lg:relative z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
-        <div class="p-6 flex items-center gap-3 border-b border-[#222] shrink-0">
-            <i data-lucide="boxes" class="w-7 h-7 text-primary"></i>
-            <span class="text-xl font-bold tracking-wide">Next<span class="text-white">Live</span></span>
-        </div>
+    <!-- Mobile Container -->
+    <div class="relative w-full max-w-md h-[100dvh] bg-[var(--app-bg)] overflow-hidden flex flex-col shadow-2xl border-x border-[#3a0b0b]">
         
-        <div class="p-4 flex-1 overflow-y-auto">
-            <p class="text-[10px] font-bold text-textMuted mb-3 tracking-widest pl-2">MAIN MENU</p>
-            <nav class="space-y-1">
-                <a href="#" data-target="overview" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-[#FF6B00]/10 text-primary transition-colors">
-                    <i data-lucide="layout-grid" class="w-5 h-5"></i> Overview
-                </a>
-                <a href="#" data-target="products" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="package" class="w-5 h-5"></i> Products
-                </a>
-                <a href="#" data-target="users" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="users" class="w-5 h-5"></i> Users
-                </a>
-                <a href="#" data-target="orders" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i> Orders
-                </a>
-                <a href="#" data-target="deposits" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="arrow-down-circle" class="w-5 h-5"></i> Deposits
-                </a>
-                <a href="#" data-target="withdraws" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="arrow-up-circle" class="w-5 h-5"></i> Withdraws
-                </a>
-                <a href="#" data-target="affiliate" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="network" class="w-5 h-5"></i> Affiliate <span class="ml-auto text-[10px] bg-primary text-white px-1.5 rounded">New</span>
-                </a>
-                <a href="#" data-target="booking" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="calendar" class="w-5 h-5"></i> Booking
-                </a>
-            </nav>
+        <!-- ลวดลายพื้นหลัง -->
+        <div class="chinese-pattern"></div>
+        <div class="bg-flare top-0 right-0"></div>
+        <div class="bg-flare bottom-1/4 left-0"></div>
 
-            <p class="text-[10px] font-bold text-textMuted mt-8 mb-3 tracking-widest pl-2">PREFERENCE</p>
-            <nav class="space-y-1">
-                <a href="#" data-target="options" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="layers" class="w-5 h-5"></i> Product Options
-                </a>
-                <a href="#" data-target="settings" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="settings" class="w-5 h-5"></i> Settings
-                </a>
-                <a href="#" data-target="broadcast" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="mail" class="w-5 h-5"></i> Broadcast
-                </a>
-            </nav>
-        </div>
-        
-        <div class="p-4 border-t border-[#222] shrink-0">
-            <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors">
-                <i data-lucide="log-out" class="w-5 h-5"></i> Log Out
-            </button>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
-        
         <!-- Header -->
-        <header class="h-20 border-b border-[#222] flex items-center justify-between px-6 shrink-0 bg-main">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white"><i data-lucide="menu" class="w-6 h-6"></i></button>
-                <div>
-                    <h2 class="text-xl font-bold" id="top-greeting">Good to see you, Admin!</h2>
-                    <p class="text-xs text-textMuted hidden sm:block">Improve your sales management for better growth <span class="text-primary font-bold">(Auto-Sync Active)</span></p>
+        <header id="main-header" class="absolute top-0 w-full z-50 px-4 py-4 bg-gradient-to-b from-black/90 via-black/60 to-transparent">
+            <div class="flex justify-between items-center h-10">
+                <h1 class="text-3xl font-black font-maitree text-[var(--primary-red)] tracking-widest text-glow-red">ตำนานหอหมื่นลี้</h1>
+                <div class="flex gap-4 items-center">
+                    <button onclick="toggleSearch()" class="text-[var(--gold-accent)] hover:text-white transition"><i data-lucide="search" class="w-6 h-6"></i></button>
+                    <div class="w-8 h-8 rounded-full gold-border overflow-hidden p-0.5">
+                        <img src="https://i.pravatar.cc/100" class="w-full h-full rounded-full object-cover">
+                    </div>
                 </div>
             </div>
-            <div class="flex items-center gap-4">
-                <!-- Notifications Bell -->
-                <div class="relative cursor-pointer w-10 h-10 rounded-full bg-[#1A1A1A] border border-[#333] flex items-center justify-center hover:bg-[#222] transition-colors" onclick="clearNotifications()">
-                    <i data-lucide="bell" id="bell-icon" class="w-4 h-4 text-gray-400"></i>
-                    <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+            
+            <!-- Search Bar -->
+            <div id="search-container" class="hidden mt-3 slide-fade">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
+                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาชื่อตำนาน..." class="w-full bg-black/50 gold-border rounded-full py-2 pl-10 pr-4 text-[var(--gold-accent)] placeholder-gray-500 focus:outline-none focus:border-[var(--primary-red)] text-sm font-maitree">
                 </div>
-
-                <div class="relative hidden md:block">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
-                    <input type="text" placeholder="Search anything..." class="bg-[#1A1A1A] border border-[#333] text-sm rounded-full pl-10 pr-4 py-2 w-64 outline-none disabled:opacity-50" disabled>
-                </div>
-                <button onclick="fetchData()" class="w-10 h-10 rounded-full bg-[#1A1A1A] border border-[#333] flex items-center justify-center hover:bg-[#222] transition-colors" title="Refresh Data">
-                    <i data-lucide="refresh-cw" class="w-4 h-4 text-gray-400"></i>
-                </button>
             </div>
         </header>
 
-        <!-- Scrollable Views Container -->
-        <div class="flex-1 overflow-y-auto p-4 lg:p-8" id="scroll-area">
-            
-            <!-- VIEW: OVERVIEW -->
-            <div id="view-overview" class="view-section animate-fade-in block">
-                <!-- 5 Main Dashboard Boxes -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-                    <div class="card p-4 flex flex-col justify-center border-l-4 border-l-[#3B82F6]">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-textMuted uppercase tracking-wider">Total Users</span>
-                            <div class="p-1.5 bg-[#3B82F6]/10 rounded"><i data-lucide="users" class="w-4 h-4 text-[#3B82F6]"></i></div>
-                        </div>
-                        <span class="text-2xl font-bold" id="db-users">0</span>
-                    </div>
-                    <div class="card p-4 flex flex-col justify-center border-l-4 border-l-primary">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-textMuted uppercase tracking-wider">Orders</span>
-                            <div class="p-1.5 bg-[#FF6B00]/10 rounded"><i data-lucide="shopping-bag" class="w-4 h-4 text-primary"></i></div>
-                        </div>
-                        <span class="text-2xl font-bold" id="db-orders">0</span>
-                    </div>
-                    <div class="card p-4 flex flex-col justify-center border-l-4 border-l-[#10B981]">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-textMuted uppercase tracking-wider">Deposits</span>
-                            <div class="p-1.5 bg-[#10B981]/10 rounded"><i data-lucide="arrow-down-circle" class="w-4 h-4 text-[#10B981]"></i></div>
-                        </div>
-                        <span class="text-2xl font-bold" id="db-dep">฿0</span>
-                    </div>
-                    <div class="card p-4 flex flex-col justify-center border-l-4 border-l-[#EF4444]">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-textMuted uppercase tracking-wider">Withdraws</span>
-                            <div class="p-1.5 bg-[#EF4444]/10 rounded"><i data-lucide="arrow-up-circle" class="w-4 h-4 text-[#EF4444]"></i></div>
-                        </div>
-                        <span class="text-2xl font-bold" id="db-wit">฿0</span>
-                    </div>
-                    <div class="card p-4 flex flex-col justify-center border-l-4 border-l-[#8B5CF6]">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-textMuted uppercase tracking-wider">Commissions</span>
-                            <div class="p-1.5 bg-[#8B5CF6]/10 rounded"><i data-lucide="percent" class="w-4 h-4 text-[#8B5CF6]"></i></div>
-                        </div>
-                        <span class="text-2xl font-bold" id="db-com">฿0</span>
-                    </div>
-                </div>
-                
-                <!-- Charts -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="card">
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <h3 class="font-bold text-lg">Statistic Overview</h3>
-                                <p class="text-xs text-textMuted">Comparison of system flows</p>
-                            </div>
-                        </div>
-                        <div class="h-64 relative w-full"><canvas id="statChart"></canvas></div>
-                    </div>
-                    <div class="card">
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <h3 class="font-bold text-lg">Sales Trend</h3>
-                                <p class="text-xs text-textMuted">Orders volume based on recent data</p>
-                            </div>
-                        </div>
-                        <div class="h-64 relative w-full"><canvas id="trendChart"></canvas></div>
-                    </div>
-                    <div class="card">
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <h3 class="font-bold text-lg">Affiliate Tiers</h3>
-                                <p class="text-xs text-textMuted">Commission distribution by levels</p>
-                            </div>
-                        </div>
-                        <div class="h-64 relative w-full"><canvas id="affiliateChart"></canvas></div>
-                    </div>
-                </div>
-            </div>
+        <!-- Main Content Area -->
+        <main id="app-content" class="flex-1 overflow-y-auto hide-scrollbar relative z-10 pb-20">
+            <!-- ข้อมูลจะถูก render ที่นี่ -->
+        </main>
 
-            <!-- VIEW: PRODUCTS -->
-            <div id="view-products" class="view-section animate-fade-in hidden">
-                <div class="flex justify-between items-end mb-4">
-                    <h2 class="text-xl font-bold">Products Management</h2>
-                    <button onclick="openAddModal('products')" class="bg-primary hover:bg-primaryDark text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg transition-colors flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> Add Product</button>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Total Products</span>
-                        <span class="text-xl font-bold text-primary" id="sum-prod-total">0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Categories</span>
-                        <span class="text-xl font-bold" id="sum-prod-cat">0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Avg. Price</span>
-                        <span class="text-xl font-bold" id="sum-prod-avg">฿0</span>
-                    </div>
-                </div>
-                <div class="card p-0 overflow-hidden border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-products">
-                            <thead><tr><th>ID</th><th>Category</th><th>Name</th><th>Description</th><th>Price</th><th class="text-center">Image</th><th>DL Link</th><th>Manual</th><th>Stock</th><th class="text-center">Action</th></tr></thead>
-                            <tbody id="tbody-products"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <!-- Bottom Navigation -->
+        <nav id="bottom-nav" class="absolute bottom-0 w-full h-[70px] bg-gradient-to-t from-[#050000] via-[#0a0505]/95 to-transparent z-50 flex justify-around items-center px-2 pb-2 border-t border-[var(--gold-accent)]/20">
+            <button onclick="switchTab('home')" id="nav-home" class="nav-btn active flex flex-col items-center gap-1 w-16 mt-2">
+                <i data-lucide="home" class="w-6 h-6"></i>
+                <span class="text-[10px] font-medium font-maitree">หน้าหลัก</span>
+            </button>
+            <button onclick="switchTab('miniseries')" id="nav-miniseries" class="nav-btn flex flex-col items-center gap-1 w-16 mt-2">
+                <i data-lucide="smartphone" class="w-6 h-6"></i>
+                <span class="text-[10px] font-medium font-maitree">มินิซีรีส์</span>
+            </button>
+            <button onclick="switchTab('library')" id="nav-library" class="nav-btn flex flex-col items-center gap-1 w-16 mt-2">
+                <i data-lucide="book-open" class="w-6 h-6"></i>
+                <span class="text-[10px] font-medium font-maitree">ตำราของฉัน</span>
+            </button>
+        </nav>
 
-            <!-- VIEW: USERS -->
-            <div id="view-users" class="view-section animate-fade-in hidden">
-                <div class="flex justify-between items-end mb-4">
-                    <h2 class="text-xl font-bold">Users Management</h2>
-                    <button onclick="openAddModal('users')" class="bg-primary hover:bg-primaryDark text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg transition-colors flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> Add User</button>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Total Users</span>
-                        <span class="text-xl font-bold text-primary" id="sum-user-total">0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Total Balances</span>
-                        <span class="text-xl font-bold text-[#10B981]" id="sum-user-bal">฿0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">New Today</span>
-                        <span class="text-xl font-bold" id="sum-user-new">0</span>
-                    </div>
-                </div>
-                <div class="card p-0 overflow-hidden border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-users">
-                            <thead><tr><th>Date</th><th>UID</th><th>Name</th><th>Surname</th><th>Email</th><th>Phone</th><th>Pass</th><th>Bank</th><th>Acc No</th><th>Balance</th><th class="text-center">Action</th></tr></thead>
-                            <tbody id="tbody-users"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW: ORDERS -->
-            <div id="view-orders" class="view-section animate-fade-in hidden">
-                <div class="mb-4">
-                    <h2 class="text-xl font-bold">Orders (Sales)</h2>
-                    <p class="text-xs text-primary mt-1">* Final status locks the row.</p>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="stat-box border-l-2 border-[#10B981]">
-                        <span class="text-xs text-textMuted uppercase">Net Revenue</span>
-                        <span class="text-xl font-bold text-[#10B981]" id="sum-ord-rev">฿0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Total Orders</span>
-                        <span class="text-xl font-bold" id="sum-ord-total">0</span>
-                    </div>
-                    <div class="stat-box border-l-2 border-[#FFC107]">
-                        <span class="text-xs text-textMuted uppercase">Pending</span>
-                        <span class="text-xl font-bold text-[#FFC107]" id="sum-ord-pen">0</span>
-                    </div>
-                </div>
-                <div class="card p-0 overflow-hidden border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-orders">
-                            <thead><tr><th>Date</th><th>Ref</th><th>Buyer</th><th>Phone</th><th>Items</th><th>Net Total</th><th class="text-center">Slip</th><th>Status</th><th class="text-center w-24">Action</th></tr></thead>
-                            <tbody id="tbody-orders"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW: DEPOSITS -->
-            <div id="view-deposits" class="view-section animate-fade-in hidden">
-                <div class="mb-4">
-                    <h2 class="text-xl font-bold">Deposits</h2>
-                    <p class="text-xs text-primary mt-1">* Set to 'สำเร็จ' to auto-add credit.</p>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="stat-box border-l-2 border-[#10B981]">
-                        <span class="text-xs text-textMuted uppercase">Success Deposits</span>
-                        <span class="text-xl font-bold text-[#10B981]" id="sum-dep-rev">฿0</span>
-                    </div>
-                    <div class="stat-box border-l-2 border-[#FFC107]">
-                        <span class="text-xs text-textMuted uppercase">Pending Auth</span>
-                        <span class="text-xl font-bold text-[#FFC107]" id="sum-dep-pen">0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Total Request</span>
-                        <span class="text-xl font-bold" id="sum-dep-total">0</span>
-                    </div>
-                </div>
-                <div class="card p-0 overflow-hidden border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-deposits">
-                            <thead><tr><th>Date</th><th>UID</th><th>Name</th><th>Phone</th><th>Amount</th><th class="text-center">Slip</th><th>Status</th><th class="text-center w-24">Action</th></tr></thead>
-                            <tbody id="tbody-deposits"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW: WITHDRAWS -->
-            <div id="view-withdraws" class="view-section animate-fade-in hidden">
-                <div class="mb-4">
-                    <h2 class="text-xl font-bold">Withdrawals</h2>
-                    <p class="text-xs text-primary mt-1">* Set to 'ยกเลิก' to auto-refund credit.</p>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="stat-box border-l-2 border-[#EF4444]">
-                        <span class="text-xs text-textMuted uppercase">Paid Out</span>
-                        <span class="text-xl font-bold text-[#EF4444]" id="sum-wit-rev">฿0</span>
-                    </div>
-                    <div class="stat-box border-l-2 border-[#FFC107]">
-                        <span class="text-xs text-textMuted uppercase">Pending Payout</span>
-                        <span class="text-xl font-bold text-[#FFC107]" id="sum-wit-pen">0</span>
-                    </div>
-                    <div class="stat-box border-l-2 border-gray-500">
-                        <span class="text-xs text-textMuted uppercase">Refunded (Cancel)</span>
-                        <span class="text-xl font-bold" id="sum-wit-can">0</span>
-                    </div>
-                </div>
-                <div class="card p-0 overflow-hidden border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-withdraws">
-                            <thead><tr><th>Date</th><th>UID</th><th>Name</th><th>Phone</th><th>Amount</th><th>Bank Info</th><th>Status</th><th class="text-center w-24">Action</th></tr></thead>
-                            <tbody id="tbody-withdraws"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW: AFFILIATE -->
-            <div id="view-affiliate" class="view-section animate-fade-in hidden">
-                <div class="mb-4">
-                    <h2 class="text-xl font-bold">Affiliate / Commission</h2>
-                    <p class="text-xs text-textMuted mt-1">Network tree and commission logs.</p>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="stat-box border-l-2 border-[#8B5CF6]">
-                        <span class="text-xs text-textMuted uppercase">Total Commission Given</span>
-                        <span class="text-xl font-bold text-[#8B5CF6]" id="sum-aff-given">฿0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Total Transactions</span>
-                        <span class="text-xl font-bold" id="sum-aff-tx">0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Active Networks</span>
-                        <span class="text-xl font-bold" id="sum-aff-net">0</span>
-                    </div>
-                </div>
-                <div class="card p-0 overflow-hidden border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-affiliate">
-                            <thead><tr><th>Date</th><th>Inviter UID</th><th>Buyer Info</th><th>Type</th><th>Sales (฿)</th><th>Commission (฿)</th><th>Status</th><th class="text-center w-24">Action</th></tr></thead>
-                            <tbody id="tbody-affiliate"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW: BOOKING -->
-            <div id="view-booking" class="view-section animate-fade-in hidden">
-                <div class="mb-4">
-                    <h2 class="text-xl font-bold">Booking System</h2>
-                    <p class="text-xs text-textMuted mt-1">Manage customer queues.</p>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Total Bookings</span>
-                        <span class="text-xl font-bold" id="sum-bk-total">0</span>
-                    </div>
-                    <div class="stat-box border-l-2 border-[#FFC107]">
-                        <span class="text-xs text-textMuted uppercase">Pending / Waiting</span>
-                        <span class="text-xl font-bold text-[#FFC107]" id="sum-bk-pen">0</span>
-                    </div>
-                    <div class="stat-box border-l-2 border-[#10B981]">
-                        <span class="text-xs text-textMuted uppercase">Completed</span>
-                        <span class="text-xl font-bold text-[#10B981]" id="sum-bk-done">0</span>
-                    </div>
-                </div>
-                <div class="card p-0 overflow-hidden border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-booking">
-                            <thead><tr><th>DateTime</th><th>Queue (Seq)</th><th>Customer</th><th>Topic / Detail</th><th>Wait</th><th>Status</th><th>Note</th><th class="text-center w-32">Action</th></tr></thead>
-                            <tbody id="tbody-booking"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW: OPTIONS -->
-            <div id="view-options" class="view-section animate-fade-in hidden">
-                <div class="flex justify-between items-end mb-4">
-                    <div>
-                        <h2 class="text-xl font-bold">Product Options</h2>
-                    </div>
-                    <button onclick="openAddModal('options')" class="bg-primary hover:bg-primaryDark text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg transition-colors flex items-center gap-1"><i data-lucide="plus" class="w-4 h-4"></i> Add Option</button>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">Total Addons</span>
-                        <span class="text-xl font-bold" id="sum-opt-total">0</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">-</span>
-                        <span class="text-xl font-bold">-</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="text-xs text-textMuted uppercase">-</span>
-                        <span class="text-xl font-bold">-</span>
-                    </div>
-                </div>
-                <div class="card p-0 overflow-hidden max-w-6xl border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-options">
-                            <thead><tr><th>Product ID</th><th>Option Name</th><th>Price (+฿)</th><th>DL Link</th><th>Manual</th><th class="text-center w-24">Action</th></tr></thead>
-                            <tbody id="tbody-options"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW: SETTINGS -->
-            <div id="view-settings" class="view-section animate-fade-in hidden">
-                <div class="mb-4">
-                    <h2 class="text-xl font-bold">System Settings</h2>
-                    <p class="text-xs text-textMuted mt-1">Change values and save immediately.</p>
-                </div>
-                <div class="card p-0 overflow-hidden max-w-4xl border border-[#2A2A2A]">
-                    <div class="table-container">
-                        <table class="admin-table" id="table-settings">
-                            <thead><tr><th class="w-1/4">Key</th><th class="w-2/4">Value</th><th class="w-1/4">Description</th><th class="text-center w-24">Action</th></tr></thead>
-                            <tbody id="tbody-settings"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VIEW: BROADCAST -->
-            <div id="view-broadcast" class="view-section animate-fade-in hidden">
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold">Email Broadcast</h2>
-                    <p class="text-sm text-textMuted mt-1">Send promotion to all registered users.</p>
-                </div>
-                <div class="card max-w-2xl border border-[#2A2A2A]">
-                    <form onsubmit="handleBroadcast(event)" class="space-y-5">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-300 mb-2">Subject <span class="text-red-500">*</span></label>
-                            <input type="text" id="bc-subject" required class="form-input" placeholder="Title...">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-300 mb-2">Image URL</label>
-                            <input type="url" id="bc-image" class="form-input" placeholder="https://... (Optional)">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-300 mb-2">Message <span class="text-red-500">*</span></label>
-                            <textarea id="bc-message" required rows="6" class="form-input resize-none" placeholder="HTML or Text..."></textarea>
-                        </div>
-                        <button type="submit" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 mt-4 shadow-lg transition-colors">
-                            <i data-lucide="send" class="w-4 h-4"></i> Send to All Users
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-    </main>
+    </div>
 
     <script>
-        // --- Configuration ---
-        // ⚠️ อย่าลืมแก้ไข GAS_URL ตรงนี้ให้เป็น Web App URL ของคุณเอง!
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec";
+        // --- 1. ข้อมูลฐาน (Database) ---
+        const categories = ["ทั้งหมด", "ยุทธภพ", "วังหลวง", "เทพเซียน", "สืบสวน", "โรแมนติก"];
+        const sampleVideos = [
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        ];
         
-        let state = { users: [], orders: [], deposits: [], withdraws: [], booking: [], products: [], options: [], settings: [], affiliate: [] };
-        let chartInstanceStat = null;
-        let chartInstanceTrend = null;
-        let chartInstanceAffiliate = null; // เพิ่มตัวแปรสำหรับกราฟ Affiliate
-        
-        // Variables for Real-time Polling
-        let isEditing = false;
-        let previousCounts = { orders: -1, deposits: -1, withdraws: -1, booking: -1 };
-        let unreadNotifications = 0;
+        // วิดีโอแนวตั้งสำหรับ Mini Series
+        const verticalVideos = [
+            "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+            "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+            "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4"
+        ];
 
-        lucide.createIcons();
+        let moviesData = [];
 
-        // --- Core UI Functions ---
-        function showLoader(show) { document.getElementById('global-loader').classList.toggle('active', show); }
-        
-        function safeSetText(id, text) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = text;
-        }
-        
-        let popupCallback = null;
-        function showPopup(title, desc, callback = null, isConfirm = false) {
-            document.getElementById('popup-title').innerText = title;
-            document.getElementById('popup-desc').innerText = desc;
-            
-            const btnCont = document.getElementById('popup-btn-container');
-            if(isConfirm) {
-                btnCont.innerHTML = `
-                    <button class="w-1/2 bg-panel border border-[#333] hover:bg-[#222] text-white py-3 rounded-lg font-bold transition-colors" onclick="closePopup()">ยกเลิก</button>
-                    <button class="w-1/2 bg-danger hover:bg-red-600 text-white py-3 rounded-lg font-bold transition-colors" onclick="confirmAction()">ยืนยัน</button>
-                `;
-                popupCallback = callback;
-            } else {
-                btnCont.innerHTML = `<button class="w-full bg-primary hover:bg-primaryDark text-white py-3 rounded-lg font-bold transition-colors" onclick="closePopup()">ตกลง</button>`;
-                popupCallback = callback;
-            }
-            document.getElementById('custom-popup').classList.add('active');
-        }
-        function closePopup() {
-            document.getElementById('custom-popup').classList.remove('active');
-            if(popupCallback && document.getElementById('popup-btn-container').children.length === 1) { 
-                popupCallback(); popupCallback = null; 
-            }
-        }
-        function confirmAction() {
-            document.getElementById('custom-popup').classList.remove('active');
-            if(popupCallback) { popupCallback(); popupCallback = null; }
-        }
+        // สร้างข้อมูลหนัง 50 เรื่องอัตโนมัติ พร้อมสร้างตอน (Episodes)
+        function generateData() {
+            const adjectives = ["ตำนาน", "ลิขิต", "เล่ห์รัก", "กระบี่", "จอมยุทธ", "วิญญาณ", "สวรรค์", "หยาดตะวัน", "มังกร", "บุปผา"];
+            const nouns = ["วังต้องห้าม", "เย้ยพิภพ", "ผ่าบัลลังก์", "ไร้พ่าย", "ซ่อนพิษ", "ล่าปีศาจ", "ไร้เงา", "ข้ามภพ", "สังหาร", "หมื่นลี้"];
+            const epNames = ["ปฐมบท", "แผนลวง", "รอยแค้น", "คราบน้ำตา", "หักเหลี่ยม", "พบพาน", "บทสรุป"];
 
-        // Image Preview Popup (Gallery)
-        function openImagePreview(url) {
-            document.getElementById('preview-img-src').src = url;
-            document.getElementById('preview-img-link').href = url;
-            document.getElementById('image-popup').classList.add('active');
-            setTimeout(() => {
-                document.getElementById('image-popup-box').classList.remove('scale-90');
-                document.getElementById('image-popup-box').classList.add('scale-100');
-            }, 10);
-        }
-        function closeImagePopup() {
-            document.getElementById('image-popup-box').classList.remove('scale-100');
-            document.getElementById('image-popup-box').classList.add('scale-90');
-            setTimeout(() => {
-                document.getElementById('image-popup').classList.remove('active');
-            }, 300);
-        }
-
-        // Audio Notification System (Web Audio API)
-        function playNotificationSound() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
+            for(let i=1; i<=50; i++) {
+                const title = adjectives[i%10] + nouns[(i*3)%10] + (i <= 5 ? " ภาค " + i : "");
+                const type = i > 40 ? 'miniseries' : 'movie'; 
+                const category = type === 'miniseries' ? 'มินิซีรีส์' : categories[(i % (categories.length - 1)) + 1];
                 
-                // Note 1
-                const osc1 = ctx.createOscillator();
-                const gain1 = ctx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-                gain1.gain.setValueAtTime(0, ctx.currentTime);
-                gain1.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
-                gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-                osc1.connect(gain1);
-                gain1.connect(ctx.destination);
-                osc1.start(ctx.currentTime);
-                osc1.stop(ctx.currentTime + 0.5);
+                // สร้างตอน (Episodes) สำหรับหนังทั่วไป
+                let episodesList = [];
+                if(type === 'movie') {
+                    const numEps = Math.floor(Math.random() * 4) + 3; // 3 ถึง 6 ตอน
+                    for(let j=0; j<numEps; j++) {
+                        episodesList.push({
+                            ep: j + 1,
+                            title: epNames[j % epNames.length],
+                            videoUrl: sampleVideos[j % sampleVideos.length]
+                        });
+                    }
+                } else {
+                    episodesList.push({ ep: 1, title: "ตอนที่ 1", videoUrl: verticalVideos[i % verticalVideos.length] });
+                }
 
-                // Note 2
-                const osc2 = ctx.createOscillator();
-                const gain2 = ctx.createGain();
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
-                gain2.gain.setValueAtTime(0, ctx.currentTime + 0.1);
-                gain2.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.15);
-                gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-                osc2.connect(gain2);
-                gain2.connect(ctx.destination);
-                osc2.start(ctx.currentTime + 0.1);
-                osc2.stop(ctx.currentTime + 0.8);
-            } catch (e) { console.log("Audio play blocked by browser."); }
+                moviesData.push({
+                    id: i,
+                    title: title,
+                    description: `ตำนานกล่าวขานถึงเรื่องราวของ ${title} การทรยศหักหลังในวังหลวง ความรักข้ามภพชาติ และการต่อสู้แย่งชิงความเป็นหนึ่งในยุทธภพ...`,
+                    cover: `https://picsum.photos/seed/${i*10}/800/1200`,
+                    poster: `https://picsum.photos/seed/${i*20}/400/600`,
+                    rating: (Math.random() * 1.5 + 8.5).toFixed(1), // เรตติ้ง 8.5 - 10.0
+                    year: 2020 + (i % 5),
+                    genre: category,
+                    type: type,
+                    episodes: episodesList
+                });
+            }
+        }
+        generateData();
+
+        // --- 2. State Management ---
+        let state = {
+            tab: 'home',
+            category: 'ทั้งหมด',
+            searchQuery: '',
+            bannerIndex: 0,
+            activeMovie: null,
+            activeEpisodeIndex: 0,
+            view: 'main'
+        };
+
+        let bannerInterval;
+
+        // --- 3. การควบคุม UI หลัก ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderApp();
+            startBannerAutoPlay();
+        });
+
+        function switchTab(tabId) {
+            state.tab = tabId;
+            state.view = 'main';
+            state.searchQuery = '';
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`nav-${tabId}`).classList.add('active');
+            
+            renderApp();
         }
 
-        // Toast Notification System
-        function showToast(message) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast-message';
-            toast.innerHTML = `<i data-lucide="bell-ring" class="w-5 h-5 text-primary"></i> <span>${message}</span>`;
-            container.appendChild(toast);
-            lucide.createIcons();
-            
-            setTimeout(() => {
-                toast.classList.add('hide');
-                setTimeout(() => toast.remove(), 400);
+        function setCategory(cat) {
+            state.category = cat;
+            renderApp();
+        }
+
+        function toggleSearch() {
+            const searchContainer = document.getElementById('search-container');
+            searchContainer.classList.toggle('hidden');
+            if(!searchContainer.classList.contains('hidden')) {
+                document.getElementById('search-input').focus();
+            } else {
+                state.searchQuery = '';
+                document.getElementById('search-input').value = '';
+                renderApp();
+            }
+        }
+
+        function handleSearch(query) {
+            state.searchQuery = query.toLowerCase();
+            renderApp();
+        }
+
+        function openPlayer(id) {
+            state.activeMovie = moviesData.find(m => m.id === id);
+            state.activeEpisodeIndex = 0; // เริ่มที่ตอน 1 เสมอ
+            state.view = 'player';
+            renderApp();
+        }
+
+        function closePlayer() {
+            state.view = 'main';
+            state.activeMovie = null;
+            renderApp();
+        }
+
+        function changeEpisode(index) {
+            state.activeEpisodeIndex = index;
+            renderApp(); // Render ใหม่เพื่อให้เพลเยอร์เปลี่ยนวิดีโอ
+        }
+
+        // --- 4. Logic แบนเนอร์สไลด์ ---
+        function startBannerAutoPlay() {
+            clearInterval(bannerInterval);
+            bannerInterval = setInterval(() => {
+                if (state.tab === 'home' && state.view === 'main' && !state.searchQuery) {
+                    state.bannerIndex = (state.bannerIndex + 1) % 5;
+                    renderHomeBannerOnly();
+                }
             }, 5000);
         }
 
-        // Notification Bell Update
-        function updateBellIcon() {
-            const badge = document.getElementById('notif-badge');
-            const icon = document.getElementById('bell-icon');
-            if(unreadNotifications > 0) {
-                badge.innerText = unreadNotifications > 9 ? '9+' : unreadNotifications;
-                badge.classList.remove('hidden');
-                icon.classList.add('text-primary', 'animate-ring');
-                setTimeout(() => icon.classList.remove('animate-ring'), 1000);
+        function renderHomeBannerOnly() {
+            const bannerContainer = document.getElementById('hero-banner-container');
+            if (bannerContainer) {
+                bannerContainer.innerHTML = generateBannerHTML();
+                lucide.createIcons();
+            }
+        }
+
+        // --- 5. Render Functions ---
+        function renderApp() {
+            const content = document.getElementById('app-content');
+            const header = document.getElementById('main-header');
+            const nav = document.getElementById('bottom-nav');
+
+            if (state.view === 'player') {
+                header.style.display = 'none';
+                nav.style.display = 'none';
+                content.innerHTML = generateStandardPlayer();
+            } else if (state.tab === 'miniseries') {
+                header.style.display = 'none';
+                nav.style.display = 'flex';
+                content.innerHTML = generateMiniSeriesHTML();
+                setupTikTokObserver();
             } else {
-                badge.classList.add('hidden');
-                icon.classList.remove('text-primary');
-                icon.classList.add('text-gray-400');
+                header.style.display = 'block';
+                nav.style.display = 'flex';
+                
+                if (state.tab === 'home') content.innerHTML = generateHomeHTML();
+                if (state.tab === 'library') content.innerHTML = generateLibraryHTML();
             }
-        }
-        function clearNotifications() {
-            unreadNotifications = 0;
-            updateBellIcon();
+            
+            lucide.createIcons();
+            if(state.view !== 'player') content.scrollTop = 0;
         }
 
-        // Add Data Modal
-        let currentAddSheet = '';
-        function openAddModal(sheet) {
-            currentAddSheet = sheet;
-            const container = document.getElementById('add-inputs-container');
-            container.innerHTML = '';
+        // --- 6. HTML Generators ---
+
+        function generateBannerHTML() {
+            const hero = moviesData[state.bannerIndex];
+            return `
+                <div class="relative w-full h-[75vh] slide-fade border-b-2 border-[var(--gold-accent)]/30" id="hero-banner">
+                    <img src="${hero.cover}" class="absolute inset-0 w-full h-full object-cover opacity-60">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--app-bg)] via-[var(--app-bg)]/40 to-transparent"></div>
+                    
+                    <div class="absolute bottom-0 w-full px-5 pb-8 flex flex-col items-center text-center">
+                        <span class="text-[var(--gold-accent)] border border-[var(--gold-accent)]/50 px-3 py-1 rounded-sm text-[10px] font-bold tracking-widest mb-3 bg-black/30 backdrop-blur-sm font-maitree">ยอดนิยมอันดับ ${state.bannerIndex + 1}</span>
+                        <h2 class="text-4xl font-bold font-maitree text-white text-glow-gold mb-2 leading-tight">
+                            ${hero.title}
+                        </h2>
+                        
+                        <div class="flex items-center gap-3 text-xs font-semibold text-gray-300 mb-5 font-maitree">
+                            <span class="text-[var(--primary-red)]"><i data-lucide="star" class="w-3 h-3 inline fill-current"></i> ${hero.rating}</span>
+                            <span class="text-[var(--gold-accent)]">•</span>
+                            <span>${hero.genre}</span>
+                            <span class="text-[var(--gold-accent)]">•</span>
+                            <span>ตอนที่ 1-${hero.episodes.length}</span>
+                        </div>
+                        
+                        <div class="flex gap-4 w-full max-w-[280px]">
+                            <button onclick="openPlayer(${hero.id})" class="flex-1 bg-gradient-to-r from-[var(--primary-red)] to-[#800000] text-white py-3 rounded-full font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(200,16,46,0.6)] font-maitree border border-red-500/50">
+                                <i data-lucide="play" class="fill-current w-4 h-4 text-[var(--gold-accent)]"></i> รับชมตำนาน
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateHomeHTML() {
+            let filteredMovies = moviesData.filter(m => m.type === 'movie');
             
-            let title = '';
-            let fields = [];
-            
-            if(sheet === 'products') {
-                title = 'เพิ่มสินค้า (Product)';
-                fields = [
-                    {id: 'p_id', label: 'รหัสสินค้า', type: 'text', req: true, ph: 'P001'},
-                    {id: 'p_cat', label: 'หมวดหมู่', type: 'text', req: true, ph: 'Category'},
-                    {id: 'p_name', label: 'ชื่อสินค้า', type: 'text', req: true, ph: 'Product Name'},
-                    {id: 'p_desc', label: 'รายละเอียด', type: 'text', req: false, ph: 'Detail...'},
-                    {id: 'p_price', label: 'ราคา (บาท)', type: 'number', req: true, ph: '0'},
-                    {id: 'p_img', label: 'ลิงก์รูปภาพ', type: 'url', req: false, ph: 'https://...'},
-                    {id: 'p_dllink', label: 'ลิงก์โหลดไฟล์', type: 'url', req: false, ph: 'https://...'},
-                    {id: 'p_manual', label: 'ลิงก์คู่มือ', type: 'url', req: false, ph: 'https://...'},
-                    {id: 'p_stock', label: 'สต๊อกสินค้า', type: 'number', req: true, ph: '10'}
-                ];
-            } else if (sheet === 'users') {
-                title = 'เพิ่มผู้ใช้ (User)';
-                fields = [
-                    {id: 'u_fname', label: 'ชื่อ', type: 'text', req: true, ph: 'First Name'},
-                    {id: 'u_lname', label: 'นามสกุล', type: 'text', req: true, ph: 'Last Name'},
-                    {id: 'u_email', label: 'อีเมล', type: 'email', req: true, ph: 'test@mail.com'},
-                    {id: 'u_phone', label: 'เบอร์โทรศัพท์', type: 'text', req: true, ph: '0800000000'},
-                    {id: 'u_pass', label: 'รหัสผ่าน', type: 'text', req: true, ph: 'Password'}
-                ];
-            } else if (sheet === 'options') {
-                title = 'เพิ่มตัวเลือก (Option)';
-                fields = [
-                    {id: 'o_pid', label: 'รหัสสินค้า', type: 'text', req: true, ph: 'P001'},
-                    {id: 'o_name', label: 'ชื่อตัวเลือก', type: 'text', req: true, ph: 'Size L, Color Red...'},
-                    {id: 'o_price', label: 'ราคาบวกเพิ่ม (บาท)', type: 'number', req: true, ph: '0'},
-                    {id: 'o_dllink', label: 'ลิงก์ไฟล์ดาวน์โหลด', type: 'url', req: false, ph: 'https://...'},
-                    {id: 'o_manual', label: 'ลิงก์คู่มือ', type: 'url', req: false, ph: 'https://...'}
-                ];
+            if (state.searchQuery) {
+                filteredMovies = filteredMovies.filter(m => m.title.toLowerCase().includes(state.searchQuery));
+            } else if (state.category !== 'ทั้งหมด') {
+                filteredMovies = filteredMovies.filter(m => m.genre === state.category);
             }
 
-            document.getElementById('add-modal-title').innerText = title;
-            fields.forEach(f => {
-                container.innerHTML += `
-                    <div>
-                        <label class="block text-xs font-bold text-textMuted mb-1">${f.label} ${f.req?'<span class="text-red-500">*</span>':''}</label>
-                        <input type="${f.type}" id="${f.id}" ${f.req?'required':''} placeholder="${f.ph}" class="form-input">
+            let html = '';
+
+            if (!state.searchQuery && state.category === 'ทั้งหมด') {
+                html += `<div id="hero-banner-container">${generateBannerHTML()}</div>`;
+            } else {
+                html += `<div class="h-28"></div>`;
+            }
+
+            // Categories Pills
+            html += `
+                <div class="px-4 py-3 sticky top-0 z-30 bg-[#0a0505]/95 backdrop-blur-md border-b border-[var(--gold-accent)]/20 shadow-lg">
+                    <div class="flex gap-3 overflow-x-auto hide-scrollbar">
+            `;
+            categories.forEach(cat => {
+                const isActive = state.category === cat;
+                html += `<button onclick="setCategory('${cat}')" class="cat-btn px-4 py-1.5 rounded-full border border-[var(--gold-accent)]/30 text-xs font-maitree whitespace-nowrap tracking-wide ${isActive ? 'active' : 'text-[var(--gold-accent)] hover:bg-white/5'}">${cat}</button>`;
+            });
+            html += `</div></div>`;
+
+            // Movie List
+            html += `<div class="px-4 py-6">`;
+            
+            if (state.searchQuery) {
+                html += `<h3 class="font-maitree text-gray-400 mb-4 text-sm">ม้วนคัมภีร์ที่ค้นพบ: <span class="text-[var(--gold-accent)]">"${state.searchQuery}"</span></h3>`;
+            } else {
+                const headText = state.category === 'ทั้งหมด' ? 'ยอดตำนานมาใหม่' : `หมวด: ${state.category}`;
+                html += `<h3 class="text-xl font-bold font-maitree text-[var(--gold-accent)] mb-4 border-l-2 border-[var(--primary-red)] pl-3 text-glow-gold">${headText}</h3>`;
+            }
+
+            if (filteredMovies.length === 0) {
+                html += `<div class="text-center py-10 font-maitree text-gray-500">ไม่พบตำนานที่ท่านค้นหา</div>`;
+            } else {
+                html += `<div class="grid grid-cols-3 gap-3">`;
+                filteredMovies.forEach(movie => {
+                    html += `
+                        <div class="flex flex-col cursor-pointer group" onclick="openPlayer(${movie.id})">
+                            <div class="relative w-full aspect-[2/3] rounded-sm overflow-hidden mb-2 gold-border shadow-md">
+                                <img src="${movie.poster}" loading="lazy" class="w-full h-full object-cover opacity-90 transition-all duration-500 group-hover:scale-110 group-hover:opacity-100">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                                <div class="absolute inset-0 bg-[var(--primary-red)]/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                    <i data-lucide="play-circle" class="w-8 h-8 text-[var(--gold-accent)]"></i>
+                                </div>
+                                <div class="absolute top-1 right-1 bg-black/80 px-1.5 rounded text-[9px] text-[var(--gold-accent)] font-bold border border-[var(--gold-accent)]/50">${movie.episodes.length} ตอน</div>
+                            </div>
+                            <h4 class="text-sm font-semibold font-maitree text-gray-200 truncate group-hover:text-[var(--gold-accent)] transition-colors">${movie.title}</h4>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            html += `</div>`;
+
+            return html;
+        }
+
+        // --- 7. Mini Series (TikTok Style) โฉมใหม่ ---
+        function generateMiniSeriesHTML() {
+            const miniseries = moviesData.filter(m => m.type === 'miniseries');
+            let html = `<div class="tiktok-scroll-container" id="tiktok-container">`;
+            
+            miniseries.forEach((movie) => {
+                html += `
+                    <div class="tiktok-video-item">
+                        <video src="${movie.episodes[0].videoUrl}" poster="${movie.cover}" loop muted playsinline data-id="${movie.id}"></video>
+                        
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent pointer-events-none"></div>
+                        
+                        <!-- Header แบบมินิมอล -->
+                        <div class="absolute top-12 left-0 w-full flex justify-center z-20 pointer-events-none">
+                            <span class="text-[var(--gold-accent)] font-maitree text-lg font-bold text-glow-gold tracking-widest opacity-80">มินิซีรีส์</span>
+                        </div>
+
+                        <!-- Right Actions (เหลือแค่แชร์ และ เปิดเสียง) -->
+                        <div class="absolute right-4 bottom-32 flex flex-col items-center gap-6 z-20">
+                            <!-- ปุ่มแชร์ -->
+                            <div class="flex flex-col items-center group cursor-pointer">
+                                <div class="w-12 h-12 bg-black/50 border border-[var(--gold-accent)]/30 rounded-full flex items-center justify-center backdrop-blur-md group-hover:bg-[var(--primary-red)]/80 transition">
+                                    <i data-lucide="share-2" class="w-5 h-5 text-[var(--gold-accent)]"></i>
+                                </div>
+                                <span class="text-[10px] font-maitree mt-1 text-gray-300">ส่งต่อ</span>
+                            </div>
+
+                            <!-- ปุ่มเปิด/ปิดเสียง -->
+                            <div class="flex flex-col items-center cursor-pointer mt-2" onclick="toggleMute(this)">
+                                <div class="w-12 h-12 bg-black/50 border border-[var(--gold-accent)]/30 rounded-full flex items-center justify-center backdrop-blur-md transition sound-btn-bg">
+                                    <i data-lucide="volume-x" class="w-5 h-5 text-gray-400 mute-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Info -->
+                        <div class="absolute bottom-20 left-5 right-20 z-20">
+                            <span class="bg-[var(--primary-red)] text-white px-2 py-0.5 rounded text-[10px] font-bold mb-2 inline-block font-maitree border border-red-400">Exclusive</span>
+                            <h2 class="text-2xl font-bold font-maitree text-[var(--gold-accent)] mb-1 text-glow-gold">${movie.title}</h2>
+                            <p class="text-sm text-gray-300 line-clamp-2 font-prompt opacity-90 leading-relaxed">
+                                ${movie.description}
+                            </p>
+                        </div>
                     </div>
                 `;
             });
-            document.getElementById('add-data-modal').classList.add('active');
-        }
-        function closeAddModal() {
-            document.getElementById('add-data-modal').classList.remove('active');
-            document.getElementById('add-data-form').reset();
-        }
-        async function submitAddData(e) {
-            e.preventDefault();
-            let data = [];
-            if(currentAddSheet === 'products') {
-                data = [
-                    document.getElementById('p_id').value, document.getElementById('p_cat').value, document.getElementById('p_name').value, document.getElementById('p_desc').value, document.getElementById('p_price').value, document.getElementById('p_img').value, document.getElementById('p_dllink').value, document.getElementById('p_manual').value, document.getElementById('p_stock').value
-                ];
-            } else if (currentAddSheet === 'users') {
-                data = [
-                    document.getElementById('u_fname').value, document.getElementById('u_lname').value, document.getElementById('u_email').value, document.getElementById('u_phone').value, document.getElementById('u_pass').value
-                ];
-            } else if (currentAddSheet === 'options') {
-                data = [
-                    document.getElementById('o_pid').value, document.getElementById('o_name').value, document.getElementById('o_price').value, document.getElementById('o_dllink').value, document.getElementById('o_manual').value
-                ];
-            }
-            
-            closeAddModal();
-            showLoader(true);
-            try {
-                const res = await fetch(GAS_URL, { 
-                    redirect: "follow",
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'adminAddRow', sheet: currentAddSheet, data: data }) 
-                });
-                const resText = await res.text();
-                try {
-                    const resData = JSON.parse(resText);
-                    if(resData.status === 'success') { showPopup("Success", "เพิ่มข้อมูลสำเร็จ", fetchDataSilent); } 
-                    else { showPopup("Error", resData.message); }
-                } catch(parseErr) {
-                    showPopup("Error", "เกิดข้อผิดพลาดในการอ่านข้อมูลจากเซิร์ฟเวอร์");
-                }
-            } catch(err) { showPopup("Error", "Connection failed. ตรวจสอบการเชื่อมต่อ"); }
-            showLoader(false);
+            html += `</div>`;
+            return html;
         }
 
-        function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            const overlay = document.getElementById('mobile-overlay');
-            if (sb.classList.contains('-translate-x-full')) {
-                sb.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
+        function setupTikTokObserver() {
+            const videos = document.querySelectorAll('.tiktok-video-item video');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target;
+                    if (entry.isIntersecting) {
+                        video.play().catch(e => console.log("Auto-play prevented", e));
+                    } else {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                });
+            }, { threshold: 0.7 });
+
+            videos.forEach(video => {
+                observer.observe(video);
+                video.addEventListener('click', () => {
+                    if (video.paused) video.play(); else video.pause();
+                });
+            });
+        }
+
+        function toggleMute(btnElement) {
+            const container = btnElement.closest('.tiktok-video-item');
+            const video = container.querySelector('video');
+            const icon = btnElement.querySelector('.mute-icon');
+            const bg = btnElement.querySelector('.sound-btn-bg');
+
+            if (video.muted) {
+                video.muted = false;
+                icon.setAttribute('data-lucide', 'volume-2');
+                icon.classList.replace('text-gray-400', 'text-[var(--gold-accent)]');
+                bg.classList.replace('bg-black/50', 'bg-[var(--primary-red)]/80');
             } else {
-                sb.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
+                video.muted = true;
+                icon.setAttribute('data-lucide', 'volume-x');
+                icon.classList.replace('text-[var(--gold-accent)]', 'text-gray-400');
+                bg.classList.replace('bg-[var(--primary-red)]/80', 'bg-black/50');
             }
-        }
-
-        // --- Navigation ---
-        document.querySelectorAll('.menu-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = btn.getAttribute('data-target');
-                
-                document.querySelectorAll('.menu-btn').forEach(b => {
-                    b.classList.remove('bg-[#FF6B00]/10', 'text-primary');
-                    b.classList.add('text-gray-400', 'hover:text-white');
-                });
-                btn.classList.add('bg-[#FF6B00]/10', 'text-primary');
-                btn.classList.remove('text-gray-400', 'hover:text-white');
-
-                document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
-                document.getElementById(`view-${target}`).classList.remove('hidden');
-                
-                if(window.innerWidth < 1024) toggleSidebar();
-                document.getElementById('scroll-area').scrollTop = 0;
-            });
-        });
-
-        // --- Auth ---
-        window.onload = () => {
-            const isLogged = localStorage.getItem('nextLiveAdmin');
-            if(isLogged) {
-                document.getElementById('login-overlay').style.display = 'none';
-                fetchData();
-                // อนุญาตให้เล่นเสียงได้หลังจากเริ่มทำงาน
-                document.body.addEventListener('click', () => { window.audioInit = true; }, {once:true});
-                setInterval(fetchDataSilent, 15000);
-            }
-        };
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const phone = document.getElementById('login-phone').value;
-            showLoader(true);
-            try {
-                const res = await fetch(GAS_URL, { 
-                    redirect: "follow",
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({action: 'adminLogin', email, phone}) 
-                });
-                const text = await res.text();
-                try {
-                    const data = JSON.parse(text);
-                    if(data.status === 'success') {
-                        localStorage.setItem('nextLiveAdmin', 'true');
-                        document.getElementById('login-overlay').style.display = 'none';
-                        window.audioInit = true; // อนุญาตให้เล่นเสียงหลัง login
-                        showPopup("Welcome", "เข้าสู่ระบบสำเร็จ");
-                        fetchData();
-                        setInterval(fetchDataSilent, 15000);
-                    } else {
-                        showPopup("Error", data.message);
-                    }
-                } catch(e) { showPopup("Error", "รหัสจากเซิร์ฟเวอร์ผิดพลาด"); }
-            } catch(err) { showPopup("Error", "Connection failed. ตรวจสอบ Web App URL"); }
-            showLoader(false);
-        }
-        function logout() { localStorage.removeItem('nextLiveAdmin'); location.reload(); }
-
-        // --- Data Fetching & Rendering ---
-        async function fetchData() {
-            showLoader(true);
-            try {
-                const res = await fetch(GAS_URL, { 
-                    redirect: "follow",
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({action: 'adminGetData'}) 
-                });
-                const text = await res.text();
-                try {
-                    const data = JSON.parse(text);
-                    if(data.status === 'success') {
-                        processFetchedData(data.data, true);
-                    } else { showPopup("Error", "Failed to load data: " + data.message); }
-                } catch(e) {
-                    console.error("System Error:", e);
-                    showPopup("Error", "ข้อมูลจากเซิร์ฟเวอร์ผิดพลาด โปรดตรวจสอบการอัปเดตโค้ด Apps Script");
-                }
-            } catch(err) { 
-                console.error("Network Error:", err);
-                showPopup("Error", "Connection failed. ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต"); 
-            }
-            showLoader(false);
-        }
-
-        async function fetchDataSilent() {
-            try {
-                const res = await fetch(GAS_URL, { 
-                    redirect: "follow",
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({action: 'adminGetData'}) 
-                });
-                const text = await res.text();
-                const data = JSON.parse(text);
-                if(data.status === 'success') {
-                    processFetchedData(data.data, false);
-                }
-            } catch(err) {}
-        }
-
-        function processFetchedData(newData, isInitialLoad) {
-            let newOrdersCount = newData.orders.length;
-            let newDepsCount = newData.deposits.length;
-            let newWitsCount = newData.withdraws.length;
-            let newBooksCount = newData.booking.length;
-
-            if(!isInitialLoad && previousCounts.orders !== -1) {
-                let newItems = [];
-                if(newOrdersCount > previousCounts.orders) newItems.push('ออเดอร์ใหม่');
-                if(newDepsCount > previousCounts.deposits) newItems.push('รายการฝากเงิน');
-                if(newWitsCount > previousCounts.withdraws) newItems.push('รายการถอนเงิน');
-                if(newBooksCount > previousCounts.booking) newItems.push('จองคิวใหม่');
-
-                if(newItems.length > 0) {
-                    showToast(`มีการอัปเดต: ${newItems.join(', ')}`);
-                    unreadNotifications += newItems.length;
-                    updateBellIcon();
-                    
-                    // เรียกใช้งานเสียงเมื่อมีรายการใหม่
-                    if(window.audioInit) { playNotificationSound(); }
-                }
-            }
-
-            previousCounts = { orders: newOrdersCount, deposits: newDepsCount, withdraws: newWitsCount, booking: newBooksCount };
-            state = newData;
-
-            if(!isEditing) {
-                renderAllTables();
-                updateDashboard();
-                updateSummaryBoxes();
-            }
-        }
-
-        // --- Select Options Definitions ---
-        const STATUS_OPTIONS = {
-            deposits: ['รอดำเนินการ', 'สำเร็จ', 'ไม่สำเร็จ', 'ยกเลิก', 'สลิปซ้ำ'],
-            withdraws: ['รอดำเนินการ', 'โอนแล้ว', 'ยกเลิก'],
-            orders: ['รอดำเนินการ', 'การชำระเงินถูกต้อง', 'ยกเลิก'],
-            booking: ['รอเรียกคิว', 'เข้ารับบริการแล้ว', 'ยกเลิกแล้ว'],
-            affiliate: ['ได้รับแล้ว', 'รอย้ายเข้าเป๋า', 'ถอนรายได้']
-        };
-        const FINAL_STATUSES = ['สำเร็จ', 'ไม่สำเร็จ', 'ยกเลิก', 'สลิปซ้ำ', 'โอนแล้ว', 'การชำระเงินถูกต้อง', 'เข้ารับบริการแล้ว', 'ยกเลิกแล้ว', 'สำเร็จ (ฟรี)', 'ได้รับแล้ว', 'ถอนรายได้'];
-
-        function renderAllTables() {
-            buildTable('products', state.products, [0,1,2,3,4,5,6,7,8], -1, []);
-            buildTable('options', state.options, [0,1,2,3,4], -1, []);
-            buildTable('users', state.users, [0,2,3,4,5,6,7,8,9,10], -1, []);
-            buildTable('settings', state.settings, [0,1,2], -1, []);
-            
-            buildTable('deposits', state.deposits, [0,1,2,4,6,8,7], 6, STATUS_OPTIONS.deposits); 
-            buildTable('withdraws', state.withdraws, [0,1,2,4,6,8,7], 6, STATUS_OPTIONS.withdraws); 
-            buildTable('orders', state.orders, [0,1,2,3,4,7,8,9], 7, STATUS_OPTIONS.orders); 
-            buildTable('affiliate', state.affiliate, [0,1,2,3,4,5,6], 6, STATUS_OPTIONS.affiliate);
-            
-            renderBookingTable();
-        }
-
-        function getEditableCols(sheet) {
-            if(sheet === 'products') return [0,1,2,3,4,5,6,7,8];
-            if(sheet === 'options') return [0,1,2,3,4];
-            if(sheet === 'users') return [2,3,4,5,6,7,8,9,10];
-            if(sheet === 'settings') return [1,2];
-            if(sheet === 'deposits') return [6]; 
-            if(sheet === 'withdraws') return [6];
-            if(sheet === 'orders') return [7];
-            if(sheet === 'booking') return [14, 15]; 
-            if(sheet === 'affiliate') return [6]; 
-            return [];
-        }
-
-        function buildTable(sheet, dataList, mapping, mappedStatusColIndex, statusArray) {
-            const tbody = document.getElementById(`tbody-${sheet}`);
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            
-            if(!dataList || dataList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="15" class="text-center text-textMuted py-6">No data found.</td></tr>`; return;
-            }
-
-            const editCols = getEditableCols(sheet);
-
-            dataList.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.id = `row-${sheet}-${item.row}`;
-                
-                let isFinal = false;
-                if(mappedStatusColIndex > -1) {
-                    let st = String(item.cols[mapping[mappedStatusColIndex]]).trim();
-                    if(FINAL_STATUSES.some(f => st.indexOf(f) > -1)) isFinal = true;
-                }
-
-                let html = '';
-                mapping.forEach((origIdx, currentMapIdx) => {
-                    let val = item.cols[origIdx] === undefined ? '' : item.cols[origIdx];
-                    let displayVal = val;
-                    
-                    if(typeof val === 'string' && val.startsWith('http')) {
-                        let isImage = val.match(/\.(jpeg|jpg|gif|png)$/i) != null || origIdx === 8 /* slip in tx or orders */ || origIdx === 5 /* img in prod */;
-                        if(isImage || val.includes('drive.google') || val.includes('slipok')) {
-                            displayVal = `<div class="cursor-pointer bg-[#222] hover:bg-primary/20 border border-[#333] hover:border-primary text-gray-400 hover:text-primary rounded-lg w-10 h-10 flex items-center justify-center transition-all shadow-sm mx-auto" onclick="openImagePreview('${val}')" title="คลิกเพื่อดูรูปภาพ">
-                                            <i data-lucide="image" class="w-5 h-5"></i>
-                                          </div>`;
-                            html += `<td class="text-center w-20">${displayVal}</td>`;
-                            return; 
-                        } else {
-                            displayVal = `<a href="${val}" target="_blank" class="text-primary underline"><i data-lucide="link" class="w-4 h-4 inline"></i> Link</a>`;
-                        }
-                    }
-
-                    if(currentMapIdx === mappedStatusColIndex) {
-                        if(isFinal) {
-                            let color = 'text-gray-400 border-[#333]';
-                            if(val.includes('สำเร็จ') || val.includes('โอนแล้ว')) color = 'text-[#10B981] border-[#10B981]/30 bg-[#10B981]/10';
-                            if(val.includes('ยกเลิก') || val.includes('ไม่สำเร็จ')) color = 'text-[#EF4444] border-[#EF4444]/30 bg-[#EF4444]/10';
-                            html += `<td><span class="px-2 py-1 rounded text-xs font-bold border ${color}">${val}</span></td>`;
-                        } else {
-                            let optionsHtml = statusArray.map(opt => `<option value="${opt}" ${val.indexOf(opt)>-1?'selected':''}>${opt}</option>`).join('');
-                            html += `<td><select id="input-${sheet}-${item.row}-${origIdx}" class="form-select bg-main" onchange="markDirty('${sheet}', ${item.row})">${optionsHtml}</select></td>`;
-                        }
-                    } else {
-                        let canEdit = editCols.includes(origIdx) && !isFinal;
-                        html += `<td class="max-w-[200px] truncate" title="${val}">`;
-                        if(canEdit) {
-                            html += `<input type="text" id="input-${sheet}-${item.row}-${origIdx}" class="form-input bg-transparent border-transparent px-0 py-0 focus:bg-main focus:border-[#333] focus:px-2 focus:py-1 transition-all w-full" value="${val}" oninput="markDirty('${sheet}', ${item.row})">`;
-                        } else {
-                            html += displayVal;
-                        }
-                        html += `</td>`;
-                    }
-                });
-
-                if(isFinal) {
-                    html += `<td class="text-center"><button onclick="confirmDelete('${sheet}', ${item.row})" class="text-gray-600 hover:text-danger"><i data-lucide="trash" class="w-4 h-4 mx-auto"></i></button></td>`;
-                } else {
-                    html += `
-                        <td class="text-center">
-                            <div class="flex justify-center gap-3">
-                                <button id="btn-save-${sheet}-${item.row}" onclick="saveRow('${sheet}', ${item.row})" class="text-gray-600 hover:text-success hidden"><i data-lucide="save" class="w-4 h-4"></i></button>
-                                <button onclick="confirmDelete('${sheet}', ${item.row})" class="text-gray-600 hover:text-danger"><i data-lucide="trash" class="w-4 h-4"></i></button>
-                            </div>
-                        </td>
-                    `;
-                }
-
-                tr.innerHTML = html;
-                tbody.appendChild(tr);
-            });
             lucide.createIcons();
         }
 
-        function renderBookingTable() {
-            const sheet = 'booking';
-            const tbody = document.getElementById(`tbody-${sheet}`);
-            tbody.innerHTML = '';
-            if(!state.booking || state.booking.length === 0) return;
-            
-            const editCols = getEditableCols(sheet);
+        function generateLibraryHTML() {
+            return `
+                <div class="pt-20 px-4 h-full flex flex-col items-center justify-center text-center pb-20 font-maitree">
+                    <div class="w-20 h-20 rounded-full border-2 border-[var(--gold-accent)]/50 flex items-center justify-center mb-6 bg-black/50">
+                        <i data-lucide="book" class="w-10 h-10 text-[var(--gold-accent)]"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-[var(--gold-accent)] mb-2">หอตำราลับ</h2>
+                    <p class="text-sm text-gray-400 mb-8 font-prompt">ท่านยังไม่ได้เก็บรวบรวมม้วนคัมภีร์ใดๆ ไว้ในหอตำรา</p>
+                    <button onclick="switchTab('home')" class="border border-[var(--primary-red)] text-[var(--primary-red)] px-8 py-2.5 rounded-sm font-bold text-sm hover:bg-[var(--primary-red)] hover:text-[var(--gold-accent)] transition">
+                        ค้นหาตำนาน
+                    </button>
+                </div>
+            `;
+        }
 
-            state.booking.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.id = `row-${sheet}-${item.row}`;
-                
-                let st = String(item.cols[14]).trim();
-                let isFinal = FINAL_STATUSES.some(f => st.indexOf(f) > -1);
+        // --- 8. Standard Player (หน้ารายละเอียด และ ระบบตอน) ---
+        function generateStandardPlayer() {
+            const movie = state.activeMovie;
+            const currentEp = movie.episodes[state.activeEpisodeIndex];
 
-                let displayBookStr = `${item.cols[9]}<br><span class="text-xs text-textMuted">${item.cols[10]}</span>`;
-                let qStr = `${item.cols[11]}<br><span class="text-xs text-textMuted">Seq: ${item.cols[12]}</span>`;
-                let nameStr = `${item.cols[3]} ${item.cols[4]}`;
-                let topicStr = `<b>${item.cols[7]}</b><br><span class="text-xs text-textMuted">${item.cols[8]}</span>`;
-
-                let html = `
-                    <td class="whitespace-nowrap">${displayBookStr}</td>
-                    <td class="whitespace-nowrap font-bold text-primary">${qStr}</td>
-                    <td class="whitespace-nowrap">${nameStr}</td>
-                    <td class="min-w-[200px]">${topicStr}</td>
-                    <td>${item.cols[13]}</td>
+            // สร้างรายชื่อตอน
+            let episodesHTML = '';
+            movie.episodes.forEach((ep, idx) => {
+                const isActive = idx === state.activeEpisodeIndex;
+                episodesHTML += `
+                    <div onclick="changeEpisode(${idx})" class="flex items-center gap-4 p-3 rounded-md cursor-pointer transition-all ${isActive ? 'bg-[var(--primary-red)]/20 border border-[var(--primary-red)]/50' : 'bg-black/40 hover:bg-white/5 border border-[var(--gold-accent)]/10'}">
+                        <div class="w-12 h-8 rounded flex justify-center items-center shrink-0 ${isActive ? 'bg-[var(--primary-red)] text-[var(--gold-accent)]' : 'bg-black text-gray-500 border border-[var(--gold-accent)]/20'} font-bold font-maitree text-sm">
+                            EP ${ep.ep}
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-sm font-maitree ${isActive ? 'text-[var(--gold-accent)]' : 'text-gray-300'}">${ep.title}</h4>
+                        </div>
+                        ${isActive ? '<i data-lucide="play-circle" class="w-5 h-5 text-[var(--primary-red)]"></i>' : '<i data-lucide="lock" class="w-4 h-4 text-gray-600"></i>'}
+                    </div>
                 `;
-
-                if(isFinal) {
-                    let color = 'text-gray-400 border-[#333]';
-                    if(st.includes('เข้ารับบริการ')) color = 'text-[#10B981] border-[#10B981]/30 bg-[#10B981]/10';
-                    if(st.includes('ยกเลิก')) color = 'text-[#EF4444] border-[#EF4444]/30 bg-[#EF4444]/10';
-                    html += `<td><span class="px-2 py-1 rounded text-xs font-bold border ${color}">${st}</span></td>`;
-                } else {
-                    let optionsHtml = STATUS_OPTIONS.booking.map(opt => `<option value="${opt}" ${st.indexOf(opt)>-1?'selected':''}>${opt}</option>`).join('');
-                    html += `<td><select id="input-${sheet}-${item.row}-14" class="form-select bg-main" onchange="markDirty('${sheet}', ${item.row})">${optionsHtml}</select></td>`;
-                }
-
-                html += `<td>`;
-                if(!isFinal) {
-                    html += `<input type="text" id="input-${sheet}-${item.row}-15" class="form-input bg-transparent border-transparent px-0 py-0 focus:bg-main focus:border-[#333] focus:px-2 focus:py-1 transition-all w-full" value="${item.cols[15] || ''}" oninput="markDirty('${sheet}', ${item.row})">`;
-                } else {
-                    html += item.cols[15] || '-';
-                }
-                html += `</td>`;
-
-                html += `<td class="text-center"><div class="flex justify-center gap-3">`;
-                if(!isFinal) {
-                    html += `<button onclick="callQueue(${item.row}, '${item.cols[5]}')" class="text-gray-400 hover:text-primary" title="Call Queue (Email)"><i data-lucide="bell" class="w-4 h-4"></i></button>`;
-                    html += `<button id="btn-save-${sheet}-${item.row}" onclick="saveRow('${sheet}', ${item.row})" class="text-gray-600 hover:text-success hidden"><i data-lucide="save" class="w-4 h-4"></i></button>`;
-                }
-                html += `<button onclick="confirmDelete('${sheet}', ${item.row})" class="text-gray-600 hover:text-danger"><i data-lucide="trash" class="w-4 h-4"></i></button></div></td>`;
-
-                tr.innerHTML = html;
-                tbody.appendChild(tr);
-            });
-            lucide.createIcons();
-        }
-
-        // --- Interaction Logic ---
-        function markDirty(sheet, row) {
-            isEditing = true;
-            const btn = document.getElementById(`btn-save-${sheet}-${row}`);
-            if(btn) { btn.classList.remove('hidden'); btn.classList.add('text-primary'); }
-        }
-
-        async function saveRow(sheet, rowId) {
-            const tr = document.getElementById(`row-${sheet}-${rowId}`);
-            const inputs = tr.querySelectorAll('input[id^="input-"], select[id^="input-"]');
-            let updateData = {};
-            inputs.forEach(input => {
-                let colIdx = input.id.split('-').pop();
-                updateData[colIdx] = input.value;
             });
 
-            if (sheet === 'withdraws' && updateData['7'] === 'ยกเลิก') {
-                showPopup("ยืนยันการยกเลิกถอนเงิน", "ระบบจะทำการ คืนเครดิต ให้ผู้ใช้โดยอัตโนมัติ\nยืนยันหรือไม่?", () => proceedSave(sheet, rowId, updateData), true);
-            } else if (sheet === 'deposits' && updateData['7'] === 'สำเร็จ') {
-                showPopup("ยืนยันรายการสำเร็จ", "ระบบจะทำการ เพิ่มเครดิต ให้ผู้ใช้โดยอัตโนมัติ\nยืนยันหรือไม่?", () => proceedSave(sheet, rowId, updateData), true);
-            } else {
-                proceedSave(sheet, rowId, updateData);
-            }
-        }
+            return `
+                <div class="w-full h-full flex flex-col bg-[var(--app-bg)]">
+                    <!-- Video Section -->
+                    <div class="relative w-full aspect-video bg-black sticky top-0 z-50 border-b border-[var(--gold-accent)]/30">
+                        <button onclick="closePlayer()" class="absolute top-4 left-4 z-50 w-10 h-10 bg-black/60 rounded-full flex items-center justify-center text-[var(--gold-accent)] hover:bg-[var(--primary-red)] transition backdrop-blur-md border border-[var(--gold-accent)]/30">
+                            <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                        </button>
+                        <!-- วิดีโอจะเปลี่ยนตาม Source ที่เลือก -->
+                        <video controls autoplay playsinline poster="${movie.cover}" class="w-full h-full outline-none">
+                            <source src="${currentEp.videoUrl}" type="video/mp4">
+                        </video>
+                    </div>
 
-        async function proceedSave(sheet, rowId, updateData) {
-            showLoader(true);
-            try {
-                const res = await fetch(GAS_URL, { 
-                    redirect: "follow",
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'adminUpdateRow', sheet: sheet, row: rowId, data: updateData }) 
-                });
-                const text = await res.text();
-                const data = JSON.parse(text);
-                showLoader(false);
-                if(data.status === 'success') { 
-                    isEditing = false;
-                    showPopup("Success", "อัปเดตข้อมูลสำเร็จ", fetchDataSilent); 
-                } 
-                else { showPopup("Error", data.message); fetchDataSilent(); }
-            } catch(e) { showLoader(false); showPopup("Error", "Failed to save."); }
-        }
+                    <!-- Detail Section -->
+                    <div class="flex-1 overflow-y-auto px-4 py-5 hide-scrollbar">
+                        <h1 class="text-3xl font-bold font-maitree text-[var(--gold-accent)] mb-2 text-glow-gold">${movie.title}</h1>
+                        
+                        <div class="flex items-center gap-3 text-xs text-gray-400 mb-4 font-maitree">
+                            <span class="text-[var(--primary-red)] border border-[var(--primary-red)] px-1.5 rounded-sm">เรตติ้ง ${movie.rating}</span>
+                            <span class="text-[var(--gold-accent)]">•</span>
+                            <span>${movie.year}</span>
+                            <span class="text-[var(--gold-accent)]">•</span>
+                            <span>หมวด: ${movie.genre}</span>
+                        </div>
 
-        function confirmDelete(sheet, rowId) {
-            showPopup("ยืนยันการลบ", "คุณต้องการลบข้อมูลนี้ใช่หรือไม่?\n(ลบแล้วไม่สามารถกู้คืนได้)", async () => {
-                showLoader(true);
-                try {
-                    const res = await fetch(GAS_URL, { 
-                        redirect: "follow",
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'adminDeleteRow', sheet: sheet, row: rowId }) 
-                    });
-                    const text = await res.text();
-                    const data = JSON.parse(text);
-                    showLoader(false);
-                    if(data.status === 'success') { fetchDataSilent(); } else { showPopup("Error", data.message); }
-                } catch(e) { showLoader(false); showPopup("Error", "Failed to delete."); }
-            }, true);
-        }
+                        <p class="text-sm text-gray-300 mb-6 leading-relaxed opacity-90">${movie.description}</p>
 
-        async function callQueue(rowId, email) {
-            showPopup("เรียกคิว", `ต้องการส่งอีเมลแจ้งเตือนคิวไปยัง:\n${email} หรือไม่?`, async () => {
-                showLoader(true);
-                try {
-                    const res = await fetch(GAS_URL, { 
-                        redirect: "follow",
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify({ action: 'adminCallQueue', row: rowId, email: email }) 
-                    });
-                    const text = await res.text();
-                    const data = JSON.parse(text);
-                    showLoader(false);
-                    if(data.status === 'success') fetchDataSilent(); else { showPopup("Error", "Failed to call."); }
-                } catch(e) { showLoader(false); showPopup("Error", "Failed to call."); }
-            }, true);
-        }
+                        <!-- Actions -->
+                        <div class="flex justify-around mb-8 border-y border-[var(--gold-accent)]/20 py-4">
+                            <button class="flex flex-col items-center gap-2 text-[var(--gold-accent)]/70 hover:text-[var(--gold-accent)] transition">
+                                <i data-lucide="bookmark-plus" class="w-6 h-6"></i>
+                                <span class="text-[10px] font-maitree">เก็บเข้าหอตำรา</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-2 text-[var(--gold-accent)]/70 hover:text-[var(--gold-accent)] transition">
+                                <i data-lucide="share-2" class="w-6 h-6"></i>
+                                <span class="text-[10px] font-maitree">ส่งมอบ</span>
+                            </button>
+                            <button class="flex flex-col items-center gap-2 text-[var(--gold-accent)]/70 hover:text-[var(--gold-accent)] transition">
+                                <i data-lucide="download" class="w-6 h-6"></i>
+                                <span class="text-[10px] font-maitree">บันทึก</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Episodes List -->
+                        <div class="flex justify-between items-end mb-4">
+                            <h3 class="font-bold text-lg font-maitree text-white border-l-2 border-[var(--primary-red)] pl-2">เลือกตอนรับชม</h3>
+                            <span class="text-xs text-[var(--gold-accent)] font-maitree">กำลังเล่น: ตอนที่ ${currentEp.ep}</span>
+                        </div>
+                        <div class="space-y-2 pb-8">
+                            ${episodesHTML}
+                        </div>
 
-        async function handleBroadcast(e) {
-            e.preventDefault();
-            showPopup("ส่ง Broadcast", "ระบบจะส่งอีเมลหาผู้ใช้ 'ทุกคน' ในระบบ\nคุณแน่ใจหรือไม่?", async () => {
-                showLoader(true);
-                try {
-                    const payload = {
-                        action: 'adminBroadcast',
-                        subject: document.getElementById('bc-subject').value,
-                        imgUrl: document.getElementById('bc-image').value,
-                        message: document.getElementById('bc-message').value
-                    };
-                    const res = await fetch(GAS_URL, { 
-                        redirect: "follow",
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(payload) 
-                    });
-                    const text = await res.text();
-                    const data = JSON.parse(text);
-                    showLoader(false);
-                    if(data.status === 'success') {
-                        showPopup("Success", "ส่ง Broadcast สำเร็จ");
-                        document.getElementById('bc-subject').value = '';
-                        document.getElementById('bc-image').value = '';
-                        document.getElementById('bc-message').value = '';
-                    } else { showPopup("Error", data.message); }
-                } catch(err) { showLoader(false); showPopup("Error", "Failed to send."); }
-            }, true);
-        }
-
-        // --- Dashboard & Summary Boxes ---
-        function updateSummaryBoxes() {
-            // Products
-            safeSetText('sum-prod-total', state.products.length);
-            let cats = new Set(); let sumPrice = 0;
-            state.products.forEach(p => { cats.add(p.cols[1]); sumPrice+=parseFloat(p.cols[4]||0); });
-            safeSetText('sum-prod-cat', cats.size);
-            safeSetText('sum-prod-avg', `฿${state.products.length > 0 ? (sumPrice/state.products.length).toFixed(2) : 0}`);
-
-            // Users
-            safeSetText('sum-user-total', state.users.length);
-            let uBal = 0; let newU = 0; let todayStr = new Date().toLocaleDateString('en-GB').split('/').reverse().join('-'); 
-            state.users.forEach(u => { uBal+=parseFloat(u.cols[10]||0); if(String(u.cols[0]).includes(new Date().getDate())) newU++; });
-            safeSetText('sum-user-bal', `฿${uBal.toLocaleString()}`);
-            safeSetText('sum-user-new', newU);
-
-            // Orders
-            safeSetText('sum-ord-total', state.orders.length);
-            let oRev = 0; let oPen = 0;
-            state.orders.forEach(o => { 
-                let st = String(o.cols[9]);
-                if(st.includes('สำเร็จ') || st.includes('ถูกต้อง')) oRev+=parseFloat(o.cols[7]||0); 
-                else if(!st.includes('ยกเลิก')) oPen++;
-            });
-            safeSetText('sum-ord-rev', `฿${oRev.toLocaleString()}`);
-            safeSetText('sum-ord-pen', oPen);
-
-            // Deposits
-            safeSetText('sum-dep-total', state.deposits.length);
-            let dRev = 0; let dPen = 0;
-            state.deposits.forEach(d => { 
-                let st = String(d.cols[7]);
-                if(st.includes('สำเร็จ')) dRev+=parseFloat(d.cols[6]||0); 
-                else if(st.includes('รอ')) dPen++;
-            });
-            safeSetText('sum-dep-rev', `฿${dRev.toLocaleString()}`);
-            safeSetText('sum-dep-pen', dPen);
-
-            // Withdraws
-            let wRev = 0; let wPen = 0; let wCan = 0;
-            state.withdraws.forEach(w => { 
-                let st = String(w.cols[7]);
-                if(st.includes('สำเร็จ') || st.includes('โอนแล้ว')) wRev+=parseFloat(w.cols[6]||0); 
-                else if(st.includes('ยกเลิก')) wCan++;
-                else wPen++;
-            });
-            safeSetText('sum-wit-rev', `฿${wRev.toLocaleString()}`);
-            safeSetText('sum-wit-pen', wPen);
-            safeSetText('sum-wit-can', wCan);
-
-            // Booking
-            safeSetText('sum-bk-total', state.booking.length);
-            let bkPen = 0; let bkDone = 0;
-            state.booking.forEach(b => { 
-                let st = String(b.cols[14]);
-                if(st.includes('รอ')) bkPen++; else if(st.includes('เข้า')) bkDone++;
-            });
-            safeSetText('sum-bk-pen', bkPen);
-            safeSetText('sum-bk-done', bkDone);
-
-            // Affiliate
-            safeSetText('sum-aff-tx', state.affiliate.length);
-            let aGiven = 0; let aNet = new Set();
-            state.affiliate.forEach(a => { 
-                if(!String(a.cols[3]).includes('ถอนรายได้')) aGiven+=parseFloat(a.cols[5]||0);
-                if(a.cols[1]) aNet.add(a.cols[1]);
-            });
-            safeSetText('sum-aff-given', `฿${aGiven.toLocaleString()}`);
-            safeSetText('sum-aff-net', aNet.size);
-
-            // Options
-            safeSetText('sum-opt-total', state.options.length);
-        }
-
-        function updateDashboard() {
-            let tUser = state.users.length;
-            let tOrder = state.orders.length;
-            let tDep = 0, tWit = 0, tCom = 0;
-
-            state.deposits.forEach(d => { if(String(d.cols[7]).includes('สำเร็จ')) tDep += parseFloat(d.cols[6] || 0); });
-            state.withdraws.forEach(w => { if(String(w.cols[7]).includes('โอนแล้ว')||String(w.cols[7]).includes('สำเร็จ')) tWit += parseFloat(w.cols[6] || 0); });
-            state.affiliate.forEach(a => { if(!String(a.cols[3]).includes('ถอนรายได้')) tCom += parseFloat(a.cols[5] || 0); });
-
-            safeSetText('db-users', tUser);
-            safeSetText('db-orders', tOrder);
-            safeSetText('db-dep', `฿${tDep.toLocaleString()}`);
-            safeSetText('db-wit', `฿${tWit.toLocaleString()}`);
-            safeSetText('db-com', `฿${tCom.toLocaleString()}`);
-
-            drawCharts(tDep, tWit, tCom);
-        }
-
-        function drawCharts(tDep, tWit, tCom) {
-            let oRev = 0;
-            state.orders.forEach(o => { if(String(o.cols[9]).includes('ถูกต้อง')||String(o.cols[9]).includes('สำเร็จ')) oRev+=parseFloat(o.cols[7]||0); });
-
-            // 1. Bar Chart (Statistic Overview)
-            const ctx1 = document.getElementById('statChart');
-            if(chartInstanceStat) chartInstanceStat.destroy();
-            chartInstanceStat = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: ['Deposits', 'Sales(Net)', 'Withdraws', 'Affiliate'],
-                    datasets: [{
-                        label: 'Amount (THB)',
-                        data: [tDep, oRev, tWit, tCom],
-                        backgroundColor: ['#10B981', '#FF6B00', '#EF4444', '#8B5CF6'],
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, animation: false },
-                    scales: {
-                        y: { grid: { color: '#2A2A2A', borderDash: [5, 5] }, ticks: { color: '#888' } },
-                        x: { grid: { display: false }, ticks: { color: '#888' } }
-                    }
-                }
-            });
-
-            // 2. Line Chart (Sales Trend)
-            let dateMap = {};
-            state.orders.forEach(o => {
-                let dStr = String(o.cols[0]).split('|')[0].trim();
-                if(!dateMap[dStr]) dateMap[dStr] = 0;
-                dateMap[dStr]++;
-            });
-            let sortedDates = Object.keys(dateMap).slice(-7); 
-            let trendData = sortedDates.map(d => dateMap[d]);
-
-            const ctx2 = document.getElementById('trendChart');
-            if(chartInstanceTrend) chartInstanceTrend.destroy();
-            chartInstanceTrend = new Chart(ctx2, {
-                type: 'line',
-                data: {
-                    labels: sortedDates.length > 0 ? sortedDates : ['N/A'],
-                    datasets: [{
-                        label: 'Orders Volume',
-                        data: trendData.length > 0 ? trendData : [0],
-                        borderColor: '#FF6B00',
-                        backgroundColor: 'rgba(255, 107, 0, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, animation: false },
-                    scales: {
-                        y: { grid: { color: '#2A2A2A', borderDash: [5, 5] }, ticks: { color: '#888', stepSize: 1 } },
-                        x: { grid: { display: false }, ticks: { color: '#888' } }
-                    }
-                }
-            });
-
-            // 3. Doughnut Chart (Affiliate Tiers Breakdown)
-            let tier1 = 0, tier2 = 0, tier3 = 0, tier4Plus = 0;
-            state.affiliate.forEach(a => {
-                let type = String(a.cols[3]);
-                let amt = parseFloat(a.cols[5] || 0);
-                if (type.includes('ถอนรายได้')) return; // ไม่นำยอดถอนมาคำนวณในกราฟ
-                
-                if (type.includes('ชั้นที่ 2')) tier2 += amt;
-                else if (type.includes('ชั้นที่ 3')) tier3 += amt;
-                else if (type.includes('ชั้นที่')) tier4Plus += amt;
-                else tier1 += amt; // ชั้นที่ 1 (เพื่อนใหม่, เพื่อนเก่า, ไม่มีบัญชี)
-            });
-
-            const ctx3 = document.getElementById('affiliateChart');
-            if(chartInstanceAffiliate) chartInstanceAffiliate.destroy();
-            chartInstanceAffiliate = new Chart(ctx3, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Tier 1 (Direct)', 'Tier 2', 'Tier 3', 'Tier 4+'],
-                    datasets: [{
-                        data: [tier1, tier2, tier3, tier4Plus],
-                        backgroundColor: ['#3B82F6', '#10B981', '#FFC107', '#EF4444'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { position: 'bottom', labels: { color: '#888', font: { size: 11 } } },
-                        animation: false 
-                    },
-                    cutout: '70%'
-                }
-            });
+                        <!-- Related -->
+                        <h3 class="font-bold text-lg font-maitree text-white mb-4 border-l-2 border-[var(--primary-red)] pl-2">ตำนานที่คล้ายกัน</h3>
+                        <div class="grid grid-cols-3 gap-3 pb-10">
+                            ${moviesData.filter(m => m.genre === movie.genre && m.id !== movie.id && m.type === 'movie').slice(0, 3).map(m => `
+                                <div class="cursor-pointer group" onclick="openPlayer(${m.id})">
+                                    <div class="relative rounded-sm overflow-hidden gold-border mb-1">
+                                        <img src="${m.poster}" class="w-full aspect-[2/3] object-cover group-hover:scale-110 transition duration-300 opacity-80 group-hover:opacity-100">
+                                    </div>
+                                    <h4 class="text-[10px] text-[var(--gold-accent)]/80 font-maitree truncate">${m.title}</h4>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
         }
     </script>
 </body>
