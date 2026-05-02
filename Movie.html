@@ -3,539 +3,948 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SiamFlix - ดูหนังออนไลน์</title>
+    <title>ตำหนักอักษร - Imperial Drama Premium</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #050505;
-            color: #ffffff;
-            overflow-x: hidden;
-        }
-
-        /* ซ่อน Scrollbar */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* ตกแต่ง Range Input (Progress Bar) */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-            cursor: pointer;
-        }
-        input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px; width: 16px;
-            border-radius: 50%;
-            background: #E50914;
-            margin-top: -6px;
-            box-shadow: 0 0 8px rgba(229, 9, 20, 0.9);
-            transition: transform 0.1s;
-        }
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-        }
-
-        .hero-gradient {
-            background: linear-gradient(to right, rgba(5,5,5,1) 0%, rgba(5,5,5,0.6) 40%, transparent 100%);
-        }
-        
-        @media (max-width: 768px) {
-            .hero-gradient {
-                background: linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,0.7) 50%, transparent 100%);
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'imperial-red': '#4A0404',
+                        'imperial-dark': '#1a0505',
+                        'gold-light': '#FCE79C',
+                        'gold-main': '#D4AF37',
+                        'gold-dark': '#AA8529',
+                        'bg-dark': '#0a0a0a',
+                        'jade': '#00A86B'
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.4s ease-out',
+                        'pulse-gold': 'pulseGold 2s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        pulseGold: {
+                            '0%, 100%': { boxShadow: '0 0 10px rgba(212, 175, 55, 0.2)' },
+                            '50%': { boxShadow: '0 0 20px rgba(212, 175, 55, 0.6)' },
+                        }
+                    }
+                }
             }
         }
-
-        /* สำหรับโหมด Fullscreen จำลอง (CSS Fallback) */
-        .css-fullscreen {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            max-height: none !important;
-            z-index: 9999 !important;
-            background-color: black !important;
-            border-radius: 0 !important;
+    </script>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
         }
-        .css-fullscreen video {
-            height: 100% !important;
-            width: 100% !important;
-            object-fit: contain !important;
+        
+        /* Mobile App Container */
+        #app-container {
+            width: 100%;
+            max-w: 480px;
+            height: 100vh;
+            height: 100dvh;
+            background: linear-gradient(to bottom, rgba(26, 5, 5, 0.95), rgba(10, 10, 10, 0.98)), url('https://images.unsplash.com/photo-1540316200632-44161a0bc0e9?auto=format&fit=crop&q=80') center/cover;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.15);
         }
 
-        /* ซ่อนปุ่มควบคุมวิดีโอพื้นฐานของเบราว์เซอร์ */
-        video::-webkit-media-controls {
-            display: none !important;
+        /* Gold Text & Effects */
+        .text-gold-gradient {
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
+        }
+        .bg-gold-gradient {
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
+        }
+        .border-gold-glow {
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15), inset 0 0 10px rgba(212, 175, 55, 0.05);
+        }
+
+        /* Hide Scrollbar but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom Scrollbar for Main Content */
+        .scroll-area::-webkit-scrollbar { width: 3px; }
+        .scroll-area::-webkit-scrollbar-track { background: transparent; }
+        .scroll-area::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 10px; }
+
+        /* Hero Slider */
+        .slider-container {
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+        .slider-item {
+            scroll-snap-align: center;
+        }
+        .slider-dot {
+            transition: all 0.3s ease;
+        }
+        .slider-dot.active {
+            width: 16px;
+            background-color: #D4AF37;
+            box-shadow: 0 0 8px #D4AF37;
+        }
+
+        /* Category Menu */
+        .cat-btn {
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .cat-btn.active {
+            color: #FCE79C;
+            font-weight: 500;
+        }
+        .cat-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            border-radius: 2px;
+            box-shadow: 0 0 5px #D4AF37;
+        }
+
+        /* Movie Cards */
+        .movie-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .movie-card:active {
+            transform: scale(0.95);
+        }
+
+        /* Bottom Nav */
+        .nav-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .nav-btn.active {
+            color: #FCE79C;
+            transform: translateY(-8px);
+        }
+        .nav-indicator {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            width: 32px;
+            height: 4px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            box-shadow: 0 -2px 10px rgba(212, 175, 55, 0.5);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-btn.active .nav-indicator {
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* Video Player */
+        video { width: 100%; background: #000; }
+        video::-webkit-media-controls-enclosure { border-radius: 0; }
+        
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        /* Premium Episode Button Style */
+        .ep-btn-premium {
+            background: linear-gradient(145deg, rgba(26, 5, 5, 0.9), rgba(10, 10, 10, 0.9));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 2px 5px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+        .ep-btn-premium:active {
+            transform: scale(0.98);
+        }
+        .ep-btn-premium.active-ep {
+            border-color: #D4AF37;
+            background: linear-gradient(145deg, rgba(74, 4, 4, 0.8), rgba(26, 5, 5, 0.9));
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Progress Bar Animation */
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        .downloading-bar {
+            animation: fillProgress 3s ease-in-out forwards;
+        }
+
+        /* Toast Notification */
+        #toast {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
-<body class="antialiased selection:bg-red-600 selection:text-white">
+<body class="text-gray-200">
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-40 bg-gradient-to-b from-black/90 to-transparent p-4 md:px-8 flex justify-between items-center transition-all duration-300" id="navbar">
-        <div class="flex items-center gap-8">
-            <h1 class="text-3xl font-black text-[#E50914] tracking-wider uppercase drop-shadow-md">SIAMFLIX</h1>
-            <ul class="hidden md:flex gap-6 text-sm font-medium text-gray-300">
-                <li class="text-white cursor-pointer hover:text-[#E50914] transition">HOME</li>
-                <li class="cursor-pointer hover:text-[#E50914] transition">PROFILE</li>
-                <li class="cursor-pointer hover:text-[#E50914] transition">GENRE</li>
-                <li class="cursor-pointer hover:text-[#E50914] transition">DRAMA</li>
-                <li class="cursor-pointer hover:text-[#E50914] transition">MOVIE</li>
-                <li class="cursor-pointer hover:text-[#E50914] transition">CARTOON</li>
-            </ul>
-        </div>
-        <button class="md:hidden text-white hover:text-red-500 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-        </button>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="relative h-[85vh] w-full flex items-center">
-        <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=2000&auto=format&fit=crop" alt="Hero Background" class="w-full h-full object-cover object-top opacity-60">
-            <div class="absolute inset-0 hero-gradient"></div>
-        </div>
-
-        <div class="relative z-10 p-6 md:p-16 max-w-2xl mt-20 md:mt-0">
-            <h2 class="text-5xl md:text-7xl font-black text-[#E50914] mb-2 drop-shadow-[0_0_10px_rgba(229,9,20,0.5)] leading-none uppercase">SIKSA<br>NERAKA</h2>
-            
-            <div class="flex items-center gap-3 text-sm md:text-base text-yellow-500 mb-4">
-                <span>★★★★☆</span>
-                <span class="text-gray-300">| 2023 | 1h 38m | Horor</span>
+<div id="app-container" class="flex flex-col">
+    
+    <!-- Top Header -->
+    <header class="pt-10 pb-2 px-5 bg-gradient-to-b from-black via-black/80 to-transparent z-20 flex justify-between items-center absolute top-0 w-full">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded bg-gold-gradient p-[1px]">
+                <div class="w-full h-full bg-black rounded flex items-center justify-center">
+                    <span class="text-gold-light font-serif text-lg leading-none">ตำ</span>
+                </div>
             </div>
-            
-            <p class="text-gray-300 text-sm md:text-base mb-8 line-clamp-4 md:line-clamp-none">
-                ภาพยนตร์สยองขวัญสุดระทึกขวัญแห่งปี 2023 นำแสดงโดย Ratu Sofya เรื่องราวของการชดใช้กรรมในนรกภูมิที่สมจริงและน่าสะพรึงกลัวที่สุด สร้างจากคอมมิคชื่อดัง
-            </p>
-            
-            <div class="flex gap-4">
-                <!-- กดปุ่มนี้จะเปิดหนังเรื่องแรก (Siksa Neraka) -->
-                <button class="bg-red-700 hover:bg-[#E50914] text-white px-8 py-3 rounded-full font-bold transition shadow-[0_0_20px_rgba(229,9,20,0.4)] flex items-center gap-2 transform hover:scale-105" onclick="openModal(movies[0])">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                    เล่นเลย
-                </button>
-                <button class="bg-black/50 border border-gray-500 hover:border-white hover:bg-white/10 text-white px-8 py-3 rounded-full font-bold transition backdrop-blur-sm">
-                    รายละเอียด
-                </button>
+            <div>
+                <h1 class="text-xl font-bold text-gold-gradient tracking-wide font-serif leading-tight">ตำหนักอักษร</h1>
+                <p class="text-[9px] text-gold-dark uppercase tracking-widest">Premium Imperial</p>
+            </div>
+        </div>
+        <div class="flex gap-3">
+            <button class="text-gold-main hover:text-gold-light transition"><i class="ph ph-magnifying-glass text-2xl"></i></button>
+            <div class="w-8 h-8 rounded-full border border-gold-main flex items-center justify-center bg-imperial-red/80 shadow-[0_0_10px_rgba(212,175,55,0.3)]">
+                <i class="ph ph-user text-gold-light"></i>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="relative z-10 -mt-16 pb-20 bg-gradient-to-b from-transparent via-[#050505] to-[#050505]">
+    <!-- Toast Notification -->
+    <div id="toast" class="absolute top-24 left-1/2 transform -translate-x-1/2 z-50 bg-[#1a0505] border border-gold-main rounded-full px-6 py-2 flex items-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.4)] pointer-events-none">
+        <i class="ph-fill ph-check-circle text-jade text-xl"></i>
+        <span id="toast-msg" class="text-sm text-gold-light font-medium">ดาวน์โหลดสำเร็จ</span>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-1 overflow-y-auto scroll-area pb-24 relative z-0">
         
-        <!-- หมวดหมู่ -->
-        <div class="flex gap-3 md:gap-6 px-6 md:px-16 mb-8 overflow-x-auto hide-scrollbar pb-2 pt-16">
-            <button class="text-white font-bold whitespace-nowrap px-5 py-1.5 bg-red-700/80 border border-red-500 rounded-full shadow-[0_0_10px_rgba(229,9,20,0.3)]">Horor</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-5 py-1.5 border border-transparent hover:border-gray-600 rounded-full transition">Comedy</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-5 py-1.5 border border-transparent hover:border-gray-600 rounded-full transition">Anime</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-5 py-1.5 border border-transparent hover:border-gray-600 rounded-full transition">Action</button>
-            <button class="text-gray-400 hover:text-white font-medium whitespace-nowrap px-5 py-1.5 border border-transparent hover:border-gray-600 rounded-full transition">Thriller</button>
+        <!-- View: Home -->
+        <div id="view-home" class="view-section">
+            
+            <!-- Hero Auto Slider -->
+            <div class="relative w-full h-[65vh] max-h-[500px]">
+                <div id="hero-slider" class="w-full h-full flex overflow-x-auto slider-container no-scrollbar">
+                    <!-- Slides generated by JS -->
+                </div>
+                
+                <!-- Overlay Gradient for Slider -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent pointer-events-none"></div>
+                
+                <!-- Slider Dots -->
+                <div id="slider-dots" class="absolute bottom-6 left-0 w-full flex justify-center gap-2 z-10">
+                    <!-- Dots generated by JS -->
+                </div>
+            </div>
+
+            <!-- Categories Menu (Horizontal Scroll) -->
+            <div class="sticky top-0 z-10 glass-panel px-4 py-3 mt-[-20px] shadow-lg">
+                <div id="category-menu" class="flex gap-6 overflow-x-auto no-scrollbar items-center pb-2">
+                    <button class="cat-btn active text-sm text-gray-400" onclick="filterCategory('all', this)">หน้าแรก</button>
+                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('เทพเซียน', this)"><i class="ph-fill ph-cloud-moon text-gold-dark"></i> เทพเซียน</button>
+                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('ย้อนยุค', this)"><i class="ph-fill ph-scroll text-gold-dark"></i> ย้อนยุค</button>
+                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('ดราม่า', this)"><i class="ph-fill ph-mask-sad text-gold-dark"></i> ดราม่า</button>
+                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('แก้แค้น', this)"><i class="ph-fill ph-sword text-gold-dark"></i> แก้แค้น</button>
+                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('สืบสวน', this)"><i class="ph-fill ph-detective text-gold-dark"></i> สืบสวน</button>
+                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('การ์ตูน', this)"><i class="ph-fill ph-paint-brush text-gold-dark"></i> อนิเมะ/ตงฮวา</button>
+                </div>
+            </div>
+
+            <div class="px-5 mt-6">
+                <!-- Section Title -->
+                <div class="flex justify-between items-end mb-4">
+                    <h3 id="current-category-title" class="text-xl text-gold-light font-serif border-l-4 border-gold-main pl-3 shadow-gold">แนะนำสำหรับคุณ</h3>
+                    <span class="text-xs text-gold-dark cursor-pointer hover:text-gold-light flex items-center">ดูทั้งหมด <i class="ph ph-caret-right"></i></span>
+                </div>
+
+                <!-- Movies Grid -->
+                <div id="movies-grid" class="grid grid-cols-2 gap-x-4 gap-y-6">
+                    <!-- Movie cards generated here -->
+                </div>
+            </div>
+            
+            <div class="h-8"></div>
         </div>
 
-        <!-- Section 1: Trends Now -->
-        <section class="mb-12 px-6 md:px-16">
-            <h3 class="text-xl md:text-2xl font-bold mb-6 flex items-center gap-4 border-l-4 border-[#E50914] pl-3">
-                กำลังฮิต (TRENDS NOW)
-            </h3>
-            <div class="flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar pb-6" id="trendsContainer">
-                <!-- โหลดการ์ดหนังด้วย JS -->
+        <!-- View: Continue Watching -->
+        <div id="view-continue" class="view-section hidden pt-24 px-5">
+            <div class="flex items-center gap-2 mb-6 border-b border-gold-dark/30 pb-3">
+                <i class="ph-fill ph-clock-counter-clockwise text-2xl text-gold-main"></i>
+                <h3 class="text-xl text-gold-gradient font-bold">ประวัติการรับชม</h3>
             </div>
-        </section>
+            <div id="continue-list" class="space-y-4">
+                <!-- List generated by JS -->
+            </div>
+        </div>
 
-        <!-- Section 2: Continue Watching -->
-        <section class="mb-10 px-6 md:px-16">
-            <div class="flex justify-between items-end mb-6">
-                <h3 class="text-xl md:text-2xl font-bold border-l-4 border-[#E50914] pl-3">ดูต่อให้จบ</h3>
-                <button class="text-xs text-gray-400 hover:text-white bg-gray-900 px-4 py-1.5 rounded-full border border-gray-700 transition">ดูทั้งหมด</button>
+        <!-- View: Download (Offline) -->
+        <div id="view-download" class="view-section hidden pt-24 px-5">
+            <div class="flex justify-between items-center mb-6 border-b border-gold-dark/30 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="ph-fill ph-download-simple text-2xl text-gold-main"></i>
+                    <h3 class="text-xl text-gold-gradient font-bold">วิดีโอออฟไลน์</h3>
+                </div>
+                <span class="text-xs text-gray-400" id="download-count">0 รายการ</span>
             </div>
-            <div class="flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar pb-6" id="continueContainer">
-                <!-- โหลดการ์ดตอนหนังด้วย JS -->
+            
+            <!-- Download List -->
+            <div id="download-list" class="space-y-4 min-h-[50vh]">
+                <!-- Empty State (Default) -->
+                <div id="download-empty" class="flex flex-col items-center justify-center mt-32 text-center">
+                    <div class="w-24 h-24 rounded-full bg-[#1a0505] border border-gold-dark/30 flex items-center justify-center mb-6 relative">
+                        <i class="ph-thin ph-download text-5xl text-gold-main"></i>
+                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-imperial-red rounded-full flex items-center justify-center border border-gold-main">
+                            <i class="ph-fill ph-x text-white text-xs"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-lg text-gold-light mb-2 font-medium">ยังไม่มีรายการดาวน์โหลด</h4>
+                    <p class="text-sm text-gray-400 max-w-[250px]">บันทึกซีรีส์เรื่องโปรดไว้ดูตอนไม่มีอินเทอร์เน็ตได้ทุกที่ทุกเวลา</p>
+                    <button class="mt-8 px-6 py-2 rounded-full bg-gold-gradient text-black font-medium text-sm shadow-[0_0_15px_rgba(212,175,55,0.4)]" onclick="switchTab('home')">
+                        หาซีรีส์ดูเลย
+                    </button>
+                </div>
+                <!-- Downloads generated by JS -->
             </div>
-        </section>
+        </div>
 
     </main>
 
-    <!-- Modal เล่นวิดีโอ (ซ่อนไว้เป็นค่าเริ่มต้น) -->
-    <div id="movieModal" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md hidden flex-col transition-opacity duration-300 opacity-0 overflow-hidden">
-        
-        <!-- Header ของ Modal -->
-        <div class="w-full p-4 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent absolute top-0 z-20">
-            <h2 id="modalHeaderTitle" class="text-lg md:text-xl font-bold text-white truncate drop-shadow-md pr-4">กำลังโหลด...</h2>
-            <button onclick="closeModal()" class="bg-gray-800/80 hover:bg-[#E50914] text-white p-2 rounded-full transition shadow-lg flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
+    <!-- View: Movie Player & Details (Overlay) -->
+    <div id="view-player" class="absolute inset-0 bg-bg-dark z-40 hidden flex-col">
+        <!-- Video Container -->
+        <div class="relative w-full bg-black aspect-video flex-shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.9)] z-20">
+            <video id="main-video" controls playsinline preload="metadata">
+                <source src="" type="video/mp4">
+            </video>
+            <!-- Custom Top Bar for Player -->
+            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-black/80 to-transparent pointer-events-none flex items-start p-4 transition-opacity duration-300" id="player-top-bar">
+                <button onclick="closePlayer()" class="pointer-events-auto w-8 h-8 rounded-full bg-black/40 border border-white/20 flex items-center justify-center text-white backdrop-blur hover:bg-gold-main hover:text-black transition">
+                    <i class="ph ph-caret-left text-xl"></i>
+                </button>
+                <span id="player-title" class="ml-4 text-white text-sm font-medium drop-shadow-md truncate max-w-[70%] mt-1"></span>
+            </div>
         </div>
 
-        <div class="w-full h-full mx-auto flex flex-col lg:flex-row overflow-y-auto hide-scrollbar pt-16 lg:pt-20 px-0 lg:px-8 pb-8 gap-4 lg:gap-8">
+        <!-- Movie Details -->
+        <div class="flex-1 overflow-y-auto scroll-area bg-[#0a0a0a] relative z-10">
+            <!-- Background Blur Effect -->
+            <div id="player-bg-blur" class="absolute top-0 left-0 w-full h-64 bg-cover bg-center opacity-20 filter blur-2xl" style="background-image: url('');"></div>
             
-            <!-- Video Player Container (ใช้ตัวนี้ในการทำ Fullscreen) -->
-            <div id="videoContainer" class="w-full lg:w-2/3 xl:w-3/4 relative group bg-black flex flex-col justify-center rounded-none lg:rounded-xl overflow-hidden shadow-2xl shadow-red-900/20 max-h-[40vh] md:max-h-[60vh] lg:max-h-[80vh] transition-all duration-300">
-                
-                <!-- วิดีโอหลัก (ใช้ HTTPS เพื่อให้เล่นได้จริง) -->
-                <video id="mainVideo" class="w-full h-full object-contain" playsinline>
-                    <source src="" type="video/mp4">
-                    เบราว์เซอร์ของคุณไม่รองรับวิดีโอ HTML5
-                </video>
-
-                <!-- Loading Spinner -->
-                <div id="videoLoading" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden bg-black/50">
-                    <svg class="animate-spin h-10 w-10 text-[#E50914]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                </div>
-
-                <!-- Custom Video Controls (แสดงเมื่อ Hover หรือ Pause) -->
-                <div id="videoControls" class="absolute bottom-0 left-0 right-0 p-3 md:p-5 bg-gradient-to-t from-black via-black/80 to-transparent flex flex-col gap-2 md:gap-4 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                    
-                    <!-- Progress Bar -->
-                    <div class="w-full flex items-center gap-3">
-                        <span id="currentTime" class="text-xs md:text-sm font-mono text-gray-300 min-w-[45px] text-right">0:00</span>
-                        <div class="relative flex-1 flex items-center group/slider">
-                            <input type="range" id="progressBar" value="0" min="0" step="0.1" class="w-full absolute z-10">
-                            <!-- แถบสีแดงวิ่งตาม (Visual) -->
-                            <div class="h-1 bg-gray-600 rounded-full w-full absolute z-0 overflow-hidden">
-                                <div id="progressFill" class="h-full bg-[#E50914]" style="width: 0%;"></div>
-                            </div>
-                        </div>
-                        <span id="durationTime" class="text-xs md:text-sm font-mono text-gray-300 min-w-[45px]">0:00</span>
-                    </div>
-
-                    <!-- แถบปุ่ม -->
-                    <div class="flex justify-between items-center text-white mt-1">
-                        <div class="flex items-center gap-4 md:gap-6">
-                            <!-- Play/Pause -->
-                            <button id="playPauseBtn" class="hover:text-[#E50914] transition transform hover:scale-110 active:scale-95">
-                                <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" md:width="32" md:height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" md:width="32" md:height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="hidden"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-                            </button>
-                            
-                            <!-- ควบคุมความเร็ว -->
-                            <div class="relative group/speed">
-                                <button class="text-xs md:text-sm font-medium hover:text-[#E50914] flex items-center gap-1 bg-gray-800/80 px-2 py-1 rounded border border-gray-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                    <span id="speedIndicator">1x</span>
-                                </button>
-                                <!-- เมนูความเร็ว -->
-                                <div class="absolute bottom-full left-0 mb-2 bg-black/90 border border-gray-700 rounded shadow-xl hidden flex-col group-hover/speed:flex z-50 w-24 overflow-hidden text-sm backdrop-blur-md">
-                                    <button class="speed-btn px-4 py-2 hover:bg-red-700 hover:text-white text-left transition" data-speed="0.5">0.5x</button>
-                                    <button class="speed-btn px-4 py-2 hover:bg-red-700 hover:text-white text-left transition text-[#E50914]" data-speed="1">1x (ปกติ)</button>
-                                    <button class="speed-btn px-4 py-2 hover:bg-red-700 hover:text-white text-left transition" data-speed="1.5">1.5x</button>
-                                    <button class="speed-btn px-4 py-2 hover:bg-red-700 hover:text-white text-left transition" data-speed="2">2x</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ปุ่มขยายเต็มจอ (ทำงานได้ 100% ทั้งมือถือแนวนอนและคอม) -->
-                        <button id="fullscreenBtn" class="hover:text-[#E50914] transition p-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-                        </button>
+            <div class="relative z-10 p-5">
+                <div class="flex justify-between items-start mb-1">
+                    <h2 id="detail-title" class="text-2xl font-bold text-gold-light font-serif">ชื่อเรื่อง</h2>
+                    <div class="flex gap-2">
+                        <button class="w-10 h-10 rounded-full bg-[#1a0505] border border-gold-dark/30 flex items-center justify-center text-gold-main"><i class="ph ph-share-network text-xl"></i></button>
+                        <button class="w-10 h-10 rounded-full bg-[#1a0505] border border-gold-dark/30 flex items-center justify-center text-imperial-red"><i class="ph-fill ph-heart text-xl drop-shadow-[0_0_5px_rgba(255,0,0,0.5)]"></i></button>
                     </div>
                 </div>
-            </div>
-
-            <!-- รายละเอียดหนัง -->
-            <div class="w-full lg:w-1/3 xl:w-1/4 flex flex-col px-4 lg:px-0 pb-10">
-                <h1 id="modalTitle" class="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 uppercase tracking-wide">ชื่อเรื่อง</h1>
-                <div class="flex items-center gap-3 text-sm text-yellow-500 mb-4 bg-gray-900/50 w-fit px-3 py-1 rounded-full border border-gray-700">
-                    <span id="modalRating">★★★★★</span>
-                    <span class="text-gray-300">| <span id="modalYear">202X</span> | <span id="modalGenre">Horror</span></span>
-                </div>
                 
-                <p id="modalDesc" class="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
-                    รายละเอียดหนัง...
-                </p>
+                <div class="flex flex-wrap items-center gap-3 text-[11px] text-gray-300 mb-5">
+                    <span id="detail-cat" class="px-2 py-1 rounded bg-[#332211] border border-gold-dark/50 text-gold-light">เทพเซียน</span>
+                    <span class="flex items-center gap-1 text-gold-main font-bold"><i class="ph-fill ph-star"></i> 9.8</span>
+                    <span>2024</span>
+                    <span class="px-1.5 py-0.5 rounded bg-red-900/50 text-white border border-red-500/30">VIP</span>
+                </div>
 
-                <div class="bg-gray-900/60 p-5 rounded-xl border border-gray-800 shadow-inner">
-                    <h4 class="text-white font-bold mb-3 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E50914" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                        ข้อมูลเรื่อง
-                    </h4>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li class="flex gap-2"><span class="w-16 font-medium text-gray-500">ผู้กำกับ:</span> <span class="text-white">Anggy Umbara</span></li>
-                        <li class="flex gap-2"><span class="w-16 font-medium text-gray-500">นักแสดง:</span> <span class="text-white">Ratu Sofya, Kiesha Alvaro</span></li>
-                        <li class="flex gap-2"><span class="w-16 font-medium text-gray-500">ภาพ:</span> <span class="text-green-500 font-semibold border border-green-500 px-1 rounded text-xs">HD 1080p</span></li>
-                    </ul>
+                <div class="relative">
+                    <p id="detail-desc" class="text-sm text-gray-400 leading-relaxed opacity-90 line-clamp-3">รายละเอียดเรื่องย่อ...</p>
+                    <button class="text-gold-dark text-xs mt-1 hover:text-gold-light">อ่านเพิ่มเติม</button>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-3 mt-6 mb-8 border-b border-white/10 pb-6">
+                    <button class="flex-1 bg-gold-gradient text-black py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                        <i class="ph-fill ph-play-circle text-xl"></i> เล่นตอนล่าสุด
+                    </button>
+                    <button id="btn-download-all" class="px-5 py-2.5 rounded-lg bg-[#1a1a1a] border border-white/10 text-white flex flex-col items-center justify-center gap-1 relative overflow-hidden" onclick="downloadCurrentDrama()">
+                        <i id="dl-icon" class="ph-bold ph-download-simple"></i>
+                        <span id="dl-text" class="text-[9px]">โหลด</span>
+                        <!-- Progress Bar Overlay -->
+                        <div id="dl-progress" class="absolute bottom-0 left-0 h-1 bg-gold-main w-0"></div>
+                    </button>
+                </div>
+
+                <!-- Episodes Section (PREMIUM LONG LIST STYLE) -->
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg text-gold-light font-medium border-l-4 border-gold-main pl-2">เลือกตอนรับชม</h3>
+                    <div class="text-xs text-gray-400">อัปเดตล่าสุด</div>
+                </div>
+
+                <!-- Episode Long List Style -->
+                <div id="episodes-list" class="space-y-3 pb-8">
+                    <!-- Episodes generated here -->
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav" class="glass-panel absolute bottom-0 w-full z-40 pb-safe pt-2 px-6 flex justify-between rounded-t-2xl">
+        <button onclick="switchTab('home')" class="nav-btn active flex flex-col items-center p-2 relative text-gray-500 w-20" data-target="view-home">
+            <i class="ph-fill ph-house text-2xl mb-1"></i>
+            <span class="text-[10px] font-medium">หน้าหลัก</span>
+            <div class="nav-indicator"></div>
+        </button>
+        <button onclick="switchTab('continue')" class="nav-btn flex flex-col items-center p-2 relative text-gray-500 w-20" data-target="view-continue">
+            <i class="ph ph-play-circle text-2xl mb-1"></i>
+            <span class="text-[10px] font-medium">ดูต่อ</span>
+            <div class="nav-indicator"></div>
+        </button>
+        <button onclick="switchTab('download')" class="nav-btn flex flex-col items-center p-2 relative text-gray-500 w-20" data-target="view-download">
+            <i class="ph ph-download-simple text-2xl mb-1"></i>
+            <span class="text-[10px] font-medium">ออฟไลน์</span>
+            <div class="nav-indicator"></div>
+            <!-- Badge for new downloads -->
+            <div id="nav-dl-badge" class="absolute top-1 right-5 w-2 h-2 bg-imperial-red rounded-full border border-black hidden"></div>
+        </button>
+    </nav>
+</div>
 
-    <script>
-        // --- 1. ข้อมูลจำลอง (แก้ไขลิงก์วิดีโอเป็น HTTPS เพื่อให้เล่นได้จริงไม่ติดบล็อก) ---
-        const movies = [
-            {
-                id: 1,
-                title: "Siksa Neraka",
-                image: "https://images.unsplash.com/photo-1605806616949-1e87b487bc2a?q=80&w=400&auto=format&fit=crop",
-                // วิดีโอทดสอบคุณภาพสูงจาก Google (Tears of Steel)
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", 
-                rating: "★★★★☆",
-                year: "2023",
-                genre: "Horor",
-                desc: "เรื่องราวสยองขวัญเกี่ยวกับการชดใช้กรรมในนรก เมื่อวัยรุ่นกลุ่มหนึ่งต้องเผชิญหน้ากับบาปกรรมที่พวกเขาก่อไว้ในอดีต (ตัวอย่างหนังใช้ภาพยนตร์ไซไฟ Tears of Steel เพื่อการทดสอบระบบ Player)"
-            },
-            {
-                id: 2,
-                title: "Pengantin Iblis",
-                image: "https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?q=80&w=400&auto=format&fit=crop",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-                rating: "★★★★☆",
-                year: "2024",
-                genre: "Horor / Thriller",
-                desc: "เจ้าสาวปีศาจ หญิงสาวที่ถูกบีบบังคับให้แต่งงานกับวิญญาณร้ายเพื่อรักษาวงศ์ตระกูล เธอต้องหาทางเอาชีวิตรอดจากคฤหาสน์ต้องคำสาป (ใช้หนังสั้น Sintel ทดสอบ)"
-            },
-            {
-                id: 3,
-                title: "DreadOut",
-                image: "https://images.unsplash.com/photo-1505635552518-3448ff116af3?q=80&w=400&auto=format&fit=crop",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                rating: "★★★☆☆",
-                year: "2019",
-                genre: "Horor / Survival",
-                desc: "สร้างจากเกมสยองขวัญชื่อดัง กลุ่มนักเรียนมัธยมปลายเข้าไปสำรวจอพาร์ตเมนต์ร้างเพื่อหวังยอดวิว แต่กลับปลดปล่อยวิญญาณร้าย (ใช้ Big Buck Bunny ทดสอบ)"
-            },
-            {
-                id: 4,
-                title: "Annabelle",
-                image: "https://images.unsplash.com/photo-1629851496181-421714bc7c2b?q=80&w=400&auto=format&fit=crop",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-                rating: "★★★★☆",
-                year: "2019",
-                genre: "Horor / Mystery",
-                desc: "ตุ๊กตาผีสิงกลับมาอีกครั้ง เมื่อห้องเก็บของอาถรรพ์ไม่สามารถกักขังความชั่วร้ายของมันไว้ได้ (ใช้ Elephants Dream ทดสอบ)"
-            }
-        ];
+<script>
+    // Sample Video URLs
+    const v1 = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4";
+    const v2 = "https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4";
 
-        const continueEpisodes = [
-            { id: 101, title: "Malam Pencabut Nyawa", image: "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=500&auto=format&fit=crop", progress: "45%" },
-            { id: 102, title: "Jailangkung Sandekala", image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=500&auto=format&fit=crop", progress: "80%" }
-        ];
+    // Extended Database with Categories
+    const dramas = [
+        {
+            id: 1, title: "ลำนำสวรรค์ มังกรคู่บัลลังก์", category: "เทพเซียน", isHero: true, size: "1.2 GB",
+            cover: "https://images.unsplash.com/photo-1510860534293-199653cb306d?auto=format&fit=crop&w=800&q=80",
+            poster: "https://images.unsplash.com/photo-1510860534293-199653cb306d?auto=format&fit=crop&w=400&q=80",
+            desc: "มหากาพย์การชิงไหวชิงพริบในราชสำนักสวรรค์ การต่อสู้เพื่อแย่งชิงความเป็นใหญ่ในใต้หล้าของสองมังกรแห่งยุค พร้อมกับเรื่องราวความรักข้ามภพชาติที่ต้องเสียสละ ท่ามกลางสงครามระหว่างเทพและมาร",
+            episodes: [
+                {ep:1, title: "ตอนที่ 1: กำเนิดมังกรซ่อนกาย", url:v1, duration: "45:00"}, 
+                {ep:2, title: "ตอนที่ 2: เพลิงพิโรธเผาวังหลวง", url:v2, duration: "44:30"}, 
+                {ep:3, title: "ตอนที่ 3: หมากกระดานใหม่", url:v1, duration: "46:15"}, 
+                {ep:4, title: "ตอนที่ 4: ลิขิตสวรรค์ (ตอนล่าสุด)", url:v2, duration: "45:20"}
+            ]
+        },
+        {
+            id: 2, title: "แค้นรัก วังต้องห้าม", category: "แก้แค้น", isHero: true, size: "850 MB",
+            cover: "https://images.unsplash.com/photo-1544256667-df57ce8c9460?auto=format&fit=crop&w=800&q=80",
+            poster: "https://images.unsplash.com/photo-1544256667-df57ce8c9460?auto=format&fit=crop&w=400&q=80",
+            desc: "องค์หญิงที่ถูกลอบปลงพระชนม์ รอดชีวิตมาได้และกลับเข้าวังด้วยฐานะใหม่เพื่อทวงแค้นทุกคนที่ทรยศครอบครัวของเธอ",
+            episodes: [
+                {ep:1, title: "ตอนที่ 1: รอดพ้นความตาย", url:v2, duration: "50:00"}, 
+                {ep:2, title: "ตอนที่ 2: กลับสู่วังวน", url:v1, duration: "48:10"}
+            ]
+        },
+        {
+            id: 3, title: "เล่ห์รัก ฉางอัน", category: "ย้อนยุค", isHero: true, size: "400 MB",
+            cover: "https://images.unsplash.com/photo-1540316200632-44161a0bc0e9?auto=format&fit=crop&w=800&q=80",
+            poster: "https://images.unsplash.com/photo-1540316200632-44161a0bc0e9?auto=format&fit=crop&w=400&q=80",
+            desc: "เรื่องราวการสืบคดีปริศนาในเมืองฉางอัน ของแม่ทัพหนุ่มและคุณหนูตระกูลใหญ่ผู้มีไหวพริบเป็นเลิศ",
+            episodes: [{ep:1, title: "ตอนที่ 1: คดีปริศนา", url:v1, duration: "42:00"}]
+        },
+        {
+            id: 4, title: "หยาดน้ำตา สวรรค์", category: "ดราม่า", isHero: true, size: "900 MB",
+            cover: "https://images.unsplash.com/photo-1628157790138-0441d6dbdfba?auto=format&fit=crop&w=800&q=80",
+            poster: "https://images.unsplash.com/photo-1628157790138-0441d6dbdfba?auto=format&fit=crop&w=400&q=80",
+            desc: "โศกนาฏกรรมความรักของเทพบุปผาและจอมมาร ที่ไม่อาจครองคู่กันได้เพราะกฎเกณฑ์แห่งสวรรค์",
+            episodes: [
+                {ep:1, title: "ตอนที่ 1: แรกพบ", url:v1, duration: "45:00"},
+                {ep:2, title: "ตอนที่ 2: พรากจาก", url:v2, duration: "45:00"},
+                {ep:3, title: "ตอนที่ 3: น้ำตา", url:v1, duration: "45:00"}
+            ]
+        },
+        {
+            id: 5, title: "จอมยุทธ ภูตพิทักษ์", category: "การ์ตูน", isHero: true, size: "300 MB",
+            cover: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80",
+            poster: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=400&q=80",
+            desc: "อนิเมะ 3D สุดอลังการ การผจญภัยของเด็กหนุ่มผู้ปลุกสายเลือดวิญญาณศักดิ์สิทธิ์เพื่อก้าวสู่จุดสูงสุดของยุทธภพ",
+            episodes: [{ep:1, title: "ตอนที่ 1: ปลุกวิญญาณ", url:v2, duration: "24:00"}]
+        },
+        // More catalog items...
+        { id: 6, title: "บุปผาซ่อนพิษ", category: "แก้แค้น", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80", desc: "สตรีที่ถูกหักหลัง กลับมาพร้อมพิษร้ายเพื่อทำลายศัตรู", episodes: [{ep:1, title: "ตอนที่ 1", url:v1, duration: "45:00"}] },
+        { id: 7, title: "คัมภีร์หมอเทวดา", category: "สืบสวน", poster: "https://images.unsplash.com/photo-1616422285623-13ff0162193c?auto=format&fit=crop&w=400&q=80", desc: "หมอหญิงผู้ไขคดีด้วยวิชาแพทย์แผนจีนโบราณ", episodes: [{ep:1, title: "ตอนที่ 1", url:v1, duration: "45:00"}, {ep:2, title: "ตอนที่ 2", url:v2, duration: "45:00"}] },
+        { id: 8, title: "ตำนานกระบี่ ไร้พ่าย", category: "ย้อนยุค", poster: "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?auto=format&fit=crop&w=400&q=80", desc: "ยุทธภพสั่นสะเทือนเมื่อกระบี่ในตำนานปรากฏ", episodes: [{ep:1, title: "ตอนที่ 1", url:v2, duration: "45:00"}] },
+    ];
 
-        // --- 2. ฟังก์ชันวาด UI หนัง ---
-        function renderMovies() {
-            const trendsContainer = document.getElementById('trendsContainer');
-            movies.forEach(movie => {
-                const card = document.createElement('div');
-                card.className = "flex-shrink-0 w-36 md:w-48 cursor-pointer group";
-                card.onclick = () => openModal(movie); 
-                card.innerHTML = `
-                    <div class="relative overflow-hidden rounded-xl aspect-[2/3] mb-3 border-2 border-transparent group-hover:border-[#E50914] shadow-lg transition-all duration-300">
-                        <img src="${movie.image}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <div class="bg-[#E50914] p-4 rounded-full text-white transform scale-50 group-hover:scale-100 transition duration-300 shadow-[0_0_15px_rgba(229,9,20,0.8)]">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="ml-1"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                            </div>
+    let currentSlide = 0;
+    let slideInterval;
+    const heroDramas = dramas.filter(d => d.isHero);
+    
+    // Downloaded Items Storage
+    let downloadedDramas = [];
+    let currentViewingId = null;
+
+    // Initialize
+    window.onload = () => {
+        renderHeroSlider();
+        filterCategory('all', document.querySelector('.cat-btn.active'));
+        renderContinueWatching();
+        updateDownloadView();
+    };
+
+    // Render Hero Auto Slider
+    function renderHeroSlider() {
+        const slider = document.getElementById('hero-slider');
+        const dotsContainer = document.getElementById('slider-dots');
+        slider.innerHTML = '';
+        dotsContainer.innerHTML = '';
+
+        heroDramas.forEach((drama, index) => {
+            slider.innerHTML += `
+                <div class="slider-item w-full h-full flex-shrink-0 relative cursor-pointer" onclick="openMovie(${drama.id})">
+                    <img src="${drama.cover}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/30 to-transparent"></div>
+                    
+                    <div class="absolute bottom-16 left-5 right-5 z-10">
+                        <span class="inline-block px-2 py-0.5 rounded-sm bg-imperial-red/80 backdrop-blur border border-gold-dark/50 text-[10px] text-white font-medium mb-2 shadow-[0_0_10px_rgba(255,0,0,0.5)]">
+                            <i class="ph-fill ph-fire text-gold-light"></i> มาแรงอันดับ ${index + 1}
+                        </span>
+                        <h2 class="text-3xl font-bold text-white mb-2 font-serif drop-shadow-lg">${drama.title}</h2>
+                        <div class="flex items-center gap-2 text-xs text-gray-300 mb-3">
+                            <span class="text-gold-main">${drama.category}</span>
+                            <span>•</span>
+                            <span>ตอนใหม่ล่าสุด</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="bg-gold-gradient text-black px-6 py-2 rounded-full font-bold flex items-center gap-1 shadow-[0_0_15px_rgba(212,175,55,0.4)] transform transition hover:scale-105" onclick="event.stopPropagation(); openMovie(${drama.id})">
+                                <i class="ph-fill ph-play text-lg"></i> เล่นเลย
+                            </button>
+                            <button class="w-10 h-10 rounded-full bg-white/20 backdrop-blur border border-white/30 flex items-center justify-center text-white" onclick="event.stopPropagation();">
+                                <i class="ph ph-plus text-xl"></i>
+                            </button>
                         </div>
                     </div>
-                    <h4 class="text-white font-semibold text-sm md:text-base truncate group-hover:text-[#E50914] transition">${movie.title}</h4>
-                    <p class="text-gray-400 text-xs mt-1">ปี ${movie.year}</p>
-                `;
-                trendsContainer.appendChild(card);
-            });
+                </div>
+            `;
+            dotsContainer.innerHTML += `
+                <div class="slider-dot w-2 h-2 rounded-full bg-white/40 ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></div>
+            `;
+        });
 
-            const continueContainer = document.getElementById('continueContainer');
-            continueEpisodes.forEach(ep => {
-                const card = document.createElement('div');
-                card.className = "flex-shrink-0 w-64 md:w-80 cursor-pointer group";
-                card.onclick = () => openModal(movies[0]); // จำลองเปิดคลิปแรก
-                card.innerHTML = `
-                    <div class="relative overflow-hidden rounded-xl aspect-video mb-3 shadow-lg border border-gray-800 group-hover:border-gray-500 transition-all">
-                        <img src="${ep.image}" alt="${ep.title}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
-                        
-                        <div class="absolute inset-0 flex items-center justify-center">
-                             <div class="border-2 border-white/70 rounded-full p-3 bg-black/40 backdrop-blur-sm group-hover:bg-[#E50914] group-hover:border-[#E50914] transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" class="text-white ml-1"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                             </div>
-                        </div>
-                        <div class="absolute bottom-0 left-0 h-1.5 bg-gray-700 w-full">
-                            <div class="h-full bg-[#E50914] shadow-[0_0_5px_rgba(229,9,20,0.8)]" style="width: ${ep.progress}"></div>
+        startAutoSlide();
+        slider.addEventListener('scroll', () => {
+            const index = Math.round(slider.scrollLeft / slider.offsetWidth);
+            updateSliderDots(index);
+            currentSlide = index;
+        });
+    }
+
+    function startAutoSlide() {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(() => {
+            currentSlide = (currentSlide + 1) % heroDramas.length;
+            goToSlide(currentSlide);
+        }, 5000);
+    }
+
+    function goToSlide(index) {
+        const slider = document.getElementById('hero-slider');
+        slider.scrollTo({
+            left: index * slider.offsetWidth,
+            behavior: 'smooth'
+        });
+        currentSlide = index;
+        updateSliderDots(index);
+        startAutoSlide();
+    }
+
+    function updateSliderDots(index) {
+        const dots = document.querySelectorAll('.slider-dot');
+        dots.forEach((dot, i) => {
+            if (i === index) dot.classList.add('active');
+            else dot.classList.remove('active');
+        });
+    }
+
+    // Filter Categories
+    function filterCategory(cat, btnElement) {
+        if(btnElement) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('text-gray-400');
+            });
+            btnElement.classList.add('active');
+            btnElement.classList.remove('text-gray-400');
+            btnElement.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+
+        document.getElementById('current-category-title').innerText = cat === 'all' ? 'แนะนำสำหรับคุณ' : `ซีรีส์${cat}`;
+        const filtered = cat === 'all' ? dramas : dramas.filter(d => d.category === cat);
+        const grid = document.getElementById('movies-grid');
+        grid.innerHTML = '';
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="col-span-2 text-center text-gray-500 py-10">ไม่พบซีรีส์ในหมวดหมู่นี้</div>`;
+            return;
+        }
+
+        filtered.forEach((drama, i) => {
+            const delay = i * 0.1;
+            grid.innerHTML += `
+                <div class="movie-card relative rounded-lg overflow-hidden border border-[#2a1a0a] bg-[#111] aspect-[2/3] cursor-pointer shadow-lg animate-fade-in" style="animation-delay: ${delay}s" onclick="openMovie(${drama.id})">
+                    <img src="${drama.poster}" class="w-full h-full object-cover opacity-90">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-2.5">
+                        <span class="absolute top-2 right-2 bg-black/60 backdrop-blur px-1.5 py-0.5 rounded text-[8px] border border-gold-dark/50 text-gold-light">
+                            ${drama.episodes.length} ตอน
+                        </span>
+                        <h4 class="text-sm font-medium text-white line-clamp-1 drop-shadow-md">${drama.title}</h4>
+                        <p class="text-[10px] text-gold-main mt-0.5">${drama.category}</p>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // Render Continue Watching
+    function renderContinueWatching() {
+        const list = document.getElementById('continue-list');
+        const drama = dramas[0]; 
+        list.innerHTML = `
+            <div class="flex gap-4 p-3 rounded-xl bg-[#1a1a1a] border border-[#333] cursor-pointer hover:border-gold-main transition" onclick="openMovie(${drama.id})">
+                <div class="w-32 aspect-video rounded-lg overflow-hidden relative flex-shrink-0 shadow-md">
+                    <img src="${drama.cover}" class="w-full h-full object-cover opacity-80">
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <i class="ph-fill ph-play-circle text-white text-3xl drop-shadow-lg"></i>
+                    </div>
+                    <div class="absolute bottom-0 left-0 h-1 bg-gray-700 w-full">
+                        <div class="h-full bg-imperial-red w-[75%] relative">
+                            <div class="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_5px_rgba(255,0,0,0.8)]"></div>
                         </div>
                     </div>
-                    <h4 class="text-white font-medium text-sm md:text-base">${ep.title}</h4>
-                `;
-                continueContainer.appendChild(card);
-            });
+                </div>
+                <div class="flex flex-col justify-center flex-1">
+                    <h4 class="text-sm font-bold text-white line-clamp-1">${drama.title}</h4>
+                    <p class="text-xs text-gray-400 mt-1">ตอนที่ 2</p>
+                    <div class="flex items-center justify-between mt-2">
+                        <p class="text-[10px] text-gold-main">เหลือ 12 นาที</p>
+                        <i class="ph ph-dots-three-vertical text-gray-500"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Tab Switching
+    function switchTab(tabId) {
+        document.getElementById('main-video').pause();
+
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active', 'text-gray-500');
+            btn.classList.add('text-gray-500');
+            btn.querySelector('i').classList.replace('ph-fill', 'ph');
+            if(btn.dataset.target === `view-${tabId}`) {
+                btn.classList.add('active');
+                btn.classList.remove('text-gray-500');
+                btn.querySelector('i').classList.replace('ph', 'ph-fill');
+            }
+        });
+
+        document.querySelectorAll('.view-section, #view-player').forEach(view => {
+            view.classList.add('hidden');
+        });
+
+        const targetView = document.getElementById(`view-${tabId}`);
+        targetView.classList.remove('hidden');
+        targetView.classList.add('animate-fade-in');
+        
+        document.getElementById('main-content').classList.remove('hidden');
+        document.getElementById('bottom-nav').style.display = 'flex';
+
+        // Clear download badge when visiting download tab
+        if(tabId === 'download') {
+            document.getElementById('nav-dl-badge').classList.add('hidden');
+        }
+    }
+
+    // Open Movie View
+    function openMovie(id) {
+        const drama = dramas.find(d => d.id === id);
+        if(!drama) return;
+        
+        currentViewingId = id;
+
+        // Check if already downloaded to update button state
+        const isDownloaded = downloadedDramas.some(d => d.id === id);
+        updateDownloadButtonState(isDownloaded);
+
+        // UI Updates
+        document.getElementById('detail-title').innerText = drama.title;
+        document.getElementById('player-title').innerText = drama.title;
+        document.getElementById('detail-desc').innerText = drama.desc;
+        document.getElementById('detail-cat').innerText = drama.category;
+        document.getElementById('player-bg-blur').style.backgroundImage = `url('${drama.poster}')`;
+        
+        // Render Episodes as Premium Long List Style
+        const epList = document.getElementById('episodes-list');
+        epList.innerHTML = '';
+        drama.episodes.forEach((ep) => {
+            epList.innerHTML += `
+                <button onclick="playEpisode('${ep.url}', this)" class="ep-btn ep-btn-premium w-full flex items-center p-3 rounded-lg text-left group">
+                    <div class="w-10 h-10 rounded border border-gold-dark/30 bg-black/50 flex flex-col items-center justify-center mr-4 flex-shrink-0 group-hover:border-gold-main transition relative overflow-hidden">
+                        <span class="text-sm font-bold text-gray-300 group-hover:text-gold-light">${ep.ep}</span>
+                        <!-- Hover play icon -->
+                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                            <i class="ph-fill ph-play text-gold-main"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-medium text-gray-200 group-hover:text-gold-light transition line-clamp-1">${ep.title}</h4>
+                        <p class="text-[10px] text-gray-500 mt-1">${ep.duration}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-400 ml-2 group-hover:text-gold-main group-hover:border-gold-main/50 transition">
+                        <i class="ph-bold ph-play"></i>
+                    </div>
+                </button>
+            `;
+        });
+
+        // Reset Video
+        const video = document.getElementById('main-video');
+        video.pause();
+        video.src = "";
+        video.poster = drama.cover || drama.poster;
+
+        // Transition Views
+        document.getElementById('main-content').classList.add('hidden');
+        document.getElementById('bottom-nav').style.display = 'none';
+        
+        const playerView = document.getElementById('view-player');
+        playerView.classList.remove('hidden');
+        playerView.classList.add('flex', 'animate-slide-up');
+    }
+
+    function closePlayer() {
+        const video = document.getElementById('main-video');
+        video.pause();
+        video.src = ""; 
+        currentViewingId = null;
+        
+        const playerView = document.getElementById('view-player');
+        playerView.classList.add('hidden');
+        playerView.classList.remove('flex', 'animate-slide-up');
+        
+        document.getElementById('main-content').classList.remove('hidden');
+        document.getElementById('bottom-nav').style.display = 'flex';
+    }
+
+    function playEpisode(url, btnElement) {
+        const video = document.getElementById('main-video');
+        
+        // Style Active Ep Button (Premium List Style)
+        document.querySelectorAll('.ep-btn').forEach(btn => {
+            btn.classList.remove('active-ep');
+            btn.querySelector('.w-10').classList.remove('border-gold-main');
+            btn.querySelector('h4').classList.remove('text-gold-light');
+            btn.querySelector('.w-8 i').classList.replace('ph-pause', 'ph-play');
+            btn.querySelector('.w-8').classList.remove('text-gold-main', 'border-gold-main');
+        });
+        
+        if (btnElement) {
+            btnElement.classList.add('active-ep');
+            btnElement.querySelector('.w-10').classList.add('border-gold-main');
+            btnElement.querySelector('h4').classList.add('text-gold-light');
+            btnElement.querySelector('.w-8 i').classList.replace('ph-play', 'ph-pause');
+            btnElement.querySelector('.w-8').classList.add('text-gold-main', 'border-gold-main');
         }
 
-        // --- 3. ระบบ Video Player & Fullscreen Logic ---
-        const modal = document.getElementById('movieModal');
-        const videoContainer = document.getElementById('videoContainer');
-        const video = document.getElementById('mainVideo');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const playIcon = document.getElementById('playIcon');
-        const pauseIcon = document.getElementById('pauseIcon');
-        const progressBar = document.getElementById('progressBar');
-        const progressFill = document.getElementById('progressFill');
-        const currentTimeDisplay = document.getElementById('currentTime');
-        const durationDisplay = document.getElementById('durationTime');
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        const speedBtns = document.querySelectorAll('.speed-btn');
-        const speedIndicator = document.getElementById('speedIndicator');
-        const videoLoading = document.getElementById('videoLoading');
+        video.src = url;
+        video.load();
+        
+        document.getElementById('player-top-bar').style.opacity = '0';
+        
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => console.log("Auto-play prevented", error));
+        }
+    }
 
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return "0:00";
-            const m = Math.floor(seconds / 60);
-            const s = Math.floor(seconds % 60);
-            return `${m}:${s < 10 ? '0' : ''}${s}`;
+    // Video Controls Logic
+    document.getElementById('main-video').addEventListener('pause', () => {
+        document.getElementById('player-top-bar').style.opacity = '1';
+    });
+    document.getElementById('main-video').addEventListener('play', () => {
+        document.getElementById('player-top-bar').style.opacity = '0';
+    });
+    // Show top bar when user clicks/taps on video
+    document.getElementById('main-video').addEventListener('click', () => {
+        const topBar = document.getElementById('player-top-bar');
+        topBar.style.opacity = topBar.style.opacity === '0' ? '1' : '0';
+    });
+
+
+    // --- Download System (Offline Simulation) ---
+
+    function downloadCurrentDrama() {
+        if(!currentViewingId) return;
+        
+        // Check if already downloaded
+        if(downloadedDramas.some(d => d.id === currentViewingId)) {
+            showToast("เรื่องนี้ถูกดาวน์โหลดไว้แล้ว");
+            return;
         }
 
-        function openModal(movieData) {
-            document.getElementById('modalHeaderTitle').innerText = movieData.title;
-            document.getElementById('modalTitle').innerText = movieData.title;
-            document.getElementById('modalRating').innerText = movieData.rating;
-            document.getElementById('modalYear').innerText = movieData.year;
-            document.getElementById('modalGenre').innerText = movieData.genre;
-            document.getElementById('modalDesc').innerText = movieData.desc;
+        const btn = document.getElementById('btn-download-all');
+        const icon = document.getElementById('dl-icon');
+        const text = document.getElementById('dl-text');
+        const progress = document.getElementById('dl-progress');
 
-            // รีเซ็ตวิดีโอ
-            video.src = movieData.videoUrl;
-            video.playbackRate = 1;
-            speedIndicator.innerText = "1x";
-            updateSpeedBtnUI(1);
-            updatePlayPauseIcon(false);
-            progressBar.value = 0;
-            progressFill.style.width = '0%';
+        // Prevent multiple clicks
+        if(btn.classList.contains('downloading')) return;
+        
+        // Start UI Animation
+        btn.classList.add('downloading');
+        icon.classList.replace('ph-download-simple', 'ph-spinner');
+        icon.classList.add('animate-spin', 'text-gold-main');
+        text.innerText = "กำลังโหลด...";
+        progress.classList.add('downloading-bar');
+
+        // Simulate network delay for downloading (3 seconds)
+        setTimeout(() => {
+            // Save to Mock Database
+            const dramaToSave = dramas.find(d => d.id === currentViewingId);
+            downloadedDramas.push(dramaToSave);
             
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.remove('opacity-0'), 10);
-
-            // แสดง Loading จนกว่าจะเล่นได้
-            videoLoading.classList.remove('hidden');
-
-            // เริ่มเล่น (ถ้าไม่ติด Policy ของเบราว์เซอร์)
-            video.play().then(() => {
-                updatePlayPauseIcon(true);
-            }).catch(() => {
-                // เบราว์เซอร์บล็อก Auto-play (พบได้บ่อยในมือถือถ้าไม่ได้ Mute)
-                console.log("กรุณากดปุ่ม Play เพื่อเริ่มเล่น");
-                videoLoading.classList.add('hidden');
-            });
-        }
-
-        function closeModal() {
-            modal.classList.add('opacity-0');
-            video.pause();
+            // Update UI
+            updateDownloadButtonState(true);
+            updateDownloadView();
+            showToast("ดาวน์โหลดวิดีโอสำเร็จ ดูออฟไลน์ได้เลย");
             
-            // ออกจาก Fullscreen ถ้าเปิดอยู่
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            }
-            videoContainer.classList.remove('css-fullscreen');
-
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                video.src = ""; // ล้าง source 
-            }, 300);
-        }
-
-        // สถานะวิดีโอ (Loading / Playing)
-        video.addEventListener('waiting', () => videoLoading.classList.remove('hidden'));
-        video.addEventListener('playing', () => videoLoading.classList.add('hidden'));
-        video.addEventListener('canplay', () => videoLoading.classList.add('hidden'));
-
-        function updatePlayPauseIcon(isPlaying) {
-            if (isPlaying) {
-                playIcon.classList.add('hidden'); pauseIcon.classList.remove('hidden');
-            } else {
-                playIcon.classList.remove('hidden'); pauseIcon.classList.add('hidden');
-            }
-        }
-
-        function togglePlay() {
-            if (video.paused) {
-                video.play(); updatePlayPauseIcon(true);
-            } else {
-                video.pause(); updatePlayPauseIcon(false);
-            }
-        }
-
-        playPauseBtn.addEventListener('click', togglePlay);
-        video.addEventListener('click', togglePlay); // แตะที่จอวิดีโอเพื่อหยุด/เล่น
-
-        video.addEventListener('loadedmetadata', () => {
-            progressBar.max = video.duration;
-            durationDisplay.innerText = formatTime(video.duration);
-        });
-
-        video.addEventListener('timeupdate', () => {
-            progressBar.value = video.currentTime;
-            currentTimeDisplay.innerText = formatTime(video.currentTime);
-            const percentage = (video.currentTime / video.duration) * 100;
-            progressFill.style.width = `${percentage}%`;
-        });
-
-        progressBar.addEventListener('input', () => {
-            video.currentTime = progressBar.value;
-        });
-
-        // ความเร็ว
-        function updateSpeedBtnUI(speedValue) {
-            speedBtns.forEach(btn => {
-                if(parseFloat(btn.dataset.speed) === parseFloat(speedValue)) {
-                    btn.classList.add('text-[#E50914]', 'font-bold');
-                } else {
-                    btn.classList.remove('text-[#E50914]', 'font-bold');
-                }
-            });
-        }
-
-        speedBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const speed = parseFloat(e.target.dataset.speed);
-                video.playbackRate = speed;
-                speedIndicator.innerText = speed + "x";
-                updateSpeedBtnUI(speed);
-            });
-        });
-
-        // --- ระบบ Fullscreen สำหรับรองรับทุกหน้าจอแนวนอน/แนวตั้ง ---
-        fullscreenBtn.addEventListener('click', () => {
-            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || videoContainer.classList.contains('css-fullscreen');
+            // Show badge on nav
+            document.getElementById('nav-dl-badge').classList.remove('hidden');
             
-            if (!isFullscreen) {
-                // พยายามใช้ API ก่อน (ทำงานได้ดีบน Android และ PC)
-                if (videoContainer.requestFullscreen) {
-                    videoContainer.requestFullscreen();
-                } else if (videoContainer.webkitRequestFullscreen) { /* Safari PC */
-                    videoContainer.webkitRequestFullscreen();
-                } else if (video.webkitEnterFullscreen) { 
-                    // สำหรับ iOS Safari บน iPhone (เรียกใช้ Player ของระบบ)
-                    video.webkitEnterFullscreen();
-                } else {
-                    // CSS Fallback (ถ้า API ข้างต้นไม่ทำงาน)
-                    videoContainer.classList.add('css-fullscreen');
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
-                videoContainer.classList.remove('css-fullscreen');
-            }
-        });
+        }, 3000);
+    }
 
-        // ตรวจจับเมื่อผู้ใช้ออกจาก Fullscreen (ผ่านปุ่ม Back ของเครื่อง)
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) videoContainer.classList.remove('css-fullscreen');
-        });
-        document.addEventListener('webkitfullscreenchange', () => {
-            if (!document.webkitFullscreenElement) videoContainer.classList.remove('css-fullscreen');
-        });
+    function updateDownloadButtonState(isDownloaded) {
+        const icon = document.getElementById('dl-icon');
+        const text = document.getElementById('dl-text');
+        const progress = document.getElementById('dl-progress');
+        const btn = document.getElementById('btn-download-all');
 
-        // เริ่มต้นแอป
-        renderMovies();
+        btn.classList.remove('downloading');
+        icon.classList.remove('animate-spin');
+        progress.classList.remove('downloading-bar');
+        progress.style.width = '0';
 
-    </script>
+        if(isDownloaded) {
+            icon.classList.replace('ph-download-simple', 'ph-check-circle');
+            icon.classList.replace('ph-spinner', 'ph-check-circle');
+            icon.classList.add('text-jade');
+            icon.classList.remove('text-gold-main');
+            text.innerText = "โหลดแล้ว";
+            text.classList.add('text-jade');
+        } else {
+            icon.classList.replace('ph-check-circle', 'ph-download-simple');
+            icon.classList.replace('ph-spinner', 'ph-download-simple');
+            icon.classList.remove('text-jade', 'text-gold-main');
+            text.innerText = "โหลด";
+            text.classList.remove('text-jade');
+        }
+    }
+
+    function updateDownloadView() {
+        const listContainer = document.getElementById('download-list');
+        const emptyState = document.getElementById('download-empty');
+        const countText = document.getElementById('download-count');
+
+        countText.innerText = `${downloadedDramas.length} รายการ`;
+
+        if(downloadedDramas.length === 0) {
+            emptyState.classList.remove('hidden');
+            listContainer.querySelectorAll('.dl-item').forEach(e => e.remove());
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+        
+        // Render Downloaded Items
+        // First, clear old items
+        listContainer.querySelectorAll('.dl-item').forEach(e => e.remove());
+        
+        downloadedDramas.forEach(drama => {
+            const html = `
+                <div class="dl-item flex gap-4 p-3 rounded-xl bg-[#1a1a1a] border border-[#333] relative">
+                    <div class="w-24 aspect-[3/4] rounded-lg overflow-hidden relative flex-shrink-0 cursor-pointer" onclick="openMovie(${drama.id})">
+                        <img src="${drama.poster}" class="w-full h-full object-cover opacity-90">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/40">
+                            <i class="ph-fill ph-play-circle text-white text-3xl drop-shadow-lg"></i>
+                        </div>
+                        <div class="absolute top-1 left-1 bg-jade/80 text-white text-[8px] px-1 rounded font-bold">OFFLINE</div>
+                    </div>
+                    <div class="flex flex-col justify-between py-1 flex-1">
+                        <div>
+                            <h4 class="text-sm font-bold text-white line-clamp-1">${drama.title}</h4>
+                            <p class="text-[10px] text-gray-400 mt-1">${drama.episodes.length} ตอน • ${drama.size}</p>
+                            <p class="text-[10px] text-jade mt-1 flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> ดาวน์โหลดเสร็จสิ้น</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <button class="text-xs bg-gold-gradient text-black px-3 py-1 rounded font-medium" onclick="openMovie(${drama.id})">รับชม</button>
+                            <button class="text-gray-500 hover:text-red-500 transition p-2" onclick="deleteDownload(${drama.id})">
+                                <i class="ph ph-trash text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            listContainer.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    function deleteDownload(id) {
+        downloadedDramas = downloadedDramas.filter(d => d.id !== id);
+        updateDownloadView();
+        
+        // If we delete while viewing it, reset button
+        if(currentViewingId === id) {
+            updateDownloadButtonState(false);
+        }
+        
+        showToast("ลบออกจากรายการดาวน์โหลดแล้ว");
+    }
+
+    // Custom Toast function
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = message;
+        
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+    
+</script>
 </body>
 </html>
