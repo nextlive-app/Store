@@ -33,6 +33,7 @@
                         'fade-in': 'fadeIn 0.5s ease-out',
                         'slide-up': 'slideUp 0.4s ease-out',
                         'pulse-gold': 'pulseGold 2s infinite',
+                        'spin-slow': 'spin 3s linear infinite',
                     },
                     keyframes: {
                         fadeIn: {
@@ -73,6 +74,19 @@
             box-shadow: 0 0 50px rgba(212, 175, 55, 0.15);
         }
 
+        /* Global Loader */
+        #global-loader {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.95);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
         /* Gold Text & Effects */
         .text-gold-gradient {
             background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
@@ -90,13 +104,8 @@
         }
 
         /* Hide Scrollbar but keep functionality */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* Custom Scrollbar for Main Content */
         .scroll-area::-webkit-scrollbar { width: 3px; }
@@ -104,86 +113,42 @@
         .scroll-area::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 10px; }
 
         /* Hero Slider */
-        .slider-container {
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-        }
-        .slider-item {
-            scroll-snap-align: center;
-        }
-        .slider-dot {
-            transition: all 0.3s ease;
-        }
-        .slider-dot.active {
-            width: 16px;
-            background-color: #D4AF37;
-            box-shadow: 0 0 8px #D4AF37;
-        }
+        .slider-container { scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+        .slider-item { scroll-snap-align: center; }
+        .slider-dot { transition: all 0.3s ease; }
+        .slider-dot.active { width: 16px; background-color: #D4AF37; box-shadow: 0 0 8px #D4AF37; }
 
         /* Category Menu */
-        .cat-btn {
-            white-space: nowrap;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .cat-btn.active {
-            color: #FCE79C;
-            font-weight: 500;
-        }
+        .cat-btn { white-space: nowrap; transition: all 0.3s ease; position: relative; }
+        .cat-btn.active { color: #FCE79C; font-weight: 500; }
         .cat-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-            border-radius: 2px;
-            box-shadow: 0 0 5px #D4AF37;
+            content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+            width: 80%; height: 2px; background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            border-radius: 2px; box-shadow: 0 0 5px #D4AF37;
         }
 
         /* Movie Cards */
-        .movie-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .movie-card:active {
-            transform: scale(0.95);
-        }
+        .movie-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .movie-card:active { transform: scale(0.95); }
 
         /* Bottom Nav */
         .nav-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .nav-btn.active {
-            color: #FCE79C;
-            transform: translateY(-8px);
-        }
+        .nav-btn.active { color: #FCE79C; transform: translateY(-8px); }
         .nav-indicator {
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%) scale(0);
-            width: 32px;
-            height: 4px;
-            border-radius: 4px;
+            position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%) scale(0);
+            width: 32px; height: 4px; border-radius: 4px;
             background: linear-gradient(90deg, transparent, #D4AF37, transparent);
             box-shadow: 0 -2px 10px rgba(212, 175, 55, 0.5);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .nav-btn.active .nav-indicator {
-            transform: translateX(-50%) scale(1);
-        }
+        .nav-btn.active .nav-indicator { transform: translateX(-50%) scale(1); }
 
         /* Video Player */
         video { width: 100%; background: #000; }
         video::-webkit-media-controls-enclosure { border-radius: 0; }
         
         /* Glassmorphism */
-        .glass-panel {
-            background: rgba(10, 10, 10, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(212, 175, 55, 0.2);
-        }
+        .glass-panel { background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid rgba(212, 175, 55, 0.2); }
 
         /* Premium Episode Button Style */
         .ep-btn-premium {
@@ -192,9 +157,7 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 2px 5px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
         }
-        .ep-btn-premium:active {
-            transform: scale(0.98);
-        }
+        .ep-btn-premium:active { transform: scale(0.98); }
         .ep-btn-premium.active-ep {
             border-color: #D4AF37;
             background: linear-gradient(145deg, rgba(74, 4, 4, 0.8), rgba(26, 5, 5, 0.9));
@@ -202,30 +165,25 @@
         }
 
         /* Progress Bar Animation */
-        @keyframes fillProgress {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-        .downloading-bar {
-            animation: fillProgress 3s ease-in-out forwards;
-        }
+        @keyframes fillProgress { 0% { width: 0%; } 100% { width: 100%; } }
+        .downloading-bar { animation: fillProgress 3s ease-in-out forwards; }
 
         /* Toast Notification */
-        #toast {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
-            transform: translateY(-100%);
-            opacity: 0;
-        }
-        #toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
+        #toast { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s; transform: translateY(-100%); opacity: 0; }
+        #toast.show { transform: translateY(0); opacity: 1; }
     </style>
 </head>
 <body class="text-gray-200">
 
 <div id="app-container" class="flex flex-col">
     
+    <!-- Global Loader -->
+    <div id="global-loader">
+        <i class="ph-bold ph-film-strip text-6xl text-gold-main animate-spin-slow mb-4"></i>
+        <h2 class="text-gold-gradient font-serif text-xl font-bold tracking-widest">ตำหนักอักษร</h2>
+        <p class="text-xs text-gray-400 mt-2">กำลังโหลดข้อมูลจากคัมภีร์...</p>
+    </div>
+
     <!-- Top Header -->
     <header class="pt-10 pb-2 px-5 bg-gradient-to-b from-black via-black/80 to-transparent z-20 flex justify-between items-center absolute top-0 w-full">
         <div class="flex items-center gap-2">
@@ -241,7 +199,7 @@
         </div>
         <div class="flex gap-3">
             <button class="text-gold-main hover:text-gold-light transition"><i class="ph ph-magnifying-glass text-2xl"></i></button>
-            <div class="w-8 h-8 rounded-full border border-gold-main flex items-center justify-center bg-imperial-red/80 shadow-[0_0_10px_rgba(212,175,55,0.3)]">
+            <div class="w-8 h-8 rounded-full border border-gold-main flex items-center justify-center bg-imperial-red/80 shadow-[0_0_10px_rgba(212,175,55,0.3)] cursor-pointer" onclick="alert('ระบบผู้ใช้จะเชื่อมต่อกับระบบหลักของร้านค้า')">
                 <i class="ph ph-user text-gold-light"></i>
             </div>
         </div>
@@ -250,7 +208,7 @@
     <!-- Toast Notification -->
     <div id="toast" class="absolute top-24 left-1/2 transform -translate-x-1/2 z-50 bg-[#1a0505] border border-gold-main rounded-full px-6 py-2 flex items-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.4)] pointer-events-none">
         <i class="ph-fill ph-check-circle text-jade text-xl"></i>
-        <span id="toast-msg" class="text-sm text-gold-light font-medium">ดาวน์โหลดสำเร็จ</span>
+        <span id="toast-msg" class="text-sm text-gold-light font-medium">ทำรายการสำเร็จ</span>
     </div>
 
     <!-- Main Content Area -->
@@ -264,10 +222,8 @@
                 <div id="hero-slider" class="w-full h-full flex overflow-x-auto slider-container no-scrollbar">
                     <!-- Slides generated by JS -->
                 </div>
-                
                 <!-- Overlay Gradient for Slider -->
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent pointer-events-none"></div>
-                
                 <!-- Slider Dots -->
                 <div id="slider-dots" class="absolute bottom-6 left-0 w-full flex justify-center gap-2 z-10">
                     <!-- Dots generated by JS -->
@@ -278,12 +234,7 @@
             <div class="sticky top-0 z-10 glass-panel px-4 py-3 mt-[-20px] shadow-lg">
                 <div id="category-menu" class="flex gap-6 overflow-x-auto no-scrollbar items-center pb-2">
                     <button class="cat-btn active text-sm text-gray-400" onclick="filterCategory('all', this)">หน้าแรก</button>
-                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('เทพเซียน', this)"><i class="ph-fill ph-cloud-moon text-gold-dark"></i> เทพเซียน</button>
-                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('ย้อนยุค', this)"><i class="ph-fill ph-scroll text-gold-dark"></i> ย้อนยุค</button>
-                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('ดราม่า', this)"><i class="ph-fill ph-mask-sad text-gold-dark"></i> ดราม่า</button>
-                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('แก้แค้น', this)"><i class="ph-fill ph-sword text-gold-dark"></i> แก้แค้น</button>
-                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('สืบสวน', this)"><i class="ph-fill ph-detective text-gold-dark"></i> สืบสวน</button>
-                    <button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('การ์ตูน', this)"><i class="ph-fill ph-paint-brush text-gold-dark"></i> อนิเมะ/ตงฮวา</button>
+                    <!-- Categories generated by JS -->
                 </div>
             </div>
 
@@ -310,7 +261,10 @@
                 <h3 class="text-xl text-gold-gradient font-bold">ประวัติการรับชม</h3>
             </div>
             <div id="continue-list" class="space-y-4">
-                <!-- List generated by JS -->
+                <div class="text-center mt-20 text-gray-500 text-sm">
+                    <i class="ph-thin ph-popcorn text-6xl text-gold-dark/50 mb-3"></i>
+                    <p>ยังไม่มีประวัติการรับชม</p>
+                </div>
             </div>
         </div>
 
@@ -376,24 +330,23 @@
                     </div>
                 </div>
                 
-                <div class="flex flex-wrap items-center gap-3 text-[11px] text-gray-300 mb-5">
-                    <span id="detail-cat" class="px-2 py-1 rounded bg-[#332211] border border-gold-dark/50 text-gold-light">เทพเซียน</span>
+                <div class="flex flex-wrap items-center gap-3 text-[11px] text-gray-300 mb-5" id="detail-tags">
+                    <span id="detail-cat" class="px-2 py-1 rounded bg-[#332211] border border-gold-dark/50 text-gold-light">หมวดหมู่</span>
                     <span class="flex items-center gap-1 text-gold-main font-bold"><i class="ph-fill ph-star"></i> 9.8</span>
-                    <span>2024</span>
                     <span class="px-1.5 py-0.5 rounded bg-red-900/50 text-white border border-red-500/30">VIP</span>
                 </div>
 
                 <div class="relative">
                     <p id="detail-desc" class="text-sm text-gray-400 leading-relaxed opacity-90 line-clamp-3">รายละเอียดเรื่องย่อ...</p>
-                    <button class="text-gold-dark text-xs mt-1 hover:text-gold-light">อ่านเพิ่มเติม</button>
+                    <button class="text-gold-dark text-xs mt-1 hover:text-gold-light" onclick="this.previousElementSibling.classList.toggle('line-clamp-3'); this.innerText = this.innerText === 'อ่านเพิ่มเติม' ? 'ย่อลง' : 'อ่านเพิ่มเติม';">อ่านเพิ่มเติม</button>
                 </div>
 
                 <!-- Actions -->
                 <div class="flex gap-3 mt-6 mb-8 border-b border-white/10 pb-6">
-                    <button class="flex-1 bg-gold-gradient text-black py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-                        <i class="ph-fill ph-play-circle text-xl"></i> เล่นตอนล่าสุด
+                    <button id="btn-play-latest" class="flex-1 bg-gold-gradient text-black py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                        <i class="ph-fill ph-play-circle text-xl"></i> เล่นตอนแรก
                     </button>
-                    <button id="btn-download-all" class="px-5 py-2.5 rounded-lg bg-[#1a1a1a] border border-white/10 text-white flex flex-col items-center justify-center gap-1 relative overflow-hidden" onclick="downloadCurrentDrama()">
+                    <button id="btn-download-all" class="px-5 py-2.5 rounded-lg bg-[#1a1a1a] border border-white/10 text-white flex flex-col items-center justify-center gap-1 relative overflow-hidden transition-all" onclick="downloadCurrentDrama()">
                         <i id="dl-icon" class="ph-bold ph-download-simple"></i>
                         <span id="dl-text" class="text-[9px]">โหลด</span>
                         <!-- Progress Bar Overlay -->
@@ -401,10 +354,10 @@
                     </button>
                 </div>
 
-                <!-- Episodes Section (PREMIUM LONG LIST STYLE) -->
+                <!-- Episodes Section -->
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg text-gold-light font-medium border-l-4 border-gold-main pl-2">เลือกตอนรับชม</h3>
-                    <div class="text-xs text-gray-400">อัปเดตล่าสุด</div>
+                    <div class="text-xs text-gray-400" id="ep-count-display">0 ตอน</div>
                 </div>
 
                 <!-- Episode Long List Style -->
@@ -438,91 +391,145 @@
 </div>
 
 <script>
-    // Sample Video URLs
-    const v1 = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4";
-    const v2 = "https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4";
-
-    // Extended Database with Categories
-    const dramas = [
-        {
-            id: 1, title: "ลำนำสวรรค์ มังกรคู่บัลลังก์", category: "เทพเซียน", isHero: true, size: "1.2 GB",
-            cover: "https://images.unsplash.com/photo-1510860534293-199653cb306d?auto=format&fit=crop&w=800&q=80",
-            poster: "https://images.unsplash.com/photo-1510860534293-199653cb306d?auto=format&fit=crop&w=400&q=80",
-            desc: "มหากาพย์การชิงไหวชิงพริบในราชสำนักสวรรค์ การต่อสู้เพื่อแย่งชิงความเป็นใหญ่ในใต้หล้าของสองมังกรแห่งยุค พร้อมกับเรื่องราวความรักข้ามภพชาติที่ต้องเสียสละ ท่ามกลางสงครามระหว่างเทพและมาร",
-            episodes: [
-                {ep:1, title: "ตอนที่ 1: กำเนิดมังกรซ่อนกาย", url:v1, duration: "45:00"}, 
-                {ep:2, title: "ตอนที่ 2: เพลิงพิโรธเผาวังหลวง", url:v2, duration: "44:30"}, 
-                {ep:3, title: "ตอนที่ 3: หมากกระดานใหม่", url:v1, duration: "46:15"}, 
-                {ep:4, title: "ตอนที่ 4: ลิขิตสวรรค์ (ตอนล่าสุด)", url:v2, duration: "45:20"}
-            ]
-        },
-        {
-            id: 2, title: "แค้นรัก วังต้องห้าม", category: "แก้แค้น", isHero: true, size: "850 MB",
-            cover: "https://images.unsplash.com/photo-1544256667-df57ce8c9460?auto=format&fit=crop&w=800&q=80",
-            poster: "https://images.unsplash.com/photo-1544256667-df57ce8c9460?auto=format&fit=crop&w=400&q=80",
-            desc: "องค์หญิงที่ถูกลอบปลงพระชนม์ รอดชีวิตมาได้และกลับเข้าวังด้วยฐานะใหม่เพื่อทวงแค้นทุกคนที่ทรยศครอบครัวของเธอ",
-            episodes: [
-                {ep:1, title: "ตอนที่ 1: รอดพ้นความตาย", url:v2, duration: "50:00"}, 
-                {ep:2, title: "ตอนที่ 2: กลับสู่วังวน", url:v1, duration: "48:10"}
-            ]
-        },
-        {
-            id: 3, title: "เล่ห์รัก ฉางอัน", category: "ย้อนยุค", isHero: true, size: "400 MB",
-            cover: "https://images.unsplash.com/photo-1540316200632-44161a0bc0e9?auto=format&fit=crop&w=800&q=80",
-            poster: "https://images.unsplash.com/photo-1540316200632-44161a0bc0e9?auto=format&fit=crop&w=400&q=80",
-            desc: "เรื่องราวการสืบคดีปริศนาในเมืองฉางอัน ของแม่ทัพหนุ่มและคุณหนูตระกูลใหญ่ผู้มีไหวพริบเป็นเลิศ",
-            episodes: [{ep:1, title: "ตอนที่ 1: คดีปริศนา", url:v1, duration: "42:00"}]
-        },
-        {
-            id: 4, title: "หยาดน้ำตา สวรรค์", category: "ดราม่า", isHero: true, size: "900 MB",
-            cover: "https://images.unsplash.com/photo-1628157790138-0441d6dbdfba?auto=format&fit=crop&w=800&q=80",
-            poster: "https://images.unsplash.com/photo-1628157790138-0441d6dbdfba?auto=format&fit=crop&w=400&q=80",
-            desc: "โศกนาฏกรรมความรักของเทพบุปผาและจอมมาร ที่ไม่อาจครองคู่กันได้เพราะกฎเกณฑ์แห่งสวรรค์",
-            episodes: [
-                {ep:1, title: "ตอนที่ 1: แรกพบ", url:v1, duration: "45:00"},
-                {ep:2, title: "ตอนที่ 2: พรากจาก", url:v2, duration: "45:00"},
-                {ep:3, title: "ตอนที่ 3: น้ำตา", url:v1, duration: "45:00"}
-            ]
-        },
-        {
-            id: 5, title: "จอมยุทธ ภูตพิทักษ์", category: "การ์ตูน", isHero: true, size: "300 MB",
-            cover: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80",
-            poster: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=400&q=80",
-            desc: "อนิเมะ 3D สุดอลังการ การผจญภัยของเด็กหนุ่มผู้ปลุกสายเลือดวิญญาณศักดิ์สิทธิ์เพื่อก้าวสู่จุดสูงสุดของยุทธภพ",
-            episodes: [{ep:1, title: "ตอนที่ 1: ปลุกวิญญาณ", url:v2, duration: "24:00"}]
-        },
-        // More catalog items...
-        { id: 6, title: "บุปผาซ่อนพิษ", category: "แก้แค้น", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80", desc: "สตรีที่ถูกหักหลัง กลับมาพร้อมพิษร้ายเพื่อทำลายศัตรู", episodes: [{ep:1, title: "ตอนที่ 1", url:v1, duration: "45:00"}] },
-        { id: 7, title: "คัมภีร์หมอเทวดา", category: "สืบสวน", poster: "https://images.unsplash.com/photo-1616422285623-13ff0162193c?auto=format&fit=crop&w=400&q=80", desc: "หมอหญิงผู้ไขคดีด้วยวิชาแพทย์แผนจีนโบราณ", episodes: [{ep:1, title: "ตอนที่ 1", url:v1, duration: "45:00"}, {ep:2, title: "ตอนที่ 2", url:v2, duration: "45:00"}] },
-        { id: 8, title: "ตำนานกระบี่ ไร้พ่าย", category: "ย้อนยุค", poster: "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?auto=format&fit=crop&w=400&q=80", desc: "ยุทธภพสั่นสะเทือนเมื่อกระบี่ในตำนานปรากฏ", episodes: [{ep:1, title: "ตอนที่ 1", url:v2, duration: "45:00"}] },
-    ];
-
-    let currentSlide = 0;
-    let slideInterval;
-    const heroDramas = dramas.filter(d => d.isHero);
+    // ⚠️ นำ URL ของ Web App จาก Google Apps Script มาใส่ตรงนี้
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec";
     
-    // Downloaded Items Storage
+    // Sample Video Fallback (ในกรณีที่ใน Database ไม่ได้ใส่ลิงก์มา)
+    const fallbackVideo = "https://test-videos.co.uk/vids/sintel/mp4/h264/720/Sintel_720_10s_1MB.mp4";
+
+    // Application State
+    let movies = [];
+    let categories = ['all'];
+    let heroDramas = [];
     let downloadedDramas = [];
     let currentViewingId = null;
+    let currentSlide = 0;
+    let slideInterval;
 
-    // Initialize
-    window.onload = () => {
-        renderHeroSlider();
-        filterCategory('all', document.querySelector('.cat-btn.active'));
-        renderContinueWatching();
-        updateDownloadView();
+    // จำลอง User (เพื่อให้ระบบดาวน์โหลดบันทึกลง Database ได้)
+    // ของจริงสามารถเชื่อมกับ LocalStorage ของระบบเว็บ E-commerce หลักได้
+    let currentUser = {
+        uid: "MOCK-U1234",
+        phone: "0800000000",
+        email: "user@example.com"
     };
 
-    // Render Hero Auto Slider
+    // Initialize App
+    window.onload = () => {
+        // เช็คว่ามี User จากระบบร้านค้าล็อกอินค้างไว้ไหม
+        const savedUser = localStorage.getItem('nextLiveUser');
+        if(savedUser) {
+            try { currentUser = JSON.parse(savedUser); } catch(e){}
+        }
+
+        // โหลดข้อมูลหนังจาก Google Apps Script
+        fetchMoviesData();
+    };
+
+    // --- Backend API Integration ---
+    async function fetchMoviesData() {
+        try {
+            const response = await fetch(GAS_WEBAPP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'getMoviesData' })
+            });
+            const data = await JSON.parse(await response.text());
+            
+            if (data.status === 'success') {
+                movies = data.movies;
+                
+                // Set first 3 movies as Hero for the slider
+                movies.forEach((m, index) => {
+                    if(index < 3) m.isHero = true;
+                    // Fallback image if empty
+                    if(!m.poster) m.poster = "https://images.unsplash.com/photo-1540316200632-44161a0bc0e9?auto=format&fit=crop&w=400&q=80";
+                    if(!m.cover) m.cover = m.poster;
+                });
+                
+                heroDramas = movies.filter(d => d.isHero);
+                
+                // Add fetched categories to the menu
+                if(data.categories && data.categories.length > 0) {
+                    categories = ['all', ...data.categories];
+                }
+
+                // Render UI
+                renderCategoryMenu();
+                renderHeroSlider();
+                filterCategory('all', document.querySelector('.cat-btn.active'));
+                
+                // Fetch user downloads history
+                fetchUserDownloads();
+
+                // Hide Loader
+                document.getElementById('global-loader').style.display = 'none';
+            } else {
+                showToast("โหลดข้อมูลล้มเหลว");
+                document.getElementById('global-loader').style.display = 'none';
+            }
+        } catch (error) {
+            console.error("Error fetching movies:", error);
+            showToast("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้");
+            document.getElementById('global-loader').style.display = 'none';
+        }
+    }
+
+    async function fetchUserDownloads() {
+        try {
+            const response = await fetch(GAS_WEBAPP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ 
+                    action: 'getUserDownloads',
+                    email: currentUser.email,
+                    phone: currentUser.phone
+                })
+            });
+            const data = await JSON.parse(await response.text());
+            if (data.status === 'success') {
+                // แมปประวัติการดาวน์โหลด เข้ากับข้อมูลหนังที่มี
+                downloadedDramas = [];
+                data.downloads.forEach(dl => {
+                    // หาหนังต้นฉบับ
+                    let movie = movies.find(m => String(m.id) === String(dl.movieId));
+                    if(movie && !downloadedDramas.some(d => d.id === movie.id)) {
+                        // เก็บแยกเป็นรายการดาวน์โหลด
+                        downloadedDramas.push(movie);
+                    }
+                });
+                updateDownloadView();
+            }
+        } catch(e) {
+            console.error("Fetch Downloads Error", e);
+        }
+    }
+
+    // --- UI Rendering ---
+
+    function renderCategoryMenu() {
+        const menu = document.getElementById('category-menu');
+        menu.innerHTML = `<button class="cat-btn active text-sm text-gray-400" onclick="filterCategory('all', this)">หน้าแรก</button>`;
+        
+        const icons = ['ph-cloud-moon', 'ph-scroll', 'ph-mask-sad', 'ph-sword', 'ph-detective', 'ph-paint-brush'];
+        
+        categories.filter(c => c !== 'all').forEach((cat, index) => {
+            const iconClass = icons[index % icons.length];
+            menu.innerHTML += `<button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('${cat}', this)"><i class="ph-fill ${iconClass} text-gold-dark"></i> ${cat}</button>`;
+        });
+    }
+
     function renderHeroSlider() {
         const slider = document.getElementById('hero-slider');
         const dotsContainer = document.getElementById('slider-dots');
         slider.innerHTML = '';
         dotsContainer.innerHTML = '';
 
+        if(heroDramas.length === 0) return;
+
         heroDramas.forEach((drama, index) => {
             slider.innerHTML += `
-                <div class="slider-item w-full h-full flex-shrink-0 relative cursor-pointer" onclick="openMovie(${drama.id})">
+                <div class="slider-item w-full h-full flex-shrink-0 relative cursor-pointer" onclick="openMovie('${drama.id}')">
                     <img src="${drama.cover}" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/30 to-transparent"></div>
                     
@@ -530,14 +537,14 @@
                         <span class="inline-block px-2 py-0.5 rounded-sm bg-imperial-red/80 backdrop-blur border border-gold-dark/50 text-[10px] text-white font-medium mb-2 shadow-[0_0_10px_rgba(255,0,0,0.5)]">
                             <i class="ph-fill ph-fire text-gold-light"></i> มาแรงอันดับ ${index + 1}
                         </span>
-                        <h2 class="text-3xl font-bold text-white mb-2 font-serif drop-shadow-lg">${drama.title}</h2>
+                        <h2 class="text-3xl font-bold text-white mb-2 font-serif drop-shadow-lg line-clamp-2">${drama.title}</h2>
                         <div class="flex items-center gap-2 text-xs text-gray-300 mb-3">
-                            <span class="text-gold-main">${drama.category}</span>
+                            <span class="text-gold-main">${drama.category || 'ทั่วไป'}</span>
                             <span>•</span>
                             <span>ตอนใหม่ล่าสุด</span>
                         </div>
                         <div class="flex gap-3">
-                            <button class="bg-gold-gradient text-black px-6 py-2 rounded-full font-bold flex items-center gap-1 shadow-[0_0_15px_rgba(212,175,55,0.4)] transform transition hover:scale-105" onclick="event.stopPropagation(); openMovie(${drama.id})">
+                            <button class="bg-gold-gradient text-black px-6 py-2 rounded-full font-bold flex items-center gap-1 shadow-[0_0_15px_rgba(212,175,55,0.4)] transform transition hover:scale-105" onclick="event.stopPropagation(); openMovie('${drama.id}')">
                                 <i class="ph-fill ph-play text-lg"></i> เล่นเลย
                             </button>
                             <button class="w-10 h-10 rounded-full bg-white/20 backdrop-blur border border-white/30 flex items-center justify-center text-white" onclick="event.stopPropagation();">
@@ -562,14 +569,17 @@
 
     function startAutoSlide() {
         clearInterval(slideInterval);
-        slideInterval = setInterval(() => {
-            currentSlide = (currentSlide + 1) % heroDramas.length;
-            goToSlide(currentSlide);
-        }, 5000);
+        if(heroDramas.length > 1) {
+            slideInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % heroDramas.length;
+                goToSlide(currentSlide);
+            }, 5000);
+        }
     }
 
     function goToSlide(index) {
         const slider = document.getElementById('hero-slider');
+        if(!slider) return;
         slider.scrollTo({
             left: index * slider.offsetWidth,
             behavior: 'smooth'
@@ -600,7 +610,7 @@
         }
 
         document.getElementById('current-category-title').innerText = cat === 'all' ? 'แนะนำสำหรับคุณ' : `ซีรีส์${cat}`;
-        const filtered = cat === 'all' ? dramas : dramas.filter(d => d.category === cat);
+        const filtered = cat === 'all' ? movies : movies.filter(d => d.category === cat);
         const grid = document.getElementById('movies-grid');
         grid.innerHTML = '';
         
@@ -610,49 +620,20 @@
         }
 
         filtered.forEach((drama, i) => {
-            const delay = i * 0.1;
+            const delay = (i % 10) * 0.1; // Stagger animation
             grid.innerHTML += `
-                <div class="movie-card relative rounded-lg overflow-hidden border border-[#2a1a0a] bg-[#111] aspect-[2/3] cursor-pointer shadow-lg animate-fade-in" style="animation-delay: ${delay}s" onclick="openMovie(${drama.id})">
-                    <img src="${drama.poster}" class="w-full h-full object-cover opacity-90">
+                <div class="movie-card relative rounded-lg overflow-hidden border border-[#2a1a0a] bg-[#111] aspect-[2/3] cursor-pointer shadow-lg animate-fade-in" style="animation-delay: ${delay}s" onclick="openMovie('${drama.id}')">
+                    <img src="${drama.poster}" class="w-full h-full object-cover opacity-90" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-2.5">
                         <span class="absolute top-2 right-2 bg-black/60 backdrop-blur px-1.5 py-0.5 rounded text-[8px] border border-gold-dark/50 text-gold-light">
-                            ${drama.episodes.length} ตอน
+                            ${drama.episodes ? drama.episodes.length : 0} ตอน
                         </span>
                         <h4 class="text-sm font-medium text-white line-clamp-1 drop-shadow-md">${drama.title}</h4>
-                        <p class="text-[10px] text-gold-main mt-0.5">${drama.category}</p>
+                        <p class="text-[10px] text-gold-main mt-0.5">${drama.category || ''}</p>
                     </div>
                 </div>
             `;
         });
-    }
-
-    // Render Continue Watching
-    function renderContinueWatching() {
-        const list = document.getElementById('continue-list');
-        const drama = dramas[0]; 
-        list.innerHTML = `
-            <div class="flex gap-4 p-3 rounded-xl bg-[#1a1a1a] border border-[#333] cursor-pointer hover:border-gold-main transition" onclick="openMovie(${drama.id})">
-                <div class="w-32 aspect-video rounded-lg overflow-hidden relative flex-shrink-0 shadow-md">
-                    <img src="${drama.cover}" class="w-full h-full object-cover opacity-80">
-                    <div class="absolute inset-0 flex items-center justify-center bg-black/30">
-                        <i class="ph-fill ph-play-circle text-white text-3xl drop-shadow-lg"></i>
-                    </div>
-                    <div class="absolute bottom-0 left-0 h-1 bg-gray-700 w-full">
-                        <div class="h-full bg-imperial-red w-[75%] relative">
-                            <div class="absolute right-0 top-1/2 transform -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_5px_rgba(255,0,0,0.8)]"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col justify-center flex-1">
-                    <h4 class="text-sm font-bold text-white line-clamp-1">${drama.title}</h4>
-                    <p class="text-xs text-gray-400 mt-1">ตอนที่ 2</p>
-                    <div class="flex items-center justify-between mt-2">
-                        <p class="text-[10px] text-gold-main">เหลือ 12 นาที</p>
-                        <i class="ph ph-dots-three-vertical text-gray-500"></i>
-                    </div>
-                </div>
-            </div>
-        `;
     }
 
     // Tab Switching
@@ -689,47 +670,63 @@
 
     // Open Movie View
     function openMovie(id) {
-        const drama = dramas.find(d => d.id === id);
+        const drama = movies.find(d => String(d.id) === String(id));
         if(!drama) return;
         
-        currentViewingId = id;
+        currentViewingId = drama.id;
 
         // Check if already downloaded to update button state
-        const isDownloaded = downloadedDramas.some(d => d.id === id);
+        const isDownloaded = downloadedDramas.some(d => String(d.id) === String(drama.id));
         updateDownloadButtonState(isDownloaded);
 
         // UI Updates
         document.getElementById('detail-title').innerText = drama.title;
         document.getElementById('player-title').innerText = drama.title;
-        document.getElementById('detail-desc').innerText = drama.desc;
-        document.getElementById('detail-cat').innerText = drama.category;
+        document.getElementById('detail-desc').innerText = drama.desc || "ไม่มีรายละเอียด";
+        document.getElementById('detail-cat').innerText = drama.category || "ทั่วไป";
         document.getElementById('player-bg-blur').style.backgroundImage = `url('${drama.poster}')`;
+        document.getElementById('ep-count-display').innerText = `${drama.episodes ? drama.episodes.length : 0} ตอน`;
         
-        // Render Episodes as Premium Long List Style
+        // Setup Play Latest Button
+        const btnPlayLatest = document.getElementById('btn-play-latest');
+        if(drama.episodes && drama.episodes.length > 0) {
+            btnPlayLatest.onclick = () => {
+                let firstEp = drama.episodes[0];
+                let btnTarget = document.getElementById(`ep-btn-${drama.id}-0`);
+                playEpisode(firstEp.url || fallbackVideo, btnTarget);
+            };
+        }
+        
+        // Render Episodes
         const epList = document.getElementById('episodes-list');
         epList.innerHTML = '';
-        drama.episodes.forEach((ep) => {
-            epList.innerHTML += `
-                <button onclick="playEpisode('${ep.url}', this)" class="ep-btn ep-btn-premium w-full flex items-center p-3 rounded-lg text-left group">
-                    <div class="w-10 h-10 rounded border border-gold-dark/30 bg-black/50 flex flex-col items-center justify-center mr-4 flex-shrink-0 group-hover:border-gold-main transition relative overflow-hidden">
-                        <span class="text-sm font-bold text-gray-300 group-hover:text-gold-light">${ep.ep}</span>
-                        <!-- Hover play icon -->
-                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                            <i class="ph-fill ph-play text-gold-main"></i>
+        
+        if (drama.episodes && drama.episodes.length > 0) {
+            drama.episodes.forEach((ep, index) => {
+                let epUrl = ep.url || fallbackVideo;
+                epList.innerHTML += `
+                    <button id="ep-btn-${drama.id}-${index}" onclick="playEpisode('${epUrl}', this)" class="ep-btn ep-btn-premium w-full flex items-center p-3 rounded-lg text-left group">
+                        <div class="w-10 h-10 rounded border border-gold-dark/30 bg-black/50 flex flex-col items-center justify-center mr-4 flex-shrink-0 group-hover:border-gold-main transition relative overflow-hidden">
+                            <span class="text-sm font-bold text-gray-300 group-hover:text-gold-light">${ep.ep}</span>
+                            <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                <i class="ph-fill ph-play text-gold-main"></i>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="text-sm font-medium text-gray-200 group-hover:text-gold-light transition line-clamp-1">${ep.title}</h4>
-                        <p class="text-[10px] text-gray-500 mt-1">${ep.duration}</p>
-                    </div>
-                    <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-400 ml-2 group-hover:text-gold-main group-hover:border-gold-main/50 transition">
-                        <i class="ph-bold ph-play"></i>
-                    </div>
-                </button>
-            `;
-        });
+                        <div class="flex-1">
+                            <h4 class="text-sm font-medium text-gray-200 group-hover:text-gold-light transition line-clamp-1">${ep.title}</h4>
+                            <p class="text-[10px] text-gray-500 mt-1">${ep.duration || 'HD'}</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-400 ml-2 group-hover:text-gold-main group-hover:border-gold-main/50 transition">
+                            <i class="ph-bold ph-play"></i>
+                        </div>
+                    </button>
+                `;
+            });
+        } else {
+            epList.innerHTML = `<div class="text-center text-gray-500 py-4 text-sm">ยังไม่มีวิดีโอสำหรับเรื่องนี้</div>`;
+        }
 
-        // Reset Video
+        // Reset Video Player
         const video = document.getElementById('main-video');
         video.pause();
         video.src = "";
@@ -796,23 +793,25 @@
     document.getElementById('main-video').addEventListener('play', () => {
         document.getElementById('player-top-bar').style.opacity = '0';
     });
-    // Show top bar when user clicks/taps on video
     document.getElementById('main-video').addEventListener('click', () => {
         const topBar = document.getElementById('player-top-bar');
         topBar.style.opacity = topBar.style.opacity === '0' ? '1' : '0';
     });
 
 
-    // --- Download System (Offline Simulation) ---
+    // --- Download System (Record to Database) ---
 
     function downloadCurrentDrama() {
         if(!currentViewingId) return;
         
         // Check if already downloaded
-        if(downloadedDramas.some(d => d.id === currentViewingId)) {
+        if(downloadedDramas.some(d => String(d.id) === String(currentViewingId))) {
             showToast("เรื่องนี้ถูกดาวน์โหลดไว้แล้ว");
             return;
         }
+
+        const dramaToSave = movies.find(d => String(d.id) === String(currentViewingId));
+        if(!dramaToSave) return;
 
         const btn = document.getElementById('btn-download-all');
         const icon = document.getElementById('dl-icon');
@@ -826,24 +825,42 @@
         btn.classList.add('downloading');
         icon.classList.replace('ph-download-simple', 'ph-spinner');
         icon.classList.add('animate-spin', 'text-gold-main');
-        text.innerText = "กำลังโหลด...";
+        text.innerText = "กำลังบันทึก...";
         progress.classList.add('downloading-bar');
 
-        // Simulate network delay for downloading (3 seconds)
-        setTimeout(() => {
-            // Save to Mock Database
-            const dramaToSave = dramas.find(d => d.id === currentViewingId);
-            downloadedDramas.push(dramaToSave);
-            
-            // Update UI
-            updateDownloadButtonState(true);
-            updateDownloadView();
-            showToast("ดาวน์โหลดวิดีโอสำเร็จ ดูออฟไลน์ได้เลย");
-            
-            // Show badge on nav
-            document.getElementById('nav-dl-badge').classList.remove('hidden');
-            
-        }, 3000);
+        // Call Backend API to record download
+        fetch(GAS_WEBAPP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ 
+                action: 'recordMovieDownload',
+                uid: currentUser.uid,
+                email: currentUser.email,
+                phone: currentUser.phone,
+                movieId: dramaToSave.id,
+                movieTitle: dramaToSave.title,
+                episode: "ทุกตอน"
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                // Save to Local UI State
+                downloadedDramas.push(dramaToSave);
+                updateDownloadButtonState(true);
+                updateDownloadView();
+                showToast("ดาวน์โหลดหนังสำเร็จ บันทึกในประวัติแล้ว");
+                document.getElementById('nav-dl-badge').classList.remove('hidden');
+            } else {
+                updateDownloadButtonState(false);
+                showToast("บันทึกข้อมูลล้มเหลว");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            updateDownloadButtonState(false);
+            showToast("การเชื่อมต่อล้มเหลว");
+        });
     }
 
     function updateDownloadButtonState(isDownloaded) {
@@ -864,12 +881,14 @@
             icon.classList.remove('text-gold-main');
             text.innerText = "โหลดแล้ว";
             text.classList.add('text-jade');
+            btn.classList.add('border-jade/30');
         } else {
             icon.classList.replace('ph-check-circle', 'ph-download-simple');
             icon.classList.replace('ph-spinner', 'ph-download-simple');
             icon.classList.remove('text-jade', 'text-gold-main');
             text.innerText = "โหลด";
             text.classList.remove('text-jade');
+            btn.classList.remove('border-jade/30');
         }
     }
 
@@ -889,48 +908,33 @@
         emptyState.classList.add('hidden');
         
         // Render Downloaded Items
-        // First, clear old items
         listContainer.querySelectorAll('.dl-item').forEach(e => e.remove());
         
         downloadedDramas.forEach(drama => {
             const html = `
                 <div class="dl-item flex gap-4 p-3 rounded-xl bg-[#1a1a1a] border border-[#333] relative">
-                    <div class="w-24 aspect-[3/4] rounded-lg overflow-hidden relative flex-shrink-0 cursor-pointer" onclick="openMovie(${drama.id})">
+                    <div class="w-24 aspect-[3/4] rounded-lg overflow-hidden relative flex-shrink-0 cursor-pointer" onclick="openMovie('${drama.id}')">
                         <img src="${drama.poster}" class="w-full h-full object-cover opacity-90">
                         <div class="absolute inset-0 flex items-center justify-center bg-black/40">
                             <i class="ph-fill ph-play-circle text-white text-3xl drop-shadow-lg"></i>
                         </div>
-                        <div class="absolute top-1 left-1 bg-jade/80 text-white text-[8px] px-1 rounded font-bold">OFFLINE</div>
+                        <div class="absolute top-1 left-1 bg-jade/80 text-white text-[8px] px-1 rounded font-bold shadow-sm border border-jade">บันทึกแล้ว</div>
                     </div>
                     <div class="flex flex-col justify-between py-1 flex-1">
                         <div>
                             <h4 class="text-sm font-bold text-white line-clamp-1">${drama.title}</h4>
-                            <p class="text-[10px] text-gray-400 mt-1">${drama.episodes.length} ตอน • ${drama.size}</p>
-                            <p class="text-[10px] text-jade mt-1 flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> ดาวน์โหลดเสร็จสิ้น</p>
+                            <p class="text-[10px] text-gray-400 mt-1">${drama.episodes ? drama.episodes.length : 0} ตอน • สิทธิ์ Premium</p>
+                            <p class="text-[10px] text-jade mt-1 flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> บันทึกลงฐานข้อมูลแล้ว</p>
                         </div>
                         <div class="flex justify-between items-center mt-2">
-                            <button class="text-xs bg-gold-gradient text-black px-3 py-1 rounded font-medium" onclick="openMovie(${drama.id})">รับชม</button>
-                            <button class="text-gray-500 hover:text-red-500 transition p-2" onclick="deleteDownload(${drama.id})">
-                                <i class="ph ph-trash text-lg"></i>
-                            </button>
+                            <button class="text-xs bg-gold-gradient text-black px-4 py-1.5 rounded-md font-bold shadow-[0_0_10px_rgba(212,175,55,0.3)]" onclick="openMovie('${drama.id}')">รับชมออฟไลน์</button>
+                            <!-- ปุ่มลบถูกเอาออกหรือย้ายไปไว้ที่อื่นถ้าจำเป็นต้องลบประวัติ -->
                         </div>
                     </div>
                 </div>
             `;
             listContainer.insertAdjacentHTML('beforeend', html);
         });
-    }
-
-    function deleteDownload(id) {
-        downloadedDramas = downloadedDramas.filter(d => d.id !== id);
-        updateDownloadView();
-        
-        // If we delete while viewing it, reset button
-        if(currentViewingId === id) {
-            updateDownloadButtonState(false);
-        }
-        
-        showToast("ลบออกจากรายการดาวน์โหลดแล้ว");
     }
 
     // Custom Toast function
