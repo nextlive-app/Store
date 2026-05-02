@@ -98,10 +98,6 @@
         .bg-gold-gradient {
             background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728);
         }
-        .border-gold-glow {
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15), inset 0 0 10px rgba(212, 175, 55, 0.05);
-        }
 
         /* Hide Scrollbar but keep functionality */
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -127,10 +123,6 @@
             border-radius: 2px; box-shadow: 0 0 5px #D4AF37;
         }
 
-        /* Movie Cards */
-        .movie-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .movie-card:active { transform: scale(0.95); }
-
         /* Bottom Nav */
         .nav-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .nav-btn.active { color: #FCE79C; transform: translateY(-8px); }
@@ -153,7 +145,6 @@
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 2px 5px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
         }
-        .ep-btn-premium:active { transform: scale(0.98); }
         .ep-btn-premium.active-ep {
             border-color: #D4AF37;
             background: linear-gradient(145deg, rgba(74, 4, 4, 0.8), rgba(26, 5, 5, 0.9));
@@ -297,17 +288,41 @@
 
     <!-- View: Movie Player & Details (Overlay) -->
     <div id="view-player" class="absolute inset-0 bg-bg-dark z-40 hidden flex-col">
-        <!-- Video Container (Smart Player) -->
-        <div class="relative w-full bg-black aspect-video flex-shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.9)] z-20" id="player-wrapper">
-            <!-- This container will hold either <video> or <iframe> -->
-            <div id="video-container" class="w-full h-full flex items-center justify-center bg-black">
-                <!-- Cover Image initially -->
+        
+        <!-- Video Container (Smart Player Wrapper) -->
+        <!-- เราครอบไว้เพื่อให้สามารถใช้งาน Fullscreen เฉพาะส่วนนี้ได้ -->
+        <div class="relative w-full bg-black aspect-video flex-shrink-0 shadow-[0_10px_30px_rgba(0,0,0,0.9)] z-20 group" id="player-wrapper">
+            
+            <!-- ที่สิงสถิตของ Iframe หรือ Video -->
+            <div id="video-container" class="w-full h-full flex items-center justify-center bg-black relative">
+                <!-- Cover Image (Default state) -->
                 <img id="player-cover" src="" class="w-full h-full object-cover opacity-50">
                 <i class="ph-fill ph-play-circle absolute text-6xl text-white/70"></i>
             </div>
             
-            <!-- Custom Top Bar for Player -->
-            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-black/90 to-transparent flex items-start p-4 transition-opacity duration-300 pointer-events-none z-30" id="player-top-bar">
+            <!-- CUSTOM PLAYER OVERLAY (จะแสดงเฉพาะลิงก์ YouTube เท่านั้น) -->
+            <div id="custom-player-overlay" class="absolute inset-0 z-30 hidden overflow-hidden">
+                <!-- Clickable Background (เพื่อกด Pause/Play ทั่วหน้าจอ) -->
+                <div id="custom-click-area" class="absolute inset-0 cursor-pointer"></div>
+                
+                <!-- Center Play/Pause Icon -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <button id="custom-play-pause" class="text-white text-6xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] transition-all duration-300">
+                        <i class="ph-fill ph-circle-notch animate-spin"></i>
+                    </button>
+                </div>
+                
+                <!-- Bottom Controls (Fullscreen) -->
+                <div id="custom-bottom-bar" class="absolute bottom-0 left-0 w-full p-3 bg-gradient-to-t from-black/80 to-transparent flex justify-end transition-opacity duration-300 pointer-events-none">
+                    <button id="custom-fullscreen" class="pointer-events-auto text-white text-2xl drop-shadow-md hover:text-gold-main transition" onclick="toggleFullScreen()">
+                        <i class="ph-bold ph-corners-out"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Top Bar for Player (Back Button & Title) -->
+            <!-- ตัวนี้จะแสดงเสมอ ไม่ว่าจะเป็นเครื่องเล่นแบบไหน -->
+            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-black/90 to-transparent flex items-start p-4 transition-opacity duration-300 z-40 pointer-events-none" id="player-top-bar">
                 <button onclick="closePlayer()" class="pointer-events-auto w-8 h-8 rounded-full bg-black/40 border border-white/20 flex items-center justify-center text-white backdrop-blur hover:bg-gold-main hover:text-black transition shadow-lg">
                     <i class="ph ph-caret-left text-xl"></i>
                 </button>
@@ -404,6 +419,8 @@
     let currentViewingId = null;
     let currentSlide = 0;
     let slideInterval;
+    let ytPlayer = null; // เก็บ instance ของ YouTube API
+    let hideControlsTimeout; // ตัวตั้งเวลาซ่อน UI
 
     // จำลอง User (ของจริงใช้ตัวแปรจากระบบ E-Commerce ร้านค้า)
     let currentUser = {
@@ -414,11 +431,8 @@
 
     // Initialize App
     window.onload = () => {
-        // ดึงข้อมูล User จากระบบหลัก ถ้ามี
         const savedUser = localStorage.getItem('nextLiveUser');
-        if(savedUser) {
-            try { currentUser = JSON.parse(savedUser); } catch(e){}
-        }
+        if(savedUser) { try { currentUser = JSON.parse(savedUser); } catch(e){} }
         fetchMoviesData();
     };
 
@@ -443,7 +457,6 @@
                     return;
                 }
 
-                // Set first 5 movies as Hero for the slider
                 movies.forEach((m, index) => {
                     if(index < 5 && m.poster) m.isHero = true;
                     if(!m.poster) m.poster = "https://images.unsplash.com/photo-1540316200632-44161a0bc0e9?auto=format&fit=crop&w=400&q=80";
@@ -478,54 +491,31 @@
             const response = await fetch(GAS_WEBAPP_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ 
-                    action: 'getUserDownloads',
-                    email: currentUser.email,
-                    phone: currentUser.phone
-                })
+                body: JSON.stringify({ action: 'getUserDownloads', email: currentUser.email, phone: currentUser.phone })
             });
             const data = await JSON.parse(await response.text());
             if (data.status === 'success') {
                 downloadedDramas = [];
                 data.downloads.forEach(dl => {
                     let movie = movies.find(m => String(m.id) === String(dl.movieId));
-                    if(movie && !downloadedDramas.some(d => d.id === movie.id)) {
-                        downloadedDramas.push(movie);
-                    }
+                    if(movie && !downloadedDramas.some(d => d.id === movie.id)) downloadedDramas.push(movie);
                 });
                 updateDownloadView();
             }
-        } catch(e) {
-            console.error("Fetch Downloads Error", e);
-        }
+        } catch(e) {}
     }
 
     // --- Smart Player URL Parser ---
-    // ตรวจสอบว่าเป็นลิงก์ประเภทไหน (YouTube, Drive, หรือ MP4)
+    // คัดแยกประเภทลิงก์วิดีโอ (YouTube, Drive, MP4)
     function parseVideoUrl(url) {
         if (!url) return { type: 'none', src: fallbackVideo };
         
-        // 1. Check for YouTube
         let ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})/);
-        if (ytMatch && ytMatch[1]) {
-            // คืนค่าเป็น iframe youtube (autoplay, ปิด related videos)
-            return { 
-                type: 'youtube', 
-                src: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0&modestbranding=1&playsinline=1` 
-            };
-        }
+        if (ytMatch && ytMatch[1]) return { type: 'youtube', id: ytMatch[1] };
         
-        // 2. Check for Google Drive
         let driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        if (driveMatch && driveMatch[1]) {
-            // คืนค่าเป็น iframe ของ Google Drive Preview
-            return { 
-                type: 'drive', 
-                src: `https://drive.google.com/file/d/${driveMatch[1]}/preview` 
-            };
-        }
+        if (driveMatch && driveMatch[1]) return { type: 'drive', src: `https://drive.google.com/file/d/${driveMatch[1]}/preview` };
         
-        // 3. Default (Native Video Player e.g., .mp4)
         return { type: 'native', src: url };
     }
 
@@ -534,9 +524,7 @@
     function renderCategoryMenu() {
         const menu = document.getElementById('category-menu');
         menu.innerHTML = `<button class="cat-btn active text-sm text-gray-400" onclick="filterCategory('all', this)">หน้าแรก</button>`;
-        
         const icons = ['ph-cloud-moon', 'ph-scroll', 'ph-mask-sad', 'ph-sword', 'ph-detective', 'ph-paint-brush'];
-        
         categories.filter(c => c !== 'all').forEach((cat, index) => {
             const iconClass = icons[index % icons.length];
             menu.innerHTML += `<button class="cat-btn text-sm text-gray-400 flex items-center gap-1" onclick="filterCategory('${cat}', this)"><i class="ph-fill ${iconClass} text-gold-dark"></i> ${cat}</button>`;
@@ -546,9 +534,7 @@
     function renderHeroSlider() {
         const slider = document.getElementById('hero-slider');
         const dotsContainer = document.getElementById('slider-dots');
-        slider.innerHTML = '';
-        dotsContainer.innerHTML = '';
-
+        slider.innerHTML = ''; dotsContainer.innerHTML = '';
         if(heroDramas.length === 0) return;
 
         heroDramas.forEach((drama, index) => {
@@ -556,16 +542,13 @@
                 <div class="slider-item w-full h-full flex-shrink-0 relative cursor-pointer" onclick="openMovie('${drama.id}')">
                     <img src="${drama.cover}" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/50 to-transparent pointer-events-none"></div>
-                    
                     <div class="absolute bottom-16 left-5 right-5 z-10 pointer-events-auto">
                         <span class="inline-block px-2 py-0.5 rounded-sm bg-imperial-red/80 backdrop-blur border border-gold-dark/50 text-[10px] text-white font-medium mb-2 shadow-[0_0_10px_rgba(255,0,0,0.5)]">
                             <i class="ph-fill ph-fire text-gold-light"></i> มาแรงอันดับ ${index + 1}
                         </span>
                         <h2 class="text-3xl font-bold text-white mb-2 font-serif drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] line-clamp-2">${drama.title}</h2>
                         <div class="flex items-center gap-2 text-xs text-gray-300 mb-3 drop-shadow-md">
-                            <span class="text-gold-main">${drama.category || 'ทั่วไป'}</span>
-                            <span>•</span>
-                            <span>ตอนใหม่ล่าสุด</span>
+                            <span class="text-gold-main">${drama.category || 'ทั่วไป'}</span><span>•</span><span>ตอนใหม่ล่าสุด</span>
                         </div>
                         <div class="flex gap-3">
                             <button class="bg-gold-gradient text-black px-6 py-2 rounded-full font-bold flex items-center gap-1 shadow-[0_0_15px_rgba(212,175,55,0.4)] transform transition hover:scale-105" onclick="event.stopPropagation(); openMovie('${drama.id}')">
@@ -575,16 +558,13 @@
                     </div>
                 </div>
             `;
-            dotsContainer.innerHTML += `
-                <div class="slider-dot w-2 h-2 rounded-full bg-white/40 ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></div>
-            `;
+            dotsContainer.innerHTML += `<div class="slider-dot w-2 h-2 rounded-full bg-white/40 ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></div>`;
         });
 
         startAutoSlide();
         slider.addEventListener('scroll', () => {
             const index = Math.round(slider.scrollLeft / slider.offsetWidth);
-            updateSliderDots(index);
-            currentSlide = index;
+            updateSliderDots(index); currentSlide = index;
         });
     }
 
@@ -602,40 +582,29 @@
         const slider = document.getElementById('hero-slider');
         if(!slider) return;
         slider.scrollTo({ left: index * slider.offsetWidth, behavior: 'smooth' });
-        currentSlide = index;
-        updateSliderDots(index);
-        startAutoSlide();
+        currentSlide = index; updateSliderDots(index); startAutoSlide();
     }
 
     function updateSliderDots(index) {
-        const dots = document.querySelectorAll('.slider-dot');
-        dots.forEach((dot, i) => {
-            if (i === index) dot.classList.add('active');
-            else dot.classList.remove('active');
+        document.querySelectorAll('.slider-dot').forEach((dot, i) => {
+            if (i === index) dot.classList.add('active'); else dot.classList.remove('active');
         });
     }
 
-    // Filter Categories
     function filterCategory(cat, btnElement) {
         if(btnElement) {
             document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('active', 'text-gray-400');
-                btn.classList.add('text-gray-400');
+                btn.classList.remove('active', 'text-gray-400'); btn.classList.add('text-gray-400');
             });
-            btnElement.classList.add('active');
-            btnElement.classList.remove('text-gray-400');
+            btnElement.classList.add('active'); btnElement.classList.remove('text-gray-400');
             btnElement.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
 
         document.getElementById('current-category-title').innerText = cat === 'all' ? 'แนะนำสำหรับคุณ' : `ซีรีส์${cat}`;
         const filtered = cat === 'all' ? movies : movies.filter(d => d.category === cat);
-        const grid = document.getElementById('movies-grid');
-        grid.innerHTML = '';
+        const grid = document.getElementById('movies-grid'); grid.innerHTML = '';
         
-        if (filtered.length === 0) {
-            grid.innerHTML = `<div class="col-span-2 text-center text-gray-500 py-10">ไม่พบซีรีส์ในหมวดหมู่นี้</div>`;
-            return;
-        }
+        if (filtered.length === 0) { grid.innerHTML = `<div class="col-span-2 text-center text-gray-500 py-10">ไม่พบซีรีส์ในหมวดหมู่นี้</div>`; return; }
 
         filtered.forEach((drama, i) => {
             const delay = (i % 10) * 0.1;
@@ -654,38 +623,31 @@
         });
     }
 
-    // Tab Switching
     function switchTab(tabId) {
-        closePlayer(); // Stop video if switching tabs
+        closePlayer(); // ปิดวิดีโอก่อนเปลี่ยนหน้า
 
         document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.remove('active', 'text-gray-500');
-            btn.classList.add('text-gray-500');
+            btn.classList.remove('active', 'text-gray-500'); btn.classList.add('text-gray-500');
             btn.querySelector('i').classList.replace('ph-fill', 'ph');
             if(btn.dataset.target === `view-${tabId}`) {
-                btn.classList.add('active');
-                btn.classList.remove('text-gray-500');
+                btn.classList.add('active'); btn.classList.remove('text-gray-500');
                 btn.querySelector('i').classList.replace('ph', 'ph-fill');
             }
         });
 
-        document.querySelectorAll('.view-section, #view-player').forEach(view => {
-            view.classList.add('hidden');
-        });
+        document.querySelectorAll('.view-section, #view-player').forEach(view => { view.classList.add('hidden'); });
 
         const targetView = document.getElementById(`view-${tabId}`);
-        targetView.classList.remove('hidden');
-        targetView.classList.add('animate-fade-in');
+        targetView.classList.remove('hidden'); targetView.classList.add('animate-fade-in');
         
         document.getElementById('main-content').classList.remove('hidden');
         document.getElementById('bottom-nav').style.display = 'flex';
 
-        if(tabId === 'download') {
-            document.getElementById('nav-dl-badge').classList.add('hidden');
-        }
+        if(tabId === 'download') document.getElementById('nav-dl-badge').classList.add('hidden');
     }
 
-    // Open Movie View
+    // --- Smart Player Functions ---
+
     function openMovie(id) {
         const drama = movies.find(d => String(d.id) === String(id));
         if(!drama) return;
@@ -702,13 +664,13 @@
         document.getElementById('player-bg-blur').style.backgroundImage = `url('${drama.poster}')`;
         document.getElementById('ep-count-display').innerText = `${drama.episodes ? drama.episodes.length : 0} ตอน`;
         
-        // Setup Video Container Initial State
-        const videoContainer = document.getElementById('video-container');
-        videoContainer.innerHTML = `
+        // Reset Video Container
+        document.getElementById('video-container').innerHTML = `
             <img src="${drama.cover || drama.poster}" class="w-full h-full object-cover opacity-50">
             <i class="ph-fill ph-play-circle absolute text-6xl text-white/70"></i>
         `;
         document.getElementById('player-top-bar').style.opacity = '1';
+        document.getElementById('custom-player-overlay').classList.add('hidden');
         
         const btnPlayLatest = document.getElementById('btn-play-latest');
         if(drama.episodes && drama.episodes.length > 0) {
@@ -756,7 +718,14 @@
 
     function closePlayer() {
         const videoContainer = document.getElementById('video-container');
-        videoContainer.innerHTML = ''; // Stop video/iframe
+        videoContainer.innerHTML = ''; // ล้างวิดีโอหรือ Iframe ทิ้งเพื่อหยุดเล่น
+        
+        if (ytPlayer && ytPlayer.destroy) {
+            ytPlayer.destroy();
+            ytPlayer = null;
+        }
+
+        document.getElementById('custom-player-overlay').classList.add('hidden');
         currentViewingId = null;
         
         const playerView = document.getElementById('view-player');
@@ -767,14 +736,18 @@
         document.getElementById('bottom-nav').style.display = 'flex';
     }
 
-    // --- Smart Player Function ---
+    // ฟังก์ชันรันตอนที่กดปุ่ม "เล่นตอนแรก" หรือ กดเลือกตอนต่างๆ
     function playEpisode(url, btnElement) {
         const videoContainer = document.getElementById('video-container');
+        const overlay = document.getElementById('custom-player-overlay');
+        const topBar = document.getElementById('player-top-bar');
+        const playPauseBtn = document.getElementById('custom-play-pause');
+        const bottomBar = document.getElementById('custom-bottom-bar');
         
-        // 1. วิเคราะห์ลิงก์
+        // แปลงลิงก์ URL ให้รู้ว่าเป็นประเภทไหน
         const videoInfo = parseVideoUrl(url);
 
-        // 2. จัดการหน้าตาปุ่มที่ถูกกด
+        // จัดการสีปุ่มที่ถูกกด
         document.querySelectorAll('.ep-btn').forEach(btn => {
             btn.classList.remove('active-ep');
             btn.querySelector('.w-10').classList.remove('border-gold-main');
@@ -791,37 +764,139 @@
             btnElement.querySelector('.w-8').classList.add('text-gold-main', 'border-gold-main');
         }
 
-        // 3. Inject เครื่องเล่นตามประเภท
-        videoContainer.innerHTML = ''; // Clear เก่าก่อน
+        // ล้างเครื่องเล่นเก่าทิ้ง
+        if (ytPlayer && ytPlayer.destroy) { ytPlayer.destroy(); ytPlayer = null; }
+        videoContainer.innerHTML = ''; 
 
-        if (videoInfo.type === 'youtube' || videoInfo.type === 'drive') {
-            // ใช้ iframe สำหรับ YouTube และ Google Drive
-            videoContainer.innerHTML = `
-                <iframe src="${videoInfo.src}" 
-                        class="w-full h-full border-0 bg-black" 
-                        allow="autoplay; fullscreen; encrypted-media" 
-                        allowfullscreen>
-                </iframe>
-            `;
-            // สำหรับ iframe ให้ซ่อน Top Bar ไปเลยเมื่อเล่น
-            document.getElementById('player-top-bar').style.opacity = '0';
-        } else {
-            // ใช้ <video> สำหรับไฟล์ mp4
-            videoContainer.innerHTML = `
-                <video id="main-video" controls autoplay playsinline class="w-full h-full bg-black">
-                    <source src="${videoInfo.src}" type="video/mp4">
-                </video>
-            `;
+        // 1. ถ้าระบบเจอลิงก์ YouTube 
+        if (videoInfo.type === 'youtube') {
+            // สร้างกล่องใส่ YouTube ปิดการคลิกที่ iframe (pointer-events-none)
+            videoContainer.innerHTML = '<div id="yt-player-div" class="w-full h-full pointer-events-none"></div>';
+            overlay.classList.remove('hidden'); // โชว์ระบบควบคุมของเราเอง
+            topBar.style.opacity = '1';
+            bottomBar.style.opacity = '1';
             
+            playPauseBtn.innerHTML = '<i class="ph-fill ph-circle-notch animate-spin"></i>';
+            playPauseBtn.style.opacity = '1';
+
+            if (window.YT && window.YT.Player) {
+                initYTPlayer(videoInfo.id);
+            } else {
+                // โหลด YouTube API ครั้งแรก
+                const tag = document.createElement('script');
+                tag.src = "https://www.youtube.com/iframe_api";
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                window.onYouTubeIframeAPIReady = function() { initYTPlayer(videoInfo.id); };
+            }
+        } 
+        // 2. ถ้าระบบเจอลิงก์ Google Drive
+        else if (videoInfo.type === 'drive') {
+            overlay.classList.add('hidden');
+            videoContainer.innerHTML = `<iframe src="${videoInfo.src}" class="w-full h-full border-0 bg-black" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+            topBar.style.opacity = '0'; // Google Drive จะมีแถบควบคุมของตัวเอง เลยซ่อน Top Bar เราไว้
+        } 
+        // 3. ถ้าเป็นไฟล์ .mp4 ดิบๆ
+        else {
+            overlay.classList.add('hidden');
+            videoContainer.innerHTML = `<video id="main-video" controls autoplay playsinline class="w-full h-full bg-black"><source src="${videoInfo.src}" type="video/mp4"></video>`;
             const newVideo = document.getElementById('main-video');
-            newVideo.addEventListener('pause', () => { document.getElementById('player-top-bar').style.opacity = '1'; });
-            newVideo.addEventListener('play', () => { document.getElementById('player-top-bar').style.opacity = '0'; });
-            newVideo.addEventListener('click', () => {
-                const topBar = document.getElementById('player-top-bar');
-                topBar.style.opacity = topBar.style.opacity === '0' ? '1' : '0';
-            });
             
-            document.getElementById('player-top-bar').style.opacity = '0';
+            newVideo.addEventListener('pause', () => { topBar.style.opacity = '1'; });
+            newVideo.addEventListener('play', () => { topBar.style.opacity = '0'; });
+            newVideo.addEventListener('click', () => { topBar.style.opacity = topBar.style.opacity === '0' ? '1' : '0'; });
+            topBar.style.opacity = '0';
+        }
+    }
+
+    // ฟังก์ชันสร้างเครื่องเล่น YouTube อัตโนมัติ ซ่อน Title ซ่อน Logo
+    function initYTPlayer(videoId) {
+        let isPlaying = false;
+        const playPauseBtn = document.getElementById('custom-play-pause');
+        const overlay = document.getElementById('custom-player-overlay');
+        const topBar = document.getElementById('player-top-bar');
+        const bottomBar = document.getElementById('custom-bottom-bar');
+        const clickArea = document.getElementById('custom-click-area');
+
+        ytPlayer = new YT.Player('yt-player-div', {
+            videoId: videoId,
+            playerVars: {
+                'autoplay': 1,
+                'controls': 0,        // ปิดแถบควบคุม YouTube
+                'disablekb': 1,       // ปิดการใช้ Keyboard YouTube
+                'fs': 0,              // ปิดปุ่ม Fullscreen YouTube
+                'modestbranding': 1,  // ปิดโลโก้ YouTube
+                'rel': 0,             // ปิดวิดีโอแนะนำจากช่องอื่น
+                'showinfo': 0,
+                'iv_load_policy': 3,
+                'playsinline': 1
+            },
+            events: {
+                'onReady': function(event) {
+                    event.target.playVideo();
+                    
+                    // กดที่หน้าจอตรงไหนก็ได้ เพื่อ เล่น/หยุด
+                    clickArea.onclick = () => {
+                        if (isPlaying) ytPlayer.pauseVideo();
+                        else ytPlayer.playVideo();
+                    };
+                },
+                'onStateChange': function(event) {
+                    clearTimeout(hideControlsTimeout);
+                    
+                    if (event.data == YT.PlayerState.PLAYING) {
+                        isPlaying = true;
+                        playPauseBtn.innerHTML = '<i class="ph-fill ph-pause-circle"></i>';
+                        playPauseBtn.style.opacity = '1';
+                        topBar.style.opacity = '1';
+                        bottomBar.style.opacity = '1';
+                        
+                        // เมื่อเล่นไปได้ 2 วิ ให้ซ่อน UI ทั้งหมด
+                        hideControlsTimeout = setTimeout(() => {
+                            if (isPlaying) {
+                                playPauseBtn.style.opacity = '0';
+                                topBar.style.opacity = '0';
+                                bottomBar.style.opacity = '0';
+                            }
+                        }, 2500);
+                        
+                    } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.UNSTARTED) {
+                        isPlaying = false;
+                        playPauseBtn.innerHTML = '<i class="ph-fill ph-play-circle"></i>';
+                        playPauseBtn.style.opacity = '1';
+                        topBar.style.opacity = '1';
+                        bottomBar.style.opacity = '1';
+                    } else if (event.data == YT.PlayerState.ENDED) {
+                        isPlaying = false;
+                        playPauseBtn.innerHTML = '<i class="ph-fill ph-arrow-counter-clockwise"></i>';
+                        playPauseBtn.style.opacity = '1';
+                        topBar.style.opacity = '1';
+                        bottomBar.style.opacity = '1';
+                    }
+                }
+            }
+        });
+    }
+
+    // ฟังก์ชันเปิดจอแบบ Fullscreen สำหรับเครื่องเล่นที่ถูกครอบไว้
+    function toggleFullScreen() {
+        const playerWrapper = document.getElementById('player-wrapper');
+        const fsIcon = document.querySelector('#custom-fullscreen i');
+        
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            if (playerWrapper.requestFullscreen) {
+                playerWrapper.requestFullscreen();
+            } else if (playerWrapper.webkitRequestFullscreen) { 
+                playerWrapper.webkitRequestFullscreen();
+            }
+            if(fsIcon) fsIcon.className = "ph-bold ph-corners-in";
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { 
+                document.webkitExitFullscreen();
+            }
+            if(fsIcon) fsIcon.className = "ph-bold ph-corners-out";
         }
     }
 
@@ -830,10 +905,8 @@
 
     function downloadCurrentDrama() {
         if(!currentViewingId) return;
-        
         if(downloadedDramas.some(d => String(d.id) === String(currentViewingId))) {
-            showToast("เรื่องนี้ถูกดาวน์โหลดไว้แล้ว");
-            return;
+            showToast("เรื่องนี้ถูกดาวน์โหลดไว้แล้ว"); return;
         }
 
         const dramaToSave = movies.find(d => String(d.id) === String(currentViewingId));
@@ -856,33 +929,18 @@
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ 
-                action: 'recordMovieDownload',
-                uid: currentUser.uid,
-                email: currentUser.email,
-                phone: currentUser.phone,
-                movieId: dramaToSave.id,
-                movieTitle: dramaToSave.title,
-                episode: "ทุกตอน"
+                action: 'recordMovieDownload', uid: currentUser.uid, email: currentUser.email, phone: currentUser.phone, movieId: dramaToSave.id, movieTitle: dramaToSave.title, episode: "ทุกตอน"
             })
         })
         .then(res => res.json())
         .then(data => {
             if(data.status === 'success') {
                 downloadedDramas.push(dramaToSave);
-                updateDownloadButtonState(true);
-                updateDownloadView();
+                updateDownloadButtonState(true); updateDownloadView();
                 showToast("ดาวน์โหลดหนังสำเร็จ บันทึกในประวัติแล้ว");
                 document.getElementById('nav-dl-badge').classList.remove('hidden');
-            } else {
-                updateDownloadButtonState(false);
-                showToast("บันทึกข้อมูลล้มเหลว");
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            updateDownloadButtonState(false);
-            showToast("การเชื่อมต่อล้มเหลว");
-        });
+            } else { updateDownloadButtonState(false); showToast("บันทึกข้อมูลล้มเหลว"); }
+        }).catch(err => { updateDownloadButtonState(false); showToast("การเชื่อมต่อล้มเหลว"); });
     }
 
     function updateDownloadButtonState(isDownloaded) {
@@ -891,26 +949,19 @@
         const progress = document.getElementById('dl-progress');
         const btn = document.getElementById('btn-download-all');
 
-        btn.classList.remove('downloading');
-        icon.classList.remove('animate-spin');
-        progress.classList.remove('downloading-bar');
-        progress.style.width = '0';
+        btn.classList.remove('downloading'); icon.classList.remove('animate-spin');
+        progress.classList.remove('downloading-bar'); progress.style.width = '0';
 
         if(isDownloaded) {
             icon.classList.replace('ph-download-simple', 'ph-check-circle');
             icon.classList.replace('ph-spinner', 'ph-check-circle');
-            icon.classList.add('text-jade');
-            icon.classList.remove('text-gold-main');
-            text.innerText = "โหลดแล้ว";
-            text.classList.add('text-jade');
-            btn.classList.add('border-jade/30');
+            icon.classList.add('text-jade'); icon.classList.remove('text-gold-main');
+            text.innerText = "โหลดแล้ว"; text.classList.add('text-jade'); btn.classList.add('border-jade/30');
         } else {
             icon.classList.replace('ph-check-circle', 'ph-download-simple');
             icon.classList.replace('ph-spinner', 'ph-download-simple');
             icon.classList.remove('text-jade', 'text-gold-main');
-            text.innerText = "โหลด";
-            text.classList.remove('text-jade');
-            btn.classList.remove('border-jade/30');
+            text.innerText = "โหลด"; text.classList.remove('text-jade'); btn.classList.remove('border-jade/30');
         }
     }
 
@@ -923,8 +974,7 @@
 
         if(downloadedDramas.length === 0) {
             emptyState.classList.remove('hidden');
-            listContainer.querySelectorAll('.dl-item').forEach(e => e.remove());
-            return;
+            listContainer.querySelectorAll('.dl-item').forEach(e => e.remove()); return;
         }
 
         emptyState.classList.add('hidden');
@@ -962,7 +1012,6 @@
         toast.classList.add('show');
         setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
-    
 </script>
 </body>
 </html>
