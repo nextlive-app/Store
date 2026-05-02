@@ -38,7 +38,6 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* พื้นหลังดั่งสรวงสวรรค์ */
         .celestial-bg {
             position: absolute; inset: 0;
             background: 
@@ -47,7 +46,6 @@
             pointer-events: none; z-index: 0;
         }
 
-        /* เอฟเฟกต์ละอองทอง (CSS Particles) */
         .particles {
             position: absolute; inset: 0; pointer-events: none; z-index: 1;
             background-image: 
@@ -61,7 +59,6 @@
         }
         @keyframes stars { from { transform: translateY(0); } to { transform: translateY(-250px); } }
 
-        /* ดีไซน์การ์ดหนัง */
         .movie-card {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(230, 194, 122, 0.15);
@@ -77,61 +74,33 @@
             background: linear-gradient(to top, #000 10%, transparent 50%, rgba(138, 3, 3, 0.3) 100%);
         }
 
-        /* เมนูหมวดหมู่ (จัดสมดุลแล้ว) */
         .cat-btn {
             background: rgba(10, 0, 0, 0.7);
             border: 1px solid var(--gold-dark);
             color: var(--gold-celestial);
             transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 20px; /* ปรับ Padding ให้สมดุล */
-            line-height: 1.2;
-            backdrop-blur: 4px;
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 6px 20px; line-height: 1.2; backdrop-blur: 4px;
         }
-        .cat-btn:hover {
-            background: rgba(230, 194, 122, 0.1);
-            border-color: var(--gold-celestial);
-        }
+        .cat-btn:hover { background: rgba(230, 194, 122, 0.1); border-color: var(--gold-celestial); }
         .cat-btn.active {
             background: linear-gradient(to bottom, #700000, #300000);
-            border-color: var(--gold-celestial);
-            color: #fff;
-            text-shadow: var(--text-glow);
-            box-shadow: 0 0 15px rgba(138,3,3,0.8);
+            border-color: var(--gold-celestial); color: #fff;
+            text-shadow: var(--text-glow); box-shadow: 0 0 15px rgba(138,3,3,0.8);
         }
 
-        /* TikTok Scroll (มินิซีรีส์เต็มจอ) */
-        .tiktok-scroll-container {
-            height: 100dvh; 
-            width: 100%;
-            overflow-y: scroll; 
-            scroll-snap-type: y mandatory; 
-            scroll-behavior: smooth;
-        }
-        .tiktok-video-item {
-            height: 100dvh; 
-            width: 100%; 
-            scroll-snap-align: start; 
-            position: relative;
-        }
-
-        /* เมนูด้านล่าง (Nav) */
         .nav-btn { color: #6b7280; transition: all 0.3s; }
         .nav-btn.active { 
             color: var(--gold-celestial); 
             text-shadow: 0 0 8px rgba(230, 194, 122, 0.5);
         }
 
-        /* แอนิเมชัน */
         .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* รายชื่อตอนแบบเก่าแต่สวยขึ้น */
         .ep-card {
             border: 1px solid rgba(153, 122, 61, 0.3);
             background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(20,0,0,0.6));
@@ -142,36 +111,38 @@
             background: linear-gradient(to right, rgba(138,3,3,0.3), rgba(0,0,0,0.8));
             box-shadow: 0 0 15px rgba(230,194,122,0.15);
         }
-        .ep-card .ep-thumb {
-            transition: all 0.3s ease;
-        }
-        .ep-card:hover .ep-thumb, .ep-card.active .ep-thumb {
-            opacity: 1;
-            transform: scale(1.05);
-        }
+        .ep-card .ep-thumb { transition: all 0.3s ease; }
+        .ep-card:hover .ep-thumb, .ep-card.active .ep-thumb { opacity: 1; transform: scale(1.05); }
 
-        /* ปรับแต่ง Scrollbar */
         .custom-scroll::-webkit-scrollbar { width: 3px; }
         .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.8); }
         .custom-scroll::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+
+        /* Loader */
+        .loader-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000;
+            display: flex; flex-col; items-center; justify-content: center; flex-direction: column;
+        }
     </style>
 </head>
 <body>
 
-    <!-- โครงสร้างหลัก (กรอบแอป) -->
     <div id="app-wrapper" class="relative w-full h-[100dvh] md:w-[420px] md:h-[90vh] md:rounded-[2.5rem] bg-[var(--bg-dark)] overflow-hidden flex flex-col shadow-[0_0_80px_rgba(138,3,3,0.3)] md:border-[6px] md:border-[#2a0505] z-10">
         
-        <!-- แบ็คกราวน์ตกแต่ง -->
+        <!-- Loading Screen -->
+        <div id="global-loader" class="loader-overlay">
+            <i data-lucide="loader-2" class="w-12 h-12 text-[var(--gold-celestial)] animate-spin mb-4"></i>
+            <p class="text-[var(--gold-celestial)] font-maitree text-lg animate-pulse" style="text-shadow: var(--text-glow);">กำลังเบิกเนตรหอตำรา...</p>
+        </div>
+
         <div class="celestial-bg"></div>
         <div class="particles"></div>
 
-        <!-- Toast แจ้งเตือน -->
         <div id="toast-container" class="absolute top-5 left-1/2 -translate-x-1/2 z-[1000] transition-all duration-300 opacity-0 pointer-events-none bg-gradient-to-r from-[#300000] to-[#1a0000] border border-[var(--gold-celestial)] text-[var(--gold-celestial)] px-5 py-2.5 rounded-full font-maitree text-sm shadow-[0_0_20px_rgba(230,194,122,0.4)] flex items-center gap-3">
             <i data-lucide="bell-ring" class="w-4 h-4"></i>
             <span id="toast-msg">บัญชาสวรรค์</span>
         </div>
 
-        <!-- Header หลัก -->
         <header id="main-header" class="absolute top-0 w-full z-50 px-5 py-3 bg-gradient-to-b from-black via-black/80 to-transparent transition-transform duration-300">
             <div class="flex justify-between items-center h-12 mt-1">
                 <h1 class="text-[26px] font-bold font-maitree text-[var(--gold-celestial)] tracking-wider" style="text-shadow: var(--text-glow);">หอตำราหมื่นลี้</h1>
@@ -185,7 +156,6 @@
                 </div>
             </div>
             
-            <!-- ช่องค้นหา -->
             <div id="search-container" class="hidden mt-3 fade-in-up" style="animation-duration: 0.3s;">
                 <div class="relative group">
                     <i data-lucide="search" class="absolute left-4 top-[10px] w-5 h-5 text-[var(--gold-dark)] group-focus-within:text-[var(--gold-celestial)] transition-colors"></i>
@@ -194,22 +164,18 @@
             </div>
         </header>
 
-        <!-- พื้นที่แสดงเนื้อหาหลัก -->
-        <!-- แก้บัค: ลบ pb-[80px] ออกจาก class เริ่มต้น แล้วไปจัดการใน JS แทน เพื่อให้มินิซีรีส์เต็มจอ -->
-        <main id="app-content" class="flex-1 overflow-y-auto hide-scrollbar relative z-10 custom-scroll">
+        <main id="app-content" class="flex-1 overflow-y-auto hide-scrollbar relative z-10 custom-scroll pb-[80px]">
             <!-- เนื้อหาจะถูกแทรกผ่าน JS -->
         </main>
 
-        <!-- ปุ่มกุนซือ AI -->
+        <!-- กุนซือ AI -->
         <button id="ai-fab" onclick="toggleAIModal()" class="absolute bottom-[95px] right-4 z-40 w-12 h-12 bg-gradient-to-br from-[var(--gold-celestial)] to-[var(--gold-dark)] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(230,194,122,0.6)] border-2 border-[#200101] transition-transform hover:scale-110 hover:rotate-12 duration-300">
             <i data-lucide="sparkles" class="w-5 h-5 text-[#200101]"></i>
         </button>
 
-        <!-- หน้าต่างแชท AI -->
         <div id="ai-modal" class="absolute inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex-col justify-end transition-opacity">
             <div class="bg-gradient-to-b from-[#1a0101] to-[#000] w-full h-[85%] rounded-t-[2.5rem] border-t-2 border-[var(--gold-celestial)] flex flex-col shadow-[0_-15px_40px_rgba(138,3,3,0.5)] fade-in-up relative overflow-hidden">
                 <div class="particles" style="opacity: 0.1;"></div>
-
                 <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--gold-dark)]/30 relative z-10 bg-black/60">
                     <div class="flex items-center gap-4">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#500000] to-[#200000] flex items-center justify-center border border-[var(--gold-celestial)] shadow-[0_0_10px_rgba(230,194,122,0.3)]">
@@ -217,7 +183,7 @@
                         </div>
                         <div>
                             <h3 class="font-bold font-maitree text-[var(--gold-celestial)] text-lg" style="text-shadow: var(--text-glow);">กุนซือ AI แห่งหอตำรา</h3>
-                            <p class="text-[10px] text-[var(--gold-dark)] font-maitree">ผู้หยั่งรู้จักรวาลภาพยนตร์</p>
+                            <p class="text-[10px] text-[var(--gold-dark)] font-maitree">ค้นหา แนะนำ จัดการให้ท่าน</p>
                         </div>
                     </div>
                     <button onclick="toggleAIModal()" class="text-[var(--gold-dark)] hover:text-[var(--gold-celestial)] transition p-1.5 bg-black/50 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -227,7 +193,7 @@
                     <div class="flex gap-3">
                         <div class="w-8 h-8 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-celestial)]"></i></div>
                         <div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-celestial)] p-3.5 rounded-xl rounded-tl-none shadow-md max-w-[85%] leading-relaxed backdrop-blur-sm">
-                            คารวะท่านจอมยุทธ์! ปรารถนาจะให้ข้าค้นหาตำนานเรื่องใด หรือให้คำชี้แนะแนวทางใด เชิญเอยวาจามาได้เลย...
+                            คารวะท่านจอมยุทธ์! ปรารถนาจะให้ข้าค้นหาตำนานเรื่องใด เช่น "ขอหนังรัก" หรือชื่อหนังที่ท่านต้องการ เชิญเอยวาจามาได้เลย...
                         </div>
                     </div>
                 </div>
@@ -252,12 +218,12 @@
                 </div>
                 <span class="text-[11px] font-bold font-maitree tracking-wide mt-0.5">ตำหนักหลัก</span>
             </button>
-            <button onclick="switchTab('miniseries')" id="nav-miniseries" class="nav-btn flex flex-col items-center gap-1.5 w-20 group">
+            <button onclick="switchTab('continue')" id="nav-continue" class="nav-btn flex flex-col items-center gap-1.5 w-20 group">
                 <div class="relative">
-                    <i data-lucide="smartphone" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
+                    <i data-lucide="play-square" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
                     <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--gold-celestial)] rounded-full opacity-0 group-[.active]:opacity-100 transition-opacity shadow-[0_0_5px_#e6c27a]"></div>
                 </div>
-                <span class="text-[11px] font-bold font-maitree tracking-wide mt-0.5">ม้วนภาพสั้น</span>
+                <span class="text-[11px] font-bold font-maitree tracking-wide mt-0.5">ดูต่อ</span>
             </button>
             <button onclick="switchTab('library')" id="nav-library" class="nav-btn flex flex-col items-center gap-1.5 w-20 group">
                 <div class="relative">
@@ -271,69 +237,99 @@
     </div>
 
     <script>
-        // --- ส่วนที่ 1: ฐานข้อมูลเทพเซียน ---
-        const categories = ["แดนสวรรค์", "ยุทธภพ", "วังหลวง", "เทพเซียน", "มารพิภพ", "โรแมนติก"];
-        const sampleVideos = [
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
-        ];
-        const verticalVideos = [
-            "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-            "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
-        ];
+        // ⚡ ตั้งค่า Google Apps Script URL ที่นี่ ⚡
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec";
 
         let moviesData = [];
+        let categories = ["ทั้งหมด"];
+        
+        // ดึงประวัติจาก LocalStorage
+        let watchHistory = JSON.parse(localStorage.getItem('mflix_history') || '[]');
+
         let state = {
-            tab: 'home', category: 'แดนสวรรค์', searchQuery: '', bannerIndex: 0,
+            tab: 'home', category: 'ทั้งหมด', searchQuery: '', bannerIndex: 0,
             activeMovie: null, activeEpisodeIndex: 0, view: 'main'
         };
         let bannerInterval;
 
-        function generateData() {
-            const prefixes = ["ตำนาน", "ลิขิต", "เล่ห์รัก", "กระบี่", "จอมยุทธ", "วิญญาณ", "สวรรค์", "หยาดตะวัน"];
-            const suffixes = ["วังต้องห้าม", "เย้ยพิภพ", "ผ่าบัลลังก์", "ไร้พ่าย", "ซ่อนพิษ", "ล่าปีศาจ", "หมื่นลี้"];
-            const epNames = ["ปฐมบทตื่นรู้", "แผนลวงซ้อนเงื่อน", "รอยแค้นนับพันปี", "หยาดน้ำตาเทพธิดา", "หักเหลี่ยมสวรรค์"];
-
-            for(let i=1; i<=60; i++) {
-                const title = prefixes[i%8] + suffixes[(i*3)%7] + (i <= 5 ? " ภาค " + i : "");
-                const type = i > 48 ? 'miniseries' : 'movie'; 
-                const category = type === 'miniseries' ? 'มินิซีรีส์' : categories[(i % (categories.length - 1)) + 1];
-                
-                let episodesList = [];
-                if(type === 'movie') {
-                    const numEps = Math.floor(Math.random() * 5) + 3; 
-                    for(let j=0; j<numEps; j++) {
-                        episodesList.push({
-                            ep: j + 1, 
-                            title: epNames[j % epNames.length], 
-                            videoUrl: sampleVideos[j % sampleVideos.length],
-                            thumb: `https://picsum.photos/seed/${i*10+j}/300/168` // Thumbnail สำหรับรายชื่อตอน
-                        });
-                    }
-                } else {
-                    episodesList.push({ ep: 1, title: "ม้วนภาพที่ 1", videoUrl: verticalVideos[i % verticalVideos.length], thumb: '' });
-                }
-
-                moviesData.push({
-                    id: i, title: title,
-                    description: `ณ ดินแดนที่เทพและมารบรรจบกัน เรื่องราวของ ${title} ได้เริ่มต้นขึ้น การทรยศหักหลัง ความรักข้ามภพชาติ และการต่อสู้เพื่อชิงอำนาจ...`,
-                    cover: `https://picsum.photos/seed/${i*33}/1000/600`,
-                    poster: `https://picsum.photos/seed/${i*44}/400/600`,
-                    rating: (Math.random() * 1.0 + 9.0).toFixed(1),
-                    year: 2022 + (i % 3),
-                    genre: category, type: type, episodes: episodesList
-                });
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
-            generateData();
-            renderApp();
-            startBannerAutoPlay();
+            fetchMoviesData(); // ดึงข้อมูลตอนเปิดเว็บ
             lucide.createIcons();
         });
 
+        // ==========================================
+        // ดึงข้อมูลจากชีต (Google Apps Script)
+        // ==========================================
+        async function fetchMoviesData() {
+            try {
+                const res = await fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'getMoviesData' })
+                });
+                
+                const json = await res.json();
+                if (json.status === 'success') {
+                    // แปลงข้อมูลให้เข้ากับ Frontend
+                    moviesData = json.movies.map((m, index) => {
+                        return {
+                            id: m.id || index.toString(),
+                            title: m.title || 'ไม่มีชื่อเรื่อง',
+                            description: m.desc || 'ไม่มีคำอธิบายสำหรับตำรานี้...',
+                            cover: m.cover || 'https://images.unsplash.com/photo-1574267432553-4b4628081524?q=80&w=1000',
+                            poster: m.poster || 'https://images.unsplash.com/photo-1574267432553-4b4628081524?q=80&w=400',
+                            rating: (Math.random() * 1.5 + 8.5).toFixed(1), // สุ่ม rating เพื่อความสวยงาม
+                            year: new Date().getFullYear(),
+                            genre: m.category || 'ทั่วไป',
+                            type: 'movie',
+                            episodes: m.episodes && m.episodes.length > 0 ? m.episodes.map(e => ({
+                                ep: e.ep,
+                                title: e.title,
+                                videoUrl: e.url, // ลิงก์จากชีต
+                                thumb: m.poster || m.cover
+                            })) : [{ ep: 1, title: 'ตอนเดียวจบ', videoUrl: '', thumb: m.poster }]
+                        };
+                    });
+                    
+                    if (json.categories && json.categories.length > 0) {
+                        categories = json.categories;
+                        state.category = categories[0];
+                    } else if (moviesData.length > 0) {
+                        categories = [...new Set(moviesData.map(m => m.genre))];
+                        state.category = categories[0];
+                    }
+
+                    // ปิด Loader
+                    document.getElementById('global-loader').style.display = 'none';
+                    
+                    renderApp();
+                    startBannerAutoPlay();
+                } else {
+                    throw new Error("เซิร์ฟเวอร์ตอบกลับไม่สำเร็จ");
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('global-loader').innerHTML = `<p class="text-red-500 font-maitree">เปิดตำราล้มเหลว โปรดตรวจสอบการเชื่อมต่อ</p>`;
+            }
+        }
+
+        // ==========================================
+        // ระบบประวัติการเข้าชม (Continue Watching)
+        // ==========================================
+        function saveToHistory(movie) {
+            // ลบของเดิมออกก่อนถ้ามี (เพื่อดันไปอยู่อันดับ 1)
+            watchHistory = watchHistory.filter(m => m.id !== movie.id);
+            // เพิ่มเข้าไปข้างหน้าสุด
+            watchHistory.unshift(movie);
+            // เก็บไว้สูงสุด 20 เรื่อง
+            if (watchHistory.length > 20) watchHistory.pop();
+            // บันทึกลงเครื่อง
+            localStorage.setItem('mflix_history', JSON.stringify(watchHistory));
+        }
+
+        // ==========================================
+        // UI & Navigation
+        // ==========================================
         function showToast(message) {
             const toast = document.getElementById('toast-container');
             document.getElementById('toast-msg').innerText = message;
@@ -349,10 +345,6 @@
             state.tab = tabId; state.view = 'main'; state.searchQuery = '';
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`nav-${tabId}`).classList.add('active');
-            
-            const fab = document.getElementById('ai-fab');
-            if(fab) fab.style.display = tabId === 'miniseries' ? 'none' : 'flex'; // ซ่อน AI ในหน้ามินิซีรีส์ด้วยเพื่อให้ดูคลีน
-            
             renderApp();
         }
 
@@ -371,11 +363,20 @@
         function handleSearch(query) { state.searchQuery = query.toLowerCase(); renderApp(); }
 
         function openPlayer(id) {
-            state.activeMovie = moviesData.find(m => m.id === id);
+            let movie = moviesData.find(m => m.id === String(id));
+            if(!movie) movie = watchHistory.find(m => m.id === String(id)); // หาจากประวัติเผื่อข้อมูลถูกลบไปแล้วแต่ยังมีในประวัติ
+            if(!movie) return;
+
+            state.activeMovie = movie;
             state.activeEpisodeIndex = 0;
             state.view = 'player';
+            
+            // ซ่อนปุ่ม AI และจดจำประวัติ
             const fab = document.getElementById('ai-fab');
             if(fab) fab.style.display = 'none';
+            
+            saveToHistory(movie); // บันทึกประวัติ
+            
             renderApp();
         }
 
@@ -394,15 +395,17 @@
         function startBannerAutoPlay() {
             clearInterval(bannerInterval);
             bannerInterval = setInterval(() => {
-                if (state.tab === 'home' && state.view === 'main' && !state.searchQuery) {
-                    state.bannerIndex = (state.bannerIndex + 1) % 5;
+                if (state.tab === 'home' && state.view === 'main' && !state.searchQuery && moviesData.length > 0) {
+                    state.bannerIndex = (state.bannerIndex + 1) % Math.min(5, moviesData.length);
                     const bannerContainer = document.getElementById('hero-banner-container');
                     if (bannerContainer) { bannerContainer.innerHTML = generateBannerHTML(); lucide.createIcons(); }
                 }
             }, 6000);
         }
 
-        // --- ส่วน AI ล้วนๆ ---
+        // ==========================================
+        // ระบบกุนซือ AI (หาข้อมูลจากชีตที่โหลดมา)
+        // ==========================================
         function toggleAIModal() {
             const modal = document.getElementById('ai-modal');
             modal.classList.toggle('hidden');
@@ -412,29 +415,39 @@
 
         async function getSmartAIResponse(text) {
             const query = text.toLowerCase();
+            // หน่วงเวลาให้ดูเหมือนคิด
             await new Promise(r => setTimeout(r, 1000)); 
 
+            // ค้นหาในฐานข้อมูลที่เราโหลดมาจากชีต
             let results = moviesData.filter(m => 
                 m.title.toLowerCase().includes(query) || 
-                m.genre.toLowerCase().includes(query)
+                m.genre.toLowerCase().includes(query) ||
+                m.description.toLowerCase().includes(query)
             );
 
             if (results.length === 0) {
+                // เช็คว่ามีคำที่ตรงกับหมวดหมู่ไหม
                 let keywordMatch = categories.find(c => query.includes(c.toLowerCase()));
                 if(keywordMatch) {
-                    results = moviesData.filter(m => m.genre === keywordMatch).slice(0,2);
+                    results = moviesData.filter(m => m.genre === keywordMatch).slice(0,3);
                     return `ข้าคัดสรรตำราหมวด <strong class="text-[var(--gold-celestial)]">${keywordMatch}</strong> มาให้ท่านแล้ว:<br><br>
-                    ${results.map(m => `✧ <strong class="text-white underline cursor-pointer" onclick="openMovieFromAI(${m.id})">${m.title}</strong>`).join('<br>')}`;
+                    ${results.map(m => `✧ <strong class="text-white underline cursor-pointer hover:text-[var(--gold-celestial)]" onclick="openMovieFromAI('${m.id}')">${m.title}</strong>`).join('<br>')}`;
                 }
-                const randomMovie = moviesData[Math.floor(Math.random() * 20)];
-                return `ข้าไม่พบสิ่งที่ท่านหาเลยนายท่าน ลองชมเรื่องนี้แทนดีหรือไม่?<br><br>
-                ✧ <strong class="text-[var(--gold-celestial)] cursor-pointer underline" onclick="openMovieFromAI(${randomMovie.id})">${randomMovie.title}</strong> สนุกยิ่งนัก!`;
+                
+                // สุ่มเรื่องแนะนำ
+                if(moviesData.length > 0) {
+                    const randomMovie = moviesData[Math.floor(Math.random() * moviesData.length)];
+                    return `ข้าไม่พบสิ่งที่ท่านหาเลยนายท่าน ลองชมเรื่องนี้แทนดีหรือไม่?<br><br>
+                    ✧ <strong class="text-[var(--gold-celestial)] cursor-pointer underline" onclick="openMovieFromAI('${randomMovie.id}')">${randomMovie.title}</strong> สนุกยิ่งนัก!`;
+                } else {
+                    return "หอตำราว่างเปล่า ข้ามิพบสิ่งใดเลย...";
+                }
             }
 
             const topResults = results.slice(0, 3);
             let response = `ข้าค้นพบตำนานที่คู่ควรกับท่านแล้ว:<br><br>`;
             topResults.forEach(m => {
-                response += `<div class="bg-black/40 border border-[var(--gold-dark)]/50 p-2 rounded-lg mb-2 flex gap-3 cursor-pointer hover:border-[var(--gold-celestial)] transition" onclick="openMovieFromAI(${m.id})">
+                response += `<div class="bg-black/40 border border-[var(--gold-dark)]/50 p-2 rounded-lg mb-2 flex gap-3 cursor-pointer hover:border-[var(--gold-celestial)] transition" onclick="openMovieFromAI('${m.id}')">
                     <img src="${m.poster}" class="w-10 h-14 object-cover rounded border border-[var(--gold-dark)]">
                     <div>
                         <div class="font-bold text-[var(--gold-celestial)] text-sm">${m.title}</div>
@@ -467,47 +480,74 @@
             lucide.createIcons(); chatbox.scrollTop = chatbox.scrollHeight;
         }
 
-        // --- ส่วนที่ 4: การเรนเดอร์ UI ---
+        // ==========================================
+        // วิดีโอเพลเยอร์ อัจฉริยะ (YouTube, Drive, MP4)
+        // ==========================================
+        function getVideoElementHTML(url, poster) {
+            if (!url) return `<div class="w-full h-full flex flex-col items-center justify-center text-[var(--gold-dark)] bg-[#050101]"><i data-lucide="video-off" class="w-10 h-10 mb-2"></i><p class="font-maitree">ยังไม่มีคัมภีร์ภาพ</p></div>`;
+
+            // ตรวจสอบ YouTube
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                let videoId = '';
+                if(url.includes('youtube.com/watch?v=')) videoId = url.split('v=')[1].split('&')[0];
+                else if(url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+                else if(url.includes('youtube.com/embed/')) videoId = url.split('embed/')[1].split('?')[0];
+                
+                return `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+            }
+            
+            // ตรวจสอบ Google Drive
+            if (url.includes('drive.google.com')) {
+                let embedUrl = url;
+                if(url.includes('/view')) embedUrl = url.replace('/view', '/preview');
+                return `<iframe class="w-full h-full" src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+            }
+            
+            // ค่าเริ่มต้นสำหรับ MP4, M3U8, และไฟล์วิดีโอทั่วไป
+            // ใช้ playsinline ทำให้เล่นในจอได้ แต่เมื่อผู้ใช้ขยายหน้าจอ (หรือเอียงโทรศัพท์) จะสามารถเต็มจออัตโนมัติ (ขึ้นอยู่กับระบบโทรศัพท์)
+            return `<video id="main-video" controls autoplay playsinline webkit-playsinline poster="${poster}" class="w-full h-full outline-none object-contain bg-black">
+                        <source src="${url}">
+                        เบราว์เซอร์ของท่านไม่รองรับการแสดงผลวิชานี้
+                    </video>`;
+        }
+
+        // ==========================================
+        // การเรนเดอร์ UI หลัก
+        // ==========================================
         function renderApp() {
             const content = document.getElementById('app-content');
             const header = document.getElementById('main-header');
             const nav = document.getElementById('bottom-nav');
 
-            // แก้บัคมินิซีรีส์เต็มจอ: ลบ Padding Bottom หากเป็นหน้ามินิซีรีส์
-            if (state.tab === 'miniseries' && state.view === 'main') {
-                content.style.paddingBottom = '0px'; 
-            } else {
-                content.style.paddingBottom = '80px'; // คืนค่า padding ให้หน้าอื่นที่มี nav
-            }
-
             if (state.view === 'player') {
                 header.style.transform = 'translateY(-100%)'; 
                 nav.style.transform = 'translateY(100%)';
+                content.style.paddingBottom = '0px';
                 setTimeout(() => { header.style.display = 'none'; nav.style.display = 'none'; }, 300);
                 content.innerHTML = generateStandardPlayer();
-            } else if (state.tab === 'miniseries') {
-                header.style.display = 'none';
+            } else if (state.tab === 'continue') {
+                header.style.display = 'block';
+                setTimeout(() => { header.style.transform = 'translateY(0)'; }, 50);
                 nav.style.display = 'flex';
                 nav.style.transform = 'translateY(0)';
-                // nav background โปร่งแสงขึ้นในหน้าติ๊กตอก
-                nav.className = "absolute bottom-0 w-full h-[70px] bg-gradient-to-t from-black via-black/80 to-transparent z-40 flex justify-around items-center px-4 pb-2 pt-4 md:rounded-b-[2.5rem]";
-                content.innerHTML = generateMiniSeriesHTML();
-                setTimeout(setupTikTokObserver, 100);
+                content.style.paddingBottom = '80px';
+                content.innerHTML = generateContinueWatchingHTML();
             } else {
                 header.style.display = 'block';
                 setTimeout(() => { header.style.transform = 'translateY(0)'; }, 50);
                 nav.style.display = 'flex';
                 nav.style.transform = 'translateY(0)';
-                nav.className = "absolute bottom-0 w-full h-[80px] bg-gradient-to-t from-[#000] via-[#050101]/95 to-transparent z-40 flex justify-around items-center px-4 pb-3 pt-5 border-t border-[var(--gold-dark)]/20 md:rounded-b-[2.5rem]";
+                content.style.paddingBottom = '80px';
                 
                 if (state.tab === 'home') content.innerHTML = generateHomeHTML();
                 if (state.tab === 'library') content.innerHTML = generateLibraryHTML();
             }
             lucide.createIcons();
-            if(state.view !== 'player' && state.tab !== 'miniseries') content.scrollTop = 0;
+            if(state.view !== 'player') content.scrollTop = 0;
         }
 
         function generateBannerHTML() {
+            if(moviesData.length === 0) return '';
             const hero = moviesData[state.bannerIndex];
             return `
                 <div class="relative w-full h-[65vh] fade-in-up" id="hero-banner">
@@ -522,7 +562,7 @@
                             <span class="text-[var(--primary-red)] flex items-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i> ${hero.rating}</span>
                             <span>•</span><span>${hero.year}</span><span>•</span><span class="text-white">${hero.genre}</span>
                         </div>
-                        <button onclick="openPlayer(${hero.id})" class="w-3/4 max-w-[280px] bg-gradient-to-r from-[#700000] to-[#300000] text-[var(--gold-celestial)] py-3.5 rounded-full font-bold text-base flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(138,3,3,0.8)] border border-[var(--gold-celestial)] hover:scale-105 transition-transform font-maitree group">
+                        <button onclick="openPlayer('${hero.id}')" class="w-3/4 max-w-[280px] bg-gradient-to-r from-[#700000] to-[#300000] text-[var(--gold-celestial)] py-3.5 rounded-full font-bold text-base flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(138,3,3,0.8)] border border-[var(--gold-celestial)] hover:scale-105 transition-transform font-maitree group">
                             <i data-lucide="play-circle" class="w-5 h-5 group-hover:animate-pulse"></i> เข้าสู่เนื้อเรื่อง
                         </button>
                     </div>
@@ -531,15 +571,15 @@
         }
 
         function generateHomeHTML() {
-            let filteredMovies = moviesData.filter(m => m.type === 'movie');
-            if (state.searchQuery) filteredMovies = filteredMovies.filter(m => m.title.toLowerCase().includes(state.searchQuery));
-            else if (state.category !== 'แดนสวรรค์') filteredMovies = filteredMovies.filter(m => m.genre === state.category);
+            let filteredMovies = moviesData;
+            if (state.searchQuery) filteredMovies = filteredMovies.filter(m => m.title.toLowerCase().includes(state.searchQuery) || m.genre.toLowerCase().includes(state.searchQuery));
+            else if (state.category && state.category !== categories[0]) filteredMovies = filteredMovies.filter(m => m.genre === state.category);
 
             let html = '';
-            if (!state.searchQuery && state.category === 'แดนสวรรค์') html += `<div id="hero-banner-container">${generateBannerHTML()}</div>`;
+            if (!state.searchQuery && state.category === categories[0]) html += `<div id="hero-banner-container">${generateBannerHTML()}</div>`;
             else html += `<div class="h-28"></div>`;
 
-            // เมนูหมวดหมู่ (แก้ไขให้บาลานส์สวยงาม)
+            // เมนูหมวดหมู่
             html += `
                 <div class="px-2 py-3 sticky top-0 z-30 bg-[#050101]/95 backdrop-blur-xl border-b border-[var(--gold-dark)]/30 shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
                     <div class="flex gap-2.5 overflow-x-auto hide-scrollbar px-2 pb-1">
@@ -553,7 +593,7 @@
             if (state.searchQuery) {
                 html += `<h3 class="font-maitree text-[var(--gold-dark)] mb-6 text-base">ค้นพบตำนาน: <span class="text-[var(--gold-celestial)] font-bold text-lg">"${state.searchQuery}"</span></h3>`;
             } else {
-                const headText = state.category === 'แดนสวรรค์' ? 'คัมภีร์มาใหม่' : `ตำราหมวด: ${state.category}`;
+                const headText = state.category === categories[0] ? 'คัมภีร์มาใหม่' : `ตำราหมวด: ${state.category}`;
                 html += `<div class="flex items-center gap-3 mb-6">
                             <div class="w-1.5 h-6 bg-[var(--primary-red)] rounded-full shadow-[0_0_10px_red]"></div>
                             <h3 class="text-xl font-bold font-maitree text-[var(--gold-celestial)] tracking-wide" style="text-shadow: var(--text-glow);">${headText}</h3>
@@ -565,7 +605,7 @@
                 html += `<div class="grid grid-cols-3 gap-3.5">`;
                 filteredMovies.forEach(movie => {
                     html += `
-                        <div class="flex flex-col cursor-pointer movie-card rounded-lg overflow-hidden relative group" onclick="openPlayer(${movie.id})">
+                        <div class="flex flex-col cursor-pointer movie-card rounded-lg overflow-hidden relative group" onclick="openPlayer('${movie.id}')">
                             <div class="relative w-full aspect-[2/3] overflow-hidden">
                                 <img src="${movie.poster}" loading="lazy" class="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110">
                                 <div class="absolute inset-0 overlay transition-opacity"></div>
@@ -592,11 +632,51 @@
             return html;
         }
 
+        // หน้าต่าง ดูต่อ (Continue Watching)
+        function generateContinueWatchingHTML() {
+            let html = `
+                <div class="pt-20 px-5 pb-20 fade-in-up">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1.5 h-6 bg-[var(--primary-red)] rounded-full shadow-[0_0_10px_red]"></div>
+                        <h3 class="text-xl font-bold font-maitree text-[var(--gold-celestial)] tracking-wide" style="text-shadow: var(--text-glow);">ดูต่อจากที่ค้างไว้</h3>
+                    </div>
+            `;
+            
+            if (watchHistory.length === 0) {
+                html += `<div class="text-center py-20 font-maitree text-[var(--gold-dark)] text-lg flex flex-col items-center gap-4">
+                            <i data-lucide="history" class="w-12 h-12 opacity-50"></i>
+                            ยังไม่มีประวัติการรับชม
+                         </div>`;
+            } else {
+                html += `<div class="grid grid-cols-3 gap-3.5">`;
+                watchHistory.forEach(movie => {
+                    html += `
+                        <div class="flex flex-col cursor-pointer movie-card rounded-lg overflow-hidden relative group" onclick="openPlayer('${movie.id}')">
+                            <div class="relative w-full aspect-[2/3] overflow-hidden">
+                                <img src="${movie.poster}" loading="lazy" class="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute inset-0 overlay transition-opacity"></div>
+                                <div class="absolute inset-0 bg-[var(--primary-red)]/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10 backdrop-blur-[2px]">
+                                    <div class="w-10 h-10 rounded-full border border-[var(--gold-celestial)] flex items-center justify-center bg-black/60 shadow-[0_0_15px_rgba(230,194,122,0.5)]"><i data-lucide="play" class="w-5 h-5 text-[var(--gold-celestial)] ml-0.5"></i></div>
+                                </div>
+                            </div>
+                            <div class="p-2.5 bg-gradient-to-b from-[#1a0101] to-[#050000]">
+                                <h4 class="text-[13px] font-semibold font-maitree text-[var(--gold-celestial)] truncate group-hover:text-white transition-colors">${movie.title}</h4>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+
+        // วิดีโอเพลเยอร์สมบูรณ์
         function generateStandardPlayer() {
             const movie = state.activeMovie;
             const currentEp = movie.episodes[state.activeEpisodeIndex];
 
-            // คืนชีพรายการตอนแบบมีรูปภาพ (Thumbnail) แต่ออกแบบให้สวยหรูขึ้น
             let episodesHTML = '';
             movie.episodes.forEach((ep, idx) => {
                 const isActive = idx === state.activeEpisodeIndex;
@@ -613,7 +693,6 @@
                         </div>
                         <div class="flex-1">
                             <h4 class="font-semibold text-sm font-maitree line-clamp-1 ${isActive ? 'text-[var(--gold-celestial)]' : 'text-gray-300'}">${ep.title}</h4>
-                            <p class="text-[11px] text-[var(--gold-dark)] mt-1 font-prompt">ความยาว 45 นาที</p>
                         </div>
                         <div class="pr-2">
                              ${isActive ? '<div class="w-2 h-2 rounded-full bg-[var(--primary-red)] shadow-[0_0_8px_red]"></div>' : '<i data-lucide="download" class="w-4 h-4 text-gray-600"></i>'}
@@ -622,17 +701,20 @@
                 `;
             });
 
+            const videoHTML = getVideoElementHTML(currentEp.videoUrl, movie.cover);
+
             return `
                 <div class="w-full h-full flex flex-col bg-[var(--bg-dark)] fade-in-up">
                     <div id="video-wrapper" class="relative w-full aspect-video bg-black sticky top-0 z-50 border-b-2 border-[var(--gold-celestial)]/50 md:rounded-t-[2rem] shadow-[0_5px_30px_rgba(138,3,3,0.3)] group">
-                        <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-50 bg-gradient-to-b from-black/90 to-transparent opacity-100 transition-opacity">
+                        <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-50 bg-gradient-to-b from-black/90 to-transparent opacity-100 transition-opacity pointer-events-none">
                             <button onclick="closePlayer()" class="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-[var(--gold-celestial)] hover:bg-[var(--primary-red)] hover:text-white transition backdrop-blur-md border border-[var(--gold-dark)] pointer-events-auto">
                                 <i data-lucide="chevron-left" class="w-6 h-6"></i>
                             </button>
                         </div>
-                        <video id="main-video" controls autoplay playsinline webkit-playsinline poster="${movie.cover}" class="w-full h-full outline-none object-contain">
-                            <source src="${currentEp.videoUrl}" type="video/mp4">
-                        </video>
+                        
+                        <!-- Video Element Injected Here -->
+                        ${videoHTML}
+
                     </div>
 
                     <div class="flex-1 overflow-y-auto px-5 py-6 custom-scroll relative">
@@ -645,7 +727,7 @@
                             </div>
                         </div>
                         
-                        <div class="flex items-center gap-3 text-xs text-[var(--gold-dark)] mb-5 font-maitree relative z-10 bg-black/40 inline-flex px-3 py-1.5 rounded-md border border-[var(--gold-dark)]/30">
+                        <div class="flex items-center gap-3 text-xs text-[var(--gold-dark)] mb-5 font-maitree relative z-10 bg-black/40 inline-flex px-3 py-1.5 rounded-md border border-[var(--gold-dark)]/30 flex-wrap">
                             <span>ปีที่สร้าง ${movie.year}</span>
                             <span>•</span><span class="text-[var(--gold-celestial)]">หมวด: ${movie.genre}</span>
                             <span>•</span><span class="text-gray-300">รวม ${movie.episodes.length} ม้วนภาพ</span>
@@ -681,94 +763,6 @@
             `;
         }
 
-        // แก้บัคมินิซีรีส์: ลบ Padding ของ main content ออกเวลาเรียกใช้
-        function generateMiniSeriesHTML() {
-            const miniseries = moviesData.filter(m => m.type === 'miniseries');
-            let html = `<div class="tiktok-scroll-container fade-in-up" id="tiktok-container">`;
-            miniseries.forEach((movie) => {
-                html += `
-                    <div class="tiktok-video-item">
-                        <video src="${movie.episodes[0].videoUrl}" poster="${movie.cover}" loop muted playsinline webkit-playsinline class="object-cover"></video>
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0101] via-transparent to-black/60 pointer-events-none"></div>
-                        
-                        <div class="absolute top-12 left-0 w-full flex justify-center z-20 pointer-events-none">
-                            <div class="border-b-2 border-[var(--gold-celestial)] pb-1 px-5 bg-black/30 backdrop-blur-sm rounded-t-lg">
-                                <span class="text-[var(--gold-celestial)] font-maitree text-xl font-bold tracking-[0.25em]" style="text-shadow: var(--box-glow);">ม้วนภาพสั้น</span>
-                            </div>
-                        </div>
-
-                        <div class="absolute right-4 bottom-32 flex flex-col items-center gap-6 z-20">
-                            <div onclick="showToast('ท่านได้ส่งต่อวิชานี้แล้ว')" class="flex flex-col items-center cursor-pointer group">
-                                <div class="w-12 h-12 bg-black/60 border border-[var(--gold-dark)] rounded-full flex items-center justify-center backdrop-blur-md group-hover:border-[var(--gold-celestial)] transition hover:scale-110 shadow-[0_0_15px_rgba(0,0,0,0.8)]">
-                                    <i data-lucide="share-2" class="w-5 h-5 text-white group-hover:text-[var(--gold-celestial)]"></i>
-                                </div>
-                            </div>
-                            <div class="flex flex-col items-center cursor-pointer hover:scale-110 transition-transform" onclick="toggleMute(this)">
-                                <div class="w-12 h-12 bg-black/60 border border-[var(--gold-dark)] rounded-full flex items-center justify-center backdrop-blur-md transition sound-btn-bg shadow-[0_0_15px_rgba(0,0,0,0.8)]">
-                                    <i data-lucide="volume-x" class="w-5 h-5 text-gray-400 mute-icon"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="absolute bottom-[90px] left-5 right-20 z-20">
-                            <div class="flex gap-2 mb-2">
-                                <span class="bg-gradient-to-r from-[var(--red-mystic)] to-[#400000] text-white border border-[var(--gold-celestial)] px-2.5 py-0.5 rounded-sm text-[10px] font-bold font-maitree shadow-[0_0_10px_rgba(138,3,3,0.8)]">Exclusive</span>
-                            </div>
-                            <h2 class="text-3xl font-bold font-maitree text-[var(--gold-celestial)] mb-1" style="text-shadow: 0 2px 10px rgba(0,0,0,0.9);">${movie.title}</h2>
-                            <p class="text-sm text-gray-200 line-clamp-2 font-prompt opacity-90 leading-relaxed drop-shadow-md">${movie.description}</p>
-                        </div>
-                    </div>
-                `;
-            });
-            html += `</div>`;
-            return html;
-        }
-
-        function setupTikTokObserver() {
-            const container = document.getElementById('tiktok-container');
-            if(!container) return;
-            const videos = container.querySelectorAll('.tiktok-video-item video');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const video = entry.target;
-                    if (entry.isIntersecting) {
-                        const playPromise = video.play();
-                        if (playPromise !== undefined) playPromise.catch(e => console.log("Autoplay blocked"));
-                    } else { 
-                        video.pause(); video.currentTime = 0; 
-                    }
-                });
-            }, { threshold: 0.6 });
-
-            videos.forEach(video => {
-                observer.observe(video);
-                video.addEventListener('click', () => { if (video.paused) video.play(); else video.pause(); });
-            });
-        }
-
-        function toggleMute(btnElement) {
-            const container = btnElement.closest('.tiktok-video-item');
-            const video = container.querySelector('video');
-            const icon = btnElement.querySelector('.mute-icon');
-            const bg = btnElement.querySelector('.sound-btn-bg');
-
-            if (video.muted) {
-                video.muted = false;
-                icon.setAttribute('data-lucide', 'volume-2');
-                icon.classList.replace('text-gray-400', 'text-white');
-                bg.classList.replace('bg-black/60', 'bg-[var(--primary-red)]');
-                bg.classList.replace('border-[var(--gold-dark)]', 'border-[var(--gold-celestial)]');
-                showToast("ปลดผนึกเสียงวิชา");
-            } else {
-                video.muted = true;
-                icon.setAttribute('data-lucide', 'volume-x');
-                icon.classList.replace('text-white', 'text-gray-400');
-                bg.classList.replace('bg-[var(--primary-red)]', 'bg-black/60');
-                bg.classList.replace('border-[var(--gold-celestial)]', 'border-[var(--gold-dark)]');
-            }
-            lucide.createIcons();
-        }
-
         function generateLibraryHTML() {
             return `
                 <div class="pt-20 px-5 h-full flex flex-col items-center justify-center text-center pb-20 font-maitree fade-in-up">
@@ -778,9 +772,9 @@
                         <div class="absolute -inset-1 rounded-full border border-[var(--primary-red)]/40 animate-spin border-dashed" style="animation-duration: 8s; animation-direction: reverse;"></div>
                     </div>
                     <h2 class="text-3xl font-bold text-[var(--gold-celestial)] mb-2" style="text-shadow: var(--text-glow);">หอตำราลับส่วนตัว</h2>
-                    <p class="text-[15px] text-[var(--gold-dark)] mb-10 font-prompt max-w-[280px]">ณ ตอนนี้ชั้นวางตำราของท่านยังว่างเปล่า รีบไปสะสมวิชาเถิด</p>
+                    <p class="text-[15px] text-[var(--gold-dark)] mb-10 font-prompt max-w-[280px]">ฟังก์ชันนี้สงวนไว้สำหรับศิษย์สายในเท่านั้น โปรดติดตามการอัปเดต...</p>
                     <button onclick="switchTab('home')" class="relative overflow-hidden bg-transparent border-2 border-[var(--gold-celestial)] text-[var(--gold-celestial)] px-12 py-3.5 rounded-full font-bold text-base hover:text-white hover:border-transparent transition-all hover:scale-105 group shadow-[0_0_15px_rgba(230,194,122,0.2)]">
-                        <span class="relative z-10">ค้นหาตำนานสวรรค์</span>
+                        <span class="relative z-10">กลับสู่ตำหนักหลัก</span>
                         <div class="absolute inset-0 bg-gradient-to-r from-[var(--red-mystic)] to-[#400000] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
                     </button>
                 </div>
