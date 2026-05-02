@@ -3,15 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>M-FLIX: กุนซือ AI & ซีรีส์จีนพรีเมียม</title>
+    <title>M-FLIX: หอตำราหมื่นลี้</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Maitree:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --app-bg: #080303; 
-            --primary-red: #c8102e; 
-            --gold-accent: #d4af37; 
+            --bg-dark: #050101; 
+            --red-mystic: #8a0303; 
+            --gold-celestial: #e6c27a; 
+            --gold-dark: #997a3d;
+            --text-glow: 0 0 12px rgba(230, 194, 122, 0.7);
+            --box-glow: 0 0 25px rgba(138, 3, 3, 0.5);
+            --gold-shadow: 0 4px 15px rgba(230, 194, 122, 0.2);
         }
 
         body {
@@ -19,174 +23,260 @@
             background-color: #000;
             color: #fff;
             -webkit-tap-highlight-color: transparent;
-            background-image: radial-gradient(circle at center, #2a0505 0%, #000 100%);
+            background-image: radial-gradient(circle at 50% 0%, #200101 0%, #000 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
 
         .font-maitree { font-family: 'Maitree', serif; }
 
+        /* ซ่อน Scrollbar */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .text-glow-red { text-shadow: 0 0 15px rgba(200, 16, 46, 0.7); }
-        .text-glow-gold { text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-        .gold-border { border: 1px solid rgba(212, 175, 55, 0.3); }
-
-        .chinese-pattern {
-            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%23d4af37' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-            position: absolute; inset: 0; pointer-events: none; z-index: 0;
-        }
-
-        .bg-flare {
-            position: absolute; width: 250px; height: 250px;
-            background: radial-gradient(circle, rgba(200,16,46,0.2) 0%, rgba(0,0,0,0) 70%);
+        /* พื้นหลังดั่งสรวงสวรรค์ */
+        .celestial-bg {
+            position: absolute; inset: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(138,3,3,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(230,194,122,0.05) 0%, transparent 40%);
             pointer-events: none; z-index: 0;
         }
 
+        /* เอฟเฟกต์ละอองทอง (CSS Particles) */
+        .particles {
+            position: absolute; inset: 0; pointer-events: none; z-index: 1;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, var(--gold-celestial), rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 80px 120px, var(--gold-celestial), rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 150px 60px, var(--gold-celestial), rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 250px 250px;
+            animation: stars 80s linear infinite;
+            opacity: 0.4;
+        }
+        @keyframes stars { from { transform: translateY(0); } to { transform: translateY(-250px); } }
+
+        /* ดีไซน์การ์ดหนัง */
+        .movie-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(230, 194, 122, 0.15);
+            background: #0a0101;
+        }
+        .movie-card:hover {
+            transform: scale(1.05) translateY(-5px);
+            border-color: var(--gold-celestial);
+            box-shadow: var(--box-glow), 0 10px 20px rgba(0,0,0,0.9);
+            z-index: 10;
+        }
+        .movie-card .overlay {
+            background: linear-gradient(to top, #000 10%, transparent 50%, rgba(138, 3, 3, 0.3) 100%);
+        }
+
+        /* เมนูหมวดหมู่ (จัดสมดุลแล้ว) */
+        .cat-btn {
+            background: rgba(10, 0, 0, 0.7);
+            border: 1px solid var(--gold-dark);
+            color: var(--gold-celestial);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 20px; /* ปรับ Padding ให้สมดุล */
+            line-height: 1.2;
+            backdrop-blur: 4px;
+        }
+        .cat-btn:hover {
+            background: rgba(230, 194, 122, 0.1);
+            border-color: var(--gold-celestial);
+        }
+        .cat-btn.active {
+            background: linear-gradient(to bottom, #700000, #300000);
+            border-color: var(--gold-celestial);
+            color: #fff;
+            text-shadow: var(--text-glow);
+            box-shadow: 0 0 15px rgba(138,3,3,0.8);
+        }
+
+        /* TikTok Scroll (มินิซีรีส์เต็มจอ) */
         .tiktok-scroll-container {
-            height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth;
+            height: 100dvh; 
+            width: 100%;
+            overflow-y: scroll; 
+            scroll-snap-type: y mandatory; 
+            scroll-behavior: smooth;
         }
         .tiktok-video-item {
-            height: 100%; width: 100%; scroll-snap-align: start; position: relative;
-        }
-        .tiktok-video-item video {
-            width: 100%; height: 100%; object-fit: cover;
+            height: 100dvh; 
+            width: 100%; 
+            scroll-snap-align: start; 
+            position: relative;
         }
 
+        /* เมนูด้านล่าง (Nav) */
         .nav-btn { color: #6b7280; transition: all 0.3s; }
-        .nav-btn.active { color: var(--gold-accent); }
-        .cat-btn { transition: all 0.2s; }
-        .cat-btn.active { 
-            background: linear-gradient(to bottom, var(--primary-red), #800000); 
-            color: white; border-color: var(--primary-red); 
-            box-shadow: 0 2px 10px rgba(200,16,46,0.4);
+        .nav-btn.active { 
+            color: var(--gold-celestial); 
+            text-shadow: 0 0 8px rgba(230, 194, 122, 0.5);
         }
 
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .pulse-glow { animation: pulseGlow 2s infinite; }
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        /* แอนิเมชัน */
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        #toast-container {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;
-            transition: all 0.3s ease; opacity: 0; pointer-events: none;
+        /* รายชื่อตอนแบบเก่าแต่สวยขึ้น */
+        .ep-card {
+            border: 1px solid rgba(153, 122, 61, 0.3);
+            background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(20,0,0,0.6));
+            transition: all 0.3s ease;
         }
-        #toast-container.show { opacity: 1; transform: translate(-50%, 10px); pointer-events: auto; }
+        .ep-card:hover, .ep-card.active {
+            border-color: var(--gold-celestial);
+            background: linear-gradient(to right, rgba(138,3,3,0.3), rgba(0,0,0,0.8));
+            box-shadow: 0 0 15px rgba(230,194,122,0.15);
+        }
+        .ep-card .ep-thumb {
+            transition: all 0.3s ease;
+        }
+        .ep-card:hover .ep-thumb, .ep-card.active .ep-thumb {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        /* ปรับแต่ง Scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.8); }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <!-- Main App Container -->
-    <div id="app-wrapper" class="relative w-full h-[100dvh] md:w-[420px] md:h-[90vh] md:rounded-[2.5rem] bg-[var(--app-bg)] overflow-hidden flex flex-col shadow-[0_0_50px_rgba(200,16,46,0.15)] md:border-[6px] md:border-[#1a0505]">
+    <!-- โครงสร้างหลัก (กรอบแอป) -->
+    <div id="app-wrapper" class="relative w-full h-[100dvh] md:w-[420px] md:h-[90vh] md:rounded-[2.5rem] bg-[var(--bg-dark)] overflow-hidden flex flex-col shadow-[0_0_80px_rgba(138,3,3,0.3)] md:border-[6px] md:border-[#2a0505] z-10">
         
-        <div id="toast-container" class="bg-[#1a0505] gold-border text-[var(--gold-accent)] px-4 py-2 rounded-full font-maitree text-sm shadow-xl flex items-center gap-2">
-            <i data-lucide="info" class="w-4 h-4"></i>
-            <span id="toast-msg">ข้อความ</span>
+        <!-- แบ็คกราวน์ตกแต่ง -->
+        <div class="celestial-bg"></div>
+        <div class="particles"></div>
+
+        <!-- Toast แจ้งเตือน -->
+        <div id="toast-container" class="absolute top-5 left-1/2 -translate-x-1/2 z-[1000] transition-all duration-300 opacity-0 pointer-events-none bg-gradient-to-r from-[#300000] to-[#1a0000] border border-[var(--gold-celestial)] text-[var(--gold-celestial)] px-5 py-2.5 rounded-full font-maitree text-sm shadow-[0_0_20px_rgba(230,194,122,0.4)] flex items-center gap-3">
+            <i data-lucide="bell-ring" class="w-4 h-4"></i>
+            <span id="toast-msg">บัญชาสวรรค์</span>
         </div>
 
-        <div class="chinese-pattern"></div>
-        <div class="bg-flare top-0 right-0"></div>
-        <div class="bg-flare bottom-1/4 left-0"></div>
-
-        <!-- Header -->
-        <header id="main-header" class="absolute top-0 w-full z-50 px-4 py-4 bg-gradient-to-b from-black/90 via-black/60 to-transparent">
-            <div class="flex justify-between items-center h-10 mt-1">
-                <h1 class="text-3xl font-black font-maitree text-[var(--primary-red)] tracking-widest text-glow-red">ตำนานหอหมื่นลี้</h1>
+        <!-- Header หลัก -->
+        <header id="main-header" class="absolute top-0 w-full z-50 px-5 py-3 bg-gradient-to-b from-black via-black/80 to-transparent transition-transform duration-300">
+            <div class="flex justify-between items-center h-12 mt-1">
+                <h1 class="text-[26px] font-bold font-maitree text-[var(--gold-celestial)] tracking-wider" style="text-shadow: var(--text-glow);">หอตำราหมื่นลี้</h1>
                 <div class="flex gap-4 items-center">
-                    <button onclick="toggleSearch()" class="text-[var(--gold-accent)] hover:text-white transition"><i data-lucide="search" class="w-6 h-6"></i></button>
-                    <div class="w-8 h-8 rounded-full gold-border overflow-hidden p-0.5">
-                        <img src="https://i.pravatar.cc/100" class="w-full h-full rounded-full object-cover">
+                    <button onclick="toggleSearch()" class="text-[var(--gold-celestial)] hover:text-white transition transform hover:scale-110">
+                        <i data-lucide="search" class="w-6 h-6"></i>
+                    </button>
+                    <div class="w-9 h-9 rounded-full border border-[var(--gold-celestial)] overflow-hidden p-0.5 shadow-[0_0_10px_rgba(230,194,122,0.3)] bg-black">
+                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Jiao&backgroundColor=b6e3f4" class="w-full h-full rounded-full object-cover">
                     </div>
                 </div>
             </div>
             
-            <div id="search-container" class="hidden mt-3 fade-in">
-                <div class="relative">
-                    <i data-lucide="search" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
-                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาชื่อตำนาน..." class="w-full bg-black/70 gold-border rounded-full py-2 pl-10 pr-4 text-[var(--gold-accent)] placeholder-gray-500 focus:outline-none focus:border-[var(--primary-red)] text-sm font-maitree">
+            <!-- ช่องค้นหา -->
+            <div id="search-container" class="hidden mt-3 fade-in-up" style="animation-duration: 0.3s;">
+                <div class="relative group">
+                    <i data-lucide="search" class="absolute left-4 top-[10px] w-5 h-5 text-[var(--gold-dark)] group-focus-within:text-[var(--gold-celestial)] transition-colors"></i>
+                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาตำนานทั่วหล้า..." class="w-full bg-black/80 border border-[var(--gold-dark)] rounded-full py-2.5 pl-12 pr-4 text-[var(--gold-celestial)] placeholder-[var(--gold-dark)] focus:outline-none focus:border-[var(--gold-celestial)] focus:shadow-[0_0_15px_rgba(230,194,122,0.3)] text-sm font-maitree transition-all">
                 </div>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main id="app-content" class="flex-1 overflow-y-auto hide-scrollbar relative z-10 pb-[70px]"></main>
+        <!-- พื้นที่แสดงเนื้อหาหลัก -->
+        <!-- แก้บัค: ลบ pb-[80px] ออกจาก class เริ่มต้น แล้วไปจัดการใน JS แทน เพื่อให้มินิซีรีส์เต็มจอ -->
+        <main id="app-content" class="flex-1 overflow-y-auto hide-scrollbar relative z-10 custom-scroll">
+            <!-- เนื้อหาจะถูกแทรกผ่าน JS -->
+        </main>
 
-        <!-- AI Assistant Button -->
-        <button id="ai-fab" onclick="toggleAIModal()" class="absolute bottom-[85px] right-4 z-40 w-14 h-14 bg-gradient-to-tr from-[var(--primary-red)] to-[#500000] rounded-full flex items-center justify-center shadow-lg gold-border pulse-glow transition-transform hover:scale-110">
-            <i data-lucide="bot" class="w-7 h-7 text-[var(--gold-accent)]"></i>
+        <!-- ปุ่มกุนซือ AI -->
+        <button id="ai-fab" onclick="toggleAIModal()" class="absolute bottom-[95px] right-4 z-40 w-12 h-12 bg-gradient-to-br from-[var(--gold-celestial)] to-[var(--gold-dark)] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(230,194,122,0.6)] border-2 border-[#200101] transition-transform hover:scale-110 hover:rotate-12 duration-300">
+            <i data-lucide="sparkles" class="w-5 h-5 text-[#200101]"></i>
         </button>
 
-        <!-- AI Assistant Modal -->
-        <div id="ai-modal" class="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex-col justify-end">
-            <div class="bg-gradient-to-b from-[#1a0505] to-black w-full h-[85%] rounded-t-3xl border-t-2 border-[var(--gold-accent)] flex flex-col shadow-[0_-10px_30px_rgba(200,16,46,0.3)] fade-in">
-                
-                <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--gold-accent)]/20">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-[var(--primary-red)]/20 flex items-center justify-center gold-border">
-                            <i data-lucide="sparkles" class="w-5 h-5 text-[var(--gold-accent)]"></i>
+        <!-- หน้าต่างแชท AI -->
+        <div id="ai-modal" class="absolute inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex-col justify-end transition-opacity">
+            <div class="bg-gradient-to-b from-[#1a0101] to-[#000] w-full h-[85%] rounded-t-[2.5rem] border-t-2 border-[var(--gold-celestial)] flex flex-col shadow-[0_-15px_40px_rgba(138,3,3,0.5)] fade-in-up relative overflow-hidden">
+                <div class="particles" style="opacity: 0.1;"></div>
+
+                <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--gold-dark)]/30 relative z-10 bg-black/60">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#500000] to-[#200000] flex items-center justify-center border border-[var(--gold-celestial)] shadow-[0_0_10px_rgba(230,194,122,0.3)]">
+                            <i data-lucide="cpu" class="w-5 h-5 text-[var(--gold-celestial)]"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold font-maitree text-[var(--gold-accent)] text-lg">กุนซือ AI แห่งหอตำรา</h3>
-                            <p class="text-[10px] text-gray-400">ข้าค้นหาตำนานและแนะนำให้ท่านได้อัตโนมัติ</p>
+                            <h3 class="font-bold font-maitree text-[var(--gold-celestial)] text-lg" style="text-shadow: var(--text-glow);">กุนซือ AI แห่งหอตำรา</h3>
+                            <p class="text-[10px] text-[var(--gold-dark)] font-maitree">ผู้หยั่งรู้จักรวาลภาพยนตร์</p>
                         </div>
                     </div>
-                    <button onclick="toggleAIModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    <button onclick="toggleAIModal()" class="text-[var(--gold-dark)] hover:text-[var(--gold-celestial)] transition p-1.5 bg-black/50 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
                 </div>
 
-                <div id="ai-chatbox" class="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar font-maitree">
+                <div id="ai-chatbox" class="flex-1 custom-scroll overflow-y-auto p-5 space-y-4 font-maitree relative z-10 text-base">
                     <div class="flex gap-3">
-                        <div class="w-8 h-8 rounded-full bg-[var(--primary-red)]/20 shrink-0 flex justify-center items-center gold-border"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-accent)]"></i></div>
-                        <div class="bg-[#2a0808] border border-[var(--gold-accent)]/30 text-gray-200 p-3 rounded-2xl rounded-tl-none text-sm leading-relaxed max-w-[85%]">
-                            คารวะนายท่าน! ข้าคือกุนซือประจำหอตำราหมื่นลี้ ท่านอยากรับชมซีรีส์แนวใด หรืออยากให้ข้าค้นหาเรื่องใดในหอตำราแห่งนี้ บอกข้ามาได้เลย...
+                        <div class="w-8 h-8 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-celestial)]"></i></div>
+                        <div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-celestial)] p-3.5 rounded-xl rounded-tl-none shadow-md max-w-[85%] leading-relaxed backdrop-blur-sm">
+                            คารวะท่านจอมยุทธ์! ปรารถนาจะให้ข้าค้นหาตำนานเรื่องใด หรือให้คำชี้แนะแนวทางใด เชิญเอยวาจามาได้เลย...
                         </div>
                     </div>
                 </div>
 
-                <div class="p-4 border-t border-[var(--gold-accent)]/20 bg-black">
-                    <div class="flex gap-2">
-                        <input type="text" id="ai-input" placeholder="บอกความต้องการของท่าน..." class="flex-1 bg-[#1a0505] gold-border rounded-full px-4 py-2 text-[var(--gold-accent)] placeholder-gray-600 text-sm focus:outline-none font-maitree" onkeypress="if(event.key === 'Enter') sendAIMessage()">
-                        <button onclick="sendAIMessage()" class="w-10 h-10 rounded-full bg-[var(--primary-red)] flex items-center justify-center text-[var(--gold-accent)] hover:bg-red-800 transition">
-                            <i data-lucide="send" class="w-4 h-4 ml-1"></i>
+                <div class="p-4 border-t border-[var(--gold-dark)]/30 bg-[#0a0000]/95 relative z-10">
+                    <div class="flex gap-3 relative">
+                        <input type="text" id="ai-input" placeholder="ถามข้าเรื่องหนัง หรือแนวที่อยากดู..." class="flex-1 bg-[#1a0101] border border-[var(--gold-dark)] rounded-full px-5 py-3 text-[var(--gold-celestial)] placeholder-[var(--gold-dark)] focus:outline-none focus:border-[var(--gold-celestial)] focus:shadow-[0_0_10px_rgba(230,194,122,0.3)] font-maitree text-sm" onkeypress="if(event.key === 'Enter') sendAIMessage()">
+                        <button onclick="sendAIMessage()" class="absolute right-2 top-1 w-10 h-10 rounded-full bg-[var(--gold-celestial)] flex items-center justify-center text-[#200101] hover:bg-white hover:scale-105 transition-all shadow-[0_0_10px_rgba(230,194,122,0.5)]">
+                            <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation -->
-        <nav id="bottom-nav" class="absolute bottom-0 w-full h-[70px] bg-gradient-to-t from-[#000] via-[#0a0505]/95 to-transparent z-40 flex justify-around items-center px-2 pb-1 border-t border-[var(--gold-accent)]/20 md:rounded-b-[2rem]">
-            <button onclick="switchTab('home')" id="nav-home" class="nav-btn active flex flex-col items-center gap-1 w-16 mt-2">
-                <i data-lucide="home" class="w-6 h-6"></i>
-                <span class="text-[10px] font-medium font-maitree">หน้าหลัก</span>
+        <!-- เมนูหลักด้านล่าง -->
+        <nav id="bottom-nav" class="absolute bottom-0 w-full h-[80px] bg-gradient-to-t from-[#000] via-[#050101]/95 to-transparent z-40 flex justify-around items-center px-4 pb-3 pt-5 border-t border-[var(--gold-dark)]/20 md:rounded-b-[2.5rem]">
+            <button onclick="switchTab('home')" id="nav-home" class="nav-btn active flex flex-col items-center gap-1.5 w-20 group">
+                <div class="relative">
+                    <i data-lucide="home" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
+                    <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--gold-celestial)] rounded-full opacity-0 group-[.active]:opacity-100 transition-opacity shadow-[0_0_5px_#e6c27a]"></div>
+                </div>
+                <span class="text-[11px] font-bold font-maitree tracking-wide mt-0.5">ตำหนักหลัก</span>
             </button>
-            <button onclick="switchTab('miniseries')" id="nav-miniseries" class="nav-btn flex flex-col items-center gap-1 w-16 mt-2">
-                <i data-lucide="smartphone" class="w-6 h-6"></i>
-                <span class="text-[10px] font-medium font-maitree">มินิซีรีส์</span>
+            <button onclick="switchTab('miniseries')" id="nav-miniseries" class="nav-btn flex flex-col items-center gap-1.5 w-20 group">
+                <div class="relative">
+                    <i data-lucide="smartphone" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
+                    <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--gold-celestial)] rounded-full opacity-0 group-[.active]:opacity-100 transition-opacity shadow-[0_0_5px_#e6c27a]"></div>
+                </div>
+                <span class="text-[11px] font-bold font-maitree tracking-wide mt-0.5">ม้วนภาพสั้น</span>
             </button>
-            <button onclick="switchTab('library')" id="nav-library" class="nav-btn flex flex-col items-center gap-1 w-16 mt-2">
-                <i data-lucide="book-open" class="w-6 h-6"></i>
-                <span class="text-[10px] font-medium font-maitree">ตำราของฉัน</span>
+            <button onclick="switchTab('library')" id="nav-library" class="nav-btn flex flex-col items-center gap-1.5 w-20 group">
+                <div class="relative">
+                    <i data-lucide="book-open" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
+                    <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[var(--gold-celestial)] rounded-full opacity-0 group-[.active]:opacity-100 transition-opacity shadow-[0_0_5px_#e6c27a]"></div>
+                </div>
+                <span class="text-[11px] font-bold font-maitree tracking-wide mt-0.5">หอตำราข้า</span>
             </button>
         </nav>
 
     </div>
 
     <script>
-        const categories = ["ทั้งหมด", "ยุทธภพ", "วังหลวง", "เทพเซียน", "สืบสวน", "โรแมนติก"];
+        // --- ส่วนที่ 1: ฐานข้อมูลเทพเซียน ---
+        const categories = ["แดนสวรรค์", "ยุทธภพ", "วังหลวง", "เทพเซียน", "มารพิภพ", "โรแมนติก"];
         const sampleVideos = [
             "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
             "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
         ];
         const verticalVideos = [
             "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
@@ -195,40 +285,43 @@
 
         let moviesData = [];
         let state = {
-            tab: 'home', category: 'ทั้งหมด', searchQuery: '', bannerIndex: 0,
+            tab: 'home', category: 'แดนสวรรค์', searchQuery: '', bannerIndex: 0,
             activeMovie: null, activeEpisodeIndex: 0, view: 'main'
         };
         let bannerInterval;
 
         function generateData() {
-            const adjectives = ["ตำนาน", "ลิขิต", "เล่ห์รัก", "กระบี่", "จอมยุทธ", "วิญญาณ", "สวรรค์", "หยาดตะวัน"];
-            const nouns = ["วังต้องห้าม", "เย้ยพิภพ", "ผ่าบัลลังก์", "ไร้พ่าย", "ซ่อนพิษ", "ล่าปีศาจ", "หมื่นลี้"];
-            const epNames = ["ปฐมบท", "แผนลวง", "รอยแค้น", "คราบน้ำตา", "หักเหลี่ยม"];
+            const prefixes = ["ตำนาน", "ลิขิต", "เล่ห์รัก", "กระบี่", "จอมยุทธ", "วิญญาณ", "สวรรค์", "หยาดตะวัน"];
+            const suffixes = ["วังต้องห้าม", "เย้ยพิภพ", "ผ่าบัลลังก์", "ไร้พ่าย", "ซ่อนพิษ", "ล่าปีศาจ", "หมื่นลี้"];
+            const epNames = ["ปฐมบทตื่นรู้", "แผนลวงซ้อนเงื่อน", "รอยแค้นนับพันปี", "หยาดน้ำตาเทพธิดา", "หักเหลี่ยมสวรรค์"];
 
-            for(let i=1; i<=50; i++) {
-                const title = adjectives[i%8] + nouns[(i*3)%7] + (i <= 5 ? " ภาค " + i : "");
-                const type = i > 40 ? 'miniseries' : 'movie'; 
+            for(let i=1; i<=60; i++) {
+                const title = prefixes[i%8] + suffixes[(i*3)%7] + (i <= 5 ? " ภาค " + i : "");
+                const type = i > 48 ? 'miniseries' : 'movie'; 
                 const category = type === 'miniseries' ? 'มินิซีรีส์' : categories[(i % (categories.length - 1)) + 1];
                 
                 let episodesList = [];
                 if(type === 'movie') {
-                    const numEps = Math.floor(Math.random() * 3) + 2; 
+                    const numEps = Math.floor(Math.random() * 5) + 3; 
                     for(let j=0; j<numEps; j++) {
                         episodesList.push({
-                            ep: j + 1, title: epNames[j % epNames.length], videoUrl: sampleVideos[j % sampleVideos.length]
+                            ep: j + 1, 
+                            title: epNames[j % epNames.length], 
+                            videoUrl: sampleVideos[j % sampleVideos.length],
+                            thumb: `https://picsum.photos/seed/${i*10+j}/300/168` // Thumbnail สำหรับรายชื่อตอน
                         });
                     }
                 } else {
-                    episodesList.push({ ep: 1, title: "ตอนที่ 1", videoUrl: verticalVideos[i % verticalVideos.length] });
+                    episodesList.push({ ep: 1, title: "ม้วนภาพที่ 1", videoUrl: verticalVideos[i % verticalVideos.length], thumb: '' });
                 }
 
                 moviesData.push({
                     id: i, title: title,
-                    description: `ตำนานกล่าวขานถึงเรื่องราวของ ${title} การทรยศหักหลัง ความรักข้ามภพชาติ และการแย่งชิงความเป็นหนึ่ง...`,
-                    cover: `https://picsum.photos/seed/${i*15}/800/1200`,
-                    poster: `https://picsum.photos/seed/${i*25}/400/600`,
-                    rating: (Math.random() * 1.5 + 8.5).toFixed(1),
-                    year: 2020 + (i % 5),
+                    description: `ณ ดินแดนที่เทพและมารบรรจบกัน เรื่องราวของ ${title} ได้เริ่มต้นขึ้น การทรยศหักหลัง ความรักข้ามภพชาติ และการต่อสู้เพื่อชิงอำนาจ...`,
+                    cover: `https://picsum.photos/seed/${i*33}/1000/600`,
+                    poster: `https://picsum.photos/seed/${i*44}/400/600`,
+                    rating: (Math.random() * 1.0 + 9.0).toFixed(1),
+                    year: 2022 + (i % 3),
                     genre: category, type: type, episodes: episodesList
                 });
             }
@@ -244,15 +337,22 @@
         function showToast(message) {
             const toast = document.getElementById('toast-container');
             document.getElementById('toast-msg').innerText = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 15px)';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, -10px)';
+            }, 3000);
         }
 
         function switchTab(tabId) {
             state.tab = tabId; state.view = 'main'; state.searchQuery = '';
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`nav-${tabId}`).classList.add('active');
-            document.getElementById('ai-fab').style.display = 'flex';
+            
+            const fab = document.getElementById('ai-fab');
+            if(fab) fab.style.display = tabId === 'miniseries' ? 'none' : 'flex'; // ซ่อน AI ในหน้ามินิซีรีส์ด้วยเพื่อให้ดูคลีน
+            
             renderApp();
         }
 
@@ -261,8 +361,11 @@
         function toggleSearch() {
             const searchContainer = document.getElementById('search-container');
             searchContainer.classList.toggle('hidden');
-            if(!searchContainer.classList.contains('hidden')) document.getElementById('search-input').focus();
-            else { state.searchQuery = ''; document.getElementById('search-input').value = ''; renderApp(); }
+            if(!searchContainer.classList.contains('hidden')) {
+                document.getElementById('search-input').focus();
+            } else {
+                state.searchQuery = ''; document.getElementById('search-input').value = ''; renderApp();
+            }
         }
 
         function handleSearch(query) { state.searchQuery = query.toLowerCase(); renderApp(); }
@@ -271,14 +374,15 @@
             state.activeMovie = moviesData.find(m => m.id === id);
             state.activeEpisodeIndex = 0;
             state.view = 'player';
-            document.getElementById('ai-fab').style.display = 'none'; 
+            const fab = document.getElementById('ai-fab');
+            if(fab) fab.style.display = 'none';
             renderApp();
         }
 
         function closePlayer() {
-            state.view = 'main';
-            state.activeMovie = null;
-            document.getElementById('ai-fab').style.display = 'flex';
+            state.view = 'main'; state.activeMovie = null;
+            const fab = document.getElementById('ai-fab');
+            if(fab) fab.style.display = 'flex';
             renderApp();
         }
 
@@ -295,12 +399,10 @@
                     const bannerContainer = document.getElementById('hero-banner-container');
                     if (bannerContainer) { bannerContainer.innerHTML = generateBannerHTML(); lucide.createIcons(); }
                 }
-            }, 5000);
+            }, 6000);
         }
 
-        // --- ระบบ AI အอโต้ (ไม่ต้องใช้ API Key วุ่นวาย) ---
-        const apiKey = ""; 
-
+        // --- ส่วน AI ล้วนๆ ---
         function toggleAIModal() {
             const modal = document.getElementById('ai-modal');
             modal.classList.toggle('hidden');
@@ -308,56 +410,42 @@
             if(!modal.classList.contains('hidden')) document.getElementById('ai-input').focus();
         }
 
-        // ระบบช่วยค้นหาอัจฉริยะ (ทำงานได้ทันทีแม้ไม่มี API Key)
-        function localAISearchFallback(text) {
-            const keyword = text.toLowerCase();
-            const results = moviesData.filter(m => 
-                m.title.toLowerCase().includes(keyword) || 
-                m.genre.toLowerCase().includes(keyword) ||
-                m.description.toLowerCase().includes(keyword)
-            ).slice(0, 3);
+        async function getSmartAIResponse(text) {
+            const query = text.toLowerCase();
+            await new Promise(r => setTimeout(r, 1000)); 
 
-            if (results.length > 0) {
-                let response = `ข้าค้นพบตำนานที่ท่านอาจสนใจตามนี้ขอรับ:<br><br>`;
-                results.forEach(m => {
-                    response += `<strong class="text-[var(--gold-accent)]">『${m.title}』</strong> - หมวด${m.genre}<br>`;
-                });
-                response += `<br>โปรดบอกข้าหากท่านต้องการรับชมเรื่องใด`;
-                return response;
-            } else {
-                return `ข้าพลิกตำราดูแล้ว ไม่พบสิ่งที่ตรงกับ "${text}" เลยนายท่าน ลองค้นหาด้วยคำว่า ยุทธภพ, วังหลวง หรือ เทพเซียน ดูเถิด`;
-            }
-        }
+            let results = moviesData.filter(m => 
+                m.title.toLowerCase().includes(query) || 
+                m.genre.toLowerCase().includes(query)
+            );
 
-        async function getAIResponse(text) {
-            // ถ้าระบบมี API key ผูกมาให้ จะพยายามเรียกใช้ Gemini ก่อน
-            if (apiKey) {
-                try {
-                    const promptText = `
-                        คุณคือกุนซือ AI แห่งหอตำราหมื่นลี้ ตอบคำถามสั้นๆ ด้วยภาษาจีนโบราณ
-                        หากผู้ใช้ถามหาหนัง ให้ดึงชื่อจากรายชื่อเหล่านี้เท่านั้นเพื่อแนะนำ:
-                        ${moviesData.map(m=>m.title).slice(0,10).join(', ')}
-                        คำถาม: ${text}
-                    `;
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
-                    });
-                    if (response.ok) {
-                        const data = await response.json();
-                        return data.candidates[0].content.parts[0].text;
-                    }
-                } catch (e) {
-                    console.log("Gemini API fallback to Local Search");
+            if (results.length === 0) {
+                let keywordMatch = categories.find(c => query.includes(c.toLowerCase()));
+                if(keywordMatch) {
+                    results = moviesData.filter(m => m.genre === keywordMatch).slice(0,2);
+                    return `ข้าคัดสรรตำราหมวด <strong class="text-[var(--gold-celestial)]">${keywordMatch}</strong> มาให้ท่านแล้ว:<br><br>
+                    ${results.map(m => `✧ <strong class="text-white underline cursor-pointer" onclick="openMovieFromAI(${m.id})">${m.title}</strong>`).join('<br>')}`;
                 }
+                const randomMovie = moviesData[Math.floor(Math.random() * 20)];
+                return `ข้าไม่พบสิ่งที่ท่านหาเลยนายท่าน ลองชมเรื่องนี้แทนดีหรือไม่?<br><br>
+                ✧ <strong class="text-[var(--gold-celestial)] cursor-pointer underline" onclick="openMovieFromAI(${randomMovie.id})">${randomMovie.title}</strong> สนุกยิ่งนัก!`;
             }
-            
-            // หากเรียก API ไม่ได้หรือไม่มี Key ให้ใช้ระบบค้นหาออโต้ในตัวแทน
-            await new Promise(r => setTimeout(r, 1000)); // จำลองดีเลย์ให้ดูเหมือน AI กำลังคิด
-            return localAISearchFallback(text);
+
+            const topResults = results.slice(0, 3);
+            let response = `ข้าค้นพบตำนานที่คู่ควรกับท่านแล้ว:<br><br>`;
+            topResults.forEach(m => {
+                response += `<div class="bg-black/40 border border-[var(--gold-dark)]/50 p-2 rounded-lg mb-2 flex gap-3 cursor-pointer hover:border-[var(--gold-celestial)] transition" onclick="openMovieFromAI(${m.id})">
+                    <img src="${m.poster}" class="w-10 h-14 object-cover rounded border border-[var(--gold-dark)]">
+                    <div>
+                        <div class="font-bold text-[var(--gold-celestial)] text-sm">${m.title}</div>
+                        <div class="text-[10px] text-gray-400">หมวด: ${m.genre}</div>
+                    </div>
+                </div>`;
+            });
+            return response;
         }
+
+        function openMovieFromAI(id) { toggleAIModal(); openPlayer(id); }
 
         async function sendAIMessage() {
             const inputEl = document.getElementById('ai-input');
@@ -365,57 +453,53 @@
             if(!text) return;
             
             const chatbox = document.getElementById('ai-chatbox');
-            
-            chatbox.innerHTML += `
-                <div class="flex gap-3 justify-end fade-in">
-                    <div class="bg-[#3a0b0b] border border-[var(--primary-red)]/50 text-[var(--gold-accent)] p-3 rounded-2xl rounded-tr-none text-sm max-w-[85%]">${text}</div>
-                </div>
-            `;
-            inputEl.value = '';
-            chatbox.scrollTop = chatbox.scrollHeight;
+            chatbox.innerHTML += `<div class="flex gap-3 justify-end fade-in-up"><div class="bg-gradient-to-r from-[var(--red-mystic)] to-[#500000] border border-[var(--gold-dark)] text-white p-3 rounded-xl rounded-tr-none text-sm max-w-[85%] shadow-lg">${text}</div></div>`;
+            inputEl.value = ''; chatbox.scrollTop = chatbox.scrollHeight;
 
             const loadingId = 'loading-' + Date.now();
-            chatbox.innerHTML += `
-                <div id="${loadingId}" class="flex gap-3 fade-in">
-                    <div class="w-8 h-8 rounded-full bg-[var(--primary-red)]/20 shrink-0 flex justify-center items-center gold-border"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-accent)] animate-pulse"></i></div>
-                    <div class="bg-[#2a0808] border border-[var(--gold-accent)]/30 text-gray-400 p-3 rounded-2xl rounded-tl-none text-sm flex items-center gap-1">
-                        กำลังเปิดตำราค้นหา <span class="animate-bounce">.</span><span class="animate-bounce" style="animation-delay: 0.1s">.</span><span class="animate-bounce" style="animation-delay: 0.2s">.</span>
-                    </div>
-                </div>
-            `;
-            lucide.createIcons();
-            chatbox.scrollTop = chatbox.scrollHeight;
+            chatbox.innerHTML += `<div id="${loadingId}" class="flex gap-3 fade-in-up"><div class="w-8 h-8 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-celestial)] animate-pulse"></i></div><div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-dark)] p-3 rounded-xl rounded-tl-none shadow-md flex items-center gap-2 text-sm"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-[var(--gold-celestial)]"></i> กำลังใช้วิชาเปิดตำรา...</div></div>`;
+            lucide.createIcons(); chatbox.scrollTop = chatbox.scrollHeight;
 
-            const aiResponse = await getAIResponse(text);
+            const aiResponse = await getSmartAIResponse(text);
             document.getElementById(loadingId).remove();
             
-            chatbox.innerHTML += `
-                <div class="flex gap-3 fade-in">
-                    <div class="w-8 h-8 rounded-full bg-[var(--primary-red)]/20 shrink-0 flex justify-center items-center gold-border"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-accent)]"></i></div>
-                    <div class="bg-[#2a0808] border border-[var(--gold-accent)]/30 text-gray-200 p-3 rounded-2xl rounded-tl-none text-sm leading-relaxed max-w-[85%]">
-                        ${aiResponse.replace(/\n/g, '<br>')}
-                    </div>
-                </div>
-            `;
-            lucide.createIcons();
-            chatbox.scrollTop = chatbox.scrollHeight;
+            chatbox.innerHTML += `<div class="flex gap-3 fade-in-up"><div class="w-8 h-8 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-celestial)]"></i></div><div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-celestial)] p-3 rounded-xl rounded-tl-none shadow-md max-w-[90%] leading-relaxed backdrop-blur-sm text-sm">${aiResponse}</div></div>`;
+            lucide.createIcons(); chatbox.scrollTop = chatbox.scrollHeight;
         }
 
-        // --- Render Views ---
+        // --- ส่วนที่ 4: การเรนเดอร์ UI ---
         function renderApp() {
             const content = document.getElementById('app-content');
             const header = document.getElementById('main-header');
             const nav = document.getElementById('bottom-nav');
 
+            // แก้บัคมินิซีรีส์เต็มจอ: ลบ Padding Bottom หากเป็นหน้ามินิซีรีส์
+            if (state.tab === 'miniseries' && state.view === 'main') {
+                content.style.paddingBottom = '0px'; 
+            } else {
+                content.style.paddingBottom = '80px'; // คืนค่า padding ให้หน้าอื่นที่มี nav
+            }
+
             if (state.view === 'player') {
-                header.style.display = 'none'; nav.style.display = 'none';
+                header.style.transform = 'translateY(-100%)'; 
+                nav.style.transform = 'translateY(100%)';
+                setTimeout(() => { header.style.display = 'none'; nav.style.display = 'none'; }, 300);
                 content.innerHTML = generateStandardPlayer();
             } else if (state.tab === 'miniseries') {
-                header.style.display = 'none'; nav.style.display = 'flex';
+                header.style.display = 'none';
+                nav.style.display = 'flex';
+                nav.style.transform = 'translateY(0)';
+                // nav background โปร่งแสงขึ้นในหน้าติ๊กตอก
+                nav.className = "absolute bottom-0 w-full h-[70px] bg-gradient-to-t from-black via-black/80 to-transparent z-40 flex justify-around items-center px-4 pb-2 pt-4 md:rounded-b-[2.5rem]";
                 content.innerHTML = generateMiniSeriesHTML();
                 setTimeout(setupTikTokObserver, 100);
             } else {
-                header.style.display = 'block'; nav.style.display = 'flex';
+                header.style.display = 'block';
+                setTimeout(() => { header.style.transform = 'translateY(0)'; }, 50);
+                nav.style.display = 'flex';
+                nav.style.transform = 'translateY(0)';
+                nav.className = "absolute bottom-0 w-full h-[80px] bg-gradient-to-t from-[#000] via-[#050101]/95 to-transparent z-40 flex justify-around items-center px-4 pb-3 pt-5 border-t border-[var(--gold-dark)]/20 md:rounded-b-[2.5rem]";
+                
                 if (state.tab === 'home') content.innerHTML = generateHomeHTML();
                 if (state.tab === 'library') content.innerHTML = generateLibraryHTML();
             }
@@ -426,18 +510,21 @@
         function generateBannerHTML() {
             const hero = moviesData[state.bannerIndex];
             return `
-                <div class="relative w-full h-[70vh] md:h-[60vh] fade-in border-b-2 border-[var(--gold-accent)]/30" id="hero-banner">
-                    <img src="${hero.cover}" class="absolute inset-0 w-full h-full object-cover opacity-60">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--app-bg)] via-[var(--app-bg)]/40 to-transparent"></div>
-                    
-                    <div class="absolute bottom-0 w-full px-5 pb-8 flex flex-col items-center text-center">
-                        <span class="text-[var(--gold-accent)] border border-[var(--gold-accent)]/50 px-3 py-1 rounded-sm text-[10px] font-bold tracking-widest mb-3 bg-black/30 backdrop-blur-sm font-maitree">ยอดนิยมอันดับ ${state.bannerIndex + 1}</span>
-                        <h2 class="text-4xl font-bold font-maitree text-white text-glow-gold mb-2 leading-tight">${hero.title}</h2>
-                        <div class="flex gap-4 w-full max-w-[280px] mt-4">
-                            <button onclick="openPlayer(${hero.id})" class="flex-1 bg-gradient-to-r from-[var(--primary-red)] to-[#800000] text-white py-3 rounded-full font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(200,16,46,0.6)] font-maitree border border-red-500/50 hover:scale-105 transition-transform">
-                                <i data-lucide="play" class="fill-current w-4 h-4 text-[var(--gold-accent)]"></i> รับชมตำนาน
-                            </button>
+                <div class="relative w-full h-[65vh] fade-in-up" id="hero-banner">
+                    <img src="${hero.cover}" class="absolute inset-0 w-full h-full object-cover opacity-70">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-dark)] via-[#1a0101]/60 to-transparent"></div>
+                    <div class="absolute bottom-0 w-full px-6 pb-10 flex flex-col items-center text-center">
+                        <div class="bg-[#1a0000]/80 border border-[var(--gold-celestial)] text-[var(--gold-celestial)] px-4 py-1 rounded-full text-xs font-bold tracking-widest mb-4 font-maitree shadow-[0_0_15px_rgba(230,194,122,0.4)]">
+                            <i data-lucide="crown" class="w-3 h-3 inline pb-0.5"></i> ตำนานยอดเยี่ยม
                         </div>
+                        <h2 class="text-4xl md:text-5xl font-black font-maitree text-white mb-3 leading-tight" style="text-shadow: var(--box-glow);">${hero.title}</h2>
+                        <div class="flex items-center gap-3 text-sm font-semibold text-[var(--gold-dark)] mb-6 font-maitree bg-black/50 px-5 py-1.5 rounded-full border border-[var(--gold-dark)]/50 backdrop-blur-sm">
+                            <span class="text-[var(--primary-red)] flex items-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i> ${hero.rating}</span>
+                            <span>•</span><span>${hero.year}</span><span>•</span><span class="text-white">${hero.genre}</span>
+                        </div>
+                        <button onclick="openPlayer(${hero.id})" class="w-3/4 max-w-[280px] bg-gradient-to-r from-[#700000] to-[#300000] text-[var(--gold-celestial)] py-3.5 rounded-full font-bold text-base flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(138,3,3,0.8)] border border-[var(--gold-celestial)] hover:scale-105 transition-transform font-maitree group">
+                            <i data-lucide="play-circle" class="w-5 h-5 group-hover:animate-pulse"></i> เข้าสู่เนื้อเรื่อง
+                        </button>
                     </div>
                 </div>
             `;
@@ -446,42 +533,56 @@
         function generateHomeHTML() {
             let filteredMovies = moviesData.filter(m => m.type === 'movie');
             if (state.searchQuery) filteredMovies = filteredMovies.filter(m => m.title.toLowerCase().includes(state.searchQuery));
-            else if (state.category !== 'ทั้งหมด') filteredMovies = filteredMovies.filter(m => m.genre === state.category);
+            else if (state.category !== 'แดนสวรรค์') filteredMovies = filteredMovies.filter(m => m.genre === state.category);
 
             let html = '';
-            if (!state.searchQuery && state.category === 'ทั้งหมด') html += `<div id="hero-banner-container">${generateBannerHTML()}</div>`;
-            else html += `<div class="h-24"></div>`;
+            if (!state.searchQuery && state.category === 'แดนสวรรค์') html += `<div id="hero-banner-container">${generateBannerHTML()}</div>`;
+            else html += `<div class="h-28"></div>`;
 
+            // เมนูหมวดหมู่ (แก้ไขให้บาลานส์สวยงาม)
             html += `
-                <div class="px-4 py-3 sticky top-0 z-30 bg-[#0a0505]/95 backdrop-blur-md border-b border-[var(--gold-accent)]/20 shadow-lg">
-                    <div class="flex gap-3 overflow-x-auto hide-scrollbar">
+                <div class="px-2 py-3 sticky top-0 z-30 bg-[#050101]/95 backdrop-blur-xl border-b border-[var(--gold-dark)]/30 shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                    <div class="flex gap-2.5 overflow-x-auto hide-scrollbar px-2 pb-1">
             `;
             categories.forEach(cat => {
                 const isActive = state.category === cat;
-                html += `<button onclick="setCategory('${cat}')" class="cat-btn px-4 py-1.5 rounded-full border border-[var(--gold-accent)]/30 text-xs font-maitree whitespace-nowrap tracking-wide ${isActive ? 'active' : 'text-[var(--gold-accent)] hover:bg-white/5'}">${cat}</button>`;
+                html += `<button onclick="setCategory('${cat}')" class="cat-btn font-maitree rounded-full text-[13px] tracking-wide shrink-0 ${isActive ? 'active' : ''}">${cat}</button>`;
             });
-            html += `</div></div><div class="px-4 py-6 fade-in">`;
+            html += `</div></div><div class="px-5 py-6 fade-in-up">`;
             
-            if (state.searchQuery) html += `<h3 class="font-maitree text-gray-400 mb-4 text-sm">ม้วนคัมภีร์ที่ค้นพบ: <span class="text-[var(--gold-accent)]">"${state.searchQuery}"</span></h3>`;
-            else {
-                const headText = state.category === 'ทั้งหมด' ? 'ยอดตำนานมาใหม่' : `หมวด: ${state.category}`;
-                html += `<h3 class="text-xl font-bold font-maitree text-[var(--gold-accent)] mb-4 border-l-2 border-[var(--primary-red)] pl-3 text-glow-gold">${headText}</h3>`;
+            if (state.searchQuery) {
+                html += `<h3 class="font-maitree text-[var(--gold-dark)] mb-6 text-base">ค้นพบตำนาน: <span class="text-[var(--gold-celestial)] font-bold text-lg">"${state.searchQuery}"</span></h3>`;
+            } else {
+                const headText = state.category === 'แดนสวรรค์' ? 'คัมภีร์มาใหม่' : `ตำราหมวด: ${state.category}`;
+                html += `<div class="flex items-center gap-3 mb-6">
+                            <div class="w-1.5 h-6 bg-[var(--primary-red)] rounded-full shadow-[0_0_10px_red]"></div>
+                            <h3 class="text-xl font-bold font-maitree text-[var(--gold-celestial)] tracking-wide" style="text-shadow: var(--text-glow);">${headText}</h3>
+                         </div>`;
             }
 
-            if (filteredMovies.length === 0) html += `<div class="text-center py-10 font-maitree text-gray-500">ไม่พบตำนานที่ท่านค้นหา</div>`;
+            if (filteredMovies.length === 0) html += `<div class="text-center py-20 font-maitree text-[var(--gold-dark)] text-lg">ความว่างเปล่า... มิพบตำนานที่ท่านปรารถนา</div>`;
             else {
-                html += `<div class="grid grid-cols-3 gap-3">`;
+                html += `<div class="grid grid-cols-3 gap-3.5">`;
                 filteredMovies.forEach(movie => {
                     html += `
-                        <div class="flex flex-col cursor-pointer group" onclick="openPlayer(${movie.id})">
-                            <div class="relative w-full aspect-[2/3] rounded-sm overflow-hidden mb-2 gold-border shadow-md">
-                                <img src="${movie.poster}" loading="lazy" class="w-full h-full object-cover opacity-90 transition-all duration-500 group-hover:scale-110 group-hover:opacity-100">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                                <div class="absolute inset-0 bg-[var(--primary-red)]/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    <i data-lucide="play-circle" class="w-8 h-8 text-[var(--gold-accent)]"></i>
+                        <div class="flex flex-col cursor-pointer movie-card rounded-lg overflow-hidden relative group" onclick="openPlayer(${movie.id})">
+                            <div class="relative w-full aspect-[2/3] overflow-hidden">
+                                <img src="${movie.poster}" loading="lazy" class="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110">
+                                <div class="absolute inset-0 overlay transition-opacity"></div>
+                                <div class="absolute top-1.5 right-1.5 bg-gradient-to-br from-[#700000] to-[#200000] border border-[var(--gold-dark)] text-[var(--gold-celestial)] px-2 py-0.5 rounded text-[10px] font-bold font-maitree z-10 shadow-md">
+                                    ${movie.episodes.length} ตอน
+                                </div>
+                                <div class="absolute inset-0 bg-[var(--primary-red)]/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10 backdrop-blur-[2px]">
+                                    <div class="w-10 h-10 rounded-full border border-[var(--gold-celestial)] flex items-center justify-center bg-black/60 shadow-[0_0_15px_rgba(230,194,122,0.5)]"><i data-lucide="play" class="w-5 h-5 text-[var(--gold-celestial)] ml-0.5"></i></div>
                                 </div>
                             </div>
-                            <h4 class="text-sm font-semibold font-maitree text-gray-200 truncate group-hover:text-[var(--gold-accent)] transition-colors">${movie.title}</h4>
+                            <div class="p-2.5 bg-gradient-to-b from-[#1a0101] to-[#050000]">
+                                <h4 class="text-[13px] font-semibold font-maitree text-[var(--gold-celestial)] truncate group-hover:text-white transition-colors">${movie.title}</h4>
+                                <div class="flex items-center gap-1 mt-1">
+                                    <i data-lucide="star" class="w-2.5 h-2.5 text-[var(--primary-red)] fill-current"></i>
+                                    <span class="text-[10px] text-[var(--gold-dark)] font-prompt">${movie.rating}</span>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
@@ -495,94 +596,126 @@
             const movie = state.activeMovie;
             const currentEp = movie.episodes[state.activeEpisodeIndex];
 
+            // คืนชีพรายการตอนแบบมีรูปภาพ (Thumbnail) แต่ออกแบบให้สวยหรูขึ้น
             let episodesHTML = '';
             movie.episodes.forEach((ep, idx) => {
                 const isActive = idx === state.activeEpisodeIndex;
                 episodesHTML += `
-                    <div onclick="changeEpisode(${idx})" class="flex items-center gap-4 p-3 rounded-md cursor-pointer transition-all ${isActive ? 'bg-[var(--primary-red)]/20 border border-[var(--primary-red)]/50' : 'bg-black/40 hover:bg-white/5 border border-[var(--gold-accent)]/10'}">
-                        <div class="w-12 h-8 rounded flex justify-center items-center shrink-0 ${isActive ? 'bg-[var(--primary-red)] text-[var(--gold-accent)]' : 'bg-black text-gray-500 border border-[var(--gold-accent)]/20'} font-bold font-maitree text-sm">EP ${ep.ep}</div>
-                        <div class="flex-1"><h4 class="font-semibold text-sm font-maitree ${isActive ? 'text-[var(--gold-accent)]' : 'text-gray-300'}">${ep.title}</h4></div>
-                        ${isActive ? '<i data-lucide="play-circle" class="w-5 h-5 text-[var(--primary-red)] animate-pulse"></i>' : '<i data-lucide="lock" class="w-4 h-4 text-gray-600"></i>'}
+                    <div onclick="changeEpisode(${idx})" class="ep-card flex items-center gap-4 p-2.5 rounded-xl cursor-pointer ${isActive ? 'active' : ''}">
+                        <div class="relative w-28 aspect-video rounded-lg overflow-hidden shrink-0 border border-[var(--gold-dark)]/50">
+                            <img src="${ep.thumb}" class="ep-thumb w-full h-full object-cover ${isActive ? 'opacity-100' : 'opacity-60'}">
+                            <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                                <i data-lucide="play-circle" class="w-7 h-7 ${isActive ? 'text-[var(--gold-celestial)] animate-pulse' : 'text-white/70'}"></i>
+                            </div>
+                            <div class="absolute bottom-1 right-1 bg-black/80 px-1.5 rounded text-[9px] text-[var(--gold-celestial)] font-prompt border border-[var(--gold-dark)]/50">
+                                ตอน ${ep.ep}
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-sm font-maitree line-clamp-1 ${isActive ? 'text-[var(--gold-celestial)]' : 'text-gray-300'}">${ep.title}</h4>
+                            <p class="text-[11px] text-[var(--gold-dark)] mt-1 font-prompt">ความยาว 45 นาที</p>
+                        </div>
+                        <div class="pr-2">
+                             ${isActive ? '<div class="w-2 h-2 rounded-full bg-[var(--primary-red)] shadow-[0_0_8px_red]"></div>' : '<i data-lucide="download" class="w-4 h-4 text-gray-600"></i>'}
+                        </div>
                     </div>
                 `;
             });
 
             return `
-                <div class="w-full h-full flex flex-col bg-[var(--app-bg)] fade-in">
-                    <!-- ลบปุ่มขยายแบบ Custom ออก และให้ระบบใช้วิดีโอคอนโทรลแบบเต็มแทน -->
-                    <div id="video-wrapper" class="relative w-full aspect-video bg-black sticky top-0 z-50 border-b border-[var(--gold-accent)]/30 md:rounded-t-[2rem] overflow-hidden group">
-                        <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-50 bg-gradient-to-b from-black/80 to-transparent opacity-100 group-hover:opacity-100 transition-opacity pointer-events-none">
-                            <button onclick="closePlayer()" class="w-10 h-10 bg-black/60 rounded-full flex items-center justify-center text-[var(--gold-accent)] hover:bg-[var(--primary-red)] transition backdrop-blur-md border border-[var(--gold-accent)]/30 pointer-events-auto">
+                <div class="w-full h-full flex flex-col bg-[var(--bg-dark)] fade-in-up">
+                    <div id="video-wrapper" class="relative w-full aspect-video bg-black sticky top-0 z-50 border-b-2 border-[var(--gold-celestial)]/50 md:rounded-t-[2rem] shadow-[0_5px_30px_rgba(138,3,3,0.3)] group">
+                        <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-50 bg-gradient-to-b from-black/90 to-transparent opacity-100 transition-opacity">
+                            <button onclick="closePlayer()" class="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-[var(--gold-celestial)] hover:bg-[var(--primary-red)] hover:text-white transition backdrop-blur-md border border-[var(--gold-dark)] pointer-events-auto">
                                 <i data-lucide="chevron-left" class="w-6 h-6"></i>
                             </button>
                         </div>
-
-                        <!-- controls จะแสดงปุ่มขยาย/ลด แบบปกติของ Browser มุมขวาล่าง -->
                         <video id="main-video" controls autoplay playsinline webkit-playsinline poster="${movie.cover}" class="w-full h-full outline-none object-contain">
                             <source src="${currentEp.videoUrl}" type="video/mp4">
                         </video>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto px-4 py-5 hide-scrollbar">
-                        <h1 class="text-3xl font-bold font-maitree text-[var(--gold-accent)] mb-2 text-glow-gold">${movie.title}</h1>
+                    <div class="flex-1 overflow-y-auto px-5 py-6 custom-scroll relative">
+                        <div class="particles" style="opacity: 0.15; pointer-events: none;"></div>
                         
-                        <div class="flex items-center gap-3 text-xs text-gray-400 mb-4 font-maitree">
-                            <span class="text-[var(--primary-red)] border border-[var(--primary-red)] px-1.5 rounded-sm">เรตติ้ง ${movie.rating}</span>
-                            <span class="text-[var(--gold-accent)]">•</span><span>${movie.year}</span>
-                            <span class="text-[var(--gold-accent)]">•</span><span>${movie.genre}</span>
-                        </div>
-
-                        <p class="text-sm text-gray-300 mb-6 leading-relaxed opacity-90">${movie.description}</p>
-
-                        <div class="flex justify-around mb-8 border-y border-[var(--gold-accent)]/20 py-4">
-                            <button onclick="showToast('เก็บเข้าหอตำราเรียบร้อย')" class="flex flex-col items-center gap-2 text-[var(--gold-accent)]/70 hover:text-[var(--gold-accent)] hover:-translate-y-1 transition-transform">
-                                <i data-lucide="bookmark-plus" class="w-6 h-6"></i><span class="text-[10px] font-maitree">เก็บเข้าหอตำรา</span>
-                            </button>
-                            <button onclick="showToast('คัดลอกลิงก์ตำนานแล้ว')" class="flex flex-col items-center gap-2 text-[var(--gold-accent)]/70 hover:text-[var(--gold-accent)] hover:-translate-y-1 transition-transform">
-                                <i data-lucide="share-2" class="w-6 h-6"></i><span class="text-[10px] font-maitree">ส่งมอบ</span>
-                            </button>
-                            <button onclick="showToast('กำลังคัดลอกม้วนคัมภีร์ลงอุปกรณ์...')" class="flex flex-col items-center gap-2 text-[var(--gold-accent)]/70 hover:text-[var(--gold-accent)] hover:-translate-y-1 transition-transform">
-                                <i data-lucide="download" class="w-6 h-6"></i><span class="text-[10px] font-maitree">บันทึก</span>
-                            </button>
+                        <div class="flex justify-between items-start mb-2 relative z-10">
+                            <h1 class="text-2xl font-bold font-maitree text-[var(--gold-celestial)] leading-tight flex-1 pr-4" style="text-shadow: var(--text-glow);">${movie.title}</h1>
+                            <div class="bg-gradient-to-br from-[#700000] to-[#200000] border border-[var(--gold-celestial)] px-2.5 py-1 rounded text-xs text-white font-bold shadow-[0_0_10px_rgba(138,3,3,0.5)] shrink-0">
+                                <i data-lucide="star" class="w-3 h-3 inline pb-0.5 text-[var(--gold-celestial)]"></i> ${movie.rating}
+                            </div>
                         </div>
                         
-                        <div class="flex justify-between items-end mb-4">
-                            <h3 class="font-bold text-lg font-maitree text-white border-l-2 border-[var(--primary-red)] pl-2">เลือกตอนรับชม</h3>
-                            <span class="text-xs text-[var(--gold-accent)] font-maitree">กำลังเล่น: ตอนที่ ${currentEp.ep}</span>
+                        <div class="flex items-center gap-3 text-xs text-[var(--gold-dark)] mb-5 font-maitree relative z-10 bg-black/40 inline-flex px-3 py-1.5 rounded-md border border-[var(--gold-dark)]/30">
+                            <span>ปีที่สร้าง ${movie.year}</span>
+                            <span>•</span><span class="text-[var(--gold-celestial)]">หมวด: ${movie.genre}</span>
+                            <span>•</span><span class="text-gray-300">รวม ${movie.episodes.length} ม้วนภาพ</span>
                         </div>
-                        <div class="space-y-2 pb-8">${episodesHTML}</div>
+
+                        <p class="text-sm text-gray-300 mb-8 leading-relaxed opacity-90 border-l-[3px] border-[var(--primary-red)] pl-4 bg-gradient-to-r from-[#1a0101] to-transparent py-2 relative z-10">${movie.description}</p>
+
+                        <div class="flex justify-around mb-8 border-y border-[var(--gold-dark)]/30 py-4 bg-black/40 rounded-xl relative z-10 shadow-inner">
+                            <button onclick="showToast('จารึกเข้าหอตำราของท่านแล้ว')" class="flex flex-col items-center gap-2 text-[var(--gold-celestial)] hover:text-white hover:-translate-y-1 transition-transform group">
+                                <div class="w-10 h-10 rounded-full border border-[var(--gold-dark)] flex items-center justify-center group-hover:border-[var(--primary-red)] group-hover:bg-[#300000] bg-[#1a0101] transition-colors"><i data-lucide="bookmark-plus" class="w-5 h-5"></i></div>
+                                <span class="text-[11px] font-maitree">เก็บตำรา</span>
+                            </button>
+                            <button onclick="showToast('คัดลอกรหัสวิญญาณเพื่อส่งต่อ')" class="flex flex-col items-center gap-2 text-[var(--gold-celestial)] hover:text-white hover:-translate-y-1 transition-transform group">
+                                <div class="w-10 h-10 rounded-full border border-[var(--gold-dark)] flex items-center justify-center group-hover:border-[var(--primary-red)] group-hover:bg-[#300000] bg-[#1a0101] transition-colors"><i data-lucide="share-2" class="w-5 h-5"></i></div>
+                                <span class="text-[11px] font-maitree">ส่งมอบ</span>
+                            </button>
+                            <button onclick="showToast('พลังปราณกำลังอัญเชิญตำราลงเครื่อง...')" class="flex flex-col items-center gap-2 text-[var(--gold-celestial)] hover:text-white hover:-translate-y-1 transition-transform group">
+                                <div class="w-10 h-10 rounded-full border border-[var(--gold-dark)] flex items-center justify-center group-hover:border-[var(--primary-red)] group-hover:bg-[#300000] bg-[#1a0101] transition-colors"><i data-lucide="download" class="w-5 h-5"></i></div>
+                                <span class="text-[11px] font-maitree">บันทึก</span>
+                            </button>
+                        </div>
+                        
+                        <div class="flex justify-between items-end mb-5 relative z-10">
+                            <div class="flex items-center gap-2">
+                                <div class="w-1 h-5 bg-[var(--primary-red)] rounded-full shadow-[0_0_8px_red]"></div>
+                                <h3 class="font-bold text-[17px] font-maitree text-[var(--gold-celestial)]">ม้วนภาพทั้งหมด</h3>
+                            </div>
+                            <span class="text-xs text-[var(--gold-celestial)] font-maitree bg-[#2a0101] border border-[var(--gold-dark)]/50 px-2 py-1 rounded-md">กำลังฉาย: ตอน ${currentEp.ep}</span>
+                        </div>
+                        <div class="space-y-3 pb-10 relative z-10">${episodesHTML}</div>
                     </div>
                 </div>
             `;
         }
 
+        // แก้บัคมินิซีรีส์: ลบ Padding ของ main content ออกเวลาเรียกใช้
         function generateMiniSeriesHTML() {
             const miniseries = moviesData.filter(m => m.type === 'miniseries');
-            let html = `<div class="tiktok-scroll-container fade-in" id="tiktok-container">`;
+            let html = `<div class="tiktok-scroll-container fade-in-up" id="tiktok-container">`;
             miniseries.forEach((movie) => {
                 html += `
                     <div class="tiktok-video-item">
                         <video src="${movie.episodes[0].videoUrl}" poster="${movie.cover}" loop muted playsinline webkit-playsinline class="object-cover"></video>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent pointer-events-none"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0a0101] via-transparent to-black/60 pointer-events-none"></div>
+                        
                         <div class="absolute top-12 left-0 w-full flex justify-center z-20 pointer-events-none">
-                            <span class="text-[var(--gold-accent)] font-maitree text-lg font-bold text-glow-gold tracking-widest opacity-80">มินิซีรีส์</span>
+                            <div class="border-b-2 border-[var(--gold-celestial)] pb-1 px-5 bg-black/30 backdrop-blur-sm rounded-t-lg">
+                                <span class="text-[var(--gold-celestial)] font-maitree text-xl font-bold tracking-[0.25em]" style="text-shadow: var(--box-glow);">ม้วนภาพสั้น</span>
+                            </div>
                         </div>
-                        <div class="absolute right-4 bottom-28 flex flex-col items-center gap-6 z-20">
-                            <div onclick="showToast('ส่งต่อมินิซีรีส์นี้แล้ว')" class="flex flex-col items-center group cursor-pointer">
-                                <div class="w-12 h-12 bg-black/50 border border-[var(--gold-accent)]/30 rounded-full flex items-center justify-center backdrop-blur-md group-hover:bg-[var(--primary-red)]/80 transition hover:scale-110">
-                                    <i data-lucide="share-2" class="w-5 h-5 text-[var(--gold-accent)]"></i>
+
+                        <div class="absolute right-4 bottom-32 flex flex-col items-center gap-6 z-20">
+                            <div onclick="showToast('ท่านได้ส่งต่อวิชานี้แล้ว')" class="flex flex-col items-center cursor-pointer group">
+                                <div class="w-12 h-12 bg-black/60 border border-[var(--gold-dark)] rounded-full flex items-center justify-center backdrop-blur-md group-hover:border-[var(--gold-celestial)] transition hover:scale-110 shadow-[0_0_15px_rgba(0,0,0,0.8)]">
+                                    <i data-lucide="share-2" class="w-5 h-5 text-white group-hover:text-[var(--gold-celestial)]"></i>
                                 </div>
                             </div>
-                            <div class="flex flex-col items-center cursor-pointer mt-2 hover:scale-110 transition-transform" onclick="toggleMute(this)">
-                                <div class="w-12 h-12 bg-black/50 border border-[var(--gold-accent)]/30 rounded-full flex items-center justify-center backdrop-blur-md transition sound-btn-bg">
+                            <div class="flex flex-col items-center cursor-pointer hover:scale-110 transition-transform" onclick="toggleMute(this)">
+                                <div class="w-12 h-12 bg-black/60 border border-[var(--gold-dark)] rounded-full flex items-center justify-center backdrop-blur-md transition sound-btn-bg shadow-[0_0_15px_rgba(0,0,0,0.8)]">
                                     <i data-lucide="volume-x" class="w-5 h-5 text-gray-400 mute-icon"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute bottom-20 left-5 right-20 z-20">
-                            <span class="bg-[var(--primary-red)] text-white px-2 py-0.5 rounded text-[10px] font-bold mb-2 inline-block font-maitree border border-red-400">Exclusive</span>
-                            <h2 class="text-2xl font-bold font-maitree text-[var(--gold-accent)] mb-1 text-glow-gold">${movie.title}</h2>
-                            <p class="text-sm text-gray-300 line-clamp-2 font-prompt opacity-90 leading-relaxed">${movie.description}</p>
+
+                        <div class="absolute bottom-[90px] left-5 right-20 z-20">
+                            <div class="flex gap-2 mb-2">
+                                <span class="bg-gradient-to-r from-[var(--red-mystic)] to-[#400000] text-white border border-[var(--gold-celestial)] px-2.5 py-0.5 rounded-sm text-[10px] font-bold font-maitree shadow-[0_0_10px_rgba(138,3,3,0.8)]">Exclusive</span>
+                            </div>
+                            <h2 class="text-3xl font-bold font-maitree text-[var(--gold-celestial)] mb-1" style="text-shadow: 0 2px 10px rgba(0,0,0,0.9);">${movie.title}</h2>
+                            <p class="text-sm text-gray-200 line-clamp-2 font-prompt opacity-90 leading-relaxed drop-shadow-md">${movie.description}</p>
                         </div>
                     </div>
                 `;
@@ -598,8 +731,12 @@
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const video = entry.target;
-                    if (entry.isIntersecting) video.play().catch(e => console.log("Auto-play prevented", e));
-                    else { video.pause(); video.currentTime = 0; }
+                    if (entry.isIntersecting) {
+                        const playPromise = video.play();
+                        if (playPromise !== undefined) playPromise.catch(e => console.log("Autoplay blocked"));
+                    } else { 
+                        video.pause(); video.currentTime = 0; 
+                    }
                 });
             }, { threshold: 0.6 });
 
@@ -618,28 +755,33 @@
             if (video.muted) {
                 video.muted = false;
                 icon.setAttribute('data-lucide', 'volume-2');
-                icon.classList.replace('text-gray-400', 'text-[var(--gold-accent)]');
-                bg.classList.replace('bg-black/50', 'bg-[var(--primary-red)]/80');
-                showToast("เปิดเสียงแล้ว");
+                icon.classList.replace('text-gray-400', 'text-white');
+                bg.classList.replace('bg-black/60', 'bg-[var(--primary-red)]');
+                bg.classList.replace('border-[var(--gold-dark)]', 'border-[var(--gold-celestial)]');
+                showToast("ปลดผนึกเสียงวิชา");
             } else {
                 video.muted = true;
                 icon.setAttribute('data-lucide', 'volume-x');
-                icon.classList.replace('text-[var(--gold-accent)]', 'text-gray-400');
-                bg.classList.replace('bg-[var(--primary-red)]/80', 'bg-black/50');
+                icon.classList.replace('text-white', 'text-gray-400');
+                bg.classList.replace('bg-[var(--primary-red)]', 'bg-black/60');
+                bg.classList.replace('border-[var(--gold-celestial)]', 'border-[var(--gold-dark)]');
             }
             lucide.createIcons();
         }
 
         function generateLibraryHTML() {
             return `
-                <div class="pt-20 px-4 h-full flex flex-col items-center justify-center text-center pb-20 font-maitree fade-in">
-                    <div class="w-20 h-20 rounded-full border-2 border-[var(--gold-accent)]/50 flex items-center justify-center mb-6 bg-black/50 shadow-[0_0_20px_rgba(212,175,55,0.2)]">
-                        <i data-lucide="book" class="w-10 h-10 text-[var(--gold-accent)]"></i>
+                <div class="pt-20 px-5 h-full flex flex-col items-center justify-center text-center pb-20 font-maitree fade-in-up">
+                    <div class="relative w-28 h-28 rounded-full border-[3px] border-[var(--gold-dark)] flex items-center justify-center mb-6 bg-gradient-to-b from-[#2a0101] to-black shadow-[0_0_40px_rgba(230,194,122,0.15)] group hover:border-[var(--gold-celestial)] transition-colors">
+                        <i data-lucide="scroll" class="w-12 h-12 text-[var(--gold-celestial)] group-hover:scale-110 transition-transform drop-shadow-[0_0_10px_rgba(230,194,122,0.8)]"></i>
+                        <div class="absolute -inset-3 rounded-full border border-[var(--gold-celestial)]/30 animate-spin" style="animation-duration: 12s;"></div>
+                        <div class="absolute -inset-1 rounded-full border border-[var(--primary-red)]/40 animate-spin border-dashed" style="animation-duration: 8s; animation-direction: reverse;"></div>
                     </div>
-                    <h2 class="text-2xl font-bold text-[var(--gold-accent)] mb-2 text-glow-gold">หอตำราลับ</h2>
-                    <p class="text-sm text-gray-400 mb-8 font-prompt">ท่านยังไม่ได้เก็บรวบรวมม้วนคัมภีร์ใดๆ ไว้ในหอตำรา</p>
-                    <button onclick="switchTab('home')" class="border border-[var(--primary-red)] text-[var(--primary-red)] px-8 py-2.5 rounded-sm font-bold text-sm hover:bg-[var(--primary-red)] hover:text-[var(--gold-accent)] transition-all hover:scale-105 shadow-lg">
-                        ค้นหาตำนาน
+                    <h2 class="text-3xl font-bold text-[var(--gold-celestial)] mb-2" style="text-shadow: var(--text-glow);">หอตำราลับส่วนตัว</h2>
+                    <p class="text-[15px] text-[var(--gold-dark)] mb-10 font-prompt max-w-[280px]">ณ ตอนนี้ชั้นวางตำราของท่านยังว่างเปล่า รีบไปสะสมวิชาเถิด</p>
+                    <button onclick="switchTab('home')" class="relative overflow-hidden bg-transparent border-2 border-[var(--gold-celestial)] text-[var(--gold-celestial)] px-12 py-3.5 rounded-full font-bold text-base hover:text-white hover:border-transparent transition-all hover:scale-105 group shadow-[0_0_15px_rgba(230,194,122,0.2)]">
+                        <span class="relative z-10">ค้นหาตำนานสวรรค์</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-[var(--red-mystic)] to-[#400000] opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
                     </button>
                 </div>
             `;
