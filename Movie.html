@@ -118,10 +118,10 @@
         .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.8); }
         .custom-scroll::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
 
-        /* Loader */
+        /* Loader แก้ไขให้จัดกึ่งกลางถูกต้อง */
         .loader-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000;
-            display: flex; flex-col; items-center; justify-content: center; flex-direction: column;
+            position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
     </style>
 </head>
@@ -129,10 +129,14 @@
 
     <div id="app-wrapper" class="relative w-full h-[100dvh] md:w-[420px] md:h-[90vh] md:rounded-[2.5rem] bg-[var(--bg-dark)] overflow-hidden flex flex-col shadow-[0_0_80px_rgba(138,3,3,0.3)] md:border-[6px] md:border-[#2a0505] z-10">
         
-        <!-- Loading Screen -->
+        <!-- Loading Screen โฉมใหม่ (ไอคอนคัมภีร์) -->
         <div id="global-loader" class="loader-overlay">
-            <i data-lucide="loader-2" class="w-12 h-12 text-[var(--gold-celestial)] animate-spin mb-4"></i>
-            <p class="text-[var(--gold-celestial)] font-maitree text-lg animate-pulse" style="text-shadow: var(--text-glow);">กำลังเบิกเนตรหอตำรา...</p>
+            <div class="relative w-28 h-28 rounded-full border-[3px] border-[var(--gold-dark)] flex items-center justify-center mb-6 bg-gradient-to-b from-[#2a0101] to-black shadow-[0_0_40px_rgba(230,194,122,0.3)]">
+                <i data-lucide="scroll" class="w-12 h-12 text-[var(--gold-celestial)] animate-pulse drop-shadow-[0_0_10px_rgba(230,194,122,0.8)] relative z-10"></i>
+                <div class="absolute -inset-3 rounded-full border border-[var(--gold-celestial)]/30 animate-spin" style="animation-duration: 8s;"></div>
+                <div class="absolute -inset-1 rounded-full border border-[var(--primary-red)]/40 animate-spin border-dashed" style="animation-duration: 4s; animation-direction: reverse;"></div>
+            </div>
+            <p class="text-[var(--gold-celestial)] font-maitree text-xl animate-pulse font-bold tracking-widest" style="text-shadow: var(--text-glow);">กำลังเบิกคัมภีร์...</p>
         </div>
 
         <div class="celestial-bg"></div>
@@ -168,9 +172,9 @@
             <!-- เนื้อหาจะถูกแทรกผ่าน JS -->
         </main>
 
-        <!-- กุนซือ AI -->
-        <button id="ai-fab" onclick="toggleAIModal()" class="absolute bottom-[95px] right-4 z-40 w-12 h-12 bg-gradient-to-br from-[var(--gold-celestial)] to-[var(--gold-dark)] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(230,194,122,0.6)] border-2 border-[#200101] transition-transform hover:scale-110 hover:rotate-12 duration-300">
-            <i data-lucide="sparkles" class="w-5 h-5 text-[#200101]"></i>
+        <!-- กุนซือ AI (เปลี่ยนไอคอนเป็นการ์ตูนจอมยุทธ์) -->
+        <button id="ai-fab" onclick="toggleAIModal()" class="absolute bottom-[95px] right-4 z-40 w-14 h-14 bg-gradient-to-br from-[#2a0101] to-[#000] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(230,194,122,0.6)] border-2 border-[var(--gold-celestial)] transition-transform hover:scale-110 hover:rotate-6 duration-300 overflow-hidden p-0.5">
+            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=LiBai&backgroundColor=transparent&skinColor=f2d3b1&hair=long01&hairColor=000000" class="w-full h-full rounded-full bg-[#500000]">
         </button>
 
         <div id="ai-modal" class="absolute inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex-col justify-end transition-opacity">
@@ -178,8 +182,8 @@
                 <div class="particles" style="opacity: 0.1;"></div>
                 <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--gold-dark)]/30 relative z-10 bg-black/60">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[#500000] to-[#200000] flex items-center justify-center border border-[var(--gold-celestial)] shadow-[0_0_10px_rgba(230,194,122,0.3)]">
-                            <i data-lucide="cpu" class="w-5 h-5 text-[var(--gold-celestial)]"></i>
+                        <div class="w-11 h-11 rounded-full bg-[#500000] flex items-center justify-center border border-[var(--gold-celestial)] shadow-[0_0_10px_rgba(230,194,122,0.3)] overflow-hidden p-0.5">
+                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=LiBai&backgroundColor=transparent&skinColor=f2d3b1&hair=long01&hairColor=000000" class="w-full h-full rounded-full bg-[#2a0101]">
                         </div>
                         <div>
                             <h3 class="font-bold font-maitree text-[var(--gold-celestial)] text-lg" style="text-shadow: var(--text-glow);">กุนซือ AI แห่งหอตำรา</h3>
@@ -191,7 +195,9 @@
 
                 <div id="ai-chatbox" class="flex-1 custom-scroll overflow-y-auto p-5 space-y-4 font-maitree relative z-10 text-base">
                     <div class="flex gap-3">
-                        <div class="w-8 h-8 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-celestial)]"></i></div>
+                        <div class="w-9 h-9 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1 overflow-hidden p-0.5">
+                            <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=LiBai&backgroundColor=transparent&skinColor=f2d3b1&hair=long01&hairColor=000000" class="w-full h-full rounded-full bg-[#2a0101]">
+                        </div>
                         <div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-celestial)] p-3.5 rounded-xl rounded-tl-none shadow-md max-w-[85%] leading-relaxed backdrop-blur-sm">
                             คารวะท่านจอมยุทธ์! ปรารถนาจะให้ข้าค้นหาตำนานเรื่องใด เช่น "ขอหนังรัก" หรือชื่อหนังที่ท่านต้องการ เชิญเอยวาจามาได้เลย...
                         </div>
@@ -239,6 +245,9 @@
     <script>
         // ⚡ ตั้งค่า Google Apps Script URL ที่นี่ ⚡
         const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec";
+        
+        // รูป Avatar ของกุนซือ AI
+        const AI_AVATAR = "https://api.dicebear.com/7.x/adventurer/svg?seed=LiBai&backgroundColor=transparent&skinColor=f2d3b1&hair=long01&hairColor=000000";
 
         let moviesData = [];
         let categories = ["ทั้งหมด"];
@@ -251,6 +260,7 @@
             activeMovie: null, activeEpisodeIndex: 0, view: 'main'
         };
         let bannerInterval;
+        let isAiThinking = false; // ป้องกันการกดส่งรัวๆ
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchMoviesData(); // ดึงข้อมูลตอนเปิดเว็บ
@@ -309,7 +319,16 @@
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                document.getElementById('global-loader').innerHTML = `<p class="text-red-500 font-maitree">เปิดตำราล้มเหลว โปรดตรวจสอบการเชื่อมต่อ</p>`;
+                const loader = document.getElementById('global-loader');
+                loader.innerHTML = `
+                    <div class="flex flex-col items-center bg-[#1a0101] p-8 rounded-3xl border border-[var(--gold-dark)] shadow-[0_0_30px_rgba(138,3,3,0.5)]">
+                        <i data-lucide="alert-triangle" class="w-12 h-12 text-red-500 mb-4 animate-bounce"></i>
+                        <p class="text-[var(--gold-celestial)] font-maitree text-xl font-bold">ค่ายกลขัดข้อง!</p>
+                        <p class="text-[var(--gold-dark)] text-sm font-maitree mt-2">พลังปราณไม่เพียงพอในการเชื่อมต่อหอตำรา</p>
+                        <button onclick="location.reload()" class="mt-6 bg-gradient-to-r from-[#700000] to-[#300000] text-[var(--gold-celestial)] px-6 py-2 rounded-full font-maitree border border-[var(--gold-celestial)] hover:scale-105 transition shadow-[0_0_15px_rgba(138,3,3,0.8)]">ลองร่ายคาถาใหม่</button>
+                    </div>
+                `;
+                lucide.createIcons();
             }
         }
 
@@ -343,6 +362,14 @@
 
         function switchTab(tabId) {
             state.tab = tabId; state.view = 'main'; state.searchQuery = '';
+            
+            // ล้างช่องค้นหาเมื่อเปลี่ยนหน้า
+            document.getElementById('search-input').value = '';
+            const searchContainer = document.getElementById('search-container');
+            if(searchContainer && !searchContainer.classList.contains('hidden')) {
+                searchContainer.classList.add('hidden');
+            }
+
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`nav-${tabId}`).classList.add('active');
             renderApp();
@@ -381,6 +408,12 @@
         }
 
         function closePlayer() {
+            // หยุดวิดีโอเพื่อไม่ให้มีเสียงค้างเบื้องหลัง
+            const iframe = document.querySelector('#video-wrapper iframe');
+            if (iframe) iframe.src = ''; 
+            const videoObj = document.getElementById('main-video');
+            if (videoObj) videoObj.pause();
+
             state.view = 'main'; state.activeMovie = null;
             const fab = document.getElementById('ai-fab');
             if(fab) fab.style.display = 'flex';
@@ -404,7 +437,7 @@
         }
 
         // ==========================================
-        // ระบบกุนซือ AI (หาข้อมูลจากชีตที่โหลดมา)
+        // ระบบกุนซือ AI 
         // ==========================================
         function toggleAIModal() {
             const modal = document.getElementById('ai-modal');
@@ -461,23 +494,32 @@
         function openMovieFromAI(id) { toggleAIModal(); openPlayer(id); }
 
         async function sendAIMessage() {
+            if (isAiThinking) return; // ป้องกันส่งรัวๆ
+
             const inputEl = document.getElementById('ai-input');
-            const text = inputEl.value.trim();
+            let text = inputEl.value.trim();
             if(!text) return;
             
+            // ป้องกัน XSS (เปลี่ยน tag HTML ให้กลายเป็นตัวหนังสือธรรมดา)
+            text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            isAiThinking = true;
+
             const chatbox = document.getElementById('ai-chatbox');
             chatbox.innerHTML += `<div class="flex gap-3 justify-end fade-in-up"><div class="bg-gradient-to-r from-[var(--red-mystic)] to-[#500000] border border-[var(--gold-dark)] text-white p-3 rounded-xl rounded-tr-none text-sm max-w-[85%] shadow-lg">${text}</div></div>`;
             inputEl.value = ''; chatbox.scrollTop = chatbox.scrollHeight;
 
             const loadingId = 'loading-' + Date.now();
-            chatbox.innerHTML += `<div id="${loadingId}" class="flex gap-3 fade-in-up"><div class="w-8 h-8 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-celestial)] animate-pulse"></i></div><div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-dark)] p-3 rounded-xl rounded-tl-none shadow-md flex items-center gap-2 text-sm"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-[var(--gold-celestial)]"></i> กำลังใช้วิชาเปิดตำรา...</div></div>`;
+            chatbox.innerHTML += `<div id="${loadingId}" class="flex gap-3 fade-in-up"><div class="w-9 h-9 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1 overflow-hidden p-0.5"><img src="${AI_AVATAR}" class="w-full h-full rounded-full bg-[#2a0101]"></div><div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-dark)] p-3 rounded-xl rounded-tl-none shadow-md flex items-center gap-2 text-sm"><i data-lucide="loader-2" class="w-4 h-4 animate-spin text-[var(--gold-celestial)]"></i> กำลังใช้วิชาเปิดตำรา...</div></div>`;
             lucide.createIcons(); chatbox.scrollTop = chatbox.scrollHeight;
 
             const aiResponse = await getSmartAIResponse(text);
             document.getElementById(loadingId).remove();
             
-            chatbox.innerHTML += `<div class="flex gap-3 fade-in-up"><div class="w-8 h-8 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1"><i data-lucide="bot" class="w-4 h-4 text-[var(--gold-celestial)]"></i></div><div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-celestial)] p-3 rounded-xl rounded-tl-none shadow-md max-w-[90%] leading-relaxed backdrop-blur-sm text-sm">${aiResponse}</div></div>`;
+            chatbox.innerHTML += `<div class="flex gap-3 fade-in-up"><div class="w-9 h-9 rounded-full bg-[#500000] shrink-0 flex justify-center items-center border border-[var(--gold-celestial)] mt-1 overflow-hidden p-0.5"><img src="${AI_AVATAR}" class="w-full h-full rounded-full bg-[#2a0101]"></div><div class="bg-[#2a0101]/90 border border-[var(--gold-dark)] text-[var(--gold-celestial)] p-3 rounded-xl rounded-tl-none shadow-md max-w-[90%] leading-relaxed backdrop-blur-sm text-sm">${aiResponse}</div></div>`;
             lucide.createIcons(); chatbox.scrollTop = chatbox.scrollHeight;
+
+            isAiThinking = false;
         }
 
         // ==========================================
@@ -486,6 +528,9 @@
         function getVideoElementHTML(url, poster) {
             if (!url) return `<div class="w-full h-full flex flex-col items-center justify-center text-[var(--gold-dark)] bg-[#050101]"><i data-lucide="video-off" class="w-10 h-10 mb-2"></i><p class="font-maitree">ยังไม่มีคัมภีร์ภาพ</p></div>`;
 
+            // เพิ่ม allowfullscreen เพื่อบังคับให้อุปกรณ์อนุญาตการขยายเต็มจอ
+            const iframeConfig = 'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"';
+
             // ตรวจสอบ YouTube
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 let videoId = '';
@@ -493,18 +538,18 @@
                 else if(url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
                 else if(url.includes('youtube.com/embed/')) videoId = url.split('embed/')[1].split('?')[0];
                 
-                return `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+                return `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" ${iframeConfig}></iframe>`;
             }
             
             // ตรวจสอบ Google Drive
             if (url.includes('drive.google.com')) {
                 let embedUrl = url;
                 if(url.includes('/view')) embedUrl = url.replace('/view', '/preview');
-                return `<iframe class="w-full h-full" src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                return `<iframe class="w-full h-full" src="${embedUrl}" ${iframeConfig}></iframe>`;
             }
             
             // ค่าเริ่มต้นสำหรับ MP4, M3U8, และไฟล์วิดีโอทั่วไป
-            // ใช้ playsinline ทำให้เล่นในจอได้ แต่เมื่อผู้ใช้ขยายหน้าจอ (หรือเอียงโทรศัพท์) จะสามารถเต็มจออัตโนมัติ (ขึ้นอยู่กับระบบโทรศัพท์)
+            // การใช้ playsinline จะเล่นในกรอบ แต่เมื่อกดปุ่มขยายจอของเครื่อง (Native Fullscreen) จะเต็มจอและหมุนได้
             return `<video id="main-video" controls autoplay playsinline webkit-playsinline poster="${poster}" class="w-full h-full outline-none object-contain bg-black">
                         <source src="${url}">
                         เบราว์เซอร์ของท่านไม่รองรับการแสดงผลวิชานี้
@@ -707,7 +752,7 @@
                 <div class="w-full h-full flex flex-col bg-[var(--bg-dark)] fade-in-up">
                     <div id="video-wrapper" class="relative w-full aspect-video bg-black sticky top-0 z-50 border-b-2 border-[var(--gold-celestial)]/50 md:rounded-t-[2rem] shadow-[0_5px_30px_rgba(138,3,3,0.3)] group">
                         <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-50 bg-gradient-to-b from-black/90 to-transparent opacity-100 transition-opacity pointer-events-none">
-                            <button onclick="closePlayer()" class="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-[var(--gold-celestial)] hover:bg-[var(--primary-red)] hover:text-white transition backdrop-blur-md border border-[var(--gold-dark)] pointer-events-auto">
+                            <button onclick="closePlayer()" class="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-[var(--gold-celestial)] hover:bg-[var(--primary-red)] hover:text-white transition backdrop-blur-md border border-[var(--gold-dark)] pointer-events-auto shadow-md">
                                 <i data-lucide="chevron-left" class="w-6 h-6"></i>
                             </button>
                         </div>
@@ -767,7 +812,7 @@
             return `
                 <div class="pt-20 px-5 h-full flex flex-col items-center justify-center text-center pb-20 font-maitree fade-in-up">
                     <div class="relative w-28 h-28 rounded-full border-[3px] border-[var(--gold-dark)] flex items-center justify-center mb-6 bg-gradient-to-b from-[#2a0101] to-black shadow-[0_0_40px_rgba(230,194,122,0.15)] group hover:border-[var(--gold-celestial)] transition-colors">
-                        <i data-lucide="scroll" class="w-12 h-12 text-[var(--gold-celestial)] group-hover:scale-110 transition-transform drop-shadow-[0_0_10px_rgba(230,194,122,0.8)]"></i>
+                        <i data-lucide="scroll" class="w-12 h-12 text-[var(--gold-celestial)] group-hover:scale-110 transition-transform drop-shadow-[0_0_10px_rgba(230,194,122,0.8)] relative z-10"></i>
                         <div class="absolute -inset-3 rounded-full border border-[var(--gold-celestial)]/30 animate-spin" style="animation-duration: 12s;"></div>
                         <div class="absolute -inset-1 rounded-full border border-[var(--primary-red)]/40 animate-spin border-dashed" style="animation-duration: 8s; animation-direction: reverse;"></div>
                     </div>
