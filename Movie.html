@@ -15,7 +15,6 @@
             --gold-dark: #997a3d;
             --text-glow: 0 0 12px rgba(230, 194, 122, 0.7);
             --box-glow: 0 0 25px rgba(138, 3, 3, 0.5);
-            --gold-shadow: 0 4px 15px rgba(230, 194, 122, 0.2);
         }
 
         body {
@@ -24,112 +23,101 @@
             color: #fff;
             -webkit-tap-highlight-color: transparent;
             background-image: radial-gradient(circle at 50% 0%, #200101 0%, #000 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; overflow: hidden;
         }
 
         .font-maitree { font-family: 'Maitree', serif; }
-
-        /* ซ่อน Scrollbar */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .celestial-bg {
             position: absolute; inset: 0;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(138,3,3,0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(230,194,122,0.05) 0%, transparent 40%);
+            background: radial-gradient(circle at 20% 30%, rgba(138,3,3,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(230,194,122,0.05) 0%, transparent 40%);
             pointer-events: none; z-index: 0;
         }
 
         .particles {
             position: absolute; inset: 0; pointer-events: none; z-index: 1;
-            background-image: 
-                radial-gradient(1px 1px at 20px 30px, var(--gold-celestial), rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 80px 120px, var(--gold-celestial), rgba(0,0,0,0)),
-                radial-gradient(1.5px 1.5px at 150px 60px, var(--gold-celestial), rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 250px 250px;
-            animation: stars 80s linear infinite;
-            opacity: 0.4;
+            background-image: radial-gradient(1px 1px at 20px 30px, var(--gold-celestial), rgba(0,0,0,0)),
+                              radial-gradient(1px 1px at 80px 120px, var(--gold-celestial), rgba(0,0,0,0)),
+                              radial-gradient(1.5px 1.5px at 150px 60px, var(--gold-celestial), rgba(0,0,0,0));
+            background-size: 250px 250px; animation: stars 80s linear infinite; opacity: 0.4;
         }
         @keyframes stars { from { transform: translateY(0); } to { transform: translateY(-250px); } }
 
         .movie-card {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(230, 194, 122, 0.15);
-            background: #0a0101;
+            border: 1px solid rgba(230, 194, 122, 0.15); background: #0a0101;
         }
         .movie-card:hover {
-            transform: scale(1.05) translateY(-5px);
-            border-color: var(--gold-celestial);
-            box-shadow: var(--box-glow), 0 10px 20px rgba(0,0,0,0.9);
-            z-index: 10;
+            transform: scale(1.05) translateY(-5px); border-color: var(--gold-celestial);
+            box-shadow: var(--box-glow), 0 10px 20px rgba(0,0,0,0.9); z-index: 10;
         }
-        .movie-card .overlay {
-            background: linear-gradient(to top, #000 10%, transparent 50%, rgba(138, 3, 3, 0.3) 100%);
-        }
+        .movie-card .overlay { background: linear-gradient(to top, #000 10%, transparent 50%, rgba(138, 3, 3, 0.3) 100%); }
 
         .cat-btn {
-            background: rgba(10, 0, 0, 0.7);
-            border: 1px solid var(--gold-dark);
-            color: var(--gold-celestial);
-            transition: all 0.3s;
+            background: rgba(10, 0, 0, 0.7); border: 1px solid var(--gold-dark);
+            color: var(--gold-celestial); transition: all 0.3s;
             display: inline-flex; align-items: center; justify-content: center;
             padding: 6px 20px; line-height: 1.2; backdrop-blur: 4px;
         }
         .cat-btn:hover { background: rgba(230, 194, 122, 0.1); border-color: var(--gold-celestial); }
         .cat-btn.active {
             background: linear-gradient(to bottom, #700000, #300000);
-            border-color: var(--gold-celestial); color: #fff;
-            text-shadow: var(--text-glow); box-shadow: 0 0 15px rgba(138,3,3,0.8);
+            border-color: var(--gold-celestial); color: #fff; text-shadow: var(--text-glow);
+            box-shadow: 0 0 15px rgba(138,3,3,0.8);
         }
 
         .nav-btn { color: #6b7280; transition: all 0.3s; }
-        .nav-btn.active { 
-            color: var(--gold-celestial); 
-            text-shadow: 0 0 8px rgba(230, 194, 122, 0.5);
-        }
+        .nav-btn.active { color: var(--gold-celestial); text-shadow: 0 0 8px rgba(230, 194, 122, 0.5); }
 
         .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         .ep-card {
             border: 1px solid rgba(153, 122, 61, 0.3);
-            background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(20,0,0,0.6));
-            transition: all 0.3s ease;
+            background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(20,0,0,0.6)); transition: all 0.3s ease;
         }
         .ep-card:hover, .ep-card.active {
-            border-color: var(--gold-celestial);
-            background: linear-gradient(to right, rgba(138,3,3,0.3), rgba(0,0,0,0.8));
+            border-color: var(--gold-celestial); background: linear-gradient(to right, rgba(138,3,3,0.3), rgba(0,0,0,0.8));
             box-shadow: 0 0 15px rgba(230,194,122,0.15);
         }
-        .ep-card .ep-thumb { transition: all 0.3s ease; }
         .ep-card:hover .ep-thumb, .ep-card.active .ep-thumb { opacity: 1; transform: scale(1.05); }
 
-        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar { width: 3px; height: 3px; }
         .custom-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.8); }
         .custom-scroll::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
 
-        /* Loader แก้ไขให้จัดกึ่งกลางถูกต้อง */
         .loader-overlay {
             position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
+
+        /* Video Player Specific Styles */
+        #custom-video-container:fullscreen {
+            width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000;
+        }
+        #video-controls {
+            opacity: 0; transition: opacity 0.3s ease; cursor: default;
+        }
+        #custom-video-container.show-controls #video-controls {
+            opacity: 1;
+        }
+        .player-btn {
+            background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            transition: transform 0.2s, background 0.2s; color: white; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .player-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
+        .player-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <div id="app-wrapper" class="relative w-full h-[100dvh] md:w-[420px] md:h-[90vh] md:rounded-[2.5rem] bg-[var(--bg-dark)] overflow-hidden flex flex-col shadow-[0_0_80px_rgba(138,3,3,0.3)] md:border-[6px] md:border-[#2a0505] z-10">
+    <div id="app-wrapper" class="relative w-full h-[100dvh] md:w-[420px] md:h-[90vh] md:rounded-[2.5rem] bg-[var(--bg-dark)] overflow-hidden flex flex-col shadow-[0_0_80px_rgba(138,3,3,0.3)] md:border-[6px] md:border-[#2a0505] z-10 transition-all duration-300">
         
-        <!-- Loading Screen โฉมใหม่ (ไอคอนคัมภีร์) -->
+        <!-- Loading Screen -->
         <div id="global-loader" class="loader-overlay">
             <div class="relative w-28 h-28 rounded-full border-[3px] border-[var(--gold-dark)] flex items-center justify-center mb-6 bg-gradient-to-b from-[#2a0101] to-black shadow-[0_0_40px_rgba(230,194,122,0.3)]">
                 <i data-lucide="scroll" class="w-12 h-12 text-[var(--gold-celestial)] animate-pulse drop-shadow-[0_0_10px_rgba(230,194,122,0.8)] relative z-10"></i>
@@ -172,7 +160,7 @@
             <!-- เนื้อหาจะถูกแทรกผ่าน JS -->
         </main>
 
-        <!-- กุนซือ AI (เปลี่ยนไอคอนเป็นการ์ตูนจอมยุทธ์) -->
+        <!-- กุนซือ AI -->
         <button id="ai-fab" onclick="toggleAIModal()" class="absolute bottom-[95px] right-4 z-40 w-14 h-14 bg-gradient-to-br from-[#2a0101] to-[#000] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(230,194,122,0.6)] border-2 border-[var(--gold-celestial)] transition-transform hover:scale-110 hover:rotate-6 duration-300 overflow-hidden p-0.5">
             <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=LiBai&backgroundColor=transparent&skinColor=f2d3b1&hair=long01&hairColor=000000" class="w-full h-full rounded-full bg-[#500000]">
         </button>
@@ -216,7 +204,7 @@
         </div>
 
         <!-- เมนูหลักด้านล่าง -->
-        <nav id="bottom-nav" class="absolute bottom-0 w-full h-[80px] bg-gradient-to-t from-[#000] via-[#050101]/95 to-transparent z-40 flex justify-around items-center px-4 pb-3 pt-5 border-t border-[var(--gold-dark)]/20 md:rounded-b-[2.5rem]">
+        <nav id="bottom-nav" class="absolute bottom-0 w-full h-[80px] bg-gradient-to-t from-[#000] via-[#050101]/95 to-transparent z-40 flex justify-around items-center px-4 pb-3 pt-5 border-t border-[var(--gold-dark)]/20 md:rounded-b-[2.5rem] transition-transform duration-300">
             <button onclick="switchTab('home')" id="nav-home" class="nav-btn active flex flex-col items-center gap-1.5 w-20 group">
                 <div class="relative">
                     <i data-lucide="home" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
@@ -243,33 +231,27 @@
     </div>
 
     <script>
-        // ⚡ ตั้งค่า Google Apps Script URL ที่นี่ ⚡
         const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec";
-        
-        // รูป Avatar ของกุนซือ AI
         const AI_AVATAR = "https://api.dicebear.com/7.x/adventurer/svg?seed=LiBai&backgroundColor=transparent&skinColor=f2d3b1&hair=long01&hairColor=000000";
 
         let moviesData = [];
         let categories = ["ทั้งหมด"];
-        
-        // ดึงประวัติจาก LocalStorage
         let watchHistory = JSON.parse(localStorage.getItem('mflix_history') || '[]');
 
         let state = {
             tab: 'home', category: 'ทั้งหมด', searchQuery: '', bannerIndex: 0,
             activeMovie: null, activeEpisodeIndex: 0, view: 'main'
         };
+        
         let bannerInterval;
-        let isAiThinking = false; // ป้องกันการกดส่งรัวๆ
+        let isAiThinking = false;
+        let playerHideTimeout;
 
         document.addEventListener('DOMContentLoaded', () => {
-            fetchMoviesData(); // ดึงข้อมูลตอนเปิดเว็บ
+            fetchMoviesData();
             lucide.createIcons();
         });
 
-        // ==========================================
-        // ดึงข้อมูลจากชีต (Google Apps Script)
-        // ==========================================
         async function fetchMoviesData() {
             try {
                 const res = await fetch(GAS_URL, {
@@ -280,7 +262,6 @@
                 
                 const json = await res.json();
                 if (json.status === 'success') {
-                    // แปลงข้อมูลให้เข้ากับ Frontend
                     moviesData = json.movies.map((m, index) => {
                         return {
                             id: m.id || index.toString(),
@@ -288,15 +269,12 @@
                             description: m.desc || 'ไม่มีคำอธิบายสำหรับตำรานี้...',
                             cover: m.cover || 'https://images.unsplash.com/photo-1574267432553-4b4628081524?q=80&w=1000',
                             poster: m.poster || 'https://images.unsplash.com/photo-1574267432553-4b4628081524?q=80&w=400',
-                            rating: (Math.random() * 1.5 + 8.5).toFixed(1), // สุ่ม rating เพื่อความสวยงาม
+                            rating: (Math.random() * 1.5 + 8.5).toFixed(1),
                             year: new Date().getFullYear(),
                             genre: m.category || 'ทั่วไป',
                             type: 'movie',
                             episodes: m.episodes && m.episodes.length > 0 ? m.episodes.map(e => ({
-                                ep: e.ep,
-                                title: e.title,
-                                videoUrl: e.url, // ลิงก์จากชีต
-                                thumb: m.poster || m.cover
+                                ep: e.ep, title: e.title, videoUrl: e.url, thumb: m.poster || m.cover
                             })) : [{ ep: 1, title: 'ตอนเดียวจบ', videoUrl: '', thumb: m.poster }]
                         };
                     });
@@ -306,69 +284,46 @@
                         state.category = categories[0];
                     } else if (moviesData.length > 0) {
                         categories = [...new Set(moviesData.map(m => m.genre))];
+                        // เอา "ทั้งหมด" ไว้หน้าสุด
+                        if(!categories.includes("ทั้งหมด")) categories.unshift("ทั้งหมด");
                         state.category = categories[0];
                     }
 
-                    // ปิด Loader
                     document.getElementById('global-loader').style.display = 'none';
-                    
                     renderApp();
                     startBannerAutoPlay();
-                } else {
-                    throw new Error("เซิร์ฟเวอร์ตอบกลับไม่สำเร็จ");
-                }
+                } else throw new Error("เซิร์ฟเวอร์ตอบกลับไม่สำเร็จ");
             } catch (error) {
-                console.error("Error fetching data:", error);
-                const loader = document.getElementById('global-loader');
-                loader.innerHTML = `
+                document.getElementById('global-loader').innerHTML = `
                     <div class="flex flex-col items-center bg-[#1a0101] p-8 rounded-3xl border border-[var(--gold-dark)] shadow-[0_0_30px_rgba(138,3,3,0.5)]">
                         <i data-lucide="alert-triangle" class="w-12 h-12 text-red-500 mb-4 animate-bounce"></i>
                         <p class="text-[var(--gold-celestial)] font-maitree text-xl font-bold">ค่ายกลขัดข้อง!</p>
                         <p class="text-[var(--gold-dark)] text-sm font-maitree mt-2">พลังปราณไม่เพียงพอในการเชื่อมต่อหอตำรา</p>
                         <button onclick="location.reload()" class="mt-6 bg-gradient-to-r from-[#700000] to-[#300000] text-[var(--gold-celestial)] px-6 py-2 rounded-full font-maitree border border-[var(--gold-celestial)] hover:scale-105 transition shadow-[0_0_15px_rgba(138,3,3,0.8)]">ลองร่ายคาถาใหม่</button>
-                    </div>
-                `;
+                    </div>`;
                 lucide.createIcons();
             }
         }
 
-        // ==========================================
-        // ระบบประวัติการเข้าชม (Continue Watching)
-        // ==========================================
         function saveToHistory(movie) {
-            // ลบของเดิมออกก่อนถ้ามี (เพื่อดันไปอยู่อันดับ 1)
             watchHistory = watchHistory.filter(m => m.id !== movie.id);
-            // เพิ่มเข้าไปข้างหน้าสุด
             watchHistory.unshift(movie);
-            // เก็บไว้สูงสุด 20 เรื่อง
             if (watchHistory.length > 20) watchHistory.pop();
-            // บันทึกลงเครื่อง
             localStorage.setItem('mflix_history', JSON.stringify(watchHistory));
         }
 
-        // ==========================================
-        // UI & Navigation
-        // ==========================================
         function showToast(message) {
             const toast = document.getElementById('toast-container');
             document.getElementById('toast-msg').innerText = message;
-            toast.style.opacity = '1';
-            toast.style.transform = 'translate(-50%, 15px)';
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translate(-50%, -10px)';
-            }, 3000);
+            toast.style.opacity = '1'; toast.style.transform = 'translate(-50%, 15px)';
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translate(-50%, -10px)'; }, 3000);
         }
 
         function switchTab(tabId) {
             state.tab = tabId; state.view = 'main'; state.searchQuery = '';
-            
-            // ล้างช่องค้นหาเมื่อเปลี่ยนหน้า
             document.getElementById('search-input').value = '';
             const searchContainer = document.getElementById('search-container');
-            if(searchContainer && !searchContainer.classList.contains('hidden')) {
-                searchContainer.classList.add('hidden');
-            }
+            if(searchContainer && !searchContainer.classList.contains('hidden')) searchContainer.classList.add('hidden');
 
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`nav-${tabId}`).classList.add('active');
@@ -380,35 +335,33 @@
         function toggleSearch() {
             const searchContainer = document.getElementById('search-container');
             searchContainer.classList.toggle('hidden');
-            if(!searchContainer.classList.contains('hidden')) {
-                document.getElementById('search-input').focus();
-            } else {
-                state.searchQuery = ''; document.getElementById('search-input').value = ''; renderApp();
-            }
+            if(!searchContainer.classList.contains('hidden')) document.getElementById('search-input').focus();
+            else { state.searchQuery = ''; document.getElementById('search-input').value = ''; renderApp(); }
         }
 
         function handleSearch(query) { state.searchQuery = query.toLowerCase(); renderApp(); }
 
         function openPlayer(id) {
             let movie = moviesData.find(m => m.id === String(id));
-            if(!movie) movie = watchHistory.find(m => m.id === String(id)); // หาจากประวัติเผื่อข้อมูลถูกลบไปแล้วแต่ยังมีในประวัติ
+            if(!movie) movie = watchHistory.find(m => m.id === String(id));
             if(!movie) return;
 
             state.activeMovie = movie;
             state.activeEpisodeIndex = 0;
             state.view = 'player';
             
-            // ซ่อนปุ่ม AI และจดจำประวัติ
             const fab = document.getElementById('ai-fab');
             if(fab) fab.style.display = 'none';
             
-            saveToHistory(movie); // บันทึกประวัติ
-            
+            saveToHistory(movie);
             renderApp();
         }
 
         function closePlayer() {
-            // หยุดวิดีโอเพื่อไม่ให้มีเสียงค้างเบื้องหลัง
+            // ออกจาก Fullscreen หากค้างอยู่
+            if (document.fullscreenElement) document.exitFullscreen().catch(e => {});
+
+            // เคลียร์วิดีโอ
             const iframe = document.querySelector('#video-wrapper iframe');
             if (iframe) iframe.src = ''; 
             const videoObj = document.getElementById('main-video');
@@ -437,49 +390,34 @@
         }
 
         // ==========================================
-        // ระบบกุนซือ AI 
+        // ระบบกุนซือ AI
         // ==========================================
         function toggleAIModal() {
             const modal = document.getElementById('ai-modal');
-            modal.classList.toggle('hidden');
-            modal.classList.toggle('flex');
+            modal.classList.toggle('hidden'); modal.classList.toggle('flex');
             if(!modal.classList.contains('hidden')) document.getElementById('ai-input').focus();
         }
 
         async function getSmartAIResponse(text) {
             const query = text.toLowerCase();
-            // หน่วงเวลาให้ดูเหมือนคิด
             await new Promise(r => setTimeout(r, 1000)); 
-
-            // ค้นหาในฐานข้อมูลที่เราโหลดมาจากชีต
-            let results = moviesData.filter(m => 
-                m.title.toLowerCase().includes(query) || 
-                m.genre.toLowerCase().includes(query) ||
-                m.description.toLowerCase().includes(query)
-            );
+            let results = moviesData.filter(m => m.title.toLowerCase().includes(query) || m.genre.toLowerCase().includes(query) || m.description.toLowerCase().includes(query));
 
             if (results.length === 0) {
-                // เช็คว่ามีคำที่ตรงกับหมวดหมู่ไหม
                 let keywordMatch = categories.find(c => query.includes(c.toLowerCase()));
                 if(keywordMatch) {
                     results = moviesData.filter(m => m.genre === keywordMatch).slice(0,3);
                     return `ข้าคัดสรรตำราหมวด <strong class="text-[var(--gold-celestial)]">${keywordMatch}</strong> มาให้ท่านแล้ว:<br><br>
                     ${results.map(m => `✧ <strong class="text-white underline cursor-pointer hover:text-[var(--gold-celestial)]" onclick="openMovieFromAI('${m.id}')">${m.title}</strong>`).join('<br>')}`;
                 }
-                
-                // สุ่มเรื่องแนะนำ
                 if(moviesData.length > 0) {
                     const randomMovie = moviesData[Math.floor(Math.random() * moviesData.length)];
-                    return `ข้าไม่พบสิ่งที่ท่านหาเลยนายท่าน ลองชมเรื่องนี้แทนดีหรือไม่?<br><br>
-                    ✧ <strong class="text-[var(--gold-celestial)] cursor-pointer underline" onclick="openMovieFromAI('${randomMovie.id}')">${randomMovie.title}</strong> สนุกยิ่งนัก!`;
-                } else {
-                    return "หอตำราว่างเปล่า ข้ามิพบสิ่งใดเลย...";
-                }
+                    return `ข้าไม่พบสิ่งที่ท่านหาเลยนายท่าน ลองชมเรื่องนี้แทนดีหรือไม่?<br><br>✧ <strong class="text-[var(--gold-celestial)] cursor-pointer underline" onclick="openMovieFromAI('${randomMovie.id}')">${randomMovie.title}</strong> สนุกยิ่งนัก!`;
+                } else return "หอตำราว่างเปล่า ข้ามิพบสิ่งใดเลย...";
             }
 
-            const topResults = results.slice(0, 3);
             let response = `ข้าค้นพบตำนานที่คู่ควรกับท่านแล้ว:<br><br>`;
-            topResults.forEach(m => {
+            results.slice(0, 3).forEach(m => {
                 response += `<div class="bg-black/40 border border-[var(--gold-dark)]/50 p-2 rounded-lg mb-2 flex gap-3 cursor-pointer hover:border-[var(--gold-celestial)] transition" onclick="openMovieFromAI('${m.id}')">
                     <img src="${m.poster}" class="w-10 h-14 object-cover rounded border border-[var(--gold-dark)]">
                     <div>
@@ -494,15 +432,12 @@
         function openMovieFromAI(id) { toggleAIModal(); openPlayer(id); }
 
         async function sendAIMessage() {
-            if (isAiThinking) return; // ป้องกันส่งรัวๆ
-
+            if (isAiThinking) return;
             const inputEl = document.getElementById('ai-input');
             let text = inputEl.value.trim();
             if(!text) return;
             
-            // ป้องกัน XSS (เปลี่ยน tag HTML ให้กลายเป็นตัวหนังสือธรรมดา)
-            text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            
+            text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // XSS Protect
             isAiThinking = true;
 
             const chatbox = document.getElementById('ai-chatbox');
@@ -523,37 +458,211 @@
         }
 
         // ==========================================
-        // วิดีโอเพลเยอร์ อัจฉริยะ (YouTube, Drive, MP4)
+        // Custom Video Player Logic (YouTube Style)
         // ==========================================
-        function getVideoElementHTML(url, poster) {
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "00:00";
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.floor(seconds % 60);
+            if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function initCustomPlayer() {
+            const video = document.getElementById('main-video');
+            const container = document.getElementById('custom-video-container');
+            if(!video || !container) return; // Not a custom video (e.g., Iframe)
+
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            const timeCurrent = document.getElementById('time-current');
+            const timeTotal = document.getElementById('time-total');
+
+            // Toggle Play/Pause
+            window.togglePlay = () => {
+                if (video.paused) video.play();
+                else video.pause();
+            };
+
+            // Skip backward/forward
+            window.skipVideo = (seconds) => {
+                video.currentTime += seconds;
+            };
+
+            // Next Episode function attached to Custom Player
+            window.nextEpisodeFromPlayer = () => {
+                const movie = state.activeMovie;
+                if (state.activeEpisodeIndex < movie.episodes.length - 1) {
+                    changeEpisode(state.activeEpisodeIndex + 1);
+                } else {
+                    showToast("นี่คือตอนล่าสุดแล้ว");
+                }
+            };
+
+            // Fullscreen & Auto-Landscape Rotate
+            window.toggleFullscreenPlayer = async () => {
+                if (!document.fullscreenElement) {
+                    // เข้าสู่ Fullscreen
+                    if (container.requestFullscreen) await container.requestFullscreen();
+                    else if (container.webkitRequestFullscreen) await container.webkitRequestFullscreen(); // Safari
+                    
+                    // บังคับหมุนหน้าจอแนวนอน (Landscape) หาก Browser รองรับ
+                    try {
+                        if (screen.orientation && screen.orientation.lock) {
+                            await screen.orientation.lock("landscape");
+                        }
+                    } catch (err) { console.log("Orientation lock not supported", err); }
+                } else {
+                    // ออกจาก Fullscreen
+                    if (document.exitFullscreen) await document.exitFullscreen();
+                    else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
+                    
+                    // ปลดล็อคหมุนหน้าจอ
+                    try {
+                        if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+                    } catch (err) { }
+                }
+            };
+
+            // Update UI on video events
+            video.addEventListener('play', () => {
+                playPauseBtn.innerHTML = '<i data-lucide="pause" class="w-10 h-10 fill-current"></i>';
+                lucide.createIcons();
+            });
+            video.addEventListener('pause', () => {
+                playPauseBtn.innerHTML = '<i data-lucide="play" class="w-10 h-10 fill-current ml-1"></i>';
+                lucide.createIcons();
+            });
+            video.addEventListener('loadedmetadata', () => {
+                timeTotal.textContent = formatTime(video.duration);
+            });
+            video.addEventListener('timeupdate', () => {
+                timeCurrent.textContent = formatTime(video.currentTime);
+                const percent = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = `${percent}%`;
+            });
+
+            // Seek functionality
+            window.seekVideo = (e) => {
+                const rect = progressContainer.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / progressContainer.offsetWidth;
+                video.currentTime = pos * video.duration;
+            };
+
+            // Show/Hide UI Controls automatically
+            const resetControlsTimeout = () => {
+                container.classList.add('show-controls');
+                container.style.cursor = 'default';
+                clearTimeout(playerHideTimeout);
+                if (!video.paused) {
+                    playerHideTimeout = setTimeout(() => {
+                        container.classList.remove('show-controls');
+                        container.style.cursor = 'none';
+                    }, 3000);
+                }
+            };
+            
+            container.addEventListener('mousemove', resetControlsTimeout);
+            container.addEventListener('touchstart', resetControlsTimeout);
+            video.addEventListener('pause', () => container.classList.add('show-controls'));
+            
+            // Trigger initial metadata load if available
+            if(video.readyState >= 1) {
+                timeTotal.textContent = formatTime(video.duration);
+            }
+        }
+
+        function getVideoElementHTML(url, poster, epTitle) {
             if (!url) return `<div class="w-full h-full flex flex-col items-center justify-center text-[var(--gold-dark)] bg-[#050101]"><i data-lucide="video-off" class="w-10 h-10 mb-2"></i><p class="font-maitree">ยังไม่มีคัมภีร์ภาพ</p></div>`;
 
-            // เพิ่ม allowfullscreen เพื่อบังคับให้อุปกรณ์อนุญาตการขยายเต็มจอ
             const iframeConfig = 'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"';
 
-            // ตรวจสอบ YouTube
+            // ถ้าเป็น YouTube หรือ Drive ให้ใช้ Iframe (ไม่สามารถครอบ Custom UI ได้เต็มรูปแบบเพราะติดเรื่อง CORS)
             if (url.includes('youtube.com') || url.includes('youtu.be')) {
                 let videoId = '';
                 if(url.includes('youtube.com/watch?v=')) videoId = url.split('v=')[1].split('&')[0];
                 else if(url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
                 else if(url.includes('youtube.com/embed/')) videoId = url.split('embed/')[1].split('?')[0];
                 
-                return `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" ${iframeConfig}></iframe>`;
+                return `
+                <div class="relative w-full h-full bg-black group">
+                    <div class="absolute top-0 left-0 w-full p-3 flex justify-between z-10 bg-gradient-to-b from-black/80 to-transparent pointer-events-none transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                        <button onclick="closePlayer()" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-[var(--gold-celestial)] pointer-events-auto backdrop-blur-md border border-[var(--gold-dark)]"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
+                    </div>
+                    <iframe class="w-full h-full relative z-0" src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" ${iframeConfig}></iframe>
+                </div>`;
             }
-            
-            // ตรวจสอบ Google Drive
             if (url.includes('drive.google.com')) {
                 let embedUrl = url;
                 if(url.includes('/view')) embedUrl = url.replace('/view', '/preview');
-                return `<iframe class="w-full h-full" src="${embedUrl}" ${iframeConfig}></iframe>`;
+                return `
+                <div class="relative w-full h-full bg-black group">
+                    <div class="absolute top-0 left-0 w-full p-3 flex justify-between z-10 bg-gradient-to-b from-black/80 to-transparent pointer-events-none transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                        <button onclick="closePlayer()" class="w-9 h-9 bg-black/50 rounded-full flex items-center justify-center text-[var(--gold-celestial)] pointer-events-auto backdrop-blur-md border border-[var(--gold-dark)]"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
+                    </div>
+                    <iframe class="w-full h-full relative z-0" src="${embedUrl}" ${iframeConfig}></iframe>
+                </div>`;
             }
             
-            // ค่าเริ่มต้นสำหรับ MP4, M3U8, และไฟล์วิดีโอทั่วไป
-            // การใช้ playsinline จะเล่นในกรอบ แต่เมื่อกดปุ่มขยายจอของเครื่อง (Native Fullscreen) จะเต็มจอและหมุนได้
-            return `<video id="main-video" controls autoplay playsinline webkit-playsinline poster="${poster}" class="w-full h-full outline-none object-contain bg-black">
-                        <source src="${url}">
-                        เบราว์เซอร์ของท่านไม่รองรับการแสดงผลวิชานี้
-                    </video>`;
+            // 🎬 วิดีโอเล่นตรง สร้าง Custom Player สไตล์ Premium (เหมือนภาพตัวอย่าง)
+            const movie = state.activeMovie;
+            const hasNextEp = state.activeEpisodeIndex < movie.episodes.length - 1;
+
+            return `
+            <div id="custom-video-container" class="relative w-full h-full bg-black flex items-center justify-center show-controls">
+                <video id="main-video" autoplay playsinline webkit-playsinline class="w-full h-full outline-none object-contain" src="${url}" poster="${poster}"></video>
+                
+                <!-- UI Overlay (YouTube Style) -->
+                <div id="video-controls" class="absolute inset-0 bg-black/50 flex flex-col justify-between z-10 w-full h-full">
+                    
+                    <!-- Top Bar: Back & Settings -->
+                    <div class="p-4 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+                        <button onclick="closePlayer()" class="text-white hover:text-[var(--gold-celestial)] transition p-1"><i data-lucide="chevron-down" class="w-7 h-7"></i></button>
+                        <div class="flex gap-4">
+                            <button class="text-white hover:text-[var(--gold-celestial)] transition"><i data-lucide="cast" class="w-5 h-5"></i></button>
+                            <button class="text-white hover:text-[var(--gold-celestial)] transition font-bold font-prompt border border-white/50 px-1.5 rounded-sm text-xs">CC</button>
+                            <button class="text-white hover:text-[var(--gold-celestial)] transition"><i data-lucide="settings" class="w-5 h-5"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Center Bar: Play Controls -->
+                    <div class="flex justify-center items-center gap-6 md:gap-12 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full">
+                        <button onclick="skipVideo(-10)" class="player-btn w-12 h-12 md:w-14 md:h-14"><i data-lucide="rewind" class="w-6 h-6 fill-current"></i></button>
+                        <button id="play-pause-btn" onclick="togglePlay()" class="player-btn w-16 h-16 md:w-20 md:h-20"><i data-lucide="pause" class="w-8 h-8 md:w-10 md:h-10 fill-current"></i></button>
+                        <button onclick="skipVideo(10)" class="player-btn w-12 h-12 md:w-14 md:h-14"><i data-lucide="fast-forward" class="w-6 h-6 fill-current"></i></button>
+                        ${hasNextEp ? `<button onclick="nextEpisodeFromPlayer()" class="absolute right-8 md:right-16 text-white/80 hover:text-white flex flex-col items-center gap-1 transition-transform hover:scale-110"><i data-lucide="skip-forward" class="w-6 h-6 fill-current"></i><span class="text-[10px] font-prompt">ตอนถัดไป</span></button>` : ''}
+                    </div>
+
+                    <!-- Bottom Bar: Title, Progress & Expand -->
+                    <div class="p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col gap-2">
+                        <!-- Premium Ad Overlay Mockup -->
+                        <div class="inline-flex items-center gap-2 bg-black/80 border border-white/20 text-white px-3 py-1.5 rounded-full text-xs font-prompt w-max mb-1 backdrop-blur-md">
+                            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i> การควบคุมสำหรับ Premium <button class="ml-2 bg-white/20 rounded-full p-0.5"><i data-lucide="x" class="w-3 h-3"></i></button>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="flex items-center gap-3">
+                            <span id="time-current" class="text-white text-xs font-prompt w-10 text-center">00:00</span>
+                            <div id="progress-container" class="flex-1 h-1 md:h-1.5 bg-white/30 rounded-full cursor-pointer relative flex items-center group" onclick="seekVideo(event)">
+                                <!-- Buffered (mockup) -->
+                                <div class="absolute left-0 h-full bg-white/50 rounded-full" style="width: 60%;"></div>
+                                <!-- Current Progress -->
+                                <div id="progress-bar" class="absolute left-0 h-full bg-[#ff0000] rounded-full w-0 relative">
+                                    <div class="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-[#ff0000] rounded-full scale-0 group-hover:scale-100 transition-transform shadow-[0_0_5px_rgba(255,0,0,0.8)]"></div>
+                                </div>
+                            </div>
+                            <span id="time-total" class="text-white/80 text-xs font-prompt w-10 text-center">00:00</span>
+                            <button onclick="toggleFullscreenPlayer()" class="text-white hover:text-[var(--gold-celestial)] transition ml-2"><i data-lucide="maximize" class="w-5 h-5"></i></button>
+                        </div>
+                        
+                        <div class="text-center mt-2">
+                            <h2 class="text-xl md:text-2xl font-bold font-maitree text-[var(--gold-celestial)] tracking-wide" style="text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${epTitle}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
         }
 
         // ==========================================
@@ -569,25 +678,27 @@
                 nav.style.transform = 'translateY(100%)';
                 content.style.paddingBottom = '0px';
                 setTimeout(() => { header.style.display = 'none'; nav.style.display = 'none'; }, 300);
+                
                 content.innerHTML = generateStandardPlayer();
+                lucide.createIcons();
+                // Initialize custom player logic AFTER rendering HTML
+                setTimeout(initCustomPlayer, 100); 
+
             } else if (state.tab === 'continue') {
-                header.style.display = 'block';
-                setTimeout(() => { header.style.transform = 'translateY(0)'; }, 50);
-                nav.style.display = 'flex';
-                nav.style.transform = 'translateY(0)';
+                header.style.display = 'block'; setTimeout(() => header.style.transform = 'translateY(0)', 50);
+                nav.style.display = 'flex'; nav.style.transform = 'translateY(0)';
                 content.style.paddingBottom = '80px';
                 content.innerHTML = generateContinueWatchingHTML();
+                lucide.createIcons();
             } else {
-                header.style.display = 'block';
-                setTimeout(() => { header.style.transform = 'translateY(0)'; }, 50);
-                nav.style.display = 'flex';
-                nav.style.transform = 'translateY(0)';
+                header.style.display = 'block'; setTimeout(() => header.style.transform = 'translateY(0)', 50);
+                nav.style.display = 'flex'; nav.style.transform = 'translateY(0)';
                 content.style.paddingBottom = '80px';
                 
                 if (state.tab === 'home') content.innerHTML = generateHomeHTML();
                 if (state.tab === 'library') content.innerHTML = generateLibraryHTML();
+                lucide.createIcons();
             }
-            lucide.createIcons();
             if(state.view !== 'player') content.scrollTop = 0;
         }
 
@@ -616,68 +727,99 @@
         }
 
         function generateHomeHTML() {
-            let filteredMovies = moviesData;
-            if (state.searchQuery) filteredMovies = filteredMovies.filter(m => m.title.toLowerCase().includes(state.searchQuery) || m.genre.toLowerCase().includes(state.searchQuery));
-            else if (state.category && state.category !== categories[0]) filteredMovies = filteredMovies.filter(m => m.genre === state.category);
-
             let html = '';
-            if (!state.searchQuery && state.category === categories[0]) html += `<div id="hero-banner-container">${generateBannerHTML()}</div>`;
-            else html += `<div class="h-28"></div>`;
+            
+            // Search Results
+            if (state.searchQuery) {
+                let filteredMovies = moviesData.filter(m => m.title.toLowerCase().includes(state.searchQuery) || m.genre.toLowerCase().includes(state.searchQuery));
+                html += `<div class="pt-24 px-5 pb-6 fade-in-up">
+                            <h3 class="font-maitree text-[var(--gold-dark)] mb-6 text-base">ค้นพบตำนาน: <span class="text-[var(--gold-celestial)] font-bold text-lg">"${state.searchQuery}"</span></h3>
+                            ${filteredMovies.length === 0 ? `<div class="text-center py-20 font-maitree text-[var(--gold-dark)] text-lg">ความว่างเปล่า... มิพบตำนานที่ท่านปรารถนา</div>` : `<div class="grid grid-cols-2 md:grid-cols-3 gap-4">${generateMovieCardsHTML(filteredMovies)}</div>`}
+                         </div>`;
+                return html;
+            }
 
-            // เมนูหมวดหมู่
+            // Normal Home Layout (Hero Banner + Horizontal Scroll Categories)
+            html += `<div id="hero-banner-container">${generateBannerHTML()}</div>`;
+
+            // หมวดหมู่ปุ่มกดด้านบน (Sticky)
             html += `
-                <div class="px-2 py-3 sticky top-0 z-30 bg-[#050101]/95 backdrop-blur-xl border-b border-[var(--gold-dark)]/30 shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                <div class="px-2 py-3 sticky top-0 z-30 bg-gradient-to-b from-[#050101] to-[#050101]/95 backdrop-blur-xl border-y border-[var(--gold-dark)]/30 shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
                     <div class="flex gap-2.5 overflow-x-auto hide-scrollbar px-2 pb-1">
             `;
             categories.forEach(cat => {
                 const isActive = state.category === cat;
                 html += `<button onclick="setCategory('${cat}')" class="cat-btn font-maitree rounded-full text-[13px] tracking-wide shrink-0 ${isActive ? 'active' : ''}">${cat}</button>`;
             });
-            html += `</div></div><div class="px-5 py-6 fade-in-up">`;
+            html += `</div></div><div class="py-6 fade-in-up space-y-8">`;
             
-            if (state.searchQuery) {
-                html += `<h3 class="font-maitree text-[var(--gold-dark)] mb-6 text-base">ค้นพบตำนาน: <span class="text-[var(--gold-celestial)] font-bold text-lg">"${state.searchQuery}"</span></h3>`;
-            } else {
-                const headText = state.category === categories[0] ? 'คัมภีร์มาใหม่' : `ตำราหมวด: ${state.category}`;
-                html += `<div class="flex items-center gap-3 mb-6">
-                            <div class="w-1.5 h-6 bg-[var(--primary-red)] rounded-full shadow-[0_0_10px_red]"></div>
-                            <h3 class="text-xl font-bold font-maitree text-[var(--gold-celestial)] tracking-wide" style="text-shadow: var(--text-glow);">${headText}</h3>
-                         </div>`;
+            // ดึงหมวดหมู่ที่จะแสดง
+            let displayCategories = state.category === "ทั้งหมด" ? categories.filter(c => c !== "ทั้งหมด") : [state.category];
+
+            displayCategories.forEach(cat => {
+                let moviesInCat = moviesData.filter(m => m.genre === cat);
+                if(moviesInCat.length > 0) {
+                    html += `
+                    <div>
+                        <div class="flex items-center justify-between px-5 mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1.5 h-6 bg-gradient-to-b from-[var(--gold-celestial)] to-[var(--gold-dark)] rounded-full shadow-[0_0_10px_rgba(230,194,122,0.5)]"></div>
+                                <h3 class="text-xl font-bold font-maitree text-[var(--gold-celestial)] tracking-wide">${cat}</h3>
+                            </div>
+                            <span class="text-xs text-[var(--gold-dark)] font-prompt cursor-pointer hover:text-white">ดูทั้งหมด <i data-lucide="chevron-right" class="w-3 h-3 inline"></i></span>
+                        </div>
+                        
+                        <!-- Horizontal Scroll Container (แสดงแถวละ 2 อัน โดยใช้ w-[42vw] หรือ 45%) -->
+                        <div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 px-5 pb-4">
+                            ${generateMovieCardsHTML(moviesInCat, true)}
+                        </div>
+                    </div>`;
+                }
+            });
+
+            if (displayCategories.length === 0 || moviesData.length === 0) {
+                html += `<div class="text-center py-20 font-maitree text-[var(--gold-dark)] text-lg">หอตำราอยู่ระหว่างการบูรณะ...</div>`;
             }
 
-            if (filteredMovies.length === 0) html += `<div class="text-center py-20 font-maitree text-[var(--gold-dark)] text-lg">ความว่างเปล่า... มิพบตำนานที่ท่านปรารถนา</div>`;
-            else {
-                html += `<div class="grid grid-cols-3 gap-3.5">`;
-                filteredMovies.forEach(movie => {
-                    html += `
-                        <div class="flex flex-col cursor-pointer movie-card rounded-lg overflow-hidden relative group" onclick="openPlayer('${movie.id}')">
-                            <div class="relative w-full aspect-[2/3] overflow-hidden">
-                                <img src="${movie.poster}" loading="lazy" class="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110">
-                                <div class="absolute inset-0 overlay transition-opacity"></div>
-                                <div class="absolute top-1.5 right-1.5 bg-gradient-to-br from-[#700000] to-[#200000] border border-[var(--gold-dark)] text-[var(--gold-celestial)] px-2 py-0.5 rounded text-[10px] font-bold font-maitree z-10 shadow-md">
-                                    ${movie.episodes.length} ตอน
-                                </div>
-                                <div class="absolute inset-0 bg-[var(--primary-red)]/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10 backdrop-blur-[2px]">
-                                    <div class="w-10 h-10 rounded-full border border-[var(--gold-celestial)] flex items-center justify-center bg-black/60 shadow-[0_0_15px_rgba(230,194,122,0.5)]"><i data-lucide="play" class="w-5 h-5 text-[var(--gold-celestial)] ml-0.5"></i></div>
-                                </div>
-                            </div>
-                            <div class="p-2.5 bg-gradient-to-b from-[#1a0101] to-[#050000]">
-                                <h4 class="text-[13px] font-semibold font-maitree text-[var(--gold-celestial)] truncate group-hover:text-white transition-colors">${movie.title}</h4>
-                                <div class="flex items-center gap-1 mt-1">
-                                    <i data-lucide="star" class="w-2.5 h-2.5 text-[var(--primary-red)] fill-current"></i>
-                                    <span class="text-[10px] text-[var(--gold-dark)] font-prompt">${movie.rating}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            }
             html += `</div>`;
             return html;
         }
 
-        // หน้าต่าง ดูต่อ (Continue Watching)
+        // Helper function สร้างการ์ดหนัง
+        function generateMovieCardsHTML(moviesArray, isHorizontalScroll = false) {
+            let html = '';
+            // ถ้าเป็นแนวนอน ให้ตั้งค่ากว้างของการ์ดให้พอดี 2 อันในจอมือถือ (เช่น w-[42vw])
+            const cardClass = isHorizontalScroll ? 'w-[42vw] md:w-[160px] shrink-0 snap-start' : 'w-full';
+            
+            moviesArray.forEach(movie => {
+                html += `
+                    <div class="flex flex-col cursor-pointer movie-card rounded-xl overflow-hidden relative group ${cardClass}" onclick="openPlayer('${movie.id}')">
+                        <div class="relative w-full aspect-[2/3] overflow-hidden">
+                            <img src="${movie.poster}" loading="lazy" class="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 overlay transition-opacity"></div>
+                            <div class="absolute top-2 right-2 bg-gradient-to-br from-[#700000] to-[#200000] border border-[var(--gold-dark)] text-[var(--gold-celestial)] px-2 py-0.5 rounded text-[10px] font-bold font-maitree z-10 shadow-md">
+                                ${movie.episodes.length} ตอน
+                            </div>
+                            <div class="absolute inset-0 bg-[var(--primary-red)]/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10 backdrop-blur-[2px]">
+                                <div class="w-12 h-12 rounded-full border border-[var(--gold-celestial)] flex items-center justify-center bg-black/60 shadow-[0_0_20px_rgba(230,194,122,0.8)]"><i data-lucide="play" class="w-6 h-6 text-[var(--gold-celestial)] ml-0.5"></i></div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-gradient-to-b from-[#1a0101] to-[#050000]">
+                            <h4 class="text-sm font-semibold font-maitree text-[var(--gold-celestial)] truncate group-hover:text-white transition-colors">${movie.title}</h4>
+                            <div class="flex items-center justify-between mt-1.5">
+                                <div class="flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-[var(--primary-red)] fill-current"></i>
+                                    <span class="text-[11px] text-[var(--gold-dark)] font-prompt">${movie.rating}</span>
+                                </div>
+                                <span class="text-[9px] text-gray-500 border border-gray-700 px-1 rounded">${movie.year}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            return html;
+        }
+
         function generateContinueWatchingHTML() {
             let html = `
                 <div class="pt-20 px-5 pb-20 fade-in-up">
@@ -693,31 +835,13 @@
                             ยังไม่มีประวัติการรับชม
                          </div>`;
             } else {
-                html += `<div class="grid grid-cols-3 gap-3.5">`;
-                watchHistory.forEach(movie => {
-                    html += `
-                        <div class="flex flex-col cursor-pointer movie-card rounded-lg overflow-hidden relative group" onclick="openPlayer('${movie.id}')">
-                            <div class="relative w-full aspect-[2/3] overflow-hidden">
-                                <img src="${movie.poster}" loading="lazy" class="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110">
-                                <div class="absolute inset-0 overlay transition-opacity"></div>
-                                <div class="absolute inset-0 bg-[var(--primary-red)]/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity z-10 backdrop-blur-[2px]">
-                                    <div class="w-10 h-10 rounded-full border border-[var(--gold-celestial)] flex items-center justify-center bg-black/60 shadow-[0_0_15px_rgba(230,194,122,0.5)]"><i data-lucide="play" class="w-5 h-5 text-[var(--gold-celestial)] ml-0.5"></i></div>
-                                </div>
-                            </div>
-                            <div class="p-2.5 bg-gradient-to-b from-[#1a0101] to-[#050000]">
-                                <h4 class="text-[13px] font-semibold font-maitree text-[var(--gold-celestial)] truncate group-hover:text-white transition-colors">${movie.title}</h4>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += `</div>`;
+                html += `<div class="grid grid-cols-2 md:grid-cols-3 gap-4">${generateMovieCardsHTML(watchHistory, false)}</div>`;
             }
             
             html += `</div>`;
             return html;
         }
 
-        // วิดีโอเพลเยอร์สมบูรณ์
         function generateStandardPlayer() {
             const movie = state.activeMovie;
             const currentEp = movie.episodes[state.activeEpisodeIndex];
@@ -737,29 +861,22 @@
                             </div>
                         </div>
                         <div class="flex-1">
-                            <h4 class="font-semibold text-sm font-maitree line-clamp-1 ${isActive ? 'text-[var(--gold-celestial)]' : 'text-gray-300'}">${ep.title}</h4>
+                            <h4 class="font-semibold text-sm font-maitree line-clamp-2 ${isActive ? 'text-[var(--gold-celestial)]' : 'text-gray-300'}">${ep.title}</h4>
                         </div>
                         <div class="pr-2">
-                             ${isActive ? '<div class="w-2 h-2 rounded-full bg-[var(--primary-red)] shadow-[0_0_8px_red]"></div>' : '<i data-lucide="download" class="w-4 h-4 text-gray-600"></i>'}
+                             ${isActive ? '<div class="w-2 h-2 rounded-full bg-[var(--primary-red)] shadow-[0_0_8px_red] animate-pulse"></div>' : '<i data-lucide="download" class="w-4 h-4 text-gray-600"></i>'}
                         </div>
                     </div>
                 `;
             });
 
-            const videoHTML = getVideoElementHTML(currentEp.videoUrl, movie.cover);
+            // ส่งข้อมูลไปสร้าง UI Player
+            const videoHTML = getVideoElementHTML(currentEp.videoUrl, movie.cover, movie.title + ' - ตอน ' + currentEp.ep);
 
             return `
                 <div class="w-full h-full flex flex-col bg-[var(--bg-dark)] fade-in-up">
-                    <div id="video-wrapper" class="relative w-full aspect-video bg-black sticky top-0 z-50 border-b-2 border-[var(--gold-celestial)]/50 md:rounded-t-[2rem] shadow-[0_5px_30px_rgba(138,3,3,0.3)] group">
-                        <div class="absolute top-0 left-0 w-full p-4 flex justify-between z-50 bg-gradient-to-b from-black/90 to-transparent opacity-100 transition-opacity pointer-events-none">
-                            <button onclick="closePlayer()" class="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-[var(--gold-celestial)] hover:bg-[var(--primary-red)] hover:text-white transition backdrop-blur-md border border-[var(--gold-dark)] pointer-events-auto shadow-md">
-                                <i data-lucide="chevron-left" class="w-6 h-6"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Video Element Injected Here -->
+                    <div id="video-wrapper" class="relative w-full aspect-video bg-black sticky top-0 z-50 border-b border-[var(--gold-dark)] md:rounded-t-[2rem] shadow-[0_5px_30px_rgba(138,3,3,0.5)]">
                         ${videoHTML}
-
                     </div>
 
                     <div class="flex-1 overflow-y-auto px-5 py-6 custom-scroll relative">
@@ -767,8 +884,8 @@
                         
                         <div class="flex justify-between items-start mb-2 relative z-10">
                             <h1 class="text-2xl font-bold font-maitree text-[var(--gold-celestial)] leading-tight flex-1 pr-4" style="text-shadow: var(--text-glow);">${movie.title}</h1>
-                            <div class="bg-gradient-to-br from-[#700000] to-[#200000] border border-[var(--gold-celestial)] px-2.5 py-1 rounded text-xs text-white font-bold shadow-[0_0_10px_rgba(138,3,3,0.5)] shrink-0">
-                                <i data-lucide="star" class="w-3 h-3 inline pb-0.5 text-[var(--gold-celestial)]"></i> ${movie.rating}
+                            <div class="bg-gradient-to-br from-[#700000] to-[#200000] border border-[var(--gold-celestial)] px-2.5 py-1 rounded-lg text-xs text-white font-bold shadow-[0_0_10px_rgba(138,3,3,0.5)] shrink-0 flex items-center gap-1">
+                                <i data-lucide="star" class="w-3.5 h-3.5 text-[var(--gold-celestial)] fill-current"></i> ${movie.rating}
                             </div>
                         </div>
                         
@@ -797,7 +914,7 @@
                         
                         <div class="flex justify-between items-end mb-5 relative z-10">
                             <div class="flex items-center gap-2">
-                                <div class="w-1 h-5 bg-[var(--primary-red)] rounded-full shadow-[0_0_8px_red]"></div>
+                                <div class="w-1.5 h-5 bg-gradient-to-b from-[var(--gold-celestial)] to-[var(--gold-dark)] rounded-full shadow-[0_0_8px_rgba(230,194,122,0.5)]"></div>
                                 <h3 class="font-bold text-[17px] font-maitree text-[var(--gold-celestial)]">ม้วนภาพทั้งหมด</h3>
                             </div>
                             <span class="text-xs text-[var(--gold-celestial)] font-maitree bg-[#2a0101] border border-[var(--gold-dark)]/50 px-2 py-1 rounded-md">กำลังฉาย: ตอน ${currentEp.ep}</span>
