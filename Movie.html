@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สำนักเทพเซียน - ดินแดนแห่งซีรีส์เทพนิยาย</title>
+    <title>สำนักเทพเซียน - ดินแดนแห่งซีรีส์และตำราเทพนิยาย</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Maitree:wght@300;400;600;700&family=Prompt:wght@300;400;500&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 
     <style>
         :root {
-            /* Theme 1: Heavenly Blue (Home) */
+            /* Theme 1: Heavenly Blue (Home & Novels) */
             --bg-blue-dark: #0a1128;
             --bg-blue-light: #1c2e4a;
             --text-blue-primary: #e0f2fe;
@@ -81,12 +81,12 @@
             gap: 1rem;
             padding-bottom: 1rem;
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
-        .movie-row::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
+        .movie-row::-webkit-scrollbar { display: none; }
         
         .movie-card {
-            flex: 0 0 calc(50% - 0.5rem); /* Mobile: 2 items per row */
+            flex: 0 0 calc(50% - 0.5rem); 
             scroll-snap-align: start;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
@@ -98,40 +98,19 @@
             height: 100%;
         }
 
-        /* Desktop specific styles */
         @media (min-width: 768px) {
-            .movie-card {
-                flex: 0 0 200px;
-            }
-            
-            .auto-scroll-container {
-                overflow: hidden;
-                white-space: nowrap;
-            }
-            
-            .auto-scroll-content {
-                display: inline-flex;
-                animation: scrollX 40s linear infinite;
-            }
-            
-            .auto-scroll-content:hover {
-                animation-play-state: paused;
-            }
-
-            @keyframes scrollX {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
-            }
+            .movie-card { flex: 0 0 200px; }
+            .auto-scroll-container { overflow: hidden; white-space: nowrap; }
+            .auto-scroll-content { display: inline-flex; animation: scrollX 40s linear infinite; }
+            .auto-scroll-content:hover { animation-play-state: paused; }
+            @keyframes scrollX { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         }
 
-        .movie-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            z-index: 10;
-        }
+        .movie-card:hover { transform: translateY(-5px) scale(1.02); z-index: 10; }
 
         .movie-poster-container {
             width: 100%;
-            aspect-ratio: 2/3; /* บังคับสัดส่วนปกให้เท่ากันเป๊ะ */
+            aspect-ratio: 2/3;
             position: relative;
             overflow: hidden;
         }
@@ -147,9 +126,7 @@
         .theme-mortal .movie-poster { border-bottom-color: var(--accent-gold); }
 
         /* --- AI Chat --- */
-        #ai-chat-modal {
-            backdrop-filter: blur(5px);
-        }
+        #ai-chat-modal { backdrop-filter: blur(5px); }
         .chat-bubble-ai {
             background: linear-gradient(135deg, rgba(20,20,20,0.9), rgba(50,50,50,0.9));
             border-left: 3px solid var(--accent-gold);
@@ -162,7 +139,7 @@
             text-align: right;
         }
 
-        /* Video Player Wrapper */
+        /* --- Video Player Wrapper --- */
         .video-container {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 */
@@ -188,7 +165,23 @@
             pointer-events: none;
         }
 
-        /* Utility for line clamping */
+        /* --- Novel Reader Styles --- */
+        .novel-reader-bg {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            background-image: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+        .novel-content {
+            font-family: 'Maitree', serif;
+            line-height: 2;
+            font-size: 1.125rem;
+            text-indent: 2rem;
+            white-space: pre-line;
+        }
+        .novel-content p {
+            margin-bottom: 1.5rem;
+        }
+        
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -207,7 +200,7 @@
                 สำนักเทพเซียน
             </h1>
         </div>
-        <div class="text-sm opacity-80">
+        <div class="text-sm opacity-80" id="header-subtitle">
             <i class="fa-solid fa-cloud"></i> ดินแดนศักดิ์สิทธิ์
         </div>
     </header>
@@ -218,16 +211,16 @@
     <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 w-full glass-panel flex justify-around items-center p-3 z-40 border-t border-accent rounded-t-2xl">
         <button onclick="navigate('home')" class="flex flex-col items-center gap-1 w-1/3 text-gray-400 hover:text-white transition-colors" id="nav-home">
-            <i class="fa-solid fa-home text-xl"></i>
-            <span class="text-xs">หน้าหลัก</span>
+            <i class="fa-solid fa-film text-xl"></i>
+            <span class="text-xs">ซีรีส์/ภาพยนตร์</span>
         </button>
         <button onclick="navigate('history')" class="flex flex-col items-center gap-1 w-1/3 text-gray-400 hover:text-white transition-colors" id="nav-history">
             <i class="fa-solid fa-history text-xl"></i>
             <span class="text-xs">ดูต่อ</span>
         </button>
-        <button onclick="navigate('downloads')" class="flex flex-col items-center gap-1 w-1/3 text-gray-400 hover:text-white transition-colors" id="nav-downloads">
-            <i class="fa-solid fa-download text-xl"></i>
-            <span class="text-xs">ดาวน์โหลด</span>
+        <button onclick="navigate('novels')" class="flex flex-col items-center gap-1 w-1/3 text-gray-400 hover:text-white transition-colors" id="nav-novels">
+            <i class="fa-solid fa-book-open text-xl"></i>
+            <span class="text-xs">หอตำรา (นิยาย)</span>
         </button>
     </nav>
 
@@ -253,7 +246,6 @@
             </div>
             
             <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col font-serif-thai">
-                <!-- Chat messages will appear here -->
                 <div class="chat-bubble-ai p-3 self-start max-w-[80%] text-sm text-yellow-100 shadow-md">
                     คารวะศิษย์น้อง เจ้าต้องการให้ข้าค้นหาคัมภีร์เรื่องใด หรืออยากให้ข้าแนะนำเรื่องไหนให้ บอกมาได้เลย...
                 </div>
@@ -263,7 +255,7 @@
                 <button id="voice-btn" onclick="toggleVoice()" class="p-2 text-yellow-500 hover:text-yellow-300 transition-colors">
                     <i class="fa-solid fa-volume-high" id="voice-icon"></i>
                 </button>
-                <input type="text" id="chat-input" placeholder="พิมพ์ชื่อหนัง หรือแนวที่อยากดู..." class="flex-1 bg-gray-900 border border-gray-700 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:border-yellow-500" onkeypress="handleChatEnter(event)">
+                <input type="text" id="chat-input" placeholder="พิมพ์ชื่อหนัง, นิยาย หรือแนวที่ชอบ..." class="flex-1 bg-gray-900 border border-gray-700 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:border-yellow-500" onkeypress="handleChatEnter(event)">
                 <button onclick="sendChatMessage()" class="w-10 h-10 rounded-full bg-yellow-600 flex items-center justify-center text-black hover:bg-yellow-500">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
@@ -274,23 +266,52 @@
     <script>
         // --- 1. System Configuration & API ---
         const GAS_URL = "https://script.google.com/macros/s/AKfycbx8Zw7yc9QlPrU9PeaJ6koVbk9UqAZhRIDUSxKvqhQnyc5sp27V0rkxb5FbNKivIfhi/exec";
-        let movies = []; // ข้อมูลจะถูกดึงมาจากระบบหลังบ้านแทน
+        let movies = []; 
+        let novels = []; 
 
         // --- 2. State Management ---
         let state = {
             view: 'home',
             currentMovieId: null,
+            currentNovelId: null,
             history: [],
-            downloads: [],
             voiceEnabled: true
         };
 
-        // --- 3. View Rendering ---
+        // --- 3. Mock Data Generator for Novels (Fallback if API doesn't have it yet) ---
+        function generateMockNovels() {
+            const covers = [
+                "https://images.unsplash.com/photo-1544640808-32cb4cd733d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=750&q=80",
+                "https://images.unsplash.com/photo-1614161173200-334346ed8c88?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=750&q=80",
+                "https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=750&q=80"
+            ];
+            let mock = [];
+            for(let i=1; i<=15; i++) {
+                let chapters = [];
+                for(let j=1; j<=10; j++) {
+                    chapters.push({
+                        ep: j,
+                        title: `ตอนที่ ${j}: จุดเริ่มต้นของโชคชะตา`,
+                        content: `ลมหนาวพัดโชยมาปะทะใบหน้า ชายหนุ่มยืนตระหง่านอยู่บนยอดเขา ทอดสายตามองลงไปยังเบื้องล่างที่ปกคลุมไปด้วยเมฆหมอก ดาบในมือของเขาสั่นไหวเบาๆ ราวกับรับรู้ได้ถึงจิตสังหารที่กำลังคืบคลานเข้ามา\n\n"ในที่สุด... เวลานี้ก็มาถึง" เขารำพึงกับตัวเองเบาๆ ก่อนจะพุ่งทะยานลงจากยอดเขาดั่งวิหคสวรรค์ พลังปราณอันแข็งแกร่งระเบิดออกมารอบทิศทาง ทำลายต้นไม้และโขดหินจนแหลกเป็นจุณ\n\nนี่คือการต่อสู้ที่จะตัดสินชะตากรรมของสามภพ...`
+                    });
+                }
+                mock.push({
+                    id: `N${i}`,
+                    title: `คัมภีร์ลับเทพมาร เล่มที่ ${i}`,
+                    cover: covers[i % covers.length],
+                    description: `เรื่องราวการผจญภัยของเด็กหนุ่มผู้ครอบครองสายเลือดเทพและมารในร่างเดียว เขาต้องเผชิญกับอุปสรรคมากมายเพื่อก้าวขึ้นสู่จุดสูงสุดแห่งยุทธภพ`,
+                    totalChapters: 10,
+                    episodes: chapters
+                });
+            }
+            return mock;
+        }
+
+        // --- 4. Data Fetching ---
         const mainContent = document.getElementById('main-content');
         const body = document.getElementById('app-body');
 
-        // Initial Data Fetching
-        async function fetchMoviesFromAPI() {
+        async function fetchDataFromAPI() {
             mainContent.innerHTML = `
                 <div class="flex flex-col items-center justify-center h-[60vh] text-accent">
                     <i class="fa-solid fa-yin-yang fa-spin text-5xl mb-4"></i>
@@ -298,58 +319,74 @@
                 </div>`;
             
             try {
+                // Fetch Movies
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: 'getMoviesData' })
                 });
-                
                 const data = await response.json();
+                
                 if (data.status === 'success') {
-                    // Map API Data to Template format
                     movies = data.movies.map((m, idx) => {
                         let vidUrl = m.episodes && m.episodes.length > 0 ? m.episodes[0].url : '';
-                        let vidType = vidUrl.includes('m3u8') ? 'm3u8' : (vidUrl.includes('youtube') || vidUrl.includes('youtu.be') ? 'youtube' : 'mp4');
+                        let vidType = 'mp4';
                         
-                        // Extract Youtube ID if type is youtube
-                        if(vidType === 'youtube') {
-                            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                            const match = vidUrl.match(regExp);
-                            if (match && match[2].length === 11) vidUrl = match[2];
-                        }
+                        // Detect video type
+                        if(vidUrl.includes('drive.google.com')) vidType = 'drive';
+                        else if(vidUrl.includes('dropbox.com')) vidType = 'dropbox';
+                        else if(vidUrl.includes('m3u8')) vidType = 'm3u8';
+                        else if(vidUrl.includes('youtube') || vidUrl.includes('youtu.be')) vidType = 'youtube';
 
                         return {
                             id: m.id || String(idx),
                             title: m.title || 'เรื่องไร้นาม',
-                            category: m.category || 'มาใหม่ (New)',
+                            category: m.category || 'ภาพยนตร์/ซีรีส์',
                             description: m.desc || 'ไม่มีบันทึกกล่าวถึงคัมภีร์เล่มนี้...',
                             cover: m.cover || m.poster || 'https://via.placeholder.com/500x750/1c2e4a/7dd3fc?text=No+Cover',
                             episodes: m.episodes ? m.episodes.length : 1,
                             rating: (Math.random() * 2 + 8).toFixed(1),
                             video: { type: vidType, url: vidUrl },
-                            rawEpisodes: m.episodes || [] // เก็บข้อมูลตอนทั้งหมดจาก Database
+                            rawEpisodes: m.episodes || [] 
                         };
                     });
+
+                    // Fetch Novels (If backend has it, otherwise use Mock)
+                    // (สมมติว่าถ้าส่ง action getNovelsData ไปแล้วไม่มี จะ catch error มาใช้ Mock)
+                    try {
+                        const novRes = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'getNovelsData' }) });
+                        const novData = await novRes.json();
+                        if(novData.status === 'success' && novData.novels.length > 0) {
+                            novels = novData.novels;
+                        } else { novels = generateMockNovels(); }
+                    } catch(e) { novels = generateMockNovels(); }
+
                     navigate('home');
                 } else {
                     mainContent.innerHTML = `<div class="text-center mt-20 text-red-400 font-serif-thai">ไม่สามารถทะลวงค่ายกลได้: ${data.message}</div>`;
                 }
             } catch (error) {
                 mainContent.innerHTML = `<div class="text-center mt-20 text-red-400 font-serif-thai">เกิดเหตุขัดข้อง ไม่สามารถเชื่อมต่อกับโลกภายนอกได้</div>`;
+                // For demonstration, if totally offline, load mock data anyway
+                novels = generateMockNovels();
             }
         }
 
         function updateNavState() {
-            ['home', 'history', 'downloads'].forEach(nav => {
+            ['home', 'history', 'novels'].forEach(nav => {
                 document.getElementById(`nav-${nav}`).classList.remove('nav-active', 'text-white');
-                if (state.view === nav) {
+                if (state.view === nav || (state.view === 'movie' && nav === 'home') || (state.view === 'novel_detail' && nav === 'novels') || (state.view === 'novel_reader' && nav === 'novels')) {
                     document.getElementById(`nav-${nav}`).classList.add('nav-active', 'text-white');
                 }
             });
+            
+            const subtitle = document.getElementById('header-subtitle');
+            if(state.view.includes('novel')) subtitle.innerHTML = '<i class="fa-solid fa-book"></i> หอตำราหลวง';
+            else subtitle.innerHTML = '<i class="fa-solid fa-cloud"></i> ดินแดนศักดิ์สิทธิ์';
         }
 
-        function navigate(view, data = null) {
-            if(movies.length === 0 && view !== 'home') return; // Prevent navigation if data not loaded
+        function navigate(view, data = null, extraData = null) {
+            if(movies.length === 0 && view !== 'home') return; 
 
             state.view = view;
             updateNavState();
@@ -361,26 +398,93 @@
             } else if (view === 'movie') {
                 body.className = 'theme-mortal';
                 state.currentMovieId = data;
-                addToHistory(data);
+                addToHistory('M' + data);
                 renderMovie(data);
+            } else if (view === 'novels') {
+                body.className = 'theme-heaven';
+                renderNovelsList();
+            } else if (view === 'novel_detail') {
+                body.className = 'theme-heaven';
+                state.currentNovelId = data;
+                addToHistory('N' + data);
+                renderNovelDetail(data);
+            } else if (view === 'novel_reader') {
+                body.className = 'theme-mortal'; // Darker theme for reading
+                renderNovelReader(data, extraData); // data = novelId, extraData = chapterIndex
             } else if (view === 'history') {
                 body.className = 'theme-heaven';
                 renderHistory();
-            } else if (view === 'downloads') {
-                body.className = 'theme-heaven';
-                renderDownloads();
             }
         }
 
+        // --- 5. Video Player Helpers ---
+        function getPlayerHtml(url, type) {
+            if (type === 'drive' || url.includes('drive.google.com')) {
+                // Convert to Preview URL
+                let driveId = "";
+                let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if(match) driveId = match[1];
+                else {
+                    match = url.match(/id=([a-zA-Z0-9_-]+)/);
+                    if(match) driveId = match[1];
+                }
+                
+                if(driveId) {
+                    return `<iframe src="https://drive.google.com/file/d/${driveId}/preview" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen class="w-full h-full absolute top-0 left-0"></iframe>`;
+                }
+                return `<div class="text-red-500 text-center pt-20">Drive Link ไม่ถูกต้อง</div>`;
+            } 
+            else if (type === 'dropbox' || url.includes('dropbox.com')) {
+                // Change dl=0 to raw=1
+                let rawUrl = url.replace(/(dl=0|dl=1)/, 'raw=1');
+                return `<video src="${rawUrl}" controls autoplay class="w-full h-full absolute top-0 left-0"></video>`;
+            } 
+            else if (type === 'youtube') {
+                let yId = url;
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                if (match && match[2].length === 11) yId = match[2];
+                return `<iframe src="https://www.youtube.com/embed/${yId}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full absolute top-0 left-0"></iframe>`;
+            } 
+            else if (type === 'm3u8') {
+                return `<video id="video-player" controls autoplay class="w-full h-full absolute top-0 left-0"></video>`;
+            } 
+            else {
+                return `<video src="${url}" controls autoplay class="w-full h-full absolute top-0 left-0"></video>`;
+            }
+        }
+
+        window.playEpisode = function(url, type) {
+            const container = document.getElementById('player-container-box');
+            if(!container) return;
+            
+            container.innerHTML = getPlayerHtml(url, type);
+
+            // Handle HLS specifically
+            if (type === 'm3u8') {
+                const video = document.getElementById('video-player');
+                if (Hls.isSupported() && video) {
+                    const hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+                } else if (video && video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                    video.play();
+                }
+            }
+        }
+
+
+        // --- 6. View Implementations ---
         function renderHome() {
             if(movies.length === 0) return;
 
             let html = `<div class="mb-6">
-                <h2 class="text-3xl font-bold mb-2 text-accent font-serif-thai text-shadow-glow">ดินแดนเทพเซียน</h2>
-                <p class="text-sm opacity-80">ค้นพบคัมภีร์ซีรีส์และภาพยนตร์ล้ำค่า</p>
+                <h2 class="text-3xl font-bold mb-2 text-accent font-serif-thai text-shadow-glow">ภาพยนตร์ / ซีรีส์</h2>
+                <p class="text-sm opacity-80">เรื่องราวภาพเคลื่อนไหวแห่งสามภพ</p>
             </div>`;
 
-            // ดึงหมวดหมู่ที่มีทั้งหมดจากฐานข้อมูล
             const categories = [...new Set(movies.map(m => m.category))];
 
             categories.forEach((cat, index) => {
@@ -399,7 +503,7 @@
                 html += `
                     <div class="mb-8">
                         <div class="flex items-center gap-2 mb-4">
-                            <i class="fa-solid fa-scroll text-accent"></i>
+                            <i class="fa-solid fa-film text-accent"></i>
                             <h3 class="text-xl font-bold font-serif-thai">${cat}</h3>
                         </div>
                         <div class="${rowWrapperClass}">
@@ -410,11 +514,8 @@
                                             <img src="${movie.cover}" class="movie-poster" alt="${movie.title}">
                                             <div class="mystic-overlay flex items-end p-2 pb-3">
                                                 <span class="text-xs font-bold bg-blue-900/90 px-2 py-1 rounded text-white border border-blue-400 shadow-lg">
-                                                    ${movie.episodes} คัมภีร์
+                                                    <i class="fa-solid fa-play mr-1"></i> ${movie.episodes} ตอน
                                                 </span>
-                                            </div>
-                                            <div class="absolute top-2 right-2 bg-black/70 px-2 py-1 rounded text-xs text-yellow-400 border border-yellow-600/50 shadow-md">
-                                                <i class="fa-solid fa-star"></i> ${movie.rating}
                                             </div>
                                         </div>
                                         <div class="p-3 text-center h-[3.5rem] flex items-center justify-center bg-black/20">
@@ -431,56 +532,26 @@
             mainContent.innerHTML = html;
         }
 
-        // Global function to play specific episode
-        window.playEpisode = function(url, type) {
-            const container = document.getElementById('player-container-box');
-            if(!container) return;
-            
-            if (type === 'youtube') {
-                container.innerHTML = `<iframe src="https://www.youtube.com/embed/${url}?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full absolute top-0 left-0"></iframe>`;
-            } else if (type === 'm3u8') {
-                container.innerHTML = `<video id="video-player" controls autoplay class="w-full h-full absolute top-0 left-0"></video>`;
-                const video = document.getElementById('video-player');
-                if (Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = url;
-                    video.play();
-                }
-            } else {
-                container.innerHTML = `<video src="${url}" controls autoplay class="w-full h-full absolute top-0 left-0"></video>`;
-            }
-        }
-
         function renderMovie(id) {
             const movie = movies.find(m => m.id === String(id));
             if (!movie) return;
 
-            let playerHtml = '';
-            if (movie.video.type === 'youtube') {
-                playerHtml = `<iframe src="https://www.youtube.com/embed/${movie.video.url}?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full absolute top-0 left-0"></iframe>`;
-            } else if (movie.video.type === 'm3u8') {
-                playerHtml = `<video id="video-player" controls class="w-full h-full absolute top-0 left-0"></video>`;
-            } else {
-                playerHtml = `<video src="${movie.video.url}" controls class="w-full h-full absolute top-0 left-0"></video>`;
-            }
-
-            // Generate episode buttons based on backend rawEpisodes
+            // Generate initial player HTML
+            let initialUrl = movie.video.url;
+            let initialType = movie.video.type;
+            
+            // Generate episode buttons 
             let epsHtml = '';
             if(movie.rawEpisodes && movie.rawEpisodes.length > 0) {
                 movie.rawEpisodes.forEach((ep, index) => {
-                    let epType = ep.url.includes('m3u8') ? 'm3u8' : (ep.url.includes('youtube') || ep.url.includes('youtu.be') ? 'youtube' : 'mp4');
+                    let epType = 'mp4';
                     let epUrl = ep.url;
-                    if(epType === 'youtube') {
-                        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                        const match = epUrl.match(regExp);
-                        if (match && match[2].length === 11) epUrl = match[2];
-                    }
+                    if(epUrl.includes('drive.google')) epType = 'drive';
+                    else if(epUrl.includes('dropbox')) epType = 'dropbox';
+                    else if(epUrl.includes('m3u8')) epType = 'm3u8';
+                    else if(epUrl.includes('youtube') || epUrl.includes('youtu.be')) epType = 'youtube';
                     
-                    epsHtml += `<button onclick="playEpisode('${epUrl}', '${epType}')" class="px-2 py-2 glass-panel rounded hover:bg-yellow-900 hover:text-white transition-colors border-accent text-sm whitespace-nowrap">${ep.title || 'คัมภีร์ที่ ' + (index+1)}</button>`;
+                    epsHtml += `<button onclick="playEpisode('${epUrl}', '${epType}')" class="px-2 py-2 glass-panel rounded hover:bg-yellow-900 hover:text-white transition-colors border-accent text-sm whitespace-nowrap text-ellipsis overflow-hidden">${ep.title || 'ตอนที่ ' + (index+1)}</button>`;
                 });
             } else {
                 epsHtml = `<span class="text-sm text-gray-400">ไม่มีแยกตอนย่อย</span>`;
@@ -488,40 +559,30 @@
 
             let html = `
                 <div class="animate-fade-in">
-                    <!-- Back Button -->
                     <button onclick="navigate('home')" class="mb-4 text-gray-400 hover:text-accent transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-arrow-left"></i> กลับสู่หน้าหลัก
+                        <i class="fa-solid fa-arrow-left"></i> กลับสู่หน้าภาพยนตร์
                     </button>
 
-                    <!-- Player -->
                     <div class="video-container mb-6 shadow-glow-red" id="player-container-box">
-                        ${playerHtml}
+                        ${getPlayerHtml(initialUrl, initialType)}
                     </div>
 
-                    <!-- Details -->
                     <div class="glass-panel p-5 rounded-xl mb-6 border-accent">
-                        <div class="flex justify-between items-start mb-2">
-                            <h2 class="text-3xl font-bold font-serif-thai text-accent text-shadow-glow">${movie.title}</h2>
-                            <button onclick="downloadMovie('${movie.id}')" class="bg-red-900/50 hover:bg-red-800 text-yellow-500 border border-yellow-600 p-2 rounded-full w-10 h-10 flex items-center justify-center transition-all shadow-md flex-shrink-0 ml-2">
-                                <i class="fa-solid fa-download"></i>
-                            </button>
-                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold font-serif-thai text-accent text-shadow-glow mb-2">${movie.title}</h2>
                         <div class="flex flex-wrap gap-2 text-xs mb-4 text-gray-300">
                             <span class="bg-red-900/80 px-2 py-1 rounded">หมวด: ${movie.category.split(' ')[0]}</span>
                             <span class="bg-red-900/80 px-2 py-1 rounded"><i class="fa-solid fa-star text-yellow-400"></i> ${movie.rating}</span>
-                            <span class="bg-red-900/80 px-2 py-1 rounded border border-red-500/50">ทั้งหมด ${movie.episodes} คัมภีร์</span>
                         </div>
                         <p class="text-sm leading-relaxed text-gray-200 font-serif-thai border-l-2 border-accent pl-3 whitespace-pre-wrap">
                             ${movie.description}
                         </p>
                     </div>
 
-                    <!-- Episodes -->
                     <div class="pb-8">
                         <h3 class="text-xl font-bold mb-4 font-serif-thai text-accent flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group"></i> เลือกคัมภีร์
+                            <i class="fa-solid fa-list"></i> เลือกตอนรับชม
                         </h3>
-                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
                             ${epsHtml}
                         </div>
                     </div>
@@ -530,45 +591,210 @@
 
             mainContent.innerHTML = html;
 
-            if (movie.video.type === 'm3u8') {
+            // Handle initial HLS if needed
+            if (initialType === 'm3u8') {
                 const video = document.getElementById('video-player');
                 if (Hls.isSupported() && video) {
                     const hls = new Hls();
-                    hls.loadSource(movie.video.url);
+                    hls.loadSource(initialUrl);
                     hls.attachMedia(video);
-                } else if (video && video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = movie.video.url;
                 }
             }
         }
 
+        // --- 7. Novel Implementations (หอตำรา) ---
+        function renderNovelsList() {
+            let html = `
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold mb-2 text-accent font-serif-thai text-shadow-glow">หอตำราหลวง</h2>
+                    <p class="text-sm opacity-80">บันทึกตัวอักษร ร้อยเรียงจินตนาการ</p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-8">
+            `;
+
+            novels.forEach(novel => {
+                html += `
+                    <div class="movie-card glass-panel" onclick="navigate('novel_detail', '${novel.id}')">
+                        <div class="movie-poster-container">
+                            <img src="${novel.cover}" class="movie-poster" alt="${novel.title}">
+                            <div class="mystic-overlay flex items-end p-2 pb-3">
+                                <span class="text-xs font-bold bg-purple-900/90 px-2 py-1 rounded text-white border border-purple-400 shadow-lg flex items-center gap-1">
+                                    <i class="fa-solid fa-book-open"></i> ${novel.totalChapters} ตอน
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-3 text-center h-[3.5rem] flex items-center justify-center bg-black/20 border-t border-accent">
+                            <h4 class="font-bold text-sm line-clamp-2 font-serif-thai text-blue-100">${novel.title}</h4>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            mainContent.innerHTML = html;
+        }
+
+        function renderNovelDetail(id) {
+            const novel = novels.find(n => n.id === String(id));
+            if (!novel) return;
+
+            let epsHtml = '';
+            if(novel.episodes && novel.episodes.length > 0) {
+                novel.episodes.forEach((ep, index) => {
+                    epsHtml += `
+                        <button onclick="navigate('novel_reader', '${novel.id}', ${index})" class="text-left px-4 py-3 glass-panel rounded hover:bg-blue-900 hover:text-white transition-colors border-accent text-sm w-full flex justify-between items-center group">
+                            <span class="font-serif-thai line-clamp-1">${ep.title}</span>
+                            <i class="fa-solid fa-chevron-right text-gray-500 group-hover:text-accent"></i>
+                        </button>`;
+                });
+            }
+
+            let html = `
+                <div class="animate-fade-in pb-10">
+                    <button onclick="navigate('novels')" class="mb-4 text-gray-400 hover:text-accent transition-colors flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> กลับสู่หอตำรา
+                    </button>
+
+                    <div class="glass-panel p-5 rounded-xl mb-6 border-accent flex flex-col md:flex-row gap-6">
+                        <div class="w-1/2 md:w-1/4 mx-auto flex-shrink-0">
+                            <img src="${novel.cover}" class="w-full h-auto rounded-lg shadow-glow-red border-2 border-accent">
+                        </div>
+                        <div class="flex-1">
+                            <h2 class="text-2xl md:text-3xl font-bold font-serif-thai text-accent text-shadow-glow mb-3">${novel.title}</h2>
+                            <div class="flex gap-2 text-xs mb-4 text-gray-300">
+                                <span class="bg-purple-900/80 px-3 py-1.5 rounded-full border border-purple-500/50"><i class="fa-solid fa-book"></i> นิยายบรรยาย</span>
+                                <span class="bg-blue-900/80 px-3 py-1.5 rounded-full border border-blue-500/50">ทั้งหมด ${novel.totalChapters} ตอน</span>
+                            </div>
+                            <h3 class="font-bold mb-2 text-gray-300 border-b border-gray-600 pb-1">แนะนำเรื่อง</h3>
+                            <p class="text-sm leading-relaxed text-gray-200 font-serif-thai whitespace-pre-wrap">
+                                ${novel.description}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold mb-4 font-serif-thai text-accent flex items-center gap-2">
+                            <i class="fa-solid fa-list-ul"></i> สารบัญตอน
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            ${epsHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+            mainContent.innerHTML = html;
+        }
+
+        function renderNovelReader(novelId, chapterIndex) {
+            const novel = novels.find(n => n.id === String(novelId));
+            if (!novel || !novel.episodes[chapterIndex]) return;
+
+            const chapter = novel.episodes[chapterIndex];
+            
+            let prevBtn = chapterIndex > 0 
+                ? `<button onclick="navigate('novel_reader', '${novelId}', ${chapterIndex - 1})" class="text-gray-400 hover:text-accent"><i class="fa-solid fa-chevron-left mr-1"></i> ตอนก่อนหน้า</button>`
+                : `<div class="w-20"></div>`;
+                
+            let nextBtn = chapterIndex < novel.episodes.length - 1 
+                ? `<button onclick="navigate('novel_reader', '${novelId}', ${chapterIndex + 1})" class="text-accent font-bold hover:text-white">ตอนถัดไป <i class="fa-solid fa-chevron-right ml-1"></i></button>`
+                : `<div class="w-20 text-right text-gray-500 text-sm">จบเล่ม</div>`;
+
+            let html = `
+                <div class="animate-fade-in pb-10 max-w-3xl mx-auto">
+                    <!-- Top Bar -->
+                    <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                        <button onclick="navigate('novel_detail', '${novelId}')" class="text-gray-400 hover:text-accent transition-colors">
+                            <i class="fa-solid fa-arrow-left text-lg"></i>
+                        </button>
+                        <div class="text-center truncate px-4">
+                            <div class="text-xs text-gray-500 truncate">${novel.title}</div>
+                            <div class="font-bold text-accent font-serif-thai truncate">${chapter.title}</div>
+                        </div>
+                        <button onclick="toggleTextSize()" class="text-gray-400 hover:text-accent" title="ปรับขนาดตัวอักษร">
+                            <i class="fa-solid fa-text-height text-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Reader Paper -->
+                    <div class="novel-reader-bg p-6 md:p-10 rounded-xl shadow-2xl border border-gray-800">
+                        <h2 class="text-2xl font-bold text-center mb-8 font-serif-thai text-accent">${chapter.title}</h2>
+                        <div class="novel-content text-gray-300" id="reading-content">
+                            ${chapter.content.replace(/\n\n/g, '</p><p>')}
+                        </div>
+                    </div>
+
+                    <!-- Bottom Nav Controls -->
+                    <div class="flex justify-between items-center mt-8 px-4">
+                        ${prevBtn}
+                        <button onclick="navigate('novel_detail', '${novelId}')" class="text-gray-500 hover:text-white text-xl"><i class="fa-solid fa-list"></i></button>
+                        ${nextBtn}
+                    </div>
+                </div>
+            `;
+            mainContent.innerHTML = html;
+            window.scrollTo(0,0);
+        }
+
+        let isLargeText = false;
+        function toggleTextSize() {
+            const content = document.getElementById('reading-content');
+            if(!content) return;
+            isLargeText = !isLargeText;
+            if(isLargeText) {
+                content.style.fontSize = '1.35rem';
+                content.style.lineHeight = '2.2';
+            } else {
+                content.style.fontSize = '1.125rem';
+                content.style.lineHeight = '2';
+            }
+        }
+
+        // --- 8. History ---
         function renderHistory() {
             let html = `
                 <div class="mb-6">
-                    <h2 class="text-3xl font-bold mb-2 text-accent font-serif-thai">คัมภีร์ที่เคยศึกษา (ดูต่อ)</h2>
-                    <p class="text-sm opacity-80">ประวัติการรับชมของท่าน</p>
+                    <h2 class="text-3xl font-bold mb-2 text-accent font-serif-thai">บันทึกการเดินทาง</h2>
+                    <p class="text-sm opacity-80">ประวัติการรับชมและอ่านคัมภีร์</p>
                 </div>
             `;
 
             if (state.history.length === 0) {
-                html += `<div class="text-center py-10 text-gray-500 font-serif-thai"><i class="fa-solid fa-wind text-4xl mb-3 opacity-50"></i><br>ท่านยังไม่เคยเปิดอ่านคัมภีร์เล่มใดเลย</div>`;
+                html += `<div class="text-center py-10 text-gray-500 font-serif-thai"><i class="fa-solid fa-wind text-4xl mb-3 opacity-50"></i><br>ยังไม่มีบันทึกใดๆ</div>`;
             } else {
-                html += `<div class="grid grid-cols-2 md:grid-cols-4 gap-4">`;
-                state.history.slice().reverse().forEach(id => {
-                    const movie = movies.find(m => m.id === String(id));
-                    if(movie) {
+                html += `<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">`;
+                
+                // Show unique history items, latest first
+                let uniqueHistory = [...new Set(state.history)].reverse();
+                
+                uniqueHistory.forEach(historyId => {
+                    let item = null;
+                    let type = '';
+                    let navPath = '';
+                    
+                    if(historyId.startsWith('M')) {
+                        item = movies.find(m => m.id === historyId.substring(1));
+                        type = '<i class="fa-solid fa-film text-blue-400"></i> วิดีโอ';
+                        navPath = 'movie';
+                    } else if(historyId.startsWith('N')) {
+                        item = novels.find(n => n.id === historyId.substring(1));
+                        type = '<i class="fa-solid fa-book text-purple-400"></i> นิยาย';
+                        navPath = 'novel_detail';
+                    }
+
+                    if(item) {
                         html += `
-                            <div class="movie-card glass-panel" onclick="navigate('movie', '${movie.id}')">
+                            <div class="movie-card glass-panel" onclick="navigate('${navPath}', '${item.id}')">
                                 <div class="movie-poster-container">
-                                    <img src="${movie.cover}" class="movie-poster" alt="${movie.title}">
-                                    <div class="mystic-overlay flex items-end p-2 pb-3">
-                                        <span class="text-xs font-bold bg-blue-900/90 px-2 py-1 rounded text-white border border-blue-400">
-                                            ${movie.episodes} คัมภีร์
+                                    <img src="${item.cover}" class="movie-poster" alt="${item.title}">
+                                    <div class="mystic-overlay flex items-start justify-end p-2">
+                                        <span class="text-[10px] font-bold bg-black/80 px-2 py-1 rounded border border-gray-600 shadow-lg">
+                                            ${type}
                                         </span>
                                     </div>
                                 </div>
-                                <div class="p-3 text-center h-[3.5rem] flex items-center justify-center bg-black/20">
-                                    <h4 class="font-bold text-sm line-clamp-2 font-serif-thai">${movie.title}</h4>
+                                <div class="p-3 text-center h-[3.5rem] flex items-center justify-center bg-black/20 border-t border-accent">
+                                    <h4 class="font-bold text-sm line-clamp-2 font-serif-thai">${item.title}</h4>
                                 </div>
                             </div>
                         `;
@@ -579,84 +805,7 @@
             mainContent.innerHTML = html;
         }
 
-        function renderDownloads() {
-             let html = `
-                <div class="mb-6">
-                    <h2 class="text-3xl font-bold mb-2 text-accent font-serif-thai">หอเก็บคัมภีร์ (ดาวน์โหลด)</h2>
-                    <p class="text-sm opacity-80">หนังที่ท่านเก็บไว้ดูแบบออฟไลน์</p>
-                </div>
-            `;
-
-            if (state.downloads.length === 0) {
-                html += `<div class="text-center py-10 text-gray-500 font-serif-thai"><i class="fa-solid fa-box-open text-4xl mb-3 opacity-50"></i><br>หอเก็บคัมภีร์ยังว่างเปล่า</div>`;
-            } else {
-                html += `<div class="space-y-3">`;
-                state.downloads.slice().reverse().forEach(id => {
-                    const movie = movies.find(m => m.id === String(id));
-                    if(movie) {
-                        html += `
-                            <div class="glass-panel p-3 flex gap-4 items-center rounded-xl cursor-pointer hover:bg-blue-900/30" onclick="navigate('movie', '${movie.id}')">
-                                <div class="w-16 h-24 flex-shrink-0">
-                                    <img src="${movie.cover}" class="w-full h-full object-cover rounded border border-blue-500/50">
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold font-serif-thai text-blue-100 line-clamp-2">${movie.title}</h4>
-                                    <p class="text-xs text-gray-400 mt-1">${movie.episodes} คัมภีร์ • ดาวน์โหลดสำเร็จ</p>
-                                </div>
-                                <div class="w-8 h-8 rounded-full bg-green-900/50 text-green-400 border border-green-500/50 flex items-center justify-center flex-shrink-0">
-                                    <i class="fa-solid fa-check"></i>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-                html += `</div>`;
-            }
-            mainContent.innerHTML = html;
-        }
-
-        // --- Logic Functions ---
-        function addToHistory(id) {
-            state.history = state.history.filter(item => item !== id); // Remove if exists
-            state.history.push(id);
-        }
-
-        function downloadMovie(id) {
-            if(!state.downloads.includes(id)) {
-                state.downloads.push(id);
-                const btn = event.currentTarget;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-                
-                // แจ้งเตือน Backend 
-                fetch(GAS_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'recordMovieDownload',
-                        uid: 'GUEST_UI',
-                        email: 'guest@view.com',
-                        movieId: id,
-                        movieTitle: movies.find(m=>m.id === String(id))?.title || 'Unknown'
-                    })
-                }).catch(e => console.log(e));
-
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-                    btn.classList.add('bg-green-900', 'text-green-400', 'border-green-500');
-                    btn.classList.remove('text-yellow-500', 'border-yellow-600');
-                    alertModal(`เก็บ "${movies.find(m=>m.id===String(id)).title}" ลงหอคัมภีร์เรียบร้อยแล้ว`);
-                }, 1000);
-            }
-        }
-
-        function alertModal(msg) {
-            const div = document.createElement('div');
-            div.className = 'fixed top-10 left-1/2 transform -translate-x-1/2 glass-panel bg-black/90 px-6 py-3 rounded-full z-50 animate-bounce border-accent text-sm font-serif-thai shadow-glow';
-            div.innerHTML = `<i class="fa-solid fa-bell text-yellow-500 mr-2"></i> ${msg}`;
-            document.body.appendChild(div);
-            setTimeout(() => div.remove(), 3000);
-        }
-
-        // --- AI Chat Logic ---
+        // --- 9. AI Chat Logic (Updated for Novels) ---
         function toggleAIChat() {
             const modal = document.getElementById('ai-chat-modal');
             if (modal.classList.contains('hidden')) {
@@ -678,7 +827,7 @@
             } else {
                 icon.className = 'fa-solid fa-volume-xmark';
                 icon.parentElement.classList.replace('text-yellow-500', 'text-gray-500');
-                window.speechSynthesis.cancel(); // Stop speaking immediately if disabled
+                window.speechSynthesis.cancel();
             }
         }
 
@@ -694,44 +843,55 @@
             addChatMessage(text, 'user');
             input.value = '';
 
-            // AI Logic (Search Database)
             setTimeout(() => {
                 let replyHTML = '';
                 let speakTextContent = '';
-                const searchResults = movies.filter(m => m.title.includes(text) || m.description.includes(text) || m.category.includes(text));
+                
+                // Search both movies and novels
+                const foundMovies = movies.filter(m => m.title.includes(text) || m.description.includes(text));
+                const foundNovels = novels.filter(n => n.title.includes(text) || n.description.includes(text));
+                const totalFound = foundMovies.length + foundNovels.length;
 
                 if (text.includes('สวัสดี') || text.includes('ทักทาย')) {
-                    replyHTML = 'คารวะผู้ฝึกตน มีสิ่งใดให้ผู้อาวุโสผู้นี้ชี้แนะหรือไม่? อยากให้ข้าค้นหาคัมภีร์เรื่องใด?';
+                    replyHTML = 'คารวะผู้ฝึกตน ข้าคือบรรพจารย์ดูแลหอตำราและค่ายกลภาพมายา อยากให้ข้าค้นหาสิ่งใดให้บอกมา...';
                     speakTextContent = replyHTML;
-                } else if (text.includes('แนะนำ') || text.includes('น่าดู')) {
-                    const random = movies[Math.floor(Math.random() * movies.length)];
-                    speakTextContent = `ข้าขอแนะนำตำราวิชา ${random.title} รับรองว่าท่านจะต้องตื่นตาตื่นใจเป็นแน่แท้`;
+                } else if (text.includes('แนะนำ') || text.includes('น่าดู') || text.includes('น่าอ่าน')) {
+                    const allItems = [...movies.map(m=>({...m, isM:true})), ...novels.map(n=>({...n, isM:false}))];
+                    const random = allItems[Math.floor(Math.random() * allItems.length)];
+                    let tName = random.isM ? "ค่ายกลภาพมายา" : "ตำราวิชา";
+                    let navPath = random.isM ? 'movie' : 'novel_detail';
                     
-                    replyHTML = `ข้าขอแนะนำตำราวิชา <b>"${random.title}"</b> รับรองว่าท่านจะต้องตื่นตาตื่นใจเป็นแน่แท้`;
+                    speakTextContent = `ข้าขอแนะนำ ${tName} เรื่อง ${random.title} รับรองว่าท่านจะต้องตื่นตาตื่นใจเป็นแน่แท้`;
+                    
+                    replyHTML = `ข้าขอแนะนำ ${tName} <b>"${random.title}"</b> รับรองว่าท่านจะต้องตื่นตาตื่นใจเป็นแน่แท้`;
                     replyHTML += `<div class="mt-3 bg-yellow-900/40 border border-yellow-600/50 p-3 rounded flex gap-3 items-center">
                                     <img src="${random.cover}" class="w-12 h-16 object-cover rounded border border-yellow-700/50">
                                     <div class="flex flex-col gap-1">
                                         <div class="font-bold text-yellow-300 line-clamp-1">${random.title}</div>
-                                        <button onclick="navigate('movie', '${random.id}'); toggleAIChat();" class="text-xs bg-yellow-600 px-3 py-1.5 rounded text-black font-bold hover:bg-yellow-500 w-fit">เปิดอ่านคัมภีร์</button>
+                                        <button onclick="navigate('${navPath}', '${random.id}'); toggleAIChat();" class="text-xs bg-yellow-600 px-3 py-1.5 rounded text-black font-bold hover:bg-yellow-500 w-fit">เข้าไปชม</button>
                                     </div>
                                   </div>`;
-                } else if (searchResults.length > 0) {
-                    speakTextContent = `อา... ข้าพบคัมภีร์ที่ท่านตามหาแล้ว มีทั้งหมด ${searchResults.length} เรื่องด้วยกัน`;
-                    replyHTML = `อา... ข้าพบคัมภีร์ที่ท่านตามหาแล้ว มีดังนี้:<br>`;
+                } else if (totalFound > 0) {
+                    speakTextContent = `อา... ข้าพบคัมภีร์ที่ท่านตามหาแล้ว มีทั้งหมด ${totalFound} เรื่องด้วยกัน`;
+                    replyHTML = `อา... ข้าพบสิ่งที่ท่านตามหาแล้ว มีดังนี้:<br>`;
                     
-                    // Show up to 3 results in chat to avoid crowding
-                    searchResults.slice(0, 3).forEach(m => {
+                    let displayItems = [...foundMovies.map(m=>({...m, isM:true})), ...foundNovels.map(n=>({...n, isM:false}))].slice(0, 3);
+                    
+                    displayItems.forEach(item => {
+                        let tIcon = item.isM ? '<i class="fa-solid fa-film text-blue-400 mr-1"></i>' : '<i class="fa-solid fa-book text-purple-400 mr-1"></i>';
+                        let navPath = item.isM ? 'movie' : 'novel_detail';
                         replyHTML += `<div class="mt-3 bg-yellow-900/40 border border-yellow-600/50 p-3 rounded flex gap-3 items-center">
-                                        <img src="${m.cover}" class="w-12 h-16 object-cover rounded border border-yellow-700/50">
-                                        <div class="flex flex-col gap-1">
-                                            <div class="font-bold text-yellow-300 line-clamp-1">${m.title}</div>
-                                            <button onclick="navigate('movie', '${m.id}'); toggleAIChat();" class="text-xs bg-yellow-600 px-3 py-1.5 rounded text-black font-bold hover:bg-yellow-500 w-fit">เปิดอ่านคัมภีร์</button>
+                                        <img src="${item.cover}" class="w-12 h-16 object-cover rounded border border-yellow-700/50">
+                                        <div class="flex flex-col gap-1 flex-1">
+                                            <div class="font-bold text-yellow-300 line-clamp-1">${item.title}</div>
+                                            <div class="text-[10px] text-gray-400">${tIcon} ${item.isM?'วิดีโอ':'นิยาย'}</div>
+                                            <button onclick="navigate('${navPath}', '${item.id}'); toggleAIChat();" class="text-xs bg-yellow-600 px-3 py-1 rounded text-black font-bold hover:bg-yellow-500 self-start mt-1">เปิดดู</button>
                                         </div>
                                       </div>`;
                     });
                     
-                    if(searchResults.length > 3) {
-                        replyHTML += `<div class="text-xs mt-2 text-yellow-400/80">และเรื่องอื่นๆ อีก ${searchResults.length - 3} เรื่อง...</div>`;
+                    if(totalFound > 3) {
+                        replyHTML += `<div class="text-xs mt-2 text-yellow-400/80">และเรื่องอื่นๆ อีก ${totalFound - 3} เรื่อง...</div>`;
                     }
                 } else {
                     speakTextContent = 'น่าเสียดาย หอคัมภีร์ของเรายังไม่มีบันทึกเรื่องราวที่ท่านตามหา ลองค้นหาด้วยคำอื่นดูเถิด...';
@@ -749,10 +909,10 @@
             
             if (sender === 'user') {
                 div.className = 'chat-bubble-user p-3 self-end max-w-[80%] text-sm text-blue-100 shadow-md';
-                div.textContent = text; // Secure from HTML injection by user
+                div.textContent = text;
             } else {
                 div.className = 'chat-bubble-ai p-3 self-start max-w-[85%] text-sm text-yellow-100 shadow-md';
-                div.innerHTML = text; // Allow HTML for buttons/images from AI
+                div.innerHTML = text;
             }
             
             box.appendChild(div);
@@ -761,8 +921,7 @@
 
         function speakText(text) {
             if (!state.voiceEnabled || !('speechSynthesis' in window)) return;
-            
-            window.speechSynthesis.cancel(); // Stop current speech
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'th-TH';
             utterance.rate = 1.0; 
@@ -770,7 +929,7 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // Add some global CSS animations dynamically
+        // Add dynamic CSS animations
         const style = document.createElement('style');
         style.innerHTML = `
             .text-shadow-glow { text-shadow: 0 0 15px currentColor; }
@@ -782,8 +941,8 @@
         `;
         document.head.appendChild(style);
 
-        // Start the application by fetching real data
-        window.onload = fetchMoviesFromAPI;
+        // Bootstrap App
+        window.onload = fetchDataFromAPI;
 
     </script>
 </body>
