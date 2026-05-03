@@ -182,46 +182,51 @@
         <div class="p-4 flex-1 overflow-y-auto">
             <p class="text-[10px] font-bold text-textMuted mb-3 tracking-widest pl-2">MAIN MENU</p>
             <nav class="space-y-1">
-                <a href="#" data-target="overview" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium bg-[#FF6B00]/10 text-primary transition-colors">
-                    <i data-lucide="layout-grid" class="w-5 h-5"></i> Overview
+                <a href="#" data-target="overview" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium bg-[#FF6B00]/10 text-primary transition-colors">
+                    <i data-lucide="layout-grid" class="w-5 h-5 mr-3"></i> Overview
                 </a>
-                <a href="#" data-target="products" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="package" class="w-5 h-5"></i> Products
+                <a href="#" data-target="products" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="package" class="w-5 h-5 mr-3"></i> Products
                 </a>
-                <a href="#" data-target="users" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="users" class="w-5 h-5"></i> Users
+                <a href="#" data-target="users" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="users" class="w-5 h-5 mr-3"></i> Users
                 </a>
-                <a href="#" data-target="orders" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i> Orders
+                <a href="#" data-target="orders" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 mr-3"></i> Orders
+                    <span id="nav-badge-orders" class="ml-auto text-[10px] bg-[#FF6B00] text-white px-2 py-0.5 rounded-full font-bold hidden">0</span>
                 </a>
-                <a href="#" data-target="deposits" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="arrow-down-circle" class="w-5 h-5"></i> Deposits
+                <a href="#" data-target="deposits" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="arrow-down-circle" class="w-5 h-5 mr-3"></i> Deposits
+                    <span id="nav-badge-deposits" class="ml-auto text-[10px] bg-[#10B981] text-white px-2 py-0.5 rounded-full font-bold hidden">0</span>
                 </a>
-                <a href="#" data-target="withdraws" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="arrow-up-circle" class="w-5 h-5"></i> Withdraws
+                <a href="#" data-target="withdraws" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="arrow-up-circle" class="w-5 h-5 mr-3"></i> Withdraws
+                    <span id="nav-badge-withdraws" class="ml-auto text-[10px] bg-[#EF4444] text-white px-2 py-0.5 rounded-full font-bold hidden">0</span>
                 </a>
-                <a href="#" data-target="affiliate" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="network" class="w-5 h-5"></i> Affiliate
+                <a href="#" data-target="affiliate" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="network" class="w-5 h-5 mr-3"></i> Affiliate
                 </a>
-                <a href="#" data-target="booking" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="calendar" class="w-5 h-5"></i> Booking
+                <a href="#" data-target="booking" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="calendar" class="w-5 h-5 mr-3"></i> Booking
+                    <span id="nav-badge-booking" class="ml-auto text-[10px] bg-[#FFC107] text-black px-2 py-0.5 rounded-full font-bold hidden">0</span>
                 </a>
-                <!-- เมนู Movies ที่ถูกเพิ่มเข้ามา -->
-                <a href="#" data-target="movies" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="film" class="w-5 h-5"></i> Movies <span class="ml-auto text-[10px] bg-[#D4AF37] text-black px-1.5 rounded font-bold">New</span>
+                <!-- เมนู Movies -->
+                <a href="#" data-target="movies" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="film" class="w-5 h-5 mr-3"></i> Movies 
+                    <span class="ml-auto text-[10px] bg-[#D4AF37] text-black px-1.5 rounded font-bold">New</span>
                 </a>
             </nav>
 
             <p class="text-[10px] font-bold text-textMuted mt-8 mb-3 tracking-widest pl-2">PREFERENCE</p>
             <nav class="space-y-1">
-                <a href="#" data-target="options" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="layers" class="w-5 h-5"></i> Product Options
+                <a href="#" data-target="options" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="layers" class="w-5 h-5 mr-3"></i> Product Options
                 </a>
-                <a href="#" data-target="settings" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="settings" class="w-5 h-5"></i> Settings
+                <a href="#" data-target="settings" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="settings" class="w-5 h-5 mr-3"></i> Settings
                 </a>
-                <a href="#" data-target="broadcast" class="menu-btn flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                    <i data-lucide="mail" class="w-5 h-5"></i> Broadcast
+                <a href="#" data-target="broadcast" class="menu-btn flex items-center px-4 py-3 rounded-lg text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                    <i data-lucide="mail" class="w-5 h-5 mr-3"></i> Broadcast
                 </a>
             </nav>
         </div>
@@ -234,7 +239,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
         
         <!-- Header -->
         <header class="h-20 border-b border-[#222] flex items-center justify-between px-6 shrink-0 bg-main">
@@ -242,7 +247,7 @@
                 <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white"><i data-lucide="menu" class="w-6 h-6"></i></button>
                 <div>
                     <h2 class="text-xl font-bold" id="top-greeting">Good to see you, Admin!</h2>
-                    <p class="text-xs text-textMuted hidden sm:block">Improve your sales management for better growth <span class="text-primary font-bold">(Auto-Sync Active)</span></p>
+                    <p class="text-xs text-textMuted hidden sm:block">Improve your management. <span class="text-primary font-bold">(Auto-Sync Active)</span></p>
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -263,7 +268,8 @@
         </header>
 
         <!-- Scrollable Views Container -->
-        <div class="flex-1 overflow-y-auto p-4 lg:p-8" id="scroll-area">
+        <!-- เพิ่ม pb-20 เพื่อให้เลื่อนข้อมูลข้างล่างสุดได้ไม่ถูกบัง -->
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 pb-24" id="scroll-area">
             
             <!-- VIEW: OVERVIEW -->
             <div id="view-overview" class="view-section animate-fade-in block">
@@ -307,7 +313,7 @@
                 </div>
                 
                 <!-- Charts -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
                     <div class="card">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -335,6 +341,18 @@
                         </div>
                         <div class="h-64 relative w-full"><canvas id="affiliateChart"></canvas></div>
                     </div>
+                </div>
+
+                <!-- New Movie Stats Chart -->
+                <div class="card w-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-[#D4AF37]">Movies Performance (Top 5)</h3>
+                            <p class="text-xs text-textMuted">View/Download trends for the last 7 days</p>
+                        </div>
+                        <i data-lucide="film" class="w-6 h-6 text-[#D4AF37]"></i>
+                    </div>
+                    <div class="h-80 relative w-full"><canvas id="movieChart"></canvas></div>
                 </div>
             </div>
 
@@ -548,7 +566,7 @@
                 </div>
             </div>
 
-            <!-- VIEW: MOVIES (ส่วนที่เพิ่มเข้ามาใหม่) -->
+            <!-- VIEW: MOVIES -->
             <div id="view-movies" class="view-section animate-fade-in hidden">
                 <div class="flex justify-between items-end mb-4">
                     <div>
@@ -559,7 +577,7 @@
                 </div>
                 <div class="grid grid-cols-3 gap-4 mb-6">
                     <div class="stat-box border-l-2 border-[#D4AF37]">
-                        <span class="text-xs text-textMuted uppercase">Total Episodes/Movies</span>
+                        <span class="text-xs text-textMuted uppercase">Total Episodes</span>
                         <span class="text-xl font-bold text-[#D4AF37]" id="sum-mov-total">0</span>
                     </div>
                     <div class="stat-box border-l-2 border-blue-400">
@@ -567,7 +585,7 @@
                         <span class="text-xl font-bold text-blue-400" id="sum-mov-titles">0</span>
                     </div>
                     <div class="stat-box border-l-2 border-green-500">
-                        <span class="text-xs text-textMuted uppercase">Total Downloads</span>
+                        <span class="text-xs text-textMuted uppercase">Total Views/DLs</span>
                         <span class="text-xl font-bold text-green-500" id="sum-mov-dl">0</span>
                     </div>
                 </div>
@@ -582,7 +600,7 @@
                     </div>
                 </div>
 
-                <h3 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest border-b border-[#333] pb-1">Download History Log</h3>
+                <h3 class="text-sm font-bold text-gray-300 mb-2 uppercase tracking-widest border-b border-[#333] pb-1">Download / Watch History Log</h3>
                 <div class="card p-0 overflow-hidden border border-[#2A2A2A]">
                     <div class="table-container">
                         <table class="admin-table" id="table-movie_downloads">
@@ -680,6 +698,7 @@
         let chartInstanceStat = null;
         let chartInstanceTrend = null;
         let chartInstanceAffiliate = null; 
+        let chartInstanceMovie = null; // กราฟใหม่ของ Movies
         
         // Variables for Real-time Polling
         let isEditing = false;
@@ -1071,8 +1090,8 @@
 
             if(!isEditing) {
                 renderAllTables();
+                updateSummaryBoxes(); // เรียกให้คำนวณและอัปเดต Badges และ ตัวเลขสรุป
                 updateDashboard();
-                updateSummaryBoxes();
             }
         }
 
@@ -1401,6 +1420,7 @@
             });
             safeSetText('sum-ord-rev', `฿${oRev.toLocaleString()}`);
             safeSetText('sum-ord-pen', oPen);
+            updateNavBadge('badge-orders', oPen); // อัปเดตตัวเลขเมนู
 
             // Deposits
             safeSetText('sum-dep-total', state.deposits.length);
@@ -1412,6 +1432,7 @@
             });
             safeSetText('sum-dep-rev', `฿${dRev.toLocaleString()}`);
             safeSetText('sum-dep-pen', dPen);
+            updateNavBadge('badge-deposits', dPen); // อัปเดตตัวเลขเมนู
 
             // Withdraws
             let wRev = 0; let wPen = 0; let wCan = 0;
@@ -1424,6 +1445,7 @@
             safeSetText('sum-wit-rev', `฿${wRev.toLocaleString()}`);
             safeSetText('sum-wit-pen', wPen);
             safeSetText('sum-wit-can', wCan);
+            updateNavBadge('badge-withdraws', wPen); // อัปเดตตัวเลขเมนู
 
             // Booking
             safeSetText('sum-bk-total', state.booking.length);
@@ -1434,6 +1456,7 @@
             });
             safeSetText('sum-bk-pen', bkPen);
             safeSetText('sum-bk-done', bkDone);
+            updateNavBadge('badge-booking', bkPen); // อัปเดตตัวเลขเมนู
 
             // Affiliate
             safeSetText('sum-aff-tx', state.affiliate.length);
@@ -1454,6 +1477,18 @@
 
             // Options
             safeSetText('sum-opt-total', state.options.length);
+        }
+
+        // ฟังก์ชันช่วยแสดงตัวเลขบนเมนูด้านข้าง (Badges)
+        function updateNavBadge(id, count) {
+            const badge = document.getElementById(`nav-${id}`);
+            if(!badge) return;
+            if (count > 0) {
+                badge.innerText = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
         }
 
         function updateDashboard() {
@@ -1571,6 +1606,81 @@
                         animation: false 
                     },
                     cutout: '70%'
+                }
+            });
+
+            // 4. Line Chart (Movie Downloads Top 5 Trend - 7 Days)
+            drawMovieChart();
+        }
+
+        function drawMovieChart() {
+            const downloads = state.movie_downloads || [];
+            let movieStats = {}; 
+            let totalMovieCount = {}; 
+            let allDates = [];
+
+            // สร้าง Array ของวันที่ย้อนหลัง 7 วัน ในรูปแบบ DD/MM/YYYY
+            for(let i=6; i>=0; i--) {
+                let d = new Date();
+                d.setDate(d.getDate() - i);
+                let dStr = `${("0"+d.getDate()).slice(-2)}/${("0"+(d.getMonth()+1)).slice(-2)}/${d.getFullYear()}`;
+                allDates.push(dStr);
+            }
+
+            // คำนวณยอด
+            downloads.forEach(dl => {
+                let fullDate = String(dl.cols[0]); // e.g. 15/08/2023 | 12:00:00
+                let dStr = fullDate.split('|')[0].trim();
+                let title = String(dl.cols[4]).trim();
+                
+                if(!totalMovieCount[title]) totalMovieCount[title] = 0;
+                totalMovieCount[title]++;
+
+                if(!movieStats[title]) movieStats[title] = {};
+                if(!movieStats[title][dStr]) movieStats[title][dStr] = 0;
+                movieStats[title][dStr]++;
+            });
+
+            // หา Top 5 หนังที่มีการดาวน์โหลด/ดู สูงสุด
+            let top5 = Object.keys(totalMovieCount).sort((a,b) => totalMovieCount[b] - totalMovieCount[a]).slice(0, 5);
+
+            // สร้าง Datasets 5 เส้น
+            const colors = ['#D4AF37', '#10B981', '#3B82F6', '#EF4444', '#8B5CF6'];
+            let datasets = top5.map((title, index) => {
+                let dataArray = allDates.map(dStr => movieStats[title]?.[dStr] || 0);
+                return {
+                    label: title.length > 20 ? title.substring(0, 20) + '...' : title, // ตัดชื่อถ้ายาวไป
+                    data: dataArray,
+                    borderColor: colors[index % colors.length],
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6
+                };
+            });
+
+            // วาดกราฟ
+            const ctx4 = document.getElementById('movieChart');
+            if(chartInstanceMovie) chartInstanceMovie.destroy();
+            chartInstanceMovie = new Chart(ctx4, {
+                type: 'line',
+                data: { 
+                    labels: allDates, 
+                    datasets: datasets.length > 0 ? datasets : [{ label: 'No Data', data: [0,0,0,0,0,0,0], borderColor: '#555' }] 
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { color: '#888', font: { size: 11 }, usePointStyle: true, boxWidth: 6 } },
+                        animation: false,
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { grid: { color: '#2A2A2A', borderDash: [5, 5] }, ticks: { color: '#888', stepSize: 1, precision: 0 } },
+                        x: { grid: { display: false }, ticks: { color: '#888' } }
+                    },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
                 }
             });
         }
